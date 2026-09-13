@@ -6,6 +6,7 @@ import { useAppStore } from '@/lib/store';
 import { fetchStory, fetchConversations, fetchConversation } from '@/lib/api';
 import { CoserCard } from '@/components/chat/CoserCard';
 import { GenericCard } from '@/components/chat/GenericCard';
+import { RealityModifierCard } from '@/components/chat/RealityModifierCard';
 import { ChatInput } from '@/components/chat/ChatInput';
 import { ScenarioSidebar } from '@/components/chat/ScenarioSidebar';
 import { Sparkles, ArrowLeft, RotateCcw, Plus, Trash2, Edit2, History } from 'lucide-react';
@@ -75,12 +76,12 @@ export default function ChatPage() {
 
     try {
       // 2. Prepare context for AI call
-      const activeModel = modelSettings.model || 'deepseek-v3.2';
+      const activeModel = modelSettings.model || 'deepseek-flash';
       const promptMessages = [
         {
           role: 'system',
           content: `你是一名顶级沉浸式小说推演者。当前剧本是《${currentDeck?.title || '未命名'}》。
-女主角与场景氛围需根据用户行动推进剧情，细致刻画环境、微表情与情绪变化。
+女主与场景氛围需根据用户行动推进剧情，细致刻画环境、微表情与情绪变化。
 请严格输出高质量文学叙事，并在结尾提供 2-4 个下一步行动选项。`
         },
         ...conversationHistory.slice(-6).map((h) => ({
@@ -185,16 +186,18 @@ export default function ChatPage() {
   };
 
   const isCoser = deckId === 'deck_coser_sister';
+  const isModifier = deckId === 'deck_reality_modifier';
+  const bgClass = isCoser ? 'coser-sister-bg' : (isModifier ? 'reality-modifier-bg' : '');
 
   return (
     <div className="flex-1 flex min-h-screen">
       {/* Secondary Scenario & Saves Sidebar (270px) */}
-      <div className="hidden lg:block shrink-0">
+      <div className="hidden md:block shrink-0">
         <ScenarioSidebar />
       </div>
 
       {/* Main Chat Canvas */}
-      <div className={`flex-1 flex flex-col min-w-0 h-screen overflow-y-auto ${isCoser ? 'coser-sister-bg' : ''}`}>
+      <div className={`flex-1 flex flex-col min-w-0 h-screen overflow-y-auto ${bgClass}`}>
         {/* Theater Sticky Header */}
         <div className="sticky top-0 z-20 border-b border-[#20222e] bg-[#0e0f14]/90 backdrop-blur-md px-4 sm:px-6 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -273,6 +276,18 @@ export default function ChatPage() {
                   turn={turn}
                   index={idx}
                   onSendAction={handleSend}
+                />
+              );
+            }
+
+            if (isModifier) {
+              return (
+                <RealityModifierCard
+                  key={idx}
+                  turn={turn}
+                  index={idx}
+                  onSendAction={handleSend}
+                  onDelete={(dIdx) => truncateHistory(dIdx)}
                 />
               );
             }

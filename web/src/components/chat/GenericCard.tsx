@@ -13,6 +13,31 @@ interface GenericCardProps {
 }
 
 export function GenericCard({ turn, index, onSendAction, onDelete, onRegenerate }: GenericCardProps) {
+  const storyText = turn.story || turn.text || '';
+
+  const renderStoryParagraphs = (text: string) => {
+    return text.split('\n').map((line, li) => {
+      const trimmed = line.trim();
+      if (!trimmed) return <div key={li} className="h-2" />;
+
+      const parts = trimmed.split(/([“「][^”」]+[”」])/g);
+      return (
+        <p key={li} className="leading-relaxed mb-3 font-serif text-[14px] sm:text-[14.5px] text-gray-200">
+          {parts.map((part, pi) => {
+            if (/^[“「].*[”」]$/.test(part)) {
+              return (
+                <span key={pi} className="dialogue-quote font-semibold text-sky-400">
+                  {part}
+                </span>
+              );
+            }
+            return <span key={pi}>{part}</span>;
+          })}
+        </p>
+      );
+    });
+  };
+
   return (
     <div className="p-5 sm:p-6 rounded-2xl bg-[#171822] border border-[#272a38] shadow-xl space-y-4 text-gray-200">
       {/* Location Header */}
@@ -26,10 +51,31 @@ export function GenericCard({ turn, index, onSendAction, onDelete, onRegenerate 
         </div>
       )}
 
-      {/* Prose Text */}
-      <div className="text-gray-200 text-sm sm:text-[14.5px] leading-relaxed whitespace-pre-wrap font-normal">
-        {turn.story || turn.text}
+      {/* Prose Text with Quotes */}
+      <div className="novel-text space-y-1">
+        {renderStoryParagraphs(storyText)}
       </div>
+
+      {/* Memory Accordion if available */}
+      {turn.memory && turn.memory.length > 0 && (
+        <details className="reality-panel" open={false}>
+          <summary className="reality-summary cursor-pointer select-none">
+            <span className="flex items-center gap-2">
+              <span>📄</span>
+              <span>本幕记忆沉淀 ({turn.memory.length} 条事实)</span>
+            </span>
+            <span className="reality-arrow"></span>
+          </summary>
+          <div className="reality-body space-y-1 text-xs text-gray-300">
+            {turn.memory.map((m, mi) => (
+              <div key={mi} className="leading-relaxed flex items-start gap-1.5">
+                <span className="text-amber-400 shrink-0">•</span>
+                <span>{m}</span>
+              </div>
+            ))}
+          </div>
+        </details>
+      )}
 
       {/* Status Box if available */}
       {turn.status && Object.keys(turn.status).length > 0 && (
