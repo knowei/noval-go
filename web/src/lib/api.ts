@@ -107,7 +107,7 @@ export async function fetchUserList(): Promise<UserProfile[]> {
 
 export async function fetchUserProfile(userId: string): Promise<UserProfile | null> {
   try {
-    const resp = await fetch(`/api/user/profile?id=${encodeURIComponent(userId)}`);
+    const resp = await fetch(`/api/user/profile?user_id=${encodeURIComponent(userId)}`);
     if (!resp.ok) return null;
     return await resp.json();
   } catch (e) {

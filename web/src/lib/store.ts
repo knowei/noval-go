@@ -34,7 +34,9 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
-  currentUserId: typeof window !== 'undefined' ? localStorage.getItem('noval_user_id') || 'user_master' : 'user_master',
+  currentUserId: typeof window !== 'undefined'
+    ? localStorage.getItem('rp_current_user_id') || localStorage.getItem('noval_user_id') || 'default_user'
+    : 'default_user',
   currentUser: null,
   currentDeckKey: 'deck_coser_sister',
   currentDeck: null,
@@ -42,7 +44,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   conversationHistory: [],
   savedConversations: [],
   modelSettings: {
-    model: typeof window !== 'undefined' ? localStorage.getItem('rp_api_model') || 'deepseek-v3.2' : 'deepseek-v3.2',
+    model: typeof window !== 'undefined' ? localStorage.getItem('rp_api_model') || 'deepseek-flash' : 'deepseek-flash',
     baseUrl: typeof window !== 'undefined' ? localStorage.getItem('rp_api_base_url') || 'https://api.openai.com/v1' : 'https://api.openai.com/v1',
     apiKey: typeof window !== 'undefined' ? localStorage.getItem('rp_api_key') || '' : '',
     temperature: 0.85,
@@ -53,12 +55,25 @@ export const useAppStore = create<AppState>((set, get) => ({
   isDrawerOpen: false,
 
   setCurrentUserId: (id: string) => {
-    if (typeof window !== 'undefined') localStorage.setItem('noval_user_id', id);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('rp_current_user_id', id);
+      localStorage.setItem('noval_user_id', id);
+    }
     set({ currentUserId: id });
     get().refreshSaves();
   },
 
-  setCurrentUser: (user) => set({ currentUser: user }),
+  setCurrentUser: (user) => {
+    set({ currentUser: user });
+    if (user && (user as any).model_config) {
+      const cfg = (user as any).model_config;
+      get().setModelSettings({
+        model: cfg.api_model || get().modelSettings.model,
+        baseUrl: cfg.api_base || get().modelSettings.baseUrl,
+        apiKey: cfg.api_key !== undefined ? cfg.api_key : get().modelSettings.apiKey,
+      });
+    }
+  },
   setCurrentDeck: (deckKey, deck) => set({ currentDeckKey: deckKey, currentDeck: deck }),
   setConversationHistory: (history) => set({ conversationHistory: history }),
   setCurrentConversationId: (id) => set({ currentConversationId: id }),

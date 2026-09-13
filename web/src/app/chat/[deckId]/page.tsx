@@ -7,6 +7,7 @@ import { fetchStory, fetchConversations, fetchConversation } from '@/lib/api';
 import { CoserCard } from '@/components/chat/CoserCard';
 import { GenericCard } from '@/components/chat/GenericCard';
 import { ChatInput } from '@/components/chat/ChatInput';
+import { ScenarioSidebar } from '@/components/chat/ScenarioSidebar';
 import { Sparkles, ArrowLeft, RotateCcw, Plus, Trash2, Edit2, History } from 'lucide-react';
 import Link from 'next/link';
 
@@ -21,6 +22,7 @@ export default function ChatPage() {
     setCurrentDeck,
     conversationHistory,
     setConversationHistory,
+    setCurrentConversationId,
     addTurn,
     updateTurn,
     truncateHistory,
@@ -46,6 +48,7 @@ export default function ChatPage() {
         if (deckSaves.length > 0 && deckSaves[0].id) {
           const loaded = await fetchConversation(deckSaves[0].id);
           if (loaded && loaded.history && loaded.history.length > 0) {
+            setCurrentConversationId(loaded.id);
             setConversationHistory(loaded.history);
             return;
           }
@@ -184,100 +187,113 @@ export default function ChatPage() {
   const isCoser = deckId === 'deck_coser_sister';
 
   return (
-    <div className={`flex-1 flex flex-col min-h-full ${isCoser ? 'coser-sister-bg' : ''}`}>
-      {/* Theater Sticky Header */}
-      <div className="sticky top-14 z-20 border-b border-[#242734]/80 bg-[#12141c]/90 backdrop-blur-md px-4 sm:px-8 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/"
-            className="p-1.5 rounded-xl hover:bg-[#1f212c] text-gray-400 hover:text-white transition flex items-center gap-1 text-xs"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">返回广场</span>
-          </Link>
+    <div className="flex-1 flex min-h-screen">
+      {/* Secondary Scenario & Saves Sidebar (270px) */}
+      <div className="hidden lg:block shrink-0">
+        <ScenarioSidebar />
+      </div>
 
-          <div className="h-4 w-px bg-gray-700" />
+      {/* Main Chat Canvas */}
+      <div className={`flex-1 flex flex-col min-w-0 h-screen overflow-y-auto ${isCoser ? 'coser-sister-bg' : ''}`}>
+        {/* Theater Sticky Header */}
+        <div className="sticky top-0 z-20 border-b border-[#20222e] bg-[#0e0f14]/90 backdrop-blur-md px-4 sm:px-6 py-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="p-1 rounded-lg hover:bg-[#1a1c27] text-gray-400 hover:text-white transition flex items-center gap-1.5 text-xs group"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition" />
+              <span>返回探索</span>
+            </Link>
 
-          <div className="flex items-center gap-2">
-            <span className="text-lg">{isCoser ? '🎀' : currentDeck?.coverIcon || '📖'}</span>
-            <div>
-              <h2 className="font-bold text-xs sm:text-sm text-gray-100 flex items-center gap-1.5 font-mono">
-                <span>{currentDeck?.title || '沉浸剧场'}</span>
-                {currentDeck?.badge && (
-                  <span className="hidden sm:inline px-2 py-0.5 rounded-full text-[10px] bg-pink-500/20 text-pink-300 border border-pink-500/30">
-                    {currentDeck.badge}
-                  </span>
-                )}
-              </h2>
+            <span className="text-gray-700 font-mono">|</span>
+
+            <div className="flex items-center gap-2">
+              <span className="text-base">{isCoser ? '🎀' : currentDeck?.coverIcon || '📖'}</span>
+              <span className="font-bold text-xs sm:text-sm text-gray-200">
+                {currentDeck?.title || '沉浸剧场'}
+              </span>
+              {currentDeck?.badge && (
+                <span className="hidden sm:inline px-2 py-0.5 rounded-full text-[10px] bg-pink-500/20 text-pink-300 border border-pink-500/30">
+                  {currentDeck.badge}
+                </span>
+              )}
             </div>
+
+            <span className="text-gray-700 font-mono">|</span>
+
+            <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded-full font-mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>{modelSettings.model || 'deepseek-flash'}</span>
+            </div>
+          </div>
+
+          {/* Action Controls */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                if (currentDeck && confirm('确定要重新开始本剧本第一幕吗？当前进度将重置。')) {
+                  startNewStory(currentDeck);
+                }
+              }}
+              className="px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-amber-300 text-xs flex items-center gap-1.5 transition cursor-pointer"
+              title="重置到第一幕开局"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline text-[11px]">重新开卷</span>
+            </button>
+
+            <button
+              onClick={() => setIsDrawerOpen(true)}
+              className="px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-pink-300 text-xs flex items-center gap-1.5 transition cursor-pointer"
+            >
+              <History className="w-3.5 h-3.5 text-pink-400" />
+              <span className="text-[11px]">存档抽屉</span>
+            </button>
           </div>
         </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => {
-              if (currentDeck && confirm('确定要重新开始本剧本第一幕吗？当前进度将重置。')) {
-                startNewStory(currentDeck);
-              }
-            }}
-            className="px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-amber-300 text-xs flex items-center gap-1.5 transition cursor-pointer"
-            title="重置到第一幕开局"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline text-[11px]">重新开卷</span>
-          </button>
-
-          <button
-            onClick={() => setIsDrawerOpen(true)}
-            className="px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-pink-300 text-xs flex items-center gap-1.5 transition cursor-pointer"
-          >
-            <History className="w-3.5 h-3.5 text-pink-400" />
-            <span className="text-[11px]">存档</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Main Dialogue Stream */}
-      <div className="flex-1 max-w-3xl mx-auto w-full p-4 sm:p-6 space-y-6 pb-28">
-        {conversationHistory.map((turn, idx) => {
-          if (turn.isUser) {
-            return (
-              <div key={idx} className="flex flex-col items-end gap-1 group">
-                <div className="bg-[#242734] text-gray-100 text-xs sm:text-sm px-4 py-3 rounded-2xl rounded-tr-xs max-w-lg shadow-lg border border-[#333748] leading-relaxed font-mono select-text">
-                  {turn.text}
+        {/* Main Dialogue Stream */}
+        <div className="flex-1 max-w-3xl mx-auto w-full p-4 sm:p-6 space-y-6 pb-28">
+          {conversationHistory.map((turn, idx) => {
+            if (turn.isUser) {
+              return (
+                <div key={idx} className="flex flex-col items-end gap-1 group">
+                  <div className="bg-[#242734] text-gray-100 text-xs sm:text-sm px-4 py-3 rounded-2xl rounded-tr-xs max-w-lg shadow-lg border border-[#333748] leading-relaxed font-mono select-text">
+                    {turn.text}
+                  </div>
                 </div>
-              </div>
-            );
-          }
+              );
+            }
 
-          if (isCoser) {
+            if (isCoser) {
+              return (
+                <CoserCard
+                  key={idx}
+                  turn={turn}
+                  index={idx}
+                  onSendAction={handleSend}
+                />
+              );
+            }
+
             return (
-              <CoserCard
+              <GenericCard
                 key={idx}
                 turn={turn}
                 index={idx}
                 onSendAction={handleSend}
+                onDelete={(dIdx) => truncateHistory(dIdx)}
               />
             );
-          }
+          })}
 
-          return (
-            <GenericCard
-              key={idx}
-              turn={turn}
-              index={idx}
-              onSendAction={handleSend}
-              onDelete={(dIdx) => truncateHistory(dIdx)}
-            />
-          );
-        })}
+          <div ref={streamBottomRef} />
+        </div>
 
-        <div ref={streamBottomRef} />
+        {/* Floating Bottom Input */}
+        <ChatInput onSend={handleSend} isLoading={isLoading} />
       </div>
-
-      {/* Floating Bottom Input */}
-      <ChatInput onSend={handleSend} isLoading={isLoading} />
     </div>
   );
 }
