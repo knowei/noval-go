@@ -32,6 +32,7 @@ export default function ChatPage() {
     addTurn,
     updateTurn,
     truncateHistory,
+    currentConversationId,
     setCurrentConversationId,
     startNewStory,
     modelSettings,
@@ -47,6 +48,41 @@ export default function ChatPage() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const latestUserTurnRef = useRef<HTMLDivElement>(null);
   const streamBottomRef = useRef<HTMLDivElement>(null);
+  const hasInitialScrolledRef = useRef(false);
+
+  // Reset initial scroll flag when entering or switching conversations
+  useEffect(() => {
+    hasInitialScrolledRef.current = false;
+  }, [deckId, currentConversationId]);
+
+  // Automatically scroll to the latest turn when conversation history loads
+  useEffect(() => {
+    if (conversationHistory.length > 0 && !hasInitialScrolledRef.current) {
+      hasInitialScrolledRef.current = true;
+      const timer1 = setTimeout(() => {
+        if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTo({
+            top: chatContainerRef.current.scrollHeight,
+            behavior: 'auto'
+          });
+        }
+      }, 100);
+
+      const timer2 = setTimeout(() => {
+        if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTo({
+            top: chatContainerRef.current.scrollHeight,
+            behavior: 'smooth'
+          });
+        }
+      }, 350);
+
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+    }
+  }, [conversationHistory]);
 
   useEffect(() => {
     async function init() {
@@ -351,11 +387,29 @@ export default function ChatPage() {
     }
   };
 
-  const handleScrollToBottom = () => {
-    chatContainerRef.current?.scrollTo({
-      top: chatContainerRef.current.scrollHeight,
-      behavior: 'smooth'
-    });
+  const handleScrollToBottom = (smooth = true) => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: smooth ? 'smooth' : 'auto'
+      });
+    }
+  };
+
+  const handleContainerDoubleClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    // Don't trigger if user is interacting with form controls or links
+    if (
+      target.closest('input') ||
+      target.closest('textarea') ||
+      target.closest('button') ||
+      target.closest('select') ||
+      target.closest('a') ||
+      target.closest('summary')
+    ) {
+      return;
+    }
+    handleScrollToBottom(true);
   };
 
   return (
@@ -393,10 +447,12 @@ export default function ChatPage() {
         onCancel={() => setIsResetConfirmOpen(false)}
       />
 
-      {/* Main Chat Canvas with container ref */}
+      {/* Main Chat Canvas with container ref & double-click listener */}
       <div
         ref={chatContainerRef}
+        onDoubleClick={handleContainerDoubleClick}
         className={`flex-1 flex flex-col min-w-0 h-screen overflow-y-auto ${bgClass}`}
+        title="双击空白处可快速滑动至最后一条记录"
       >
         {/* Theater Sticky Header */}
         <div className="sticky top-0 z-20 border-b border-[#20222e] bg-[#0e0f14]/90 backdrop-blur-md px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2">
