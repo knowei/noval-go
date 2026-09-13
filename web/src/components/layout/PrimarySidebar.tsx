@@ -41,7 +41,7 @@ const MENU_ITEMS = [
 
 export function PrimarySidebar() {
   const pathname = usePathname();
-  const { currentUserId, currentUser, setCurrentUser, setIsUserSwitchOpen, setIsSettingsOpen } = useAppStore();
+  const { currentUserId, currentUser, setCurrentUser, setIsUserSwitchOpen, setIsSettingsOpen, modelSettings } = useAppStore();
 
   useEffect(() => {
     if (currentUserId) {
@@ -54,10 +54,10 @@ export function PrimarySidebar() {
   const isChatActive = pathname.startsWith('/chat');
 
   return (
-    <aside className="w-[76px] shrink-0 h-screen sticky top-0 bg-[#0d0e13] border-r border-[#1e2029] flex flex-col justify-between py-2 px-1 z-40 select-none no-scrollbar">
+    <aside className="w-[86px] sm:w-[88px] shrink-0 h-screen sticky top-0 bg-[#0d0e13] border-r border-[#1e2029] flex flex-col justify-between py-2.5 px-1.5 z-40 select-none no-scrollbar">
       {/* Top Logo */}
       <div className="flex flex-col items-center space-y-2">
-        <div className="flex items-center justify-between w-full px-1.5 py-1">
+        <div className="flex items-center justify-between w-full px-1 py-0.5">
           <Link href="/" className="flex items-center gap-1 group">
             <div className="w-7 h-7 rounded-xl bg-gradient-to-tr from-amber-500 via-rose-500 to-pink-500 flex items-center justify-center text-white shadow-md shadow-pink-500/20 group-hover:scale-105 transition font-black text-xs">
               风月
@@ -67,7 +67,7 @@ export function PrimarySidebar() {
         </div>
 
         {/* Menu Navigation */}
-        <nav className="flex flex-col items-center space-y-1 w-full overflow-y-auto max-h-[calc(100vh-220px)] no-scrollbar py-0.5">
+        <nav className="flex flex-col items-center space-y-0.5 w-full overflow-y-auto no-scrollbar flex-1 min-h-0 py-0.5">
           {MENU_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive = item.isChat ? isChatActive : pathname === item.href && item.href !== '#';
@@ -84,7 +84,7 @@ export function PrimarySidebar() {
                 title={item.name}
               >
                 <Icon className={`w-4 h-4 ${isActive ? 'text-amber-400' : item.color} group-hover:scale-110 transition`} />
-                <span className="text-[10.5px] tracking-tight leading-none whitespace-nowrap">
+                <span className="text-[11px] tracking-tight leading-none whitespace-nowrap">
                   {item.name}
                 </span>
               </Link>
@@ -94,41 +94,51 @@ export function PrimarySidebar() {
       </div>
 
       {/* Bottom Profile Area */}
-      <div className="pt-2 border-t border-[#1e2029] flex flex-col items-center space-y-2 w-full">
+      <div className="pt-2 border-t border-[#1e2029] flex flex-col items-center space-y-1.5 w-full">
         {/* User Card */}
         <div
           onClick={() => setIsUserSwitchOpen(true)}
-          className="w-full py-2 px-1 rounded-xl bg-[#14161f] hover:bg-[#1c1f2c] border border-amber-500/20 hover:border-amber-500/40 flex flex-col items-center cursor-pointer transition text-center group shadow-sm"
+          className="w-full py-2 px-1 rounded-2xl bg-[#141620] hover:bg-[#1c1f2e] border border-amber-500/25 hover:border-amber-500/50 flex flex-col items-center cursor-pointer transition text-center group shadow-md"
           title="点击切换账号"
         >
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 border border-amber-300/40 flex items-center justify-center text-sm shadow">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 via-orange-500 to-rose-600 border border-amber-300/50 flex items-center justify-center text-sm shadow-sm group-hover:scale-105 transition">
             {currentUser?.avatar || '🎭'}
           </div>
-          <div className="text-xs font-bold text-gray-100 mt-1 truncate max-w-[68px] flex items-center justify-center gap-0.5 group-hover:text-amber-300">
+          <div className="text-xs font-bold text-gray-100 mt-1 truncate max-w-[76px] flex items-center justify-center gap-0.5 group-hover:text-amber-300">
             <span>{currentUser?.nickname || currentUser?.username || '风月旅行者'}</span>
-            <span className="text-[10px]">🌐</span>
+            <span className="text-[10px] text-sky-400">🌐</span>
           </div>
-          <div className="text-[11px] text-amber-400 font-bold font-mono mt-0.5">
+          <div className="text-xs text-amber-400 font-bold font-mono mt-0.5 tracking-tight">
             💎 {currentUser ? (currentUser as any).points || '9,999' : '9,999'}
           </div>
         </div>
 
+        {/* Model Switch Quick Button */}
+        <button
+          onClick={() => setIsSettingsOpen(true)}
+          className="w-full py-1 px-1 rounded-xl bg-[#181a24] hover:bg-[#222534] border border-[#2d3144] hover:border-emerald-500/50 text-[10px] text-emerald-400 hover:text-emerald-300 flex items-center justify-center gap-1 transition font-mono shadow-sm cursor-pointer"
+          title="点击切换 AI 推演大模型或配置 API"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="truncate max-w-[66px]">{modelSettings.model || 'deepseek'}</span>
+        </button>
+
         {/* Quick Links */}
-        <div className="text-[10px] text-gray-400 flex items-center justify-center gap-1.5 whitespace-nowrap">
+        <div className="text-[10px] text-gray-400 flex items-center justify-center gap-1.5 whitespace-nowrap pt-0.5">
           <span className="hover:text-gray-200 cursor-pointer">关注</span>
-          <span className="text-gray-600">|</span>
+          <span className="text-gray-700">|</span>
           <span className="hover:text-gray-200 cursor-pointer">历史</span>
-          <span className="text-gray-600">|</span>
+          <span className="text-gray-700">|</span>
           <span className="hover:text-gray-200 cursor-pointer">收藏</span>
         </div>
 
         {/* Footer tool icons */}
-        <div className="flex items-center justify-center gap-2.5 text-gray-400 pt-0.5 pb-1">
-          <button onClick={() => setIsSettingsOpen(true)} title="模型配置">
-            <Volume2 className="w-3.5 h-3.5 hover:text-white cursor-pointer transition" />
+        <div className="flex items-center justify-center gap-2.5 text-gray-500 pt-0.5 pb-0.5">
+          <button onClick={() => setIsSettingsOpen(true)} title="模型配置" className="hover:text-amber-300 transition cursor-pointer">
+            <Volume2 className="w-3.5 h-3.5" />
           </button>
-          <HelpCircle className="w-3.5 h-3.5 hover:text-white cursor-pointer transition" />
-          <Monitor className="w-3.5 h-3.5 hover:text-white cursor-pointer transition" />
+          <HelpCircle className="w-3.5 h-3.5 hover:text-sky-300 transition cursor-pointer" />
+          <Monitor className="w-3.5 h-3.5 hover:text-purple-300 transition cursor-pointer" />
         </div>
       </div>
     </aside>
