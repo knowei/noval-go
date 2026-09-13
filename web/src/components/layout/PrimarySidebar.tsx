@@ -46,6 +46,8 @@ export function PrimarySidebar() {
   const pathname = usePathname();
   const { currentUserId, currentUser, setCurrentUser, setIsUserSwitchOpen, setIsSettingsOpen, modelSettings } = useAppStore();
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     if (currentUserId) {
@@ -124,7 +126,7 @@ export function PrimarySidebar() {
             <span className="text-[10px] text-sky-400">🌐</span>
           </div>
           <div className="text-xs text-amber-400 font-bold font-mono mt-0.5 tracking-tight">
-            💎 {currentUser ? (currentUser as any).points || '9,999' : '9,999'}
+            💎 <span suppressHydrationWarning>{mounted && currentUser ? (currentUser as any).points || '9,999' : '9,999'}</span>
           </div>
         </div>
 
@@ -138,7 +140,7 @@ export function PrimarySidebar() {
           title="点击切换 AI 推演大模型或配置 API"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="truncate max-w-[70px]">{modelSettings.model || 'deepseek'}</span>
+          <span suppressHydrationWarning className="truncate max-w-[70px]">{mounted ? (modelSettings.model || 'deepseek') : 'deepseek'}</span>
         </button>
 
         {/* Quick Links */}
@@ -206,7 +208,7 @@ export function PrimarySidebar() {
               className="px-2 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-[10px] text-emerald-300 font-mono flex items-center gap-1 cursor-pointer"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>{modelSettings.model || 'deepseek'}</span>
+              <span suppressHydrationWarning>{mounted ? (modelSettings.model || 'deepseek') : 'deepseek'}</span>
             </button>
 
             <button
