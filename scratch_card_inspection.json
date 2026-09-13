@@ -1,0 +1,100 @@
+{
+  "https://awsprod.aiero.cc/console/api/installed-apps/1e9aeed5-e918-499f-9bff-24db857c827b": {
+    "id": "1e9aeed5-e918-499f-9bff-24db857c827b",
+    "app": {
+      "id": "1e9aeed5-e918-499f-9bff-24db857c827b",
+      "name": "我的绝美coser萝莉妹妹（超低消耗）",
+      "mode": "chat",
+      "created_at": 1788905651,
+      "summary": "你有一个妹妹，叫林知念，十六岁。她是那种会让别人多看两眼的女孩——个子不高，五官精致，笑起来很甜。但她在你面前是另一个样子——她会穿着你过大的卫衣在客厅晃荡，会把你的薯片吃光然后假装不知道，会在你打游戏的时候趴在你沙发靠背上看你操作。\n但最让你头疼的是她有一个烧钱的爱好：cosplay。\n她的房间里有一个衣柜，里面挂满了各种颜色的假发和戏服。她从初二开始玩cos，现在已经在圈子里有了一点名气。她cos的角色你会认出一部分——大多是动漫里那种长头发、大眼睛的可爱角色。她每次换好衣服之后都会从房间里跑出来，在你面前转一圈，然后问：\n“哥！好看吗好看吗！”\n你一般会说：“……还行。”然后她会噘着嘴说：“你每次都这样说！”但你注意到她在噘嘴的时候眼睛里是带着笑的。她其实不在乎你评价什么——她只是想让你看到。\n你知道她每个周末都会去参加漫展。你知道她在网上发照片，有很多人夸她好看。但你真正开始注意到的是另一件事——每次她换好衣服从房间出来的时候，她都会先站在你面前让你看一眼。不管你是正在看电影还是看手机，她都会等到你抬头看她。她说“好不好看”的时候，声音里有一种她自己可能都没察觉到的期待。\n她想要你看她。不是所有人——是你。\n【她在网上有几千个粉丝，但她最在乎的那个人，永远只有你一个。】",
+      "created_by_account_id": "0d2f1f2e-d58f-457d-8e59-3943b446dbf4",
+      "created_by_account_name": null,
+      "cover": "https://catai.wiki/3d5dd11b-f33d-4829-b0ee-4f4c0eb63800/cover",
+      "cover_tiny": null,
+      "bbs_link": "",
+      "score": 0,
+      "daily_rank": null,
+      "weekly_rank": null,
+      "monthly_rank": null,
+      "overall_rank": null,
+      "is_anonymous": false,
+      "average_cost_per_message": 698,
+      "published_at": null,
+      "tags": null,
+      "pre_length": 0,
+      "memo": null,
+      "pre_prompt_and_pre_post_text_length": 0,
+      "world_book_length": 0,
+      "avg_msg_count_per_conv": 0,
+      "players_count": 0,
+      "first_published_at": 1788908170,
+      "like_count": 0,
+      "average_rating_score": null,
+      "rating_count": 0,
+      "conv_count_for_avg_msg_per_conv": 0,
+      "recommendation_reason": null,
+      "recommendation_source": null,
+      "activity_names": null,
+      "depth_play_user_count": 0,
+      "avg_play_round_count": 0,
+      "type": 0,
+      "collection_id": null,
+      "is_pinned_by_author": null,
+      "pinned_at": null
+    },
+    "app_owner_tenant_id": "",
+    "is_pinned": false,
+    "last_used_at": 0,
+    "editable": false,
+    "uninstallable": true,
+    "is_available": true,
+    "fake_id": ""
+  },
+  "https://awsprod.aiero.cc/console/api/installed-apps/1e9aeed5-e918-499f-9bff-24db857c827b/parameters": {
+    "opening_statement": "选择一段开场白",
+    "suggested_questions": [],
+    "suggested_questions_after_answer": {
+      "enabled": true
+    },
+    "speech_to_text": {
+      "enabled": false
+    },
+    "text_to_speech": {
+      "enabled": false,
+      "voice": "",
+      "language": ""
+    },
+    "retriever_resource": {
+      "enabled": false
+    },
+    "annotation_reply": {
+      "enabled": false
+    },
+    "more_like_this": {
+      "enabled": false
+    },
+    "user_input_form": [],
+    "sensitive_word_avoidance": {
+      "enabled": false,
+      "type": "",
+      "configs": []
+    },
+    "file_upload": {
+      "image": {
+        "enabled": false,
+        "number_limits": 3,
+        "detail": "high",
+        "transfer_methods": [
+          "remote_url",
+          "local_file"
+        ]
+      }
+    },
+    "system_parameters": {
+      "image_file_size_limit": "10"
+    },
+    "preset_type": 1,
+    "preset_chats": []
+  },
+  "webpage_len": 42341
+}
