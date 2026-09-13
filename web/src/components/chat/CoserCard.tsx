@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { CardTurnActionBar } from './CardTurnActionBar';
 import { Turn } from '@/lib/types';
 import { Sparkles, Heart, BookOpen, Clock, User, Copy, Check } from 'lucide-react';
 
@@ -8,9 +9,23 @@ interface CoserCardProps {
   turn: Turn;
   index: number;
   onSendAction: (action: string) => void;
+  onDelete?: (index: number) => void;
+  onRegenerate?: (index: number) => void;
+  onContinueWriting?: (index: number) => void;
+  onEdit?: (index: number, newStory: string) => void;
 }
 
-export function CoserCard({ turn, index, onSendAction }: CoserCardProps) {
+export function CoserCard({
+  turn,
+  index,
+  onSendAction,
+  onDelete,
+  onRegenerate,
+  onContinueWriting,
+  onEdit,
+}: CoserCardProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedStory, setEditedStory] = useState(turn.story || turn.text || '');
   const [activeTab, setActiveTab] = useState<'daily' | 'roles' | 'archive'>('daily');
   const [copied, setCopied] = useState(false);
 
@@ -334,9 +349,20 @@ export function CoserCard({ turn, index, onSendAction }: CoserCardProps) {
             ))}
           </div>
         </div>
-      </div>
-    );
-  }
+      {/* Turn Action Bar */}
+      <CardTurnActionBar
+        index={index}
+        model={turn.model}
+        storyContent={turn.story || turn.text || ''}
+        onContinueWriting={onContinueWriting}
+        onRegenerate={onRegenerate}
+        onEditToggle={() => setIsEditing(!isEditing)}
+        onDelete={onDelete}
+        isEditing={isEditing}
+      />
+    </div>
+  );
+}
 
   // Turn > 0: Subsequent rounds
   return (

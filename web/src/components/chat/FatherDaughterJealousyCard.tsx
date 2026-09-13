@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { CardTurnActionBar } from './CardTurnActionBar';
 import { Turn } from '@/lib/types';
 import { RotateCcw, ChevronDown, ChevronUp, Trash2, BookOpen, Sliders, Flame, Heart } from 'lucide-react';
 
@@ -9,6 +10,9 @@ interface FatherDaughterJealousyCardProps {
   index: number;
   onSendAction?: (actionText: string) => void;
   onDelete?: (index: number) => void;
+  onRegenerate?: (index: number) => void;
+  onContinueWriting?: (index: number) => void;
+  onEdit?: (index: number, newStory: string) => void;
 }
 
 export function FatherDaughterJealousyCard({
@@ -16,8 +20,15 @@ export function FatherDaughterJealousyCard({
   index,
   onSendAction,
   onDelete,
+  onRegenerate,
+  onContinueWriting,
+  onEdit,
 }: FatherDaughterJealousyCardProps) {
   const [showMemory, setShowMemory] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedStory, setEditedStory] = useState(turn.story || turn.text || '');
+
+  
 
   // 1:1 对齐 media_1789310230050.png 的玩法风格与设定表单
   const [protagonistStyle, setProtagonistStyle] = useState('外冷内热');
@@ -243,19 +254,17 @@ export function FatherDaughterJealousyCard({
         </div>
       )}
 
-      {/* 底部信息 */}
-      <div className="pt-2 flex items-center justify-between text-[11px] text-gray-500 border-t border-[#20222e]">
-        <span>{turn.model || 'deepseek-flash'}</span>
-        {onDelete && (
-          <button
-            onClick={() => onDelete(index)}
-            className="hover:text-amber-400 p-1 rounded transition cursor-pointer"
-            title="回退到此前回合"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
-        )}
-      </div>
+            {/* 底部功能条 */}
+      <CardTurnActionBar
+        index={index}
+        model={turn.model}
+        storyContent={turn.story || turn.text || ''}
+        onContinueWriting={onContinueWriting}
+        onRegenerate={onRegenerate}
+        onEditToggle={() => setIsEditing(!isEditing)}
+        onDelete={onDelete}
+        isEditing={isEditing}
+      />
     </div>
   );
 }

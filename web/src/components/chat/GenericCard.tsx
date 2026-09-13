@@ -1,6 +1,7 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
+import { CardTurnActionBar } from './CardTurnActionBar';
 import { Turn } from '@/lib/types';
 import { MapPin, RotateCcw, Trash2, Edit3, Copy } from 'lucide-react';
 
@@ -10,9 +11,21 @@ interface GenericCardProps {
   onSendAction: (action: string) => void;
   onDelete: (index: number) => void;
   onRegenerate?: (index: number) => void;
+  onContinueWriting?: (index: number) => void;
+  onEdit?: (index: number, newStory: string) => void;
 }
 
-export function GenericCard({ turn, index, onSendAction, onDelete, onRegenerate }: GenericCardProps) {
+export function GenericCard({
+  turn,
+  index,
+  onSendAction,
+  onDelete,
+  onRegenerate,
+  onContinueWriting,
+  onEdit,
+}: GenericCardProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedStory, setEditedStory] = useState(turn.story || turn.text || '');
   const storyText = turn.story || turn.text || '';
 
   const renderStoryParagraphs = (text: string) => {
@@ -51,10 +64,45 @@ export function GenericCard({ turn, index, onSendAction, onDelete, onRegenerate 
         </div>
       )}
 
-      {/* Prose Text with Quotes */}
-      <div className="novel-text space-y-1">
-        {renderStoryParagraphs(storyText)}
-      </div>
+      {/* Prose Text with Quotes / Editing */}
+      {isEditing ? (
+        <div className="space-y-2 p-3 rounded-xl bg-[#12131a] border border-purple-500/40">
+          <div className="text-xs text-purple-300 font-bold flex items-center justify-between">
+            <span>✏️ 编辑第 {index + 1} 幕台词与剧情</span>
+            <span className="text-[11px] text-gray-400">修改后将即时更新</span>
+          </div>
+          <textarea
+            value={editedStory}
+            onChange={(e) => setEditedStory(e.target.value)}
+            rows={8}
+            className="w-full p-2.5 rounded-lg bg-[#0e0f14] border border-gray-700 text-gray-100 text-xs sm:text-sm font-serif leading-relaxed outline-none focus:border-purple-400"
+          />
+          <div className="flex items-center justify-end gap-2">
+            <button
+              onClick={() => {
+                setEditedStory(storyText);
+                setIsEditing(false);
+              }}
+              className="px-3 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs transition cursor-pointer"
+            >
+              取消
+            </button>
+            <button
+              onClick={() => {
+                if (onEdit) onEdit(index, editedStory);
+                setIsEditing(false);
+              }}
+              className="px-3 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition cursor-pointer"
+            >
+              保存修改
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="novel-text space-y-1">
+          {renderStoryParagraphs(storyText)}
+        </div>
+      )}
 
       {/* Memory Accordion if available */}
       {turn.memory && turn.memory.length > 0 && (
@@ -115,28 +163,17 @@ export function GenericCard({ turn, index, onSendAction, onDelete, onRegenerate 
         </div>
       )}
 
-      {/* Footer Toolbar */}
-      <div className="pt-2 border-t border-[#222430] flex items-center justify-between text-[11px] text-gray-500">
-        <span className="font-mono">{turn.model || 'AI模型推演'}</span>
-        <div className="flex items-center gap-1">
-          {onRegenerate && (
-            <button
-              onClick={() => onRegenerate(index)}
-              className="p-1 rounded hover:bg-[#20222e] hover:text-amber-300 transition"
-              title="重新推演此幕"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-            </button>
-          )}
-          <button
-            onClick={() => onDelete(index)}
-            className="p-1 rounded hover:bg-[#20222e] hover:text-red-400 transition"
-            title="删除此幕及后续"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </div>
+            {/* Footer Turn Action Bar */}
+      <CardTurnActionBar
+        index={index}
+        model={turn.model}
+        storyContent={storyText}
+        onContinueWriting={onContinueWriting}
+        onRegenerate={onRegenerate}
+        onEditToggle={() => setIsEditing(!isEditing)}
+        onDelete={onDelete}
+        isEditing={isEditing}
+      />
     </div>
   );
 }
