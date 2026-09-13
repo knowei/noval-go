@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
+import { PrimarySidebar } from "@/components/layout/PrimarySidebar";
 import { Drawer } from "@/components/layout/Drawer";
 import { ModelSettingsModal } from "@/components/modals/ModelSettingsModal";
 import { UserSwitchModal } from "@/components/modals/UserSwitchModal";
@@ -17,14 +17,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" className="dark">
-      <body className="min-h-screen bg-[#0e0f14] text-gray-100 antialiased flex flex-col font-sans selection:bg-pink-500/30 selection:text-pink-200">
-        <Navbar />
+      <body className="min-h-screen bg-[#0e0f14] text-gray-100 antialiased flex flex-row font-sans selection:bg-pink-500/30 selection:text-pink-200 overflow-x-hidden">
+        {/* Leftmost Global Navigation Sidebar */}
+        <PrimarySidebar />
+
+        {/* Global Overlays */}
         <Drawer />
         <ModelSettingsModal />
         <UserSwitchModal />
-        <main className="flex-1 flex flex-col">
+
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
           {children}
-        </main>
+        </div>
       </body>
     </html>
   );
