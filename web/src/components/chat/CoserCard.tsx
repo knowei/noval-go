@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { CardTurnActionBar } from './CardTurnActionBar';
 import { Turn } from '@/lib/types';
-import { Sparkles, Heart, BookOpen, Clock, User, Copy, Check } from 'lucide-react';
+import { Sparkles, BookOpen, Copy, Check } from 'lucide-react';
 
 interface CoserCardProps {
   turn: Turn;
@@ -28,6 +28,7 @@ export function CoserCard({
   const [editedStory, setEditedStory] = useState(turn.story || turn.text || '');
   const [activeTab, setActiveTab] = useState<'daily' | 'roles' | 'archive'>('daily');
   const [copied, setCopied] = useState(false);
+  const storyText = turn.story || turn.text || '';
 
   // Archive live inputs state
   const [name, setName] = useState('你');
@@ -61,10 +62,32 @@ export function CoserCard({
     }
   };
 
+  const renderDialogue = (content: string) => {
+    return content.split('\n').map((line, li) => {
+      const trimmed = line.trim();
+      if (!trimmed) return <div key={li} className="h-2" />;
+      const parts = trimmed.split(/([“「][^”」]+[”」])/g);
+      return (
+        <p key={li} className="leading-relaxed mb-3 font-serif text-[14px] sm:text-[14.5px] text-gray-200">
+          {parts.map((part, pi) => {
+            if (/^[“「].*[”」]$/.test(part)) {
+              return (
+                <span key={pi} className="dialogue-quote font-semibold text-pink-300">
+                  {part}
+                </span>
+              );
+            }
+            return <span key={pi}>{part}</span>;
+          })}
+        </p>
+      );
+    });
+  };
+
   // Turn 0: Render 3-Tab Comprehensive Card
   if (index === 0) {
     return (
-      <div className="p-4 sm:p-7 rounded-2xl bg-[#110c1a] border border-pink-500/30 shadow-[0_10px_40px_rgba(0,0,0,0.8),0_0_20px_rgba(244,114,182,0.12)] space-y-5 text-gray-200">
+      <div className="p-4 sm:p-7 rounded-2xl bg-[#110c1a] border border-pink-500/30 shadow-[0_10px_40px_rgba(0,0,0,0.8),0_0_20px_rgba(244,114,182,0.12)] space-y-5 text-gray-200 select-text">
         {/* Header */}
         <div className="text-center space-y-1.5 pb-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-pink-500/15 text-pink-400 text-xs font-bold tracking-widest border border-pink-500/30">
@@ -349,24 +372,30 @@ export function CoserCard({
             ))}
           </div>
         </div>
-      {/* Turn Action Bar */}
-      <CardTurnActionBar
-        index={index}
-        model={turn.model}
-        storyContent={turn.story || turn.text || ''}
-        onContinueWriting={onContinueWriting}
-        onRegenerate={onRegenerate}
-        onEditToggle={() => setIsEditing(!isEditing)}
-        onDelete={onDelete}
-        isEditing={isEditing}
-      />
-    </div>
-  );
-}
 
-  // Turn > 0: Subsequent rounds
+        {/* Turn Action Bar */}
+        <CardTurnActionBar
+          index={index}
+          model={turn.model}
+          storyContent={turn.story || turn.text || ''}
+          onContinueWriting={onContinueWriting}
+          onRegenerate={onRegenerate}
+          onEditToggle={() => setIsEditing(!isEditing)}
+          onDelete={onDelete}
+          isEditing={isEditing}
+        />
+      </div>
+    );
+  }
+
+  // Turn > 0: Subsequent rounds with standardized 1:1 collapsible accordions
+  const hasStatus = !!(turn.status || turn.npcThought);
+  const hasMemory = turn.memory && turn.memory.length > 0;
+  const hasBranches = turn.branches && turn.branches.length > 0;
+  const hasAnyPanel = hasStatus || hasMemory || hasBranches;
+
   return (
-    <div className="p-5 sm:p-6 rounded-2xl bg-[#110c1a] border border-pink-500/30 shadow-2xl space-y-4 text-gray-200">
+    <div className="p-5 sm:p-6 rounded-2xl bg-[#110c1a] border border-pink-500/30 shadow-2xl space-y-4 text-gray-200 select-text">
       <div className="flex items-center justify-between border-b border-pink-500/20 pb-2.5 text-xs text-pink-300/90 font-medium">
         <span className="flex items-center gap-1.5">
           <span>📍</span>
@@ -375,60 +404,144 @@ export function CoserCard({
         <span className="text-[10px] text-gray-500 font-mono">第 {index + 1} 幕</span>
       </div>
 
-      <div className="text-gray-200 text-sm sm:text-[14.5px] leading-relaxed whitespace-pre-wrap">
-        {turn.story}
-      </div>
-
-      {/* Status Box */}
-      <div className="p-3.5 rounded-xl bg-[#171022] border border-pink-500/25 space-y-2 text-xs">
-        <div className="flex items-center justify-between border-b border-pink-500/15 pb-1.5">
-          <span className="text-pink-300 font-bold flex items-center gap-1">
-            <span>👧</span>
-            <span>林知念 · 实时装扮与心防状态</span>
-          </span>
-          <span className="text-[10px] px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 border border-pink-500/30 font-mono">
-            第 {index + 1} 幕
-          </span>
+      {/* Novel text / Editing */}
+      {isEditing ? (
+        <div className="space-y-2 p-3 rounded-xl bg-[#171022] border border-pink-500/40">
+          <div className="text-xs text-pink-300 font-bold flex items-center justify-between">
+            <span>✏️ 编辑第 {index + 1} 幕剧情</span>
+            <span className="text-[11px] text-gray-400">修改后将即时更新</span>
+          </div>
+          <textarea
+            value={editedStory}
+            onChange={(e) => setEditedStory(e.target.value)}
+            rows={8}
+            className="w-full p-2.5 rounded-lg bg-[#0e0a16] border border-gray-700 text-gray-100 text-xs sm:text-sm font-serif leading-relaxed outline-none focus:border-pink-400"
+          />
+          <div className="flex items-center justify-end gap-2">
+            <button
+              onClick={() => {
+                setEditedStory(storyText);
+                setIsEditing(false);
+              }}
+              className="px-3 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs transition cursor-pointer"
+            >
+              取消
+            </button>
+            <button
+              onClick={() => {
+                if (onEdit) onEdit(index, editedStory);
+                setIsEditing(false);
+              }}
+              className="px-3 py-1 rounded-lg bg-pink-600 hover:bg-pink-500 text-white text-xs font-bold transition cursor-pointer"
+            >
+              保存修改
+            </button>
+          </div>
         </div>
-        <div className="space-y-1 text-gray-300 text-[11.5px] leading-relaxed">
-          <div>• <strong className="text-gray-400">当前试穿装扮：</strong><span className="text-pink-300 font-medium">{turn.status?.clothes || '洛丽塔蕾丝花瓣裙 (后背拉链微敞) / 裸足'}</span></div>
-          <div>• <strong className="text-gray-400">体态与微表情：</strong><span className="text-gray-200">{turn.status?.posture || '背对落地镜，双手护在胸前，耳尖泛着薄红'}</span></div>
-          <div>• <strong className="text-gray-400">独占与心跳指标：</strong><span className="text-purple-300 font-medium">{turn.status?.stats || '独占依赖度: 96% | 害羞心跳: 142bpm | 防备度: 10%'}</span></div>
-        </div>
-        {turn.npcThought && (
-          <div className="pt-1.5 border-t border-pink-500/15">
-            <div className="text-[11px] text-pink-300 font-bold flex items-center gap-1 mb-1">
-              <span>💡</span>
-              <span>【知念内心真实独白】：</span>
-            </div>
-            <div className="p-2 rounded-lg bg-[#110b18] border border-purple-500/20 text-pink-200/90 font-mono text-[11.5px] leading-relaxed">
-              {turn.npcThought}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Branches */}
-      {turn.branches && turn.branches.length > 0 && (
-        <div className="pt-2 space-y-2">
-          <div className="text-[11px] text-pink-300 font-semibold flex items-center gap-1">
-            <span>🎲</span>
-            <span>推荐互动抉择：</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {turn.branches.map((b, bi) => (
-              <button
-                key={bi}
-                onClick={() => onSendAction(`【${b.title}】：${b.desc || b.title}`)}
-                className="p-2.5 rounded-xl bg-[#1b1326] hover:bg-pink-950/40 border border-pink-500/30 hover:border-pink-500 text-left text-xs text-gray-200 hover:text-pink-300 transition group flex items-center justify-between cursor-pointer"
-              >
-                <span><strong>【{b.tag || '◆'}】</strong> {b.title}</span>
-                <span className="text-[10px] text-pink-400 opacity-0 group-hover:opacity-100 transition">➔</span>
-              </button>
-            ))}
-          </div>
+      ) : (
+        <div className="novel-text space-y-1">
+          {renderDialogue(storyText)}
         </div>
       )}
+
+      {/* 统一折叠面板群 */}
+      {hasAnyPanel && (
+        <div className="reality-panels-container space-y-2 mt-4">
+          {/* ① 👧 林知念 · 实时装扮与心防状态 */}
+          {hasStatus && (
+            <details className="reality-panel">
+              <summary className="reality-summary cursor-pointer select-none">
+                <span className="flex items-center gap-2">
+                  <span>👧</span>
+                  <span>林知念 · 实时装扮与心防状态</span>
+                </span>
+                <span className="reality-arrow"></span>
+              </summary>
+              <div className="reality-body space-y-2 text-xs text-gray-300">
+                <div className="space-y-1 text-[11.5px] leading-relaxed">
+                  <div>• <strong className="text-gray-400">当前试穿装扮：</strong><span className="text-pink-300 font-medium">{turn.status?.clothes || '洛丽塔蕾丝花瓣裙 (后背拉链微敞) / 裸足'}</span></div>
+                  <div>• <strong className="text-gray-400">体态与微表情：</strong><span className="text-gray-200">{turn.status?.posture || '背对落地镜，双手护在胸前，耳尖泛着薄红'}</span></div>
+                  <div>• <strong className="text-gray-400">独占与心跳指标：</strong><span className="text-purple-300 font-medium">{turn.status?.stats || '独占依赖度: 96% | 害羞心跳: 142bpm | 防备度: 10%'}</span></div>
+                </div>
+                {turn.npcThought && (
+                  <div className="pt-2 border-t border-pink-500/20">
+                    <div className="text-[11px] text-pink-300 font-bold flex items-center gap-1 mb-1">
+                      <span>💡</span>
+                      <span>【知念内心真实独白】：</span>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-[#110b18] border border-purple-500/30 text-pink-200/90 font-mono text-[11.5px] leading-relaxed">
+                      {turn.npcThought}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </details>
+          )}
+
+          {/* ② 📝 记忆折叠 */}
+          {hasMemory && (
+            <details className="reality-panel">
+              <summary className="reality-summary cursor-pointer select-none">
+                <span className="flex items-center gap-2">
+                  <span>📝</span>
+                  <span>本幕记忆沉淀 ({turn.memory!.length} 条事实)</span>
+                </span>
+                <span className="reality-arrow"></span>
+              </summary>
+              <div className="reality-body space-y-1 text-xs text-gray-300">
+                {turn.memory!.map((m, i) => (
+                  <div key={i} className="leading-relaxed flex items-start gap-1.5">
+                    <span className="text-pink-400 shrink-0">•</span>
+                    <span>{m}</span>
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
+
+          {/* ③ 🎲 推荐互动抉择 */}
+          {hasBranches && (
+            <details className="reality-panel">
+              <summary className="reality-summary cursor-pointer select-none">
+                <span className="flex items-center gap-2">
+                  <span>🎮</span>
+                  <span>推荐互动抉择 ({turn.branches!.length} 项可选)</span>
+                </span>
+                <span className="reality-arrow"></span>
+              </summary>
+              <div className="reality-body space-y-2">
+                <div className="text-[11px] text-gray-400 mb-1">
+                  💡 点击直接推进心动情节：
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {turn.branches!.map((b, bi) => (
+                    <button
+                      key={bi}
+                      onClick={() => onSendAction(`【${b.title}】：${b.desc || b.title}`)}
+                      className="p-2.5 rounded-xl bg-[#1b1326] hover:bg-pink-950/40 border border-pink-500/30 hover:border-pink-500 text-left text-xs text-gray-200 hover:text-pink-300 transition group flex items-center justify-between cursor-pointer"
+                    >
+                      <span><strong>【{b.tag || '◆'}】</strong> {b.title}</span>
+                      <span className="text-[10px] text-pink-400 opacity-0 group-hover:opacity-100 transition">➔</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </details>
+          )}
+        </div>
+      )}
+
+      {/* 底部工具条 */}
+      <CardTurnActionBar
+        index={index}
+        model={turn.model}
+        storyContent={storyText}
+        onContinueWriting={onContinueWriting}
+        onRegenerate={onRegenerate}
+        onEditToggle={() => setIsEditing(!isEditing)}
+        onDelete={onDelete}
+        isEditing={isEditing}
+      />
     </div>
   );
 }

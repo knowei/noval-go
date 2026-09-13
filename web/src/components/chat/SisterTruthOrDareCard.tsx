@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { CardTurnActionBar } from './CardTurnActionBar';
 import { Turn } from '@/lib/types';
-import { Sparkles, Gamepad2, ChevronDown, ChevronUp, Trash2, Send } from 'lucide-react';
 
 interface SisterTruthOrDareCardProps {
   turn: Turn;
@@ -24,17 +23,15 @@ export function SisterTruthOrDareCard({
   onContinueWriting,
   onEdit,
 }: SisterTruthOrDareCardProps) {
-  const [showMemory, setShowMemory] = useState(false);
   const [userName, setUserName] = useState('阿浩');
   const [isEditing, setIsEditing] = useState(false);
   const [editedStory, setEditedStory] = useState(turn.story || turn.text || '');
-
-  
+  const storyText = turn.story || turn.text || '';
 
   // 如果是第 0 轮（开局设定卡），按照媒体截图 media_1789310257883.png 渲染 1:1 专属高保真开场卡
   if (index === 0) {
     return (
-      <div className="rounded-3xl border border-[#2e3146] bg-[#12131c] shadow-2xl p-5 sm:p-8 space-y-6 max-w-2xl mx-auto text-gray-200 animate-in fade-in duration-300">
+      <div className="rounded-3xl border border-[#2e3146] bg-[#12131c] shadow-2xl p-5 sm:p-8 space-y-6 max-w-2xl mx-auto text-gray-200 animate-in fade-in duration-300 select-text">
         {/* 顶部斜体旁白 */}
         <div className="text-center text-xs sm:text-sm text-gray-400 italic font-mono tracking-wide px-2">
           你在卧室打游戏，听见喝了一点小酒的姐姐和她两个闺蜜，回家在客厅……
@@ -129,92 +126,159 @@ export function SisterTruthOrDareCard({
 
   // 随后的剧情回合渲染
   const formatDialogue = (content: string) => {
-    return content.split(/([“「].*?[”」])/g).map((part, i) => {
-      if (/^[“「].*?[”」]$/.test(part)) {
-        return (
-          <span key={i} className="dialogue-quote font-semibold text-rose-300">
-            {part}
-          </span>
-        );
-      }
-      return part;
+    return content.split('\n').map((line, li) => {
+      const trimmed = line.trim();
+      if (!trimmed) return <div key={li} className="h-2" />;
+      const parts = trimmed.split(/([“「][^”」]+[”」])/g);
+      return (
+        <p key={li} className="leading-relaxed mb-3 font-serif text-[14px] sm:text-[14.5px] text-gray-200">
+          {parts.map((part, pi) => {
+            if (/^[“「].*[”」]$/.test(part)) {
+              return (
+                <span key={pi} className="dialogue-quote font-semibold text-rose-300">
+                  {part}
+                </span>
+              );
+            }
+            return <span key={pi}>{part}</span>;
+          })}
+        </p>
+      );
     });
   };
 
-  return (
-    <div className="rounded-2xl border border-[#292b3a] bg-[#14151f] shadow-xl p-5 sm:p-6 space-y-4 text-gray-200 text-xs sm:text-sm animate-in fade-in duration-200">
-      {/* 剧情文本 */}
-      <div className="leading-relaxed whitespace-pre-wrap font-sans space-y-2 select-text">
-        {formatDialogue(turn.story || turn.text || '')}
-      </div>
+  const hasStatus = turn.status && Object.keys(turn.status).length > 0;
+  const hasMemory = turn.memory && turn.memory.length > 0;
+  const hasBranches = turn.branches && turn.branches.length > 0;
+  const hasAnyPanel = hasStatus || hasMemory || hasBranches;
 
-      {/* 记忆折叠 */}
-      {turn.memory && turn.memory.length > 0 && (
-        <div className="rounded-xl border border-[#242634] bg-[#101118] overflow-hidden text-xs">
-          <button
-            onClick={() => setShowMemory(!showMemory)}
-            className="w-full px-3.5 py-2 flex items-center justify-between text-gray-400 hover:text-gray-200 transition cursor-pointer font-mono"
-          >
-            <span className="flex items-center gap-1.5">
-              <span>📄 本幕记忆沉淀 ({turn.memory.length} 条事实)</span>
-            </span>
-            {showMemory ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          </button>
-          {showMemory && (
-            <div className="p-3 border-t border-[#1c1d28] space-y-1.5 text-gray-300 bg-[#0e0f14]">
-              {turn.memory.map((m, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <span className="text-rose-400 shrink-0">•</span>
-                  <span>{m}</span>
+  return (
+    <div className="rounded-2xl border border-[#292b3a] bg-[#14151f] shadow-xl p-5 sm:p-6 space-y-4 text-gray-200 text-xs sm:text-sm animate-in fade-in duration-200 select-text">
+      {/* 剧情文本 / 编辑模式 */}
+      {isEditing ? (
+        <div className="space-y-2 p-3 rounded-xl bg-[#12131a] border border-rose-500/40">
+          <div className="text-xs text-rose-300 font-bold flex items-center justify-between">
+            <span>✏️ 编辑第 {index + 1} 幕台词与剧情</span>
+            <span className="text-[11px] text-gray-400">修改后将即时更新</span>
+          </div>
+          <textarea
+            value={editedStory}
+            onChange={(e) => setEditedStory(e.target.value)}
+            rows={8}
+            className="w-full p-2.5 rounded-lg bg-[#0e0f14] border border-gray-700 text-gray-100 text-xs sm:text-sm font-serif leading-relaxed outline-none focus:border-rose-400"
+          />
+          <div className="flex items-center justify-end gap-2">
+            <button
+              onClick={() => {
+                setEditedStory(storyText);
+                setIsEditing(false);
+              }}
+              className="px-3 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs transition cursor-pointer"
+            >
+              取消
+            </button>
+            <button
+              onClick={() => {
+                if (onEdit) onEdit(index, editedStory);
+                setIsEditing(false);
+              }}
+              className="px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition cursor-pointer"
+            >
+              保存修改
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="novel-text space-y-1">
+          {formatDialogue(storyText)}
+        </div>
+      )}
+
+      {/* 1:1 统一折叠面板群 */}
+      {hasAnyPanel && (
+        <div className="reality-panels-container space-y-2 mt-4">
+          {/* ① 👭 客厅局势与三人状态 */}
+          {hasStatus && (
+            <details className="reality-panel">
+              <summary className="reality-summary cursor-pointer select-none">
+                <span className="flex items-center gap-2">
+                  <span>👭</span>
+                  <span>客厅局势与三人状态机</span>
+                </span>
+                <span className="reality-arrow"></span>
+              </summary>
+              <div className="reality-body space-y-1 text-xs text-gray-300">
+                {Object.entries(turn.status!).map(([k, v]) => (
+                  <div key={k} className="leading-relaxed">
+                    • <strong className="text-gray-400">{k}: </strong>
+                    <span className="text-rose-300">{typeof v === 'string' ? v : JSON.stringify(v)}</span>
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
+
+          {/* ② 📝 记忆折叠 */}
+          {hasMemory && (
+            <details className="reality-panel">
+              <summary className="reality-summary cursor-pointer select-none">
+                <span className="flex items-center gap-2">
+                  <span>📝</span>
+                  <span>本幕记忆沉淀 ({turn.memory!.length} 条事实)</span>
+                </span>
+                <span className="reality-arrow"></span>
+              </summary>
+              <div className="reality-body space-y-1 text-xs text-gray-300">
+                {turn.memory!.map((m, i) => (
+                  <div key={i} className="leading-relaxed flex items-start gap-1.5">
+                    <span className="text-rose-400 shrink-0">•</span>
+                    <span>{m}</span>
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
+
+          {/* ③ 🎯 分支选项 */}
+          {hasBranches && (
+            <details className="reality-panel">
+              <summary className="reality-summary cursor-pointer select-none">
+                <span className="flex items-center gap-2">
+                  <span>🎮</span>
+                  <span>下一步行动抉择 ({turn.branches!.length} 项可选)</span>
+                </span>
+                <span className="reality-arrow"></span>
+              </summary>
+              <div className="reality-body space-y-2">
+                <div className="text-[11px] text-gray-400 mb-1">
+                  💡 点击直接推进客厅游戏与互动进展：
                 </div>
-              ))}
-            </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {turn.branches!.map((b, bIdx) => (
+                    <button
+                      key={bIdx}
+                      onClick={() => onSendAction?.(b.desc ? `${b.title}：${b.desc}` : b.title)}
+                      className="p-3 rounded-xl border border-[#272938] bg-[#191a24] hover:border-rose-500/60 hover:bg-rose-950/20 text-left transition cursor-pointer group"
+                    >
+                      <div className="font-bold text-xs text-gray-200 group-hover:text-rose-300 flex items-center gap-1.5">
+                        <span className="text-rose-400 font-mono">[{b.tag || String.fromCharCode(65 + bIdx)}]</span>
+                        <span>{b.title}</span>
+                      </div>
+                      {b.desc && <div className="text-[11px] text-gray-400 mt-1 leading-snug">{b.desc}</div>}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </details>
           )}
         </div>
       )}
 
-      {/* 状态栏 */}
-      {turn.status && (
-        <div className="p-3 rounded-xl border border-rose-500/20 bg-rose-950/10 text-xs text-rose-200/90 space-y-1">
-          <div className="font-bold text-rose-300 flex items-center gap-1.5">
-            <span>👭 客厅局势与三人状态:</span>
-          </div>
-          {Object.entries(turn.status).map(([k, v]) => (
-            <div key={k} className="text-[11px] text-gray-300">
-              <span className="text-gray-400">• {k}: </span>
-              <span>{typeof v === 'string' ? v : JSON.stringify(v)}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* 分支选项 */}
-      {turn.branches && turn.branches.length > 0 && (
-        <div className="space-y-2 pt-1">
-          <div className="text-[11px] font-bold text-gray-400">🎯 下一步行动抉择:</div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {turn.branches.map((b, bIdx) => (
-              <button
-                key={bIdx}
-                onClick={() => onSendAction?.(b.desc ? `${b.title}：${b.desc}` : b.title)}
-                className="p-3 rounded-xl border border-[#272938] bg-[#191a24] hover:border-rose-500/60 hover:bg-rose-950/20 text-left transition cursor-pointer group"
-              >
-                <div className="font-bold text-xs text-gray-200 group-hover:text-rose-300 flex items-center gap-1.5">
-                  <span className="text-rose-400 font-mono">[{b.tag || String.fromCharCode(65 + bIdx)}]</span>
-                  <span>{b.title}</span>
-                </div>
-                {b.desc && <div className="text-[11px] text-gray-400 mt-1 leading-snug">{b.desc}</div>}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-            {/* 底部功能条 */}
+      {/* 底部功能条 */}
       <CardTurnActionBar
         index={index}
         model={turn.model}
-        storyContent={turn.story || turn.text || ''}
+        storyContent={storyText}
         onContinueWriting={onContinueWriting}
         onRegenerate={onRegenerate}
         onEditToggle={() => setIsEditing(!isEditing)}

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { CardTurnActionBar } from './CardTurnActionBar';
 import { Turn } from '@/lib/types';
-import { MapPin, RotateCcw, Trash2, Edit3, Copy } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 
 interface GenericCardProps {
   turn: Turn;
@@ -51,8 +51,13 @@ export function GenericCard({
     });
   };
 
+  const hasStatus = turn.status && Object.keys(turn.status).length > 0;
+  const hasMemory = turn.memory && turn.memory.length > 0;
+  const hasBranches = turn.branches && turn.branches.length > 0;
+  const hasAnyPanel = hasStatus || hasMemory || hasBranches;
+
   return (
-    <div className="p-5 sm:p-6 rounded-2xl bg-[#171822] border border-[#272a38] shadow-xl space-y-4 text-gray-200">
+    <div className="p-5 sm:p-6 rounded-2xl bg-[#171822] border border-[#272a38] shadow-xl space-y-4 text-gray-200 select-text">
       {/* Location Header */}
       {turn.location && (
         <div className="flex items-center justify-between border-b border-[#252836] pb-2.5 text-xs text-amber-300/90 font-medium">
@@ -104,66 +109,84 @@ export function GenericCard({
         </div>
       )}
 
-      {/* Memory Accordion if available */}
-      {turn.memory && turn.memory.length > 0 && (
-        <details className="reality-panel" open={false}>
-          <summary className="reality-summary cursor-pointer select-none">
-            <span className="flex items-center gap-2">
-              <span>📄</span>
-              <span>本幕记忆沉淀 ({turn.memory.length} 条事实)</span>
-            </span>
-            <span className="reality-arrow"></span>
-          </summary>
-          <div className="reality-body space-y-1 text-xs text-gray-300">
-            {turn.memory.map((m, mi) => (
-              <div key={mi} className="leading-relaxed flex items-start gap-1.5">
-                <span className="text-amber-400 shrink-0">•</span>
-                <span>{m}</span>
+      {/* 统一折叠面板群 (1:1 风格对齐第一版) */}
+      {hasAnyPanel && (
+        <div className="reality-panels-container space-y-2 mt-4">
+          {/* ① 📊 状态面板 */}
+          {hasStatus && (
+            <details className="reality-panel">
+              <summary className="reality-summary cursor-pointer select-none">
+                <span className="flex items-center gap-2">
+                  <span>📊</span>
+                  <span>当前局势与状态栏</span>
+                </span>
+                <span className="reality-arrow"></span>
+              </summary>
+              <div className="reality-body space-y-1 text-xs text-gray-300">
+                {Object.entries(turn.status!).map(([k, v]) => (
+                  <div key={k} className="leading-relaxed">
+                    • <strong className="text-gray-400">{k}: </strong>
+                    <span className="text-sky-300">{typeof v === 'string' ? v : JSON.stringify(v)}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </details>
-      )}
+            </details>
+          )}
 
-      {/* Status Box if available */}
-      {turn.status && Object.keys(turn.status).length > 0 && (
-        <div className="p-3 rounded-xl bg-[#1e202c] border border-[#2d3144] space-y-1.5 text-xs text-gray-300">
-          <div className="font-bold text-amber-300 flex items-center gap-1">
-            <span>📊</span>
-            <span>当前局势与状态</span>
-          </div>
-          {Object.entries(turn.status).map(([k, v]) => (
-            <div key={k} className="text-[11.5px]">
-              • <strong className="text-gray-400">{k}: </strong>
-              <span>{String(v)}</span>
-            </div>
-          ))}
+          {/* ② 📝 记忆区折叠 */}
+          {hasMemory && (
+            <details className="reality-panel">
+              <summary className="reality-summary cursor-pointer select-none">
+                <span className="flex items-center gap-2">
+                  <span>📝</span>
+                  <span>本幕记忆沉淀 ({turn.memory!.length} 条事实)</span>
+                </span>
+                <span className="reality-arrow"></span>
+              </summary>
+              <div className="reality-body space-y-1 text-xs text-gray-300">
+                {turn.memory!.map((m, mi) => (
+                  <div key={mi} className="leading-relaxed flex items-start gap-1.5">
+                    <span className="text-amber-400 shrink-0">•</span>
+                    <span>{m}</span>
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
+
+          {/* ③ 🎲 行动分支折叠 */}
+          {hasBranches && (
+            <details className="reality-panel">
+              <summary className="reality-summary cursor-pointer select-none">
+                <span className="flex items-center gap-2">
+                  <span>🎮</span>
+                  <span>当前局势 · 下一步行动抉择 ({turn.branches!.length} 项可选)</span>
+                </span>
+                <span className="reality-arrow"></span>
+              </summary>
+              <div className="reality-body space-y-2">
+                <div className="text-[11px] text-gray-400 mb-1">
+                  💡 点击直接执行行动，推进剧情发展：
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {turn.branches!.map((b, bi) => (
+                    <button
+                      key={bi}
+                      onClick={() => onSendAction(`【${b.title}】：${b.desc || b.title}`)}
+                      className="p-2.5 rounded-xl bg-[#1d1f2b] hover:bg-[#252838] border border-[#2d3142] hover:border-amber-500/60 text-left text-xs text-gray-200 hover:text-amber-200 transition group flex items-center justify-between cursor-pointer"
+                    >
+                      <span><strong>【{b.tag || '◆'}】</strong> {b.title}</span>
+                      <span className="text-[10px] text-amber-400 opacity-0 group-hover:opacity-100 transition">➔</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </details>
+          )}
         </div>
       )}
 
-      {/* Branches */}
-      {turn.branches && turn.branches.length > 0 && (
-        <div className="pt-2 space-y-2">
-          <div className="text-[11px] text-amber-300/90 font-semibold flex items-center gap-1">
-            <span>🎲</span>
-            <span>下一步行动抉择：</span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {turn.branches.map((b, bi) => (
-              <button
-                key={bi}
-                onClick={() => onSendAction(`【${b.title}】：${b.desc || b.title}`)}
-                className="p-2.5 rounded-xl bg-[#1d1f2b] hover:bg-[#252838] border border-[#2d3142] hover:border-amber-500/60 text-left text-xs text-gray-200 hover:text-amber-200 transition group flex items-center justify-between cursor-pointer"
-              >
-                <span><strong>【{b.tag || '◆'}】</strong> {b.title}</span>
-                <span className="text-[10px] text-amber-400 opacity-0 group-hover:opacity-100 transition">➔</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-            {/* Footer Turn Action Bar */}
+      {/* Footer Turn Action Bar */}
       <CardTurnActionBar
         index={index}
         model={turn.model}
