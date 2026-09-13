@@ -1,0 +1,8 @@
+BLIC_API_PREFIX,u=r.default.env.NEXT_PUBLIC_GO_API_PREFIX):globalThis.document?.body?.getAttribute("data-api-prefix")&&globalThis.document?.body?.getAttribute("data-pubic-api-prefix")&&globalThis.document?.body?.getAttribute("data-go-api-prefix")?(l=globalThis.document.body.getAttribute("data-api-pr
+---
+his.document?.body?.getAttribute("data-pubic-api-prefix")&&globalThis.document?.body?.getAttribute("data-go-api-prefix")?(l=globalThis.document.body.getAttribute("data-api-prefix"),c=globalThis.document.body.getAttribute("data-pubic-api-prefix"),u=globalThis.document.body.getAttribute("data-go-api-p
+---
+alThis.document?.body?.getAttribute("data-go-api-prefix")?(l=globalThis.document.body.getAttribute("data-api-prefix"),c=globalThis.document.body.getAttribute("data-pubic-api-prefix"),u=globalThis.document.body.getAttribute("data-go-api-prefix")):(l="http://localhost:5001/console/api",u="/go/api",c="
+---
+alThis.document.body.getAttribute("data-pubic-api-prefix"),u=globalThis.document.body.getAttribute("data-go-api-prefix")):(l="http://localhost:5001/console/api",u="/go/api",c="https://testaf.aiero.cc/api");let d=l,p=c,m=u,h=r.default.env.NEXT_PUBLIC_EDITION||globalThis.document?.body?.getAttribute("
+---
