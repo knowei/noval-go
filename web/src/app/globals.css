@@ -24,3 +24,114 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Novel typography and dialogue quote highlights */
+.novel-text {
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+}
+.novel-text p {
+  margin-bottom: 0.85em;
+}
+
+.dialogue-quote {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+/* 现实修改器专属沉浸背景与面板样式 (1:1 像素级复刻) */
+.reality-modifier-bg {
+  background-image: linear-gradient(to bottom, rgba(16, 17, 20, 0.85), rgba(16, 17, 20, 0.95)), url('https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&q=80') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+}
+
+.reality-modifier-card {
+  background: rgba(22, 24, 31, 0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid #383b46 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7) !important;
+}
+
+.reality-panels-container {
+  border: 1px solid #383b46 !important;
+  border-radius: 8px !important;
+  background: #191b22 !important;
+  overflow: hidden !important;
+  margin-top: 14px !important;
+}
+
+.reality-panel {
+  border: 1px solid #2d303a !important;
+  border-radius: 6px !important;
+  margin-bottom: 6px !important;
+  overflow: hidden !important;
+  background: #191b22 !important;
+}
+
+.reality-summary {
+  padding: 9px 14px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #e2e8f0 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  user-select: none !important;
+  background: #202228 !important;
+  transition: background 0.15s ease, color 0.15s ease !important;
+  list-style: none !important;
+}
+
+.reality-summary::-webkit-details-marker {
+  display: none !important;
+}
+
+.reality-summary:hover {
+  background: #282a32 !important;
+  color: #fff !important;
+}
+
+.reality-panel[open] > .reality-summary {
+  background: #22252e !important;
+  color: #38bdf8 !important;
+}
+
+.reality-arrow {
+  font-size: 11px !important;
+  font-family: monospace !important;
+  transition: transform 0.15s ease !important;
+}
+
+.reality-panel > .reality-summary .reality-arrow::before {
+  content: '▶';
+  color: #64748b;
+}
+
+.reality-panel[open] > .reality-summary .reality-arrow::before {
+  content: '▼';
+  color: #38bdf8;
+}
+
+.reality-body {
+  padding: 12px 16px !important;
+  font-size: 12px !important;
+  color: #cbd5e1 !important;
+  line-height: 1.85 !important;
+  background: #16171d !important;
+  border-top: 1px solid #282a32 !important;
+}
+
