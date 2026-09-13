@@ -29,6 +29,7 @@ export default function ChatPage() {
     truncateHistory,
     startNewStory,
     setIsDrawerOpen,
+    setIsSettingsOpen,
     modelSettings
   } = useAppStore();
 
@@ -225,14 +226,28 @@ export default function ChatPage() {
 
             <span className="text-gray-700 font-mono">|</span>
 
-            <div className="flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded-full font-mono">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>{modelSettings.model || 'deepseek-flash'}</span>
-            </div>
+            <button
+              onClick={() => setIsSettingsOpen(true)}
+              className="flex items-center gap-1.5 text-xs text-emerald-300 hover:text-emerald-200 bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-500/50 hover:border-emerald-400 px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-sm group"
+              title="点击切换推演大模型或配置 API 密钥"
+            >
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              <span className="font-semibold">{modelSettings.model || 'deepseek-flash'}</span>
+              <span className="text-[10px] text-emerald-400 opacity-70 group-hover:opacity-100 transition">▼</span>
+            </button>
           </div>
 
           {/* Action Controls */}
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsSettingsOpen(true)}
+              className="px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-emerald-500/50 text-gray-300 hover:text-emerald-300 text-xs flex items-center gap-1.5 transition cursor-pointer"
+              title="切换推演大模型与接口配置"
+            >
+              <span className="text-xs">⚙️</span>
+              <span className="hidden sm:inline text-[11px]">切换模型</span>
+            </button>
+
             <button
               onClick={() => {
                 if (currentDeck && confirm('确定要重新开始本剧本第一幕吗？当前进度将重置。')) {
