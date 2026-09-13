@@ -64,7 +64,7 @@ export default function StudioPage() {
   };
 
   return (
-    <div className="flex-1 p-4 sm:p-8 max-w-5xl mx-auto w-full space-y-6">
+    <div className="flex-1 p-3 sm:p-8 pt-16 md:pt-6 pb-20 md:pb-8 max-w-5xl mx-auto w-full space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#252836] pb-4">
         <div>
