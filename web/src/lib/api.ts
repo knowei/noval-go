@@ -127,3 +127,85 @@ export async function saveModelSettings(userId: string, settings: ModelSettings)
     return false;
   }
 }
+
+export async function smartFetch(url: string, options: RequestInit = {}): Promise<Response> {
+  try {
+    const resp = await fetch(url, options);
+    return resp;
+  } catch (err) {
+    const proxyUrl = `/proxy?target=${encodeURIComponent(url)}`;
+    try {
+      const proxyResp = await fetch(proxyUrl, options);
+      return proxyResp;
+    } catch (proxyErr: any) {
+      throw new Error(`直连与代理均失败: ${proxyErr?.message || proxyErr}`);
+    }
+  }
+}
+
+export async function testModelConnection(
+  baseUrl: string,
+  apiKey: string,
+  model: string
+): Promise<{ success: boolean; latencyMs: number; reply?: string; error?: string }> {
+  const cleanUrl = baseUrl.trim().replace(/\/+$/, '');
+  const startTime = Date.now();
+  try {
+    const resp = await smartFetch(`${cleanUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey.trim()}`
+      },
+      body: JSON.stringify({
+        model: model.trim(),
+        messages: [{ role: 'user', content: 'Hi, please reply OK.' }],
+        max_tokens: 30,
+        temperature: 0.1
+      })
+    });
+
+    let data: any = {};
+    try {
+      data = await resp.json();
+    } catch {
+      const txt = await resp.text();
+      data = { error: { message: txt || resp.statusText } };
+    }
+
+    const latencyMs = Date.now() - startTime;
+    if (resp.ok && data.choices && data.choices[0]) {
+      const reply = (data.choices[0].message?.content || '').trim();
+      return { success: true, latencyMs, reply: reply || 'OK' };
+    } else {
+      return {
+        success: false,
+        latencyMs,
+        error: data?.error?.message || resp.statusText || '请求失败'
+      };
+    }
+  } catch (err: any) {
+    return {
+      success: false,
+      latencyMs: Date.now() - startTime,
+      error: err.message || '网络连接异常'
+    };
+  }
+}
+
+export async function fetchRemoteModels(baseUrl: string, apiKey: string): Promise<string[]> {
+  const cleanUrl = baseUrl.trim().replace(/\/+$/, '');
+  const resp = await smartFetch(`${cleanUrl}/models`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey.trim()}`
+    }
+  });
+  if (!resp.ok) {
+    throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+  }
+  const data = await resp.json();
+  const list = (data.data || data || []).map((m: any) => m.id || m.name || m);
+  return list.filter((m: any) => typeof m === 'string' && m.length > 0);
+}

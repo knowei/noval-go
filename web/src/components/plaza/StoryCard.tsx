@@ -11,7 +11,7 @@ export function StoryCard({ card }: { card: PlazaCard }) {
 
   return (
     <Link
-      href={`/chat/${card.id}`}
+      href={`/chat/${card.deckKey || card.id}`}
       className={`group relative rounded-2xl overflow-hidden bg-[#171821] border transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col justify-between cursor-pointer ${
         isCoser
           ? 'border-pink-500/30 hover:border-pink-400 shadow-[0_4px_20px_rgba(244,114,182,0.12)]'

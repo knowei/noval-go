@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
-import { saveModelSettings } from '@/lib/api';
-import { X, Check, Cpu, Key, Globe, Sliders, Zap } from 'lucide-react';
+import { saveModelSettings, testModelConnection, fetchRemoteModels } from '@/lib/api';
+import { X, Check, Cpu, Key, Globe, Sliders, Zap, Loader2 } from 'lucide-react';
 
 const PRESET_MODELS = [
   { name: 'deepseek-flash', label: 'DeepSeek Flash (极速极简推荐)', desc: '毫秒级响应，超低消耗，风月默认高频引擎', provider: 'deepseek' },
@@ -22,12 +22,21 @@ export function ModelSettingsModal() {
   const [apiKey, setApiKey] = useState(modelSettings.apiKey || '');
   const [temperature, setTemperature] = useState(modelSettings.temperature ?? 0.85);
 
+  const [isTesting, setIsTesting] = useState(false);
+  const [isFetchingModels, setIsFetchingModels] = useState(false);
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
+  const [testStatus, setTestStatus] = useState<{
+    type: 'loading' | 'success' | 'error';
+    message: string;
+  } | null>(null);
+
   useEffect(() => {
     if (isSettingsOpen) {
       setModel(modelSettings.model || 'deepseek-flash');
       setBaseUrl(modelSettings.baseUrl || 'https://api.deepseek.com/v1');
       setApiKey(modelSettings.apiKey || '');
       setTemperature(modelSettings.temperature ?? 0.85);
+      setTestStatus(null);
     }
   }, [isSettingsOpen, modelSettings]);
 
@@ -37,6 +46,67 @@ export function ModelSettingsModal() {
     setModel(preset.name);
     if (preset.provider === 'deepseek' && !baseUrl.includes('deepseek')) {
       setBaseUrl('https://api.deepseek.com/v1');
+    }
+  };
+
+  const handleFetchModels = async () => {
+    if (!baseUrl) {
+      setTestStatus({ type: 'error', message: '请先填写 Base URL！' });
+      return;
+    }
+    setIsFetchingModels(true);
+    setTestStatus({ type: 'loading', message: '正在从 Base URL 拉取可用模型列表...' });
+    try {
+      const list = await fetchRemoteModels(baseUrl, apiKey);
+      if (list.length > 0) {
+        setAvailableModels(list);
+        setTestStatus({
+          type: 'success',
+          message: `拉取到 ${list.length} 个模型！请在右侧下拉菜单中快速选择。`
+        });
+      } else {
+        setTestStatus({
+          type: 'error',
+          message: '未获取到可用模型列表，请确认服务接口是否支持 /models'
+        });
+      }
+    } catch (e: any) {
+      setTestStatus({
+        type: 'error',
+        message: `拉取失败: ${e.message || '网络连接异常'}`
+      });
+    } finally {
+      setIsFetchingModels(false);
+    }
+  };
+
+  const handleTestConnection = async () => {
+    if (!apiKey || !model) {
+      setTestStatus({ type: 'error', message: '请填写完整 API Key 与模型名称！' });
+      return;
+    }
+    setIsTesting(true);
+    setTestStatus({ type: 'loading', message: `正在向 [${model}] 发送探针请求...` });
+    try {
+      const res = await testModelConnection(baseUrl, apiKey, model);
+      if (res.success) {
+        setTestStatus({
+          type: 'success',
+          message: `连通极度顺畅！响应耗时: ${res.latencyMs}ms，回复: "${res.reply || 'OK'}"`
+        });
+      } else {
+        setTestStatus({
+          type: 'error',
+          message: `返回异常: ${res.error || '未返回有效数据'}`
+        });
+      }
+    } catch (e: any) {
+      setTestStatus({
+        type: 'error',
+        message: `连接异常: ${e.message || '网络或接口故障'}`
+      });
+    } finally {
+      setIsTesting(false);
     }
   };
 
@@ -76,7 +146,7 @@ export function ModelSettingsModal() {
               setBaseUrl('https://api.deepseek.com/v1');
               setModel('deepseek-flash');
             }}
-            className="px-2.5 py-1 rounded-lg bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-900/60 text-[11px] transition"
+            className="px-2.5 py-1 rounded-lg bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-900/60 text-[11px] transition cursor-pointer"
           >
             ⚡ DeepSeek 官方
           </button>
@@ -86,7 +156,7 @@ export function ModelSettingsModal() {
               setBaseUrl('https://api.siliconflow.cn/v1');
               setModel('deepseek-ai/DeepSeek-V3');
             }}
-            className="px-2.5 py-1 rounded-lg bg-sky-950/40 border border-sky-500/40 text-sky-300 hover:bg-sky-900/60 text-[11px] transition"
+            className="px-2.5 py-1 rounded-lg bg-sky-950/40 border border-sky-500/40 text-sky-300 hover:bg-sky-900/60 text-[11px] transition cursor-pointer"
           >
             🌊 硅基流动
           </button>
@@ -96,7 +166,7 @@ export function ModelSettingsModal() {
               setBaseUrl('https://api.openai.com/v1');
               setModel('gpt-4o');
             }}
-            className="px-2.5 py-1 rounded-lg bg-purple-950/40 border border-purple-500/40 text-purple-300 hover:bg-purple-900/60 text-[11px] transition"
+            className="px-2.5 py-1 rounded-lg bg-purple-950/40 border border-purple-500/40 text-purple-300 hover:bg-purple-900/60 text-[11px] transition cursor-pointer"
           >
             🌐 OpenAI 官方
           </button>
@@ -129,19 +199,54 @@ export function ModelSettingsModal() {
           </div>
         </div>
 
-        {/* Model Name Input */}
-        <div className="space-y-1">
-          <label className="text-xs text-gray-400 flex items-center gap-1">
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
-            <span>模型标识符 (Model ID，可手动修改任意模型)</span>
-          </label>
-          <input
-            type="text"
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-            placeholder="deepseek-flash / gpt-4o / claude-3-5-sonnet"
-            className="w-full px-3.5 py-2.5 rounded-xl bg-[#1a1b25] border border-[#2b2e3c] focus:border-amber-500 text-gray-100 outline-none font-mono text-xs"
-          />
+        {/* Model Name Input & Dropdown */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <label className="text-xs text-gray-300 font-semibold flex items-center gap-1">
+              <Zap className="w-3.5 h-3.5 text-amber-400" />
+              <span>模型名称 (Model)</span>
+            </label>
+            <button
+              type="button"
+              disabled={isFetchingModels}
+              onClick={handleFetchModels}
+              className="text-sky-400 hover:text-sky-300 transition text-[11px] flex items-center gap-1 cursor-pointer disabled:opacity-50"
+            >
+              {isFetchingModels ? (
+                <>
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  <span>正在拉取...</span>
+                </>
+              ) : (
+                <span>🔍 获取可用模型列表</span>
+              )}
+            </button>
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              placeholder="deepseek-flash / gpt-4o / claude-3-5-sonnet"
+              className="flex-1 px-3.5 py-2.5 rounded-xl bg-[#1a1b25] border border-[#2b2e3c] focus:border-amber-500 text-gray-100 outline-none font-mono text-xs"
+            />
+            {availableModels.length > 0 && (
+              <select
+                value={availableModels.includes(model) ? model : ''}
+                onChange={(e) => {
+                  if (e.target.value) setModel(e.target.value);
+                }}
+                className="bg-[#1a1b25] border border-[#2b2e3c] rounded-xl px-2.5 py-2 text-gray-200 text-xs focus:outline-none focus:border-amber-500 max-w-[160px] cursor-pointer"
+              >
+                <option value="">-- 选择模型 ({availableModels.length}) --</option>
+                {availableModels.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
         </div>
 
         {/* Custom Inputs */}
@@ -194,22 +299,61 @@ export function ModelSettingsModal() {
           </div>
         </div>
 
+        {/* Status Box */}
+        {testStatus && (
+          <div
+            className={`p-3 rounded-xl border text-[11px] leading-relaxed transition-all ${
+              testStatus.type === 'loading'
+                ? 'bg-amber-950/30 border-amber-500/40 text-amber-300'
+                : testStatus.type === 'success'
+                ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+                : 'bg-rose-950/40 border-rose-500/40 text-rose-300'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              {testStatus.type === 'loading' && <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />}
+              {testStatus.type === 'success' && <span>✅</span>}
+              {testStatus.type === 'error' && <span>❌</span>}
+              <span className="break-all">{testStatus.message}</span>
+            </div>
+          </div>
+        )}
+
         {/* Footer */}
-        <div className="pt-3 border-t border-[#252836] flex items-center justify-end gap-2">
+        <div className="pt-3 border-t border-[#252836] flex items-center justify-between gap-2">
           <button
-            onClick={() => setIsSettingsOpen(false)}
-            className="px-4 py-2 rounded-xl bg-[#20222e] hover:bg-[#282a3a] text-gray-300 text-xs transition cursor-pointer"
+            type="button"
+            disabled={isTesting}
+            onClick={handleTestConnection}
+            className="px-3.5 py-2 rounded-xl border border-sky-500/50 bg-sky-950/30 hover:bg-sky-900/50 text-sky-300 font-medium text-xs flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
           >
-            取消
+            {isTesting ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>正在测试...</span>
+              </>
+            ) : (
+              <span>⚡ 测试连通性</span>
+            )}
           </button>
-          <button
-            onClick={handleSave}
-            className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-stone-900 font-bold text-xs shadow-lg shadow-amber-500/20 transition cursor-pointer"
-          >
-            保存并生效
-          </button>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsSettingsOpen(false)}
+              className="px-4 py-2 rounded-xl bg-[#20222e] hover:bg-[#282a3a] text-gray-300 text-xs transition cursor-pointer"
+            >
+              取消
+            </button>
+            <button
+              onClick={handleSave}
+              className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-stone-900 font-bold text-xs shadow-lg shadow-amber-500/20 transition cursor-pointer"
+            >
+              保存并生效
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+
