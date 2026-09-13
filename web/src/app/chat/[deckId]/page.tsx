@@ -83,29 +83,93 @@ export default function ChatPage() {
   const isFatherDaughter = deckId === 'deck_father_daughter_jealousy' || deckId === '1f97a5c2-3e5b-48e2-aa3a-893a9332765c';
   const bgClass = isCoser ? 'coser-sister-bg' : (isModifier ? 'reality-modifier-bg' : '');
 
+  const getFallbackStory = (actionText: string, turnIdx: number) => {
+    const act = actionText.replace(/【.*?】：?/, '').trim();
+    if (isModifier) {
+      return {
+        story: `现实修改器的指示灯在暗处规律地闪烁着幽紫色微光，因果律常识覆写的波长在空气中无声激荡。\n\n面对“${act || '顺应当前氛围深入探索'}”的指令，顾小梦身子猛然一轻，原本作为大学校花残存的最后一丝羞耻感也如同冰雪初融般悄然溃退。她眼眸半阖，双颊染上绯红的酡色，细密的汗珠顺着白皙修长的脖颈滑落。\n\n“学长……唔……身体好像已经完全习惯了……”少女柔弱无骨地靠了过来，湿透的白袜在木地板上轻轻蹭动，嗓音里夹杂着她自己都未曾察觉的战栗与深层顺从。\n\n而在门外，走廊深处传来了细碎的高跟鞋敲击地砖声——隔壁的成熟插画师苏婉清似乎也正朝着这边走来，空气中的暧昧与危险指数正在疯狂攀升。`,
+        branches: [
+          { tag: 'A', title: '伸手轻抚顾小梦的脸颊', desc: '确认因果律覆写程度，给予其绝对支配下的安心感' },
+          { tag: 'B', title: '反锁房门并加大指令输出', desc: '将常识覆写推向高潮，彻底锁定专属顺从印记' },
+          { tag: 'C', title: '故意拉开房门引起注意', desc: '让门外的苏婉清撞破这一幕，一举开启双人修罗场' }
+        ]
+      };
+    }
+
+    if (isCoser) {
+      return {
+        story: `听到你关于“${act || '继续互动'}”的话语，林知念捏着洛丽塔裙摆的手指稍稍攥紧，但耳尖那抹艳丽的薄红却迅速蔓延到了雪白的锁骨。\n\n她悄悄抬起眼帘望向你，在触及你眼神的刹那又慌乱地偏过头去，长长的睫毛在黄昏落日的余晖中剧烈颤动：“哥……你、你怎么总是趁人家换衣服的时候说这种话……要是骗我，我以后就真的一套新衣服都不给你看了……”\n\n虽然嘴上娇哼着表达抗议，但她身后的落地穿衣镜里，少女那微微扬起的嘴角与微促的心跳，却早已将她心底藏不住的窃喜与依赖暴露无遗。`,
+        branches: [
+          { tag: 'A', title: '走上前替她整理微敞的后背拉链', desc: '指尖轻轻触碰她温热敏感的后颈' },
+          { tag: 'B', title: '拿起相机为她拍摄专属特写', desc: '“既然只穿给我看，那自然要由我来记录最私密的瞬间”' },
+          { tag: 'C', title: '微笑着递过温热的水杯', desc: '用体贴的日常互动平复少女羞怯的心跳' }
+        ]
+      };
+    }
+
+    if (isSister) {
+      return {
+        story: `话音未落，客厅原本稍显轻松的氛围顿时微妙地凝固了一瞬。\n\n宋晚的脸颊刷地一下通红，抓起沙发上的抱枕挡在身前：“喂！你、你怎么能选这个大冒险啊！夏绮，林初，你们快管管他呀……”\n\n坐在地毯上的夏绮双手托腮，一双桃花眼里满是玩味的促狭笑意：“晚晚，大冒险的规矩可是你自己开局定下的哦，愿赌服输，不许耍赖~”\n\n而在角落一直有些羞怯的林初则微微低下了头，手指紧扣着易拉罐，心跳声在安静的客厅里似乎格外清晰。`,
+        branches: [
+          { tag: 'A', title: '直视宋晚要求立即履行惩罚', desc: '打破姐姐的最后防线，步步紧逼' },
+          { tag: 'B', title: '将目光转向煽风点火的夏绮', desc: '“既然你这么热心，不如你替我姐姐接受惩罚？”' },
+          { tag: 'C', title: '温和打圆场化解尴尬', desc: '以退为进，暗中观察三位少女的细微态度' }
+        ]
+      };
+    }
+
+    if (isFatherDaughter) {
+      return {
+        story: `面对你的质问与动作，女儿的身子微微发颤。在你的注视下，她眼底最初的委屈与抗拒逐渐瓦解，取而代之的是一丝无法掩饰的慌乱与羞愧。\n\n她紧紧揪着睡衣下摆，眼圈泛红，胸口由于情绪激动而起伏不定：“爸……你凭什么这样管我……你、你根本不知道我心里有多难受……”\n\n然而她微弱的反抗并没能掩饰她身躯的紧绷与依赖，在你的威严与妒意交织的气场下，卧室里的气氛变得愈发危险与禁断。`,
+        branches: [
+          { tag: 'A', title: '严肃质问并给予严厉惩戒', desc: '用不容置疑的家长威严彻底击破她的谎言' },
+          { tag: 'B', title: '收敛怒气坐到床边轻抚她的长发', desc: '“爸爸只是太在乎你，不想看你受到任何伤害”' },
+          { tag: 'C', title: '拿起桌上她男同学留下的物品', desc: '当面勒令她与外界断绝一切暧昧往来' }
+        ]
+      };
+    }
+
+    return {
+      story: `针对你的行动【${act || '深入推进'}】，场间的气氛产生了明显的微妙变化。\n\n窗外的夜色如墨，灯光在两人之间洒下斑驳的光影。对方抬起眼帘凝视着你，眼底闪过复杂的情绪波动，似乎正在重新审视你与彼此之间的界限。随着沉默的打破，彼此的距离在不知不觉中悄然拉近。`,
+      branches: [
+        { tag: 'A', title: '乘胜追击，主动打破沉默', desc: '把握当下的微妙局势，进一步占据主动' },
+        { tag: 'B', title: '以退为进，静观其变', desc: '捕捉对方微表情里的细微破绽' },
+        { tag: 'C', title: '用温和的话语给予确认', desc: '消除对方内心的疑虑与防备' }
+      ]
+    };
+  };
+
   const runGeneration = async (historyContext: Turn[]) => {
     setIsLoading(true);
     const activeModel = modelSettings.model || 'deepseek-flash';
+    const lastUserTurn = historyContext[historyContext.length - 1];
+    const userActionText = lastUserTurn?.text || '';
+    const aiTurnIndex = historyContext.length;
 
-    try {
-      const promptMessages = [
-        {
-          role: 'system',
-          content: `你是一名顶级沉浸式互动小说推演者。当前剧本是《${currentDeck?.title || '未命名'}》。
+    let hasLiveStreamSuccess = false;
+
+    // Only attempt real API call if apiKey looks real (not demo/empty)
+    const isRealApiKey = Boolean(
+      modelSettings.apiKey &&
+      modelSettings.apiKey.trim().length > 8 &&
+      !modelSettings.apiKey.startsWith('sk-demo')
+    );
+
+    if (isRealApiKey) {
+      try {
+        const promptMessages = [
+          {
+            role: 'system',
+            content: `你是一名顶级沉浸式互动小说推演者。当前剧本是《${currentDeck?.title || '未命名'}》。
 女主与场景氛围需根据用户行动推进剧情，细致刻画环境、心理独白、微表情与情绪变化。
 请严格输出高质量文学叙事，并在结尾提供 2-4 个下一步行动选项。`
-        },
-        ...historyContext.slice(-6).map((h) => ({
-          role: h.isUser ? 'user' : 'assistant',
-          content: h.text || h.story || ''
-        }))
-      ];
+          },
+          ...historyContext.slice(-6).map((h) => ({
+            role: h.isUser ? 'user' : 'assistant',
+            content: h.text || h.story || ''
+          }))
+        ];
 
-      const aiTurnIndex = historyContext.length;
-      let generatedStory = '';
-
-      if (modelSettings.apiKey) {
-        // Real API Stream via Proxy
         const targetUrl = `${modelSettings.baseUrl || 'https://api.openai.com/v1'}/chat/completions`;
         const resp = await fetch(`/proxy?target=${encodeURIComponent(targetUrl)}`, {
           method: 'POST',
@@ -125,6 +189,7 @@ export default function ChatPage() {
           const reader = resp.body.getReader();
           const decoder = new TextDecoder();
           let done = false;
+          let streamedStory = '';
 
           addTurn({
             isUser: false,
@@ -144,67 +209,58 @@ export default function ChatPage() {
                 try {
                   const parsed = JSON.parse(line.slice(6));
                   const delta = parsed.choices?.[0]?.delta?.content || '';
-                  generatedStory += delta;
-                  updateTurn(aiTurnIndex, {
-                    isUser: false,
-                    model: activeModel,
-                    location: currentDeck?.title,
-                    story: generatedStory,
-                    branches: [
-                      { tag: 'A', title: '顺应当前气氛', desc: '根据当前情境做进一步互动' },
-                      { tag: 'B', title: '主动试探心意', desc: '进一步追问她的真实想法' }
-                    ]
-                  });
+                  if (delta) {
+                    streamedStory += delta;
+                    hasLiveStreamSuccess = true;
+                    updateTurn(aiTurnIndex, {
+                      isUser: false,
+                      model: activeModel,
+                      location: currentDeck?.title,
+                      story: streamedStory,
+                      branches: [
+                        { tag: 'A', title: '顺应当前气氛', desc: '根据当前情境做进一步互动' },
+                        { tag: 'B', title: '主动试探心意', desc: '进一步追问她的真实想法' }
+                      ]
+                    });
+                  }
                 } catch (e) {}
               }
             }
           }
         }
+      } catch (err) {
+        console.warn('Live API request failed or timed out, falling back to immersive simulator:', err);
+      }
+    }
+
+    // If live API was not used or failed to produce story, use the local high-fidelity narrative engine
+    if (!hasLiveStreamSuccess) {
+      await new Promise((r) => setTimeout(r, 600));
+      const fallback = getFallbackStory(userActionText, aiTurnIndex);
+
+      // Check if placeholder turn was already added
+      const currentHistory = useAppStore.getState().conversationHistory;
+      if (currentHistory.length > aiTurnIndex) {
+        updateTurn(aiTurnIndex, {
+          isUser: false,
+          model: activeModel || '本地沉浸推演引擎',
+          location: currentDeck?.title || '室内场景',
+          story: fallback.story,
+          branches: fallback.branches
+        });
       } else {
-        // Local high-fidelity simulator
-        await new Promise((r) => setTimeout(r, 600));
-
-        let simStory = '';
-        if (deckId === 'deck_coser_sister') {
-          simStory = `听到你的回答，林知念捏着裙摆的手指稍稍松开了一些，但耳尖的薄红却依旧没有褪去。
-她悄悄抬起眼帘看了你一眼，在迎上你视线的瞬间又触电般移开，长长的睫毛在晚霞中轻轻颤动：
-“哥……你、你刚才那句话是认真的吗？要是骗我……我以后就真的一套都不穿给你看了……”
-虽然嘴上哼了一声，但她身后的落地镜里，少女翘起的唇角却已经出卖了她藏不住的窃喜。`;
-        } else if (isModifier) {
-          simStory = `现实修改器的指示灯在暗处闪过一道幽微的紫光。
-顾小梦轻轻咬住下唇，双颊泛起异样的绯红，在修改器的因果律常识覆写下，原本作为大学校花的高傲防线正在寸寸瓦解，望向你的眼神里多出了几分自己都无法理解的依恋与迷乱。`;
-        } else if (isSister) {
-          simStory = `听到这句话，原本热烈的客厅突然安静了一瞬。
-宋晚的脸蛋瞬间涨得通红，慌忙抓起沙发上的抱枕挡在胸前：“喂！你、你怎么能选这个大冒险啊！夏绮，林初，你们快管管他呀……”
-旁边的夏绮却双手托腮，嘴角噙着一抹戏谑的笑意：“晚晚，愿赌服输哦，大冒险的规矩可是你自己订的呢~”`;
-        } else if (isFatherDaughter) {
-          simStory = `女儿身子猛地一颤，原本委屈抗拒的眼神在你的注视下渐渐动摇。
-她紧紧攥着衣角，眼圈泛红，呼吸也变得有些急促起来，声音带着一丝不易察觉的轻颤：“爸……你凭什么这么管我……你、你根本就不知道我心里在想什么……”
-然而她微微后缩的动作，却暴露了她内心深处的慌乱与不知所措。`;
-        } else {
-          simStory = `听到你的话语，场间的气氛微微一滞。窗外的夜色渐深，灯光洒在彼此之间，投下朦胧的阴影。
-对方抬起眼帘望向你，眼底闪过一丝复杂的情绪，似乎正在重新权衡你所说的话，彼此之间的微妙距离在这一刻悄然拉近。`;
-        }
-
         addTurn({
           isUser: false,
-          model: '本地沉浸推演引擎',
+          model: activeModel || '本地沉浸推演引擎',
           location: currentDeck?.title || '室内场景',
-          story: simStory,
-          branches: [
-            { tag: 'A', title: '走上前轻抚她的头发', desc: '打破沉默给予她最安心的确认' },
-            { tag: 'B', title: '拿出相机替她拍照', desc: '“既然只穿给我看，那自然也要由我来做独家摄影师”' },
-            { tag: 'C', title: '故作平静地递过饮料', desc: '用温和的日常方式化解她的羞赧' }
-          ]
+          story: fallback.story,
+          branches: fallback.branches
         });
       }
-    } catch (err) {
-      console.error('AI Stream generation error:', err);
-    } finally {
-      setIsLoading(false);
     }
-  };
 
+    setIsLoading(false);
+  };
   const handleSend = async (actionText: string) => {
     if (!actionText.trim() || isLoading) return;
     const userTurn = { isUser: true, text: actionText.trim() };
