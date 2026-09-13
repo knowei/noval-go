@@ -7,6 +7,7 @@ import { ArrowLeft, BookOpen, RotateCcw, History, Sparkles } from 'lucide-react'
 
 import { useAppStore } from '@/lib/store';
 import { fetchStory, fetchConversations, fetchConversation } from '@/lib/api';
+import { parseModelOutput, generateContextualBranches } from '@/lib/modelParser';
 import { Turn } from '@/lib/types';
 import { ScenarioSidebar } from '@/components/chat/ScenarioSidebar';
 import { ChatInput } from '@/components/chat/ChatInput';
@@ -192,12 +193,37 @@ export default function ChatPage() {
 
     if (isRealApiKey) {
       try {
+        let systemPromptText = `你是一名顶级私人叙事编纂官。当前正在推演文学剧本《${currentDeck?.title || '未命名'}》。
+你必须根据用户的行动忠实推进下一幕高质量剧情，细致刻画肢体细节、心理波动、微表情与情绪变化。
+正文描写请保持连贯饱满，并在正文结束后严格输出以下格式的 3-4 项具体的下一步行动分支，供读者点击交互：
+🎲【推荐互动抉择】
+A. [具体行动标题] - 具体的行动举措或带有台词的交互说明
+B. [具体行动标题] - 具体的行动举措或带有台词的交互说明
+C. [具体行动标题] - 具体的行动举措或带有台词的交互说明
+D. [具体行动标题] - 具体的行动举措或带有台词的交互说明
+`;
+
+        if (isCoser) {
+          systemPromptText += `\n【🎀 《我的绝美coser萝莉妹妹》专有沉浸规范】
+女主角林知念（16岁·高中生，小有名气的二次元coser妹）。
+核心机制在于【外在万众瞩目 vs 唯独想被哥哥注视与占有的依赖】。
+在正文结尾请同时输出：
+💡【知念内心真实独白】：（以知念第一人称，写出她内心的羞耻心跳、对哥哥注视的渴望）
+👗【当前装扮与体态】：（描写知念此刻身上的cos装扮/家居服细节与微表情）
+`;
+        } else if (isModifier) {
+          systemPromptText += `\n【📱 《现实修改器 v6.9》专有输出规范】
+在正文结尾请同时输出：
+💡【NPC内心真实想法】：（以女性第一人称写出她面对因果律常识覆写后的心理独白）
+📡【小改改实时监控与战术报告】：（以小改改活泼俏皮的语气分析当前目标沦陷度与战术）
+👗【当前服装状态】：（当前NPC此刻的最新真实服装与修改效果）
+`;
+        }
+
         const promptMessages = [
           {
             role: 'system',
-            content: `你是一名顶级沉浸式互动小说推演者。当前剧本是《${currentDeck?.title || '未命名'}》。
-女主与场景氛围需根据用户行动推进剧情，细致刻画环境、心理独白、微表情与情绪变化。
-请严格输出高质量文学叙事，并在结尾提供 2-4 个下一步行动选项。`
+            content: systemPromptText
           },
           ...historyContext.slice(-6).map((h) => ({
             role: h.isUser ? 'user' : 'assistant',
@@ -211,7 +237,7 @@ export default function ChatPage() {
           : activeModel;
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 2800);
+        const timeoutId = setTimeout(() => controller.abort(), 25000);
 
         const resp = await fetch(`/proxy?target=${encodeURIComponent(targetUrl)}`, {
           method: 'POST',
@@ -253,29 +279,45 @@ export default function ChatPage() {
 
                     if (isFirstToken) {
                       isFirstToken = false;
+                      const initialBranches = generateContextualBranches(deckId, streamedStory, aiTurnIndex, userActionText);
                       addTurn({
                         isUser: false,
                         model: activeModel,
                         location: currentDeck?.title,
                         story: streamedStory,
-                        branches: []
+                        branches: initialBranches
                       });
                     } else {
                       updateTurn(aiTurnIndex, {
                         isUser: false,
                         model: activeModel,
                         location: currentDeck?.title,
-                        story: streamedStory,
-                        branches: [
-                          { tag: 'A', title: '顺应当前气氛', desc: '根据当前情境做进一步互动' },
-                          { tag: 'B', title: '主动试探心意', desc: '进一步追问她的真实想法' }
-                        ]
+                        story: streamedStory
                       });
                     }
                   }
                 } catch (e) {}
               }
             }
+          }
+
+          if (hasLiveStreamSuccess && streamedStory) {
+            const parsed = parseModelOutput(streamedStory, deckId, aiTurnIndex, userActionText);
+            updateTurn(aiTurnIndex, {
+              isUser: false,
+              model: activeModel,
+              location: currentDeck?.title || '室内场景',
+              story: parsed.story || streamedStory,
+              branches: parsed.branches && parsed.branches.length > 0
+                ? parsed.branches
+                : generateContextualBranches(deckId, streamedStory, aiTurnIndex, userActionText),
+              npcThought: parsed.npcThought,
+              modReport: parsed.modReport,
+              npcClothes: parsed.npcClothes,
+              modifyEffect: parsed.modifyEffect,
+              memory: parsed.memory,
+              status: parsed.status,
+            });
           }
         }
       } catch (err) {

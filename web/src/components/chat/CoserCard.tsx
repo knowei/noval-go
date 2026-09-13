@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { CardTurnActionBar } from './CardTurnActionBar';
 import { Turn } from '@/lib/types';
+import { generateContextualBranches } from '@/lib/modelParser';
 import { Sparkles, BookOpen, Copy, Check } from 'lucide-react';
 
 interface CoserCardProps {
@@ -391,7 +392,12 @@ export function CoserCard({
   // Turn > 0: Subsequent rounds with standardized 1:1 collapsible accordions
   const hasStatus = !!(turn.status || turn.npcThought);
   const hasMemory = turn.memory && turn.memory.length > 0;
-  const hasBranches = turn.branches && turn.branches.length > 0;
+    const isPlaceholderBranches = !turn.branches || turn.branches.length === 0 ||
+    (turn.branches.length <= 2 && turn.branches.some(b => b.title.includes('顺应') || b.title.includes('试探心意')));
+  const activeBranches = isPlaceholderBranches
+    ? generateContextualBranches('deck_coser_sister', storyText, index)
+    : turn.branches!;
+  const hasBranches = activeBranches && activeBranches.length > 0;
   const hasAnyPanel = hasStatus || hasMemory || hasBranches;
 
   return (
@@ -505,7 +511,7 @@ export function CoserCard({
               <summary className="reality-summary cursor-pointer select-none">
                 <span className="flex items-center gap-2">
                   <span>🎮</span>
-                  <span>推荐互动抉择 ({turn.branches!.length} 项可选)</span>
+                  <span>推荐互动抉择 ({activeBranches.length} 项可选)</span>
                 </span>
                 <span className="reality-arrow"></span>
               </summary>
@@ -514,7 +520,7 @@ export function CoserCard({
                   💡 点击直接推进心动情节：
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {turn.branches!.map((b, bi) => (
+                  {activeBranches.map((b, bi) => (
                     <button
                       key={bi}
                       onClick={() => onSendAction(`【${b.title}】：${b.desc || b.title}`)}
