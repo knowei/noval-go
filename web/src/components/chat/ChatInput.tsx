@@ -9,6 +9,7 @@ interface ChatInputProps {
   onRegenerateLast?: () => void;
   inputText?: string;
   setInputText?: (val: string) => void;
+  onScrollToBottom?: () => void;
 }
 
 const ACTION_CAPSULES = [
@@ -24,6 +25,7 @@ export function ChatInput({
   onRegenerateLast,
   inputText,
   setInputText,
+  onScrollToBottom,
 }: ChatInputProps) {
   const [internalInput, setInternalInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(true);
@@ -51,7 +53,11 @@ export function ChatInput({
   };
 
   const scrollToBottom = () => {
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    if (onScrollToBottom) {
+      onScrollToBottom();
+    } else {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
   };
 
   return (
