@@ -21,7 +21,14 @@ from datetime import datetime
 import studio_api
 
 PORT = int(os.environ.get('NOVAL_PORT', '5173'))
-DB_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'noval_data.db')
+DB_FILE = os.environ.get('NOVAL_DB_PATH') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'noval_data.db')
+
+# Ensure DB directory exists and seed if empty
+os.makedirs(os.path.dirname(os.path.abspath(DB_FILE)), exist_ok=True)
+seed_db = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'noval_data.db')
+if not os.path.exists(DB_FILE) and os.path.exists(seed_db) and os.path.abspath(DB_FILE) != os.path.abspath(seed_db):
+    import shutil
+    shutil.copy2(seed_db, DB_FILE)
 
 def get_db():
     conn = sqlite3.connect(DB_FILE)
