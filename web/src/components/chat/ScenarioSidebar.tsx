@@ -1,12 +1,17 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAppStore } from '@/lib/store';
 import { fetchConversation, deleteConversation } from '@/lib/api';
-import { ArrowLeft, Plus, Trash2, ArrowUpDown, Clock, Heart, Award, Sparkles } from 'lucide-react';
+import { ConfirmModal } from '@/components/modals/ConfirmModal';
+import { ArrowLeft, Plus, Trash2, ArrowUpDown, Clock, Heart, Award, Sparkles, X } from 'lucide-react';
 
-export function ScenarioSidebar() {
+interface ScenarioSidebarProps {
+  onClose?: () => void;
+}
+
+export function ScenarioSidebar({ onClose }: ScenarioSidebarProps) {
   const {
     currentDeckKey,
     currentDeck,
@@ -17,6 +22,8 @@ export function ScenarioSidebar() {
     setConversationHistory,
     startNewStory
   } = useAppStore();
+
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   useEffect(() => {
     refreshSaves();
@@ -29,33 +36,62 @@ export function ScenarioSidebar() {
     if (data && data.history) {
       setCurrentConversationId(data.id);
       setConversationHistory(data.history);
+      if (onClose) onClose();
     }
   };
 
-  const handleDeleteSave = async (e: React.MouseEvent, convId: string) => {
+  const handleDeleteClick = (e: React.MouseEvent, convId: string) => {
     e.stopPropagation();
-    if (!confirm('确定要删除此条存档吗？')) return;
-    await deleteConversation(convId);
-    await refreshSaves();
+    setDeleteTargetId(convId);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deleteTargetId) {
+      await deleteConversation(deleteTargetId);
+      await refreshSaves();
+      setDeleteTargetId(null);
+    }
   };
 
   return (
-    <aside className="w-64 sm:w-72 shrink-0 h-screen sticky top-0 bg-[#121319] border-r border-[#20222e] flex flex-col justify-between py-4 px-3.5 z-30 select-none overflow-y-auto">
-      {/* Top Header */}
-      <div className="space-y-4">
-        {/* Back link & badge */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition group"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition" />
-            <span>返回探索广场</span>
-          </Link>
-          <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#1e202c] text-pink-300 border border-pink-500/20">
-            SCENARIO
-          </span>
-        </div>
+    <>
+      <ConfirmModal
+        isOpen={!!deleteTargetId}
+        title="删除存档"
+        message="确定要彻底删除该条会话存档吗？删除后不可恢复。"
+        confirmText="确认删除"
+        cancelText="取消"
+        isDestructive={true}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTargetId(null)}
+      />
+
+      <aside className="w-64 sm:w-72 shrink-0 h-screen sticky top-0 bg-[#121319] border-r border-[#20222e] flex flex-col justify-between py-4 px-3.5 z-30 select-none overflow-y-auto">
+        {/* Top Header */}
+        <div className="space-y-4">
+          {/* Back link & badge */}
+          <div className="flex items-center justify-between">
+            <Link
+              href="/"
+              className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition group"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition" />
+              <span>返回探索广场</span>
+            </Link>
+            <div className="flex items-center gap-1">
+              <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#1e202c] text-pink-300 border border-pink-500/20">
+                SCENARIO
+              </span>
+              {onClose && (
+                <button
+                  onClick={onClose}
+                  className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-[#202230] md:hidden cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
 
         {/* Deck Title & Info */}
         <div className="space-y-1.5 pt-1">
@@ -138,8 +174,8 @@ export function ScenarioSidebar() {
                   </div>
 
                   <button
-                    onClick={(e) => handleDeleteSave(e, conv.id)}
-                    className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-950/40 opacity-0 group-hover:opacity-100 transition"
+                    onClick={(e) => handleDeleteClick(e, conv.id)}
+                    className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-950/40 opacity-0 group-hover:opacity-100 transition cursor-pointer"
                     title="删除存档"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -151,5 +187,6 @@ export function ScenarioSidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }

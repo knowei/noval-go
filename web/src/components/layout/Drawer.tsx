@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppStore } from '@/lib/store';
 import { deleteConversation, fetchConversation } from '@/lib/api';
+import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { X, Plus, Trash2, BookOpen, Clock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -19,6 +20,8 @@ export function Drawer() {
     setCurrentConversationId,
     setConversationHistory
   } = useAppStore();
+
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isDrawerOpen) {
@@ -40,11 +43,17 @@ export function Drawer() {
     }
   };
 
-  const handleDeleteSave = async (e: React.MouseEvent, convId: string) => {
+  const handleDeleteClick = (e: React.MouseEvent, convId: string) => {
     e.stopPropagation();
-    if (!confirm('确定要删除此条存档吗？')) return;
-    await deleteConversation(convId);
-    await refreshSaves();
+    setDeleteTargetId(convId);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deleteTargetId) {
+      await deleteConversation(deleteTargetId);
+      await refreshSaves();
+      setDeleteTargetId(null);
+    }
   };
 
   return (
@@ -123,8 +132,8 @@ export function Drawer() {
                   </div>
 
                   <button
-                    onClick={(e) => handleDeleteSave(e, conv.id)}
-                    className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-950/40 opacity-0 group-hover:opacity-100 transition"
+                    onClick={(e) => handleDeleteClick(e, conv.id)}
+                    className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-950/40 opacity-0 group-hover:opacity-100 transition cursor-pointer"
                     title="删除此存档"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -135,6 +144,18 @@ export function Drawer() {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={!!deleteTargetId}
+        title="删除存档"
+        message="确定要彻底删除该条会话存档吗？删除后不可恢复。"
+        confirmText="确认删除"
+        cancelText="取消"
+        isDestructive={true}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTargetId(null)}
+      />
     </div>
   );
 }
+
