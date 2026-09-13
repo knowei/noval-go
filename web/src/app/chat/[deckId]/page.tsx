@@ -2,23 +2,26 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { ArrowLeft, BookOpen, RotateCcw, History } from 'lucide-react';
+
 import { useAppStore } from '@/lib/store';
 import { fetchStory, fetchConversations, fetchConversation } from '@/lib/api';
+import { Turn } from '@/lib/types';
+import { ScenarioSidebar } from '@/components/chat/ScenarioSidebar';
+import { ChatInput } from '@/components/chat/ChatInput';
 import { CoserCard } from '@/components/chat/CoserCard';
-import { GenericCard } from '@/components/chat/GenericCard';
 import { RealityModifierCard } from '@/components/chat/RealityModifierCard';
 import { SisterTruthOrDareCard } from '@/components/chat/SisterTruthOrDareCard';
 import { FatherDaughterJealousyCard } from '@/components/chat/FatherDaughterJealousyCard';
-import { ChatInput } from '@/components/chat/ChatInput';
-import { ScenarioSidebar } from '@/components/chat/ScenarioSidebar';
+import { GenericCard } from '@/components/chat/GenericCard';
+import { UserTurnActionBar } from '@/components/chat/UserTurnActionBar';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
-import { Sparkles, ArrowLeft, RotateCcw, Plus, Trash2, Edit2, History, Menu, BookOpen } from 'lucide-react';
-import Link from 'next/link';
 
 export default function ChatPage() {
   const params = useParams();
+  const deckId = params.deckId as string;
   const router = useRouter();
-  const deckId = (params?.deckId as string) || 'deck_coser_sister';
 
   const {
     currentUserId,
@@ -26,24 +29,26 @@ export default function ChatPage() {
     setCurrentDeck,
     conversationHistory,
     setConversationHistory,
-    setCurrentConversationId,
     addTurn,
     updateTurn,
     truncateHistory,
+    setCurrentConversationId,
     startNewStory,
-    setIsDrawerOpen,
+    modelSettings,
     setIsSettingsOpen,
-    modelSettings
+    setIsDrawerOpen,
   } = useAppStore();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+  const [inputText, setInputText] = useState('');
   const [isMobileScenarioOpen, setIsMobileScenarioOpen] = useState(false);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const streamBottomRef = useRef<HTMLDivElement>(null);
 
-  // Load Deck and Save on mount
   useEffect(() => {
     async function init() {
+      if (!deckId) return;
+
       const deck = await fetchStory(deckId);
       if (deck) {
         setCurrentDeck(deckId, deck);
@@ -72,33 +77,31 @@ export default function ChatPage() {
     streamBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [conversationHistory, isLoading]);
 
-  const handleSend = async (actionText: string) => {
-    if (!actionText.trim() || isLoading) return;
+  const isCoser = deckId === 'deck_coser_sister';
+  const isModifier = deckId === 'deck_reality_modifier';
+  const isSister = deckId === 'deck_sister_truth_or_dare' || deckId === '6ffc2ab9-2907-4304-b0bb-53c0a950b445';
+  const isFatherDaughter = deckId === 'deck_father_daughter_jealousy' || deckId === '1f97a5c2-3e5b-48e2-aa3a-893a9332765c';
+  const bgClass = isCoser ? 'coser-sister-bg' : (isModifier ? 'reality-modifier-bg' : '');
 
-    // 1. Add user turn
-    const userTurn = { isUser: true, text: actionText };
-    addTurn(userTurn);
+  const runGeneration = async (historyContext: Turn[]) => {
     setIsLoading(true);
+    const activeModel = modelSettings.model || 'deepseek-flash';
 
     try {
-      // 2. Prepare context for AI call
-      const activeModel = modelSettings.model || 'deepseek-flash';
       const promptMessages = [
         {
           role: 'system',
-          content: `你是一名顶级沉浸式小说推演者。当前剧本是《${currentDeck?.title || '未命名'}》。
-女主与场景氛围需根据用户行动推进剧情，细致刻画环境、微表情与情绪变化。
+          content: `你是一名顶级沉浸式互动小说推演者。当前剧本是《${currentDeck?.title || '未命名'}》。
+女主与场景氛围需根据用户行动推进剧情，细致刻画环境、心理独白、微表情与情绪变化。
 请严格输出高质量文学叙事，并在结尾提供 2-4 个下一步行动选项。`
         },
-        ...conversationHistory.slice(-6).map((h) => ({
+        ...historyContext.slice(-6).map((h) => ({
           role: h.isUser ? 'user' : 'assistant',
           content: h.text || h.story || ''
-        })),
-        { role: 'user', content: actionText }
+        }))
       ];
 
-      // Temporary placeholder AI turn
-      const aiTurnIndex = conversationHistory.length + 1;
+      const aiTurnIndex = historyContext.length;
       let generatedStory = '';
 
       if (modelSettings.apiKey) {
@@ -159,7 +162,7 @@ export default function ChatPage() {
         }
       } else {
         // Local high-fidelity simulator
-        await new Promise((r) => setTimeout(r, 800));
+        await new Promise((r) => setTimeout(r, 600));
 
         let simStory = '';
         if (deckId === 'deck_coser_sister') {
@@ -167,9 +170,20 @@ export default function ChatPage() {
 她悄悄抬起眼帘看了你一眼，在迎上你视线的瞬间又触电般移开，长长的睫毛在晚霞中轻轻颤动：
 “哥……你、你刚才那句话是认真的吗？要是骗我……我以后就真的一套都不穿给你看了……”
 虽然嘴上哼了一声，但她身后的落地镜里，少女翘起的唇角却已经出卖了她藏不住的窃喜。`;
+        } else if (isModifier) {
+          simStory = `现实修改器的指示灯在暗处闪过一道幽微的紫光。
+顾小梦轻轻咬住下唇，双颊泛起异样的绯红，在修改器的因果律常识覆写下，原本作为大学校花的高傲防线正在寸寸瓦解，望向你的眼神里多出了几分自己都无法理解的依恋与迷乱。`;
+        } else if (isSister) {
+          simStory = `听到这句话，原本热烈的客厅突然安静了一瞬。
+宋晚的脸蛋瞬间涨得通红，慌忙抓起沙发上的抱枕挡在胸前：“喂！你、你怎么能选这个大冒险啊！夏绮，林初，你们快管管他呀……”
+旁边的夏绮却双手托腮，嘴角噙着一抹戏谑的笑意：“晚晚，愿赌服输哦，大冒险的规矩可是你自己订的呢~”`;
+        } else if (isFatherDaughter) {
+          simStory = `女儿身子猛地一颤，原本委屈抗拒的眼神在你的注视下渐渐动摇。
+她紧紧攥着衣角，眼圈泛红，呼吸也变得有些急促起来，声音带着一丝不易察觉的轻颤：“爸……你凭什么这么管我……你、你根本就不知道我心里在想什么……”
+然而她微微后缩的动作，却暴露了她内心深处的慌乱与不知所措。`;
         } else {
-          simStory = `听到你的指令，场间的气氛微微一滞。窗外的风声掠过树梢，带起一阵沙沙轻响。
-对方抬起眼帘望向你，眼底闪过一丝深思与隐秘的动摇，似乎正在重新评估你的意图与彼此之间的微妙距离。`;
+          simStory = `听到你的话语，场间的气氛微微一滞。窗外的夜色渐深，灯光洒在彼此之间，投下朦胧的阴影。
+对方抬起眼帘望向你，眼底闪过一丝复杂的情绪，似乎正在重新权衡你所说的话，彼此之间的微妙距离在这一刻悄然拉近。`;
         }
 
         addTurn({
@@ -191,11 +205,62 @@ export default function ChatPage() {
     }
   };
 
-  const isCoser = deckId === 'deck_coser_sister';
-  const isModifier = deckId === 'deck_reality_modifier';
-  const isSister = deckId === 'deck_sister_truth_or_dare' || deckId === '6ffc2ab9-2907-4304-b0bb-53c0a950b445';
-  const isFatherDaughter = deckId === 'deck_father_daughter_jealousy' || deckId === '1f97a5c2-3e5b-48e2-aa3a-893a9332765c';
-  const bgClass = isCoser ? 'coser-sister-bg' : (isModifier ? 'reality-modifier-bg' : '');
+  const handleSend = async (actionText: string) => {
+    if (!actionText.trim() || isLoading) return;
+    const userTurn = { isUser: true, text: actionText.trim() };
+    const nextHistory = [...conversationHistory, userTurn];
+    addTurn(userTurn);
+    await runGeneration(nextHistory);
+  };
+
+  const handleRegenerate = async (turnIndex: number) => {
+    if (isLoading) return;
+    // Slice up to turnIndex
+    const truncated = conversationHistory.slice(0, turnIndex);
+    setConversationHistory(truncated);
+    await runGeneration(truncated);
+  };
+
+  const handleContinueWriting = async (turnIndex: number) => {
+    if (isLoading) return;
+    handleSend('（请顺应当前这一幕的语境与人物状态，接着往后深层次推演剧情，展开更多细节与对白）');
+  };
+
+  const handleEditTurn = (turnIndex: number, newStory: string) => {
+    const existing = conversationHistory[turnIndex];
+    if (!existing) return;
+    updateTurn(turnIndex, {
+      ...existing,
+      story: newStory,
+      text: newStory,
+    });
+  };
+
+  const handleEditAndResendUserTurn = (turnIndex: number, text: string) => {
+    setInputText(text);
+    truncateHistory(turnIndex);
+  };
+
+  const handleResendUserTurn = async (turnIndex: number) => {
+    if (isLoading) return;
+    const kept = conversationHistory.slice(0, turnIndex + 1);
+    setConversationHistory(kept);
+    await runGeneration(kept);
+  };
+
+  const handleRetractUserTurn = (turnIndex: number) => {
+    truncateHistory(turnIndex);
+  };
+
+  const handleRegenerateLast = () => {
+    if (isLoading || conversationHistory.length === 0) return;
+    for (let i = conversationHistory.length - 1; i >= 0; i--) {
+      if (!conversationHistory[i].isUser) {
+        handleRegenerate(i);
+        return;
+      }
+    }
+  };
 
   return (
     <div className="flex-1 flex min-h-screen">
@@ -320,6 +385,13 @@ export default function ChatPage() {
             if (turn.isUser) {
               return (
                 <div key={idx} className="flex flex-col items-end gap-1 group">
+                  <UserTurnActionBar
+                    index={idx}
+                    text={turn.text || ''}
+                    onEditAndResend={handleEditAndResendUserTurn}
+                    onResendFromTurn={handleResendUserTurn}
+                    onRetract={handleRetractUserTurn}
+                  />
                   <div className="bg-[#242734] text-gray-100 text-xs sm:text-sm px-4 py-3 rounded-2xl rounded-tr-xs max-w-lg shadow-lg border border-[#333748] leading-relaxed font-mono select-text">
                     {turn.text}
                   </div>
@@ -334,6 +406,10 @@ export default function ChatPage() {
                   turn={turn}
                   index={idx}
                   onSendAction={handleSend}
+                  onDelete={(dIdx) => truncateHistory(dIdx)}
+                  onRegenerate={handleRegenerate}
+                  onContinueWriting={handleContinueWriting}
+                  onEdit={handleEditTurn}
                 />
               );
             }
@@ -346,6 +422,9 @@ export default function ChatPage() {
                   index={idx}
                   onSendAction={handleSend}
                   onDelete={(dIdx) => truncateHistory(dIdx)}
+                  onRegenerate={handleRegenerate}
+                  onContinueWriting={handleContinueWriting}
+                  onEdit={handleEditTurn}
                 />
               );
             }
@@ -358,6 +437,9 @@ export default function ChatPage() {
                   index={idx}
                   onSendAction={handleSend}
                   onDelete={(dIdx) => truncateHistory(dIdx)}
+                  onRegenerate={handleRegenerate}
+                  onContinueWriting={handleContinueWriting}
+                  onEdit={handleEditTurn}
                 />
               );
             }
@@ -370,6 +452,9 @@ export default function ChatPage() {
                   index={idx}
                   onSendAction={handleSend}
                   onDelete={(dIdx) => truncateHistory(dIdx)}
+                  onRegenerate={handleRegenerate}
+                  onContinueWriting={handleContinueWriting}
+                  onEdit={handleEditTurn}
                 />
               );
             }
@@ -381,6 +466,9 @@ export default function ChatPage() {
                 index={idx}
                 onSendAction={handleSend}
                 onDelete={(dIdx) => truncateHistory(dIdx)}
+                onRegenerate={handleRegenerate}
+                onContinueWriting={handleContinueWriting}
+                onEdit={handleEditTurn}
               />
             );
           })}
@@ -388,10 +476,15 @@ export default function ChatPage() {
           <div ref={streamBottomRef} />
         </div>
 
-        {/* Floating Bottom Input */}
-        <ChatInput onSend={handleSend} isLoading={isLoading} />
+        {/* Floating Bottom Input with Docked Toolbar directly above */}
+        <ChatInput
+          onSend={handleSend}
+          isLoading={isLoading}
+          onRegenerateLast={handleRegenerateLast}
+          inputText={inputText}
+          setInputText={setInputText}
+        />
       </div>
     </div>
   );
 }
-

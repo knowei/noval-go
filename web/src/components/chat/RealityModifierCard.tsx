@@ -1,6 +1,7 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
+import { CardTurnActionBar } from './CardTurnActionBar';
 import { Turn } from '@/lib/types';
 import { Trash2 } from 'lucide-react';
 
@@ -10,6 +11,8 @@ interface RealityModifierCardProps {
   onSendAction: (action: string) => void;
   onDelete: (index: number) => void;
   onRegenerate?: (index: number) => void;
+  onContinueWriting?: (index: number) => void;
+  onEdit?: (index: number, newStory: string) => void;
 }
 
 const REALITY_NPC_PROFILES: Record<string, {
@@ -139,7 +142,17 @@ function deriveRealtimeModReport(storyText: string, turnIndex: number, targetNpc
   return `“报告主人！现实修改器因果律已全面接入，当前在场目标的心防正在雪崩般消解，建议立即采取下一步行动！”`;
 }
 
-export function RealityModifierCard({ turn, index, onSendAction, onDelete, onRegenerate }: RealityModifierCardProps) {
+export function RealityModifierCard({
+  turn,
+  index,
+  onSendAction,
+  onDelete,
+  onRegenerate,
+  onContinueWriting,
+  onEdit,
+}: RealityModifierCardProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedStory, setEditedStory] = useState(turn.story || turn.text || '');
   const storyRaw = turn.story || turn.text || '';
   const presentNpcs = detectPresentNpcsInScene(storyRaw, (turn as any).rawText);
   const modReport = (turn as any).modReport || deriveRealtimeModReport(storyRaw, index, presentNpcs[0] || '顾小梦');
@@ -170,10 +183,45 @@ export function RealityModifierCard({ turn, index, onSendAction, onDelete, onReg
 
   return (
     <div className="reality-modifier-card p-5 sm:p-6 space-y-4 select-text relative shadow-2xl">
-      {/* 1. 正文描写 */}
-      <div className="novel-text space-y-1">
-        {renderStoryParagraphs(storyRaw)}
-      </div>
+      {/* 1. 正文描写 / 编辑态 */}
+      {isEditing ? (
+        <div className="space-y-2 p-3 rounded-xl bg-[#12131a] border border-purple-500/40">
+          <div className="text-xs text-purple-300 font-bold flex items-center justify-between">
+            <span>✏️ 编辑第 {index + 1} 幕台词与剧情</span>
+            <span className="text-[11px] text-gray-400">修改后将即时更新</span>
+          </div>
+          <textarea
+            value={editedStory}
+            onChange={(e) => setEditedStory(e.target.value)}
+            rows={8}
+            className="w-full p-2.5 rounded-lg bg-[#0e0f14] border border-gray-700 text-gray-100 text-xs sm:text-sm font-serif leading-relaxed outline-none focus:border-purple-400"
+          />
+          <div className="flex items-center justify-end gap-2">
+            <button
+              onClick={() => {
+                setEditedStory(storyRaw);
+                setIsEditing(false);
+              }}
+              className="px-3 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs transition cursor-pointer"
+            >
+              取消
+            </button>
+            <button
+              onClick={() => {
+                if (onEdit) onEdit(index, editedStory);
+                setIsEditing(false);
+              }}
+              className="px-3 py-1 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition cursor-pointer"
+            >
+              保存修改
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="novel-text space-y-1">
+          {renderStoryParagraphs(storyRaw)}
+        </div>
+      )}
 
       {/* 2. 在场各女神独立卡片 */}
       <div className="space-y-3 pt-2">
@@ -282,54 +330,17 @@ export function RealityModifierCard({ turn, index, onSendAction, onDelete, onReg
         </div>
       )}
 
-      {/* 6. Card Footer Toolbar matching Screenshot 2 */}
-      <div className="pt-3 border-t border-[#2a2c38] flex flex-wrap items-center justify-between gap-2 text-xs text-gray-400 select-none">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="px-2 py-0.5 rounded bg-[#1f212c] border border-gray-700 text-[11px] text-gray-300 font-mono">
-            🗂️ Mod
-          </span>
-          <span className="px-2 py-0.5 rounded bg-[#1f212c] border border-gray-700 text-[11px] text-sky-300 font-mono">
-            ≈ 流式
-          </span>
-          <span className="px-2 py-0.5 rounded bg-[#1f212c] border border-gray-700 text-[11px] text-gray-300">
-            💬 评论 (244)
-          </span>
-          <button
-            onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
-            className="px-2 py-0.5 rounded bg-[#1f212c] hover:bg-[#282a38] border border-gray-700 text-[11px] text-gray-300 hover:text-white transition"
-          >
-            🔝 回到底部
-          </button>
-          {onRegenerate && (
-            <button
-              onClick={() => onRegenerate(index)}
-              className="px-2.5 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-[11px] text-amber-300 font-bold transition flex items-center gap-1"
-            >
-              🔄 重新回复
-            </button>
-          )}
-          <span className="px-2 py-0.5 rounded bg-[#1f212c] border border-gray-700 text-[11px] text-gray-400">
-            更多
-          </span>
-          <span className="px-2 py-0.5 rounded bg-sky-950/40 border border-sky-600/40 text-[11px] text-sky-300">
-            [暂停时间推进]
-          </span>
-          <span className="px-2 py-0.5 rounded bg-red-950/40 border border-red-600/40 text-[11px] text-red-300">
-            【紧急】
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2 font-mono text-[11px] text-gray-500">
-          <span>{turn.model || 'deepseek-flash'}</span>
-          <button
-            onClick={() => onDelete(index)}
-            className="p-1 rounded hover:bg-red-950/40 hover:text-red-300 transition"
-            title="删除此幕"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </div>
+            {/* 6. Card Turn Action Bar (1:1 像素级对齐截图) */}
+      <CardTurnActionBar
+        index={index}
+        model={turn.model}
+        storyContent={storyRaw}
+        onContinueWriting={onContinueWriting}
+        onRegenerate={onRegenerate}
+        onEditToggle={() => setIsEditing(!isEditing)}
+        onDelete={onDelete}
+        isEditing={isEditing}
+      />
     </div>
   );
 }
