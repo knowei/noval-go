@@ -4,6 +4,10 @@
 FROM node:20-alpine AS frontend-builder
 WORKDIR /build
 
+# 使用国内高带宽镜像源加速 apk 与 npm
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
+    npm config set registry https://registry.npmmirror.com
+
 # 安装依赖
 COPY web/package.json web/package-lock.json* ./
 RUN npm ci
@@ -20,8 +24,9 @@ RUN npm run build
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-# 安装 Python3 基础运行环境
-RUN apk add --no-cache python3 bash
+# 使用国内高带宽镜像源加速安装 Python3
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
+    apk add --no-cache python3 bash
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
