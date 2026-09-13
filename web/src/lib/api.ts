@@ -16,7 +16,13 @@ export async function fetchPlazaCategories(): Promise<string[]> {
   try {
     const resp = await fetch('/api/plaza/categories');
     if (!resp.ok) return ['全部', '都市', '科幻', '同人', '恋爱', '玄幻', '悬疑'];
-    return await resp.json();
+    const data = await resp.json();
+    if (Array.isArray(data)) {
+      return data
+        .map((item: any) => (typeof item === 'string' ? item : item.name || item.title || ''))
+        .filter(Boolean);
+    }
+    return ['全部', '都市', '科幻', '同人', '恋爱', '玄幻', '悬疑'];
   } catch (e) {
     return ['全部', '都市', '科幻', '同人', '恋爱', '玄幻', '悬疑'];
   }
