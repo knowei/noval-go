@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, RotateCcw, History } from 'lucide-react';
+import { ArrowLeft, BookOpen, RotateCcw, History, Sparkles } from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
 import { fetchStory, fetchConversations, fetchConversation } from '@/lib/api';
@@ -43,6 +43,9 @@ export default function ChatPage() {
   const [inputText, setInputText] = useState('');
   const [isMobileScenarioOpen, setIsMobileScenarioOpen] = useState(false);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const latestUserTurnRef = useRef<HTMLDivElement>(null);
   const streamBottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -72,10 +75,6 @@ export default function ChatPage() {
     }
     init();
   }, [deckId, currentUserId]);
-
-  useEffect(() => {
-    streamBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [conversationHistory, isLoading]);
 
   const isCoser = deckId === 'deck_coser_sister';
   const isModifier = deckId === 'deck_reality_modifier';
@@ -148,10 +147,10 @@ export default function ChatPage() {
 
     let hasLiveStreamSuccess = false;
 
-    // Only attempt real API call if apiKey looks real (not demo/empty)
+    // Determine if real API can be attempted
     const isRealApiKey = Boolean(
       modelSettings.apiKey &&
-      modelSettings.apiKey.trim().length > 8 &&
+      modelSettings.apiKey.trim().length > 10 &&
       !modelSettings.apiKey.startsWith('sk-demo')
     );
 
@@ -171,6 +170,13 @@ export default function ChatPage() {
         ];
 
         const targetUrl = `${modelSettings.baseUrl || 'https://api.openai.com/v1'}/chat/completions`;
+        const apiModel = targetUrl.includes('deepseek.com') && (activeModel === 'deepseek-flash' || activeModel === 'deepseek-v4-pro')
+          ? 'deepseek-chat'
+          : activeModel;
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2800);
+
         const resp = await fetch(`/proxy?target=${encodeURIComponent(targetUrl)}`, {
           method: 'POST',
           headers: {
@@ -178,26 +184,22 @@ export default function ChatPage() {
             Authorization: `Bearer ${modelSettings.apiKey}`
           },
           body: JSON.stringify({
-            model: activeModel,
+            model: apiModel,
             messages: promptMessages,
             temperature: modelSettings.temperature || 0.85,
             stream: true
-          })
+          }),
+          signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         if (resp.ok && resp.body) {
           const reader = resp.body.getReader();
           const decoder = new TextDecoder();
           let done = false;
           let streamedStory = '';
-
-          addTurn({
-            isUser: false,
-            model: activeModel,
-            location: currentDeck?.title,
-            story: '...',
-            branches: []
-          });
+          let isFirstToken = true;
 
           while (!done) {
             const { value, done: doneReading } = await reader.read();
@@ -212,16 +214,28 @@ export default function ChatPage() {
                   if (delta) {
                     streamedStory += delta;
                     hasLiveStreamSuccess = true;
-                    updateTurn(aiTurnIndex, {
-                      isUser: false,
-                      model: activeModel,
-                      location: currentDeck?.title,
-                      story: streamedStory,
-                      branches: [
-                        { tag: 'A', title: '顺应当前气氛', desc: '根据当前情境做进一步互动' },
-                        { tag: 'B', title: '主动试探心意', desc: '进一步追问她的真实想法' }
-                      ]
-                    });
+
+                    if (isFirstToken) {
+                      isFirstToken = false;
+                      addTurn({
+                        isUser: false,
+                        model: activeModel,
+                        location: currentDeck?.title,
+                        story: streamedStory,
+                        branches: []
+                      });
+                    } else {
+                      updateTurn(aiTurnIndex, {
+                        isUser: false,
+                        model: activeModel,
+                        location: currentDeck?.title,
+                        story: streamedStory,
+                        branches: [
+                          { tag: 'A', title: '顺应当前气氛', desc: '根据当前情境做进一步互动' },
+                          { tag: 'B', title: '主动试探心意', desc: '进一步追问她的真实想法' }
+                        ]
+                      });
+                    }
                   }
                 } catch (e) {}
               }
@@ -229,49 +243,68 @@ export default function ChatPage() {
           }
         }
       } catch (err) {
-        console.warn('Live API request failed or timed out, falling back to immersive simulator:', err);
+        // Fast failover to local simulator
       }
     }
 
-    // If live API was not used or failed to produce story, use the local high-fidelity narrative engine
+    // High-fidelity instant typewriter stream fallback
     if (!hasLiveStreamSuccess) {
-      await new Promise((r) => setTimeout(r, 600));
       const fallback = getFallbackStory(userActionText, aiTurnIndex);
+      const fullStory = fallback.story;
 
-      // Check if placeholder turn was already added
-      const currentHistory = useAppStore.getState().conversationHistory;
-      if (currentHistory.length > aiTurnIndex) {
+      // Add turn immediately with initial chunk so user sees response instant (<100ms)
+      const initialChars = fullStory.slice(0, 16);
+      addTurn({
+        isUser: false,
+        model: activeModel || '本地沉浸推演引擎',
+        location: currentDeck?.title || '室内场景',
+        story: initialChars,
+        branches: []
+      });
+
+      // Typewriter stream smoothly at 30ms interval
+      let currentLen = 16;
+      const chunkSize = 16;
+      while (currentLen < fullStory.length) {
+        currentLen = Math.min(currentLen + chunkSize, fullStory.length);
+        const currentSlice = fullStory.slice(0, currentLen);
+        const isComplete = currentLen >= fullStory.length;
+
         updateTurn(aiTurnIndex, {
           isUser: false,
           model: activeModel || '本地沉浸推演引擎',
           location: currentDeck?.title || '室内场景',
-          story: fallback.story,
-          branches: fallback.branches
+          story: currentSlice,
+          branches: isComplete ? fallback.branches : []
         });
-      } else {
-        addTurn({
-          isUser: false,
-          model: activeModel || '本地沉浸推演引擎',
-          location: currentDeck?.title || '室内场景',
-          story: fallback.story,
-          branches: fallback.branches
-        });
+
+        if (!isComplete) {
+          await new Promise((r) => setTimeout(r, 30));
+        }
       }
     }
 
     setIsLoading(false);
   };
+
   const handleSend = async (actionText: string) => {
     if (!actionText.trim() || isLoading) return;
     const userTurn = { isUser: true, text: actionText.trim() };
     const nextHistory = [...conversationHistory, userTurn];
     addTurn(userTurn);
+
+    // Smoothly scroll the container to align the user's action at the top
+    setTimeout(() => {
+      if (latestUserTurnRef.current) {
+        latestUserTurnRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 60);
+
     await runGeneration(nextHistory);
   };
 
   const handleRegenerate = async (turnIndex: number) => {
     if (isLoading) return;
-    // Slice up to turnIndex
     const truncated = conversationHistory.slice(0, turnIndex);
     setConversationHistory(truncated);
     await runGeneration(truncated);
@@ -318,6 +351,13 @@ export default function ChatPage() {
     }
   };
 
+  const handleScrollToBottom = () => {
+    chatContainerRef.current?.scrollTo({
+      top: chatContainerRef.current.scrollHeight,
+      behavior: 'smooth'
+    });
+  };
+
   return (
     <div className="flex-1 flex min-h-screen">
       {/* Secondary Scenario & Saves Sidebar (Desktop: 270px) */}
@@ -353,8 +393,11 @@ export default function ChatPage() {
         onCancel={() => setIsResetConfirmOpen(false)}
       />
 
-      {/* Main Chat Canvas */}
-      <div className={`flex-1 flex flex-col min-w-0 h-screen overflow-y-auto ${bgClass}`}>
+      {/* Main Chat Canvas with container ref */}
+      <div
+        ref={chatContainerRef}
+        className={`flex-1 flex flex-col min-w-0 h-screen overflow-y-auto ${bgClass}`}
+      >
         {/* Theater Sticky Header */}
         <div className="sticky top-0 z-20 border-b border-[#20222e] bg-[#0e0f14]/90 backdrop-blur-md px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -400,7 +443,7 @@ export default function ChatPage() {
               title="点击切换推演大模型或配置 API 密钥"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-              <span className="font-semibold text-xs">{modelSettings.model || 'deepseek-flash'}</span>
+              <span suppressHydrationWarning className="font-semibold text-xs">{modelSettings.model || 'deepseek-flash'}</span>
               <span className="text-[10px] text-emerald-400 opacity-70 group-hover:opacity-100 transition">▼</span>
             </button>
           </div>
@@ -438,9 +481,15 @@ export default function ChatPage() {
         {/* Main Dialogue Stream */}
         <div className="flex-1 max-w-3xl mx-auto w-full p-3 sm:p-6 space-y-5 sm:space-y-6 pb-28">
           {conversationHistory.map((turn, idx) => {
+            const isLatestUserTurn = turn.isUser && (idx === conversationHistory.length - 1 || idx === conversationHistory.length - 2);
+
             if (turn.isUser) {
               return (
-                <div key={idx} className="flex flex-col items-end gap-1 group">
+                <div
+                  key={idx}
+                  ref={isLatestUserTurn ? latestUserTurnRef : undefined}
+                  className="flex flex-col items-end gap-1 group scroll-mt-14"
+                >
                   <UserTurnActionBar
                     index={idx}
                     text={turn.text || ''}
@@ -539,6 +588,7 @@ export default function ChatPage() {
           onRegenerateLast={handleRegenerateLast}
           inputText={inputText}
           setInputText={setInputText}
+          onScrollToBottom={handleScrollToBottom}
         />
       </div>
     </div>
