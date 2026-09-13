@@ -70,14 +70,16 @@ export function StoryCard({ card }: { card: PlazaCard }) {
 
         {/* Tags */}
         <div className="flex flex-wrap gap-1 pt-1">
-          {(card.tags || ['日常', '剧情']).slice(0, 3).map((tag, i) => (
-            <span
-              key={i}
-              className="px-2 py-0.5 rounded-md bg-[#20222d] text-[10px] text-gray-400 border border-[#2e3140]"
-            >
-              #{tag}
-            </span>
-          ))}
+          {((Array.isArray(card.tags) && card.tags.length > 0) ? card.tags : ['日常', '剧情'])
+            .slice(0, 3)
+            .map((tag: any, i: number) => (
+              <span
+                key={i}
+                className="px-2 py-0.5 rounded-md bg-[#20222d] text-[10px] text-gray-400 border border-[#2e3140]"
+              >
+                #{typeof tag === 'string' ? tag : tag.name || String(tag)}
+              </span>
+            ))}
         </div>
 
         {/* Footer info */}

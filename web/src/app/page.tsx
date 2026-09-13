@@ -27,6 +27,13 @@ export default function PlazaPage() {
     loadCards();
   }, []);
 
+  const categoryList = Array.from(
+    new Set([
+      '全部',
+      ...categories.map((c: any) => (typeof c === 'string' ? c : c.name || '')),
+    ])
+  ).filter(Boolean);
+
   const filteredCards = cards.filter((c) => {
     if (activeCategory === '全部') return true;
     return c.category === activeCategory;
@@ -83,7 +90,7 @@ export default function PlazaPage() {
 
       {/* Category Pills */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar border-b border-[#232532] pb-3">
-        {['全部', ...categories.filter(c => c !== '全部')].map((cat) => (
+        {categoryList.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
