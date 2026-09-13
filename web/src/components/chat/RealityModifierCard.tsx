@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Turn } from '@/lib/types';
+import { generateContextualBranches } from '@/lib/modelParser';
 import { CardTurnActionBar } from './CardTurnActionBar';
 
 interface RealityModifierCardProps {

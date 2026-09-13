@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { CardTurnActionBar } from './CardTurnActionBar';
 import { Turn } from '@/lib/types';
+import { generateContextualBranches } from '@/lib/modelParser';
 
 interface SisterTruthOrDareCardProps {
   turn: Turn;
@@ -149,7 +150,12 @@ export function SisterTruthOrDareCard({
 
   const hasStatus = turn.status && Object.keys(turn.status).length > 0;
   const hasMemory = turn.memory && turn.memory.length > 0;
-  const hasBranches = turn.branches && turn.branches.length > 0;
+    const isPlaceholderBranches = !turn.branches || turn.branches.length === 0 ||
+    (turn.branches.length <= 2 && turn.branches.some(b => b.title.includes('顺应') || b.title.includes('试探心意')));
+  const activeBranches = isPlaceholderBranches
+    ? generateContextualBranches('deck_sister_truth_or_dare', storyText, index)
+    : turn.branches!;
+  const hasBranches = activeBranches && activeBranches.length > 0;
   const hasAnyPanel = hasStatus || hasMemory || hasBranches;
 
   return (
@@ -245,7 +251,7 @@ export function SisterTruthOrDareCard({
               <summary className="reality-summary cursor-pointer select-none">
                 <span className="flex items-center gap-2">
                   <span>🎮</span>
-                  <span>下一步行动抉择 ({turn.branches!.length} 项可选)</span>
+                  <span>下一步行动抉择 ({activeBranches.length} 项可选)</span>
                 </span>
                 <span className="reality-arrow"></span>
               </summary>
@@ -254,7 +260,7 @@ export function SisterTruthOrDareCard({
                   💡 点击直接推进客厅游戏与互动进展：
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {turn.branches!.map((b, bIdx) => (
+                  {activeBranches.map((b, bIdx) => (
                     <button
                       key={bIdx}
                       onClick={() => onSendAction?.(b.desc ? `${b.title}：${b.desc}` : b.title)}
