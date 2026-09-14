@@ -118,6 +118,10 @@ export default function ChatPage() {
   const isModifier = deckId === 'deck_reality_modifier';
   const isSister = deckId === 'deck_sister_truth_or_dare' || deckId === '6ffc2ab9-2907-4304-b0bb-53c0a950b445';
   const isFatherDaughter = deckId === 'deck_father_daughter_jealousy' || deckId === '1f97a5c2-3e5b-48e2-aa3a-893a9332765c';
+  const isRentApartment = deckId === 'deck_rent_apartment' || deckId === '1134c46b-04e5-4107-b68d-b24a479650fe';
+  const isNudeHousekeeping = deckId === 'deck_nude_housekeeping' || deckId === '239451db-b3db-48ff-9849-836c928fc402';
+  const isCousinStay = deckId === 'deck_cousin_stay' || deckId === '433116bf-627e-441b-9add-cb99a3ee0349';
+  const isFriendSister = deckId === 'deck_friend_sister' || deckId === '9ba0424a-3278-4fae-b8ea-4fb4d00e2d90';
   const isYuzuki = deckId === 'deck_yuzuki';
 
   let bgClass = '';
@@ -125,6 +129,10 @@ export default function ChatPage() {
   else if (isModifier) bgClass = 'reality-modifier-bg';
   else if (isSister) bgClass = 'sister-truth-bg';
   else if (isFatherDaughter) bgClass = 'father-daughter-bg';
+  else if (isRentApartment) bgClass = 'rent-apartment-bg';
+  else if (isNudeHousekeeping) bgClass = 'nude-housekeeping-bg';
+  else if (isCousinStay) bgClass = 'cousin-stay-bg';
+  else if (isFriendSister) bgClass = 'friend-sister-bg';
   else if (isYuzuki) bgClass = 'yuzuki-bg';
 
   const getFallbackStory = (actionText: string, turnIdx: number, prevBranches?: Branch[]) => {
@@ -158,6 +166,30 @@ export default function ChatPage() {
 她紧紧揪着睡衣下摆，眼圈泛红，胸口由于情绪激动而起伏不定：“爸……你凭什么这样管我……你、你根本不知道我心里有多难受……”
 
 然而她微弱的反抗并没能掩饰她身躯的紧绷与依赖，在你的威严与妒意交织的气场下，卧室里的气氛变得愈发危险与禁断。`;
+    } else if (isRentApartment) {
+      baseStory = `针对你的举动【${act || '行使房东特权深入查房'}】，狭窄的门厅里空气瞬间凝固到了冰点。
+
+苏玉兰紧紧咬着苍白的下唇，丰满成熟的身躯止不住地轻颤，双手慌乱地抓着围裙边缘，那对H罩杯的饱满巨乳随着急促的呼吸大幅度起伏：“房东先生……求您别赶我们走……只要能宽限几天，我……我什么都听您的……”
+
+而在门边的苏小雅虽然狠狠咬着烟蒂别过头去，但通红的耳尖与下意识攥紧的指节，却暴露了她内心的极度动摇。面对掌控着整栋大楼唯一的绝对主宰，母女二人的心理防线正在步步瓦解。`;
+    } else if (isNudeHousekeeping) {
+      baseStory = `面对你的互动【${act || '贴身指导保洁侍奉'}】，客厅里原本清爽的空气逐渐染上了甜腻而躁动的温度。
+
+玉姐跪伏在地毯上的丰腴身躯猛地一僵，随后极有风情地直起腰肢，成熟娇媚的脸颊上泛起动人的红晕。她非但没有退缩，反而温柔一笑，将胸前呼之欲出的硕大乳球更加贴近了几分：“老板……您要是这么盯着看，玉姐这地可就没法专心擦了呢……”
+
+而在旁侧端着水桶的小柒更是羞得满面通红，百褶裙摆下的双腿不安地并拢交叠，在母亲默许纵容的注视下，不知所措地将目光投向你。`;
+    } else if (isCousinStay) {
+      baseStory = `听到你关于“${act || '教训不听话的表妹'}”的话语，林晚晚气鼓鼓地鼓起腮帮子，下意识抬手护住自己露在短T外平坦纤细的马甲线。
+
+“喂！你别仗着是我表哥就动手动脚的啊！”她虽然嘴上凶巴巴地嚷嚷，但那双修长白皙的大腿却不自在地蹭了蹭沙发边缘，整张俏脸一路红到了锁骨：“大不了……大不了今晚点外卖的钱我来出一半还不行吗！笨蛋表哥……”
+
+看着这位平日在学校耀武扬威的叛逆小太妹此刻在自己面前破防娇羞的模样，同居屋檐下的微妙氛围正在迅速升温。`;
+    } else if (isFriendSister) {
+      baseStory = `顺应着你的举动【${act || '打破深夜走廊的禁忌'}】，独栋别墅深夜的寂静被彻底撕裂。
+
+客房门内，刚刚经历失望的林若曦听到动静猛然抬头，发丝凌乱地贴在潮红的脸侧，那双平日冷若冰霜的美眸在与你对视的刹那闪过一丝惊慌与无法言说的炽热渴求。她没有立刻拉起床单遮掩自己白腻迷人的E罩杯躯体，反而下意识挺直了腰肢。
+
+而在走廊深处，母亲苏青岚房中那声压抑的低咽也戛然而止，空气中弥漫着让人血脉偾张的危险与偷窥刺激。`;
     } else {
       baseStory = `针对你的行动【${act || '深入推进'}】，场间的气氛产生了明显的微妙变化。
 
