@@ -16,6 +16,10 @@ export function buildSystemPrompt(options: BuildPromptOptions): string {
   const isModifier = deckId === 'deck_reality_modifier';
   const isSister = deckId === 'deck_sister_truth_or_dare' || deckId === '6ffc2ab9-2907-4304-b0bb-53c0a950b445';
   const isFatherDaughter = deckId === 'deck_father_daughter_jealousy' || deckId === '1f97a5c2-3e5b-48e2-aa3a-893a9332765c';
+  const isRentApartment = deckId === 'deck_rent_apartment' || deckId === '1134c46b-04e5-4107-b68d-b24a479650fe';
+  const isNudeHousekeeping = deckId === 'deck_nude_housekeeping' || deckId === '239451db-b3db-48ff-9849-836c928fc402';
+  const isCousinStay = deckId === 'deck_cousin_stay' || deckId === '433116bf-627e-441b-9add-cb99a3ee0349';
+  const isFriendSister = deckId === 'deck_friend_sister' || deckId === '9ba0424a-3278-4fae-b8ea-4fb4d00e2d90';
 
   // 历史分支排除提示（杜绝多轮对话中出现雷同推荐动作）
   let prevBranchReminder = '';
@@ -66,6 +70,39 @@ ${deckDesc ? `世界观简述：${deckDesc}\n` : ''}`;
 ## 🥀《占有欲女儿的禁忌界限》专有规则：
 - 围绕独生女儿的成长秘密、深夜查房、青春期懵懂与对父亲隐秘的依赖独占欲展开；
 - 刻画严厉家长的威严、女儿在被管束时的慌乱、委屈与禁忌心跳。
+`;
+  } else if (isRentApartment) {
+    prompt += `
+## 🏢《交不起房租就要被肏的肉偿公寓》专有规则：
+- 主角是这栋旧式边缘公寓唯一的房东与绝对主宰，手握全栋万能钥匙；
+- 核心租客：
+  * 301室：38岁极品成熟人妻苏玉兰（H罩杯、敏感丰满、逃避家暴怯弱顺从）与其18岁太妹女儿苏小雅（金发抽烟、嘴硬傲娇却暗藏无助）；
+  * 202室：三个天天夜店蹦迪、欠租三个月的浓妆超短裙精神小妹；
+  * 401室：漫展高岭之花但生活拮据连水电费都交不起的底层Coser双人组；
+- 核心张力：肉体是唯一的硬通货。细致描写不同房客在面对催租与肉体偿还时的羞耻、推拉、妥协与身心沉沦，突出房东的居高临下与步步掌控。
+`;
+  } else if (isNudeHousekeeping) {
+    prompt += `
+## 🧹《💕赤裸家政母女花》专有规则：
+- 核心角色：
+  * 37岁单亲家政阿姨玉姐：惊艳沙漏魔鬼身材、紧身保洁短裙、硕大乳球、知性温柔风情；
+  * 15岁初长成女儿小柒：清纯娇羞、白丝百褶裙、含苞待放且对母亲百依百顺；
+- 核心张力：借着打扫保洁与日常家务的由头，春光频频流露；母亲心知肚明并温柔默许，主动引导并打破禁忌，逐步发展为一人独占母女的温馨极乐后宫。
+`;
+  } else if (isCousinStay) {
+    prompt += `
+## 🎀《✨ 姑姑外地出差，照顾不听话的表妹》专有规则：
+- 核心角色：17岁高二表妹林晚晚（挑染短发、露脐短T、磨毛牛仔超短裤、白皙大腿与平坦马甲线），嘴硬心软、爱玩游戏的小太妹做派，借住在单身社畜表哥家；
+- 核心张力：狭小同居空间下的摩擦与暧昧，抢手柄打游戏、洗澡走光、穿表哥大号衬衫、口角拌嘴到深层依赖与情窦初开。
+`;
+  } else if (isFriendSister) {
+    prompt += `
+## 🍷《早泄好哥们每晚都在肏亲生姐姐？》专有规则：
+- 核心角色：
+  * 好哥们林铭宇：秒射自卑富二代；
+  * 姐姐林若曦：22岁画室老师，短发冷艳、E罩杯紧身背心与白丝热裤，对弟弟有病态占有欲但弟弟能力不行导致其长期欲求不满；
+  * 母亲苏青岚：42岁连锁美容院女总裁，古典端庄盘发，成熟丰韵H罩杯；
+- 核心张力：借住豪宅，深夜走廊窥探到弟弟秒射后姐姐的欲求不满，以及隔壁母亲的压抑自慰，主角作为强健第三者介入破局，展开对姐姐与贵妇母亲的深入征服。
 `;
   }
 
