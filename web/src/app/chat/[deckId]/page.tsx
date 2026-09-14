@@ -204,6 +204,9 @@ export default function ChatPage() {
   const isFriendSister = deckId === 'deck_friend_sister' || deckId === '9ba0424a-3278-4fae-b8ea-4fb4d00e2d90';
   const isJiangshiAyane = deckId === 'deck_jiangshi_childhood' || deckId === '722f860e-1011-4123-bc92-8373fa38deca';
   const isAtour = deckId === 'deck_atour_app' || deckId === '1ad4e5fd-7d79-4dd4-a3f3-d9581110c81a';
+  const isHeisiDaughter = deckId === 'deck_heisi_daughter' || deckId === 'c78de7d8-7353-467e-bc71-5e6f2c870679';
+  const isSisterInLawNiece = deckId === 'deck_sister_in_law_niece' || deckId === '432a57e9-8f8a-4e4e-80fc-83eb9ebc71eb';
+  const isApocalypse = deckId === 'deck_apocalypse_survival' || deckId === '059217c9-213b-48e7-b660-0c04f78ede48';
   const isYuzuki = deckId === 'deck_yuzuki';
 
   let bgClass = '';
@@ -217,6 +220,9 @@ export default function ChatPage() {
   else if (isFriendSister) bgClass = 'friend-sister-bg';
   else if (isJiangshiAyane) bgClass = 'jiangshi-ayane-bg';
   else if (isAtour) bgClass = 'atour-app-bg';
+  else if (isHeisiDaughter) bgClass = 'heisi-daughter-bg';
+  else if (isSisterInLawNiece) bgClass = 'sister-in-law-bg';
+  else if (isApocalypse) bgClass = 'apocalypse-survival-bg';
   else if (isYuzuki) bgClass = 'yuzuki-bg';
 
   const hasCustomHtml = Boolean(currentDeck?.customHtml);
@@ -295,6 +301,24 @@ export default function ChatPage() {
 “我……我既然拿了APP的定金，就会遵守约定的……”她轻咬下唇，声音带着一丝不易察觉的轻颤。尽管内心对于初次涉足这种关系的耻感还在激烈翻涌，但在你强大的金主气场与现实金钱的威慑下，少女的防线正不可逆转地步步瓦解。
 
 落地窗外，整座城市的万家灯火在雨幕中迷离闪烁，套房内的奢华与私密，正在为这场金钱与欲望的契约揭开最隐秘的一幕。`;
+    } else if (isHeisiDaughter) {
+      baseStory = `面对你的动作【${act || '霸道管教叛逆女儿'}】，书桌前原本慵懒傲娇的气氛骤然凝固。
+
+陈佳慧娇躯猛地一颤，下意识想要收回搭在软垫上的黑丝长腿，却被你顺势压制。薄薄的黑色连裤袜将她圆润饱满的大腿与脚背紧紧包裹，指腹摩擦过弹性惊人的丝织物，能清晰感受到她皮下肌肉的紧绷与体温的急剧攀升。少女原本轻哼不耐烦的神情荡然无存，白皙的耳根瞬间红透，眼神慌乱得无处安放。
+
+“爸……你干什么呀……快放开我……”她咬着下唇，声音里原本叛逆的尖刺在你的强硬触碰下迅速软化成带着微弱哭腔的娇喘，脚趾在黑色薄丝下不安地蜷缩着，在父权威严与私密羞耻的冲撞中，少女的心理防线彻底溃不成军。`;
+    } else if (isSisterInLawNiece) {
+      baseStory = `针对你的安排【${act || '接纳避难的母女二人'}】，门厅玄关里弥漫的惊恐与寒意瞬间消散了大半。
+
+林晚晴长长地舒了一口气，泛红的眼眶里涌出滚烫的感激泪水，双手紧紧揪着被雨水湿透的风衣衣角。湿漉漉的布料紧贴在她饱满丰润的D罩杯胸脯与丰腴腰臀上，成熟少妇曼妙诱人的梨形轮廓在暖黄灯光下一览无遗。身旁18岁的侄女周若宁也乖巧地收起了平日里的挑衅坏笑，小脸微红地缩在母亲身侧，偷偷打量着这位高大沉稳的叔叔。
+
+“小叔……真的太谢谢你了……如果不是你，今晚我和若宁真不知道该去哪……”嫂子声音微颤，成熟人妻那股走投无路后的柔软依附感，在温暖的房间里悄然滋长成不可言说的隐秘羁绊。`;
+    } else if (isApocalypse) {
+      baseStory = `面对你的指令【${act || '废土生存法则的支配'}】，避难所地下安全屋内的气氛冷酷到了极点。
+
+跪倒在水泥地上的昔日校花苏晓染浑身剧烈颤抖，干裂泛白的嘴唇死死咬住，屈辱的眼泪在布满灰尘的脸颊上冲出两道清晰的泪痕。残破的衬衫难以遮掩她发育绝佳的D罩杯傲人曲线，在冰冷的枪口与纯净水源的巨大诱惑面前，昔日万人追捧的高岭之花终于低下了骄傲的头颅。
+
+“我……我听你的……只要给我水喝……我什么都答应……”她颤抖着向前挪动膝盖，双手伏在你的军靴旁，将残存的文明自尊彻底碾碎在废土的尘埃中，沦为这间安全屋专属的私人禁脔。`;
     } else {
       baseStory = `针对你的行动【${act || '深入推进'}】，场间的气氛产生了明显的微妙变化。
 

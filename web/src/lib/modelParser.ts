@@ -429,6 +429,92 @@ const ATOUR_SEMANTIC_GROUPS: SemanticActionGroup[] = [
   }
 ];
 
+// 👣 《黑丝女儿》主题分支库
+const HEISI_DAUGHTER_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  {
+    keywords: ['丝袜', '黑丝', '脚', '足', '脚踝', '脚丫', '味道', '骚', '换', '脱', '穿', '原味'],
+    branches: [
+      { title: '俯身一把握住她微晃的黑丝足弓细细把玩', desc: '掌心覆上她微温而丝滑的脚背，指尖顺着紧绷黑丝摩挲其泛红足跟【亲昵试探: 突破身体距离，直接把玩少女私密足部】' },
+      { title: '凑近她丝袜脚尖轻嗅她三天没洗的原味气息', desc: '不顾她的抗议凑近薄丝脚趾深吸一口，坏笑着指出那抹独特的少女体香【挑动羞耻: 彻底戳破自尊防线，让其娇羞失措】' },
+      { title: '命令她自己抬起长腿当面把黑丝慢慢褪下', desc: '居高临下坐在书桌旁，以不容置疑的口吻命令叛逆女儿当场脱袜【威严命令: 借长辈威严施压，逼其顺从服软】' },
+      { title: '伸手弹了弹勒进她大腿软肉的黑色蕾丝袜口', desc: '指腹勾起深陷在丰满大腿软肉里的弹性袜边，清脆地弹了一下【轻挑戏谑: 刺激敏感神经，打破日常疏离感】' }
+    ]
+  },
+  {
+    keywords: ['手机', '作业', '叛逆', '顶嘴', '耳机', '学习', '态度', '不耐烦', '冷漠', '管教'],
+    branches: [
+      { title: '一把夺过手机反扣在桌上严肃正视其双眼', desc: '斩断其与外界的联系，近距离直视其慌乱躲闪的眼神立规矩【父权压制: 截断逃避手段，逼其正视父亲存在】' },
+      { title: '拉过椅子紧贴在她身后单手扶住她椅背低语', desc: '以包围姿态贴近其耳廓，温热的呼吸扫过其泛红的耳垂轻声责备【制造张力: 消除退缩空间，施加深层心理压迫】' },
+      { title: '以没收零花钱为由逼她乖乖开口喊爸爸求饶', desc: '掐准青春期少女的经济软肋，玩味提出带有羞耻顺从意味的交换条件【阶梯顺从: 瓦解嘴硬架子，让其主动服软】' }
+    ]
+  },
+  {
+    keywords: ['门', '锁', '房间', '更衣', '走光', '裙子', '百褶裙', '抱', '大床', '推倒'],
+    branches: [
+      { title: '顺手将卧室房门反锁并拉严遮光窗帘', desc: '切断一切可能被外界打扰的可能，将卧室化为绝对封闭的禁忌密室【绝对密闭: 剥夺安全感，将局势完全掌握在掌中】' },
+      { title: '掀开其百褶裙摆按在她丰润饱满的蜜桃臀上', desc: '大手隔着薄薄的内裤与丝袜用力揉捏其弹性惊人的翘臀惩罚【强势破界: 打破最后肢体禁忌，直切核心部位】' },
+      { title: '将娇呼挣扎的女儿推倒在柔软的大床上俯身压下', desc: '利用体型优势将其制服在大床中央，双手扣住其手腕居高临下审视【彻底制服: 肉体绝对压制，撕碎一切反抗意志】' }
+    ]
+  }
+];
+
+// 🌧️ 《深夜求助的嫂子与侄女》主题分支库
+const SISTER_IN_LAW_NIECE_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  {
+    keywords: ['雨', '暴雨', '湿透', '风衣', '门', '行李', '敲门', '深夜', '冷', '冻', '衣服'],
+    branches: [
+      { title: '迅速将母女迎进屋内并顺手反锁防盗门', desc: '接过湿淋淋的行李箱，反手关门将外面的风雨与催债骚扰彻底隔绝【温暖庇护: 给予立竿见影的安全感，确立主导地位】' },
+      { title: '拿过两条干净厚浴巾亲自替嫂子擦拭湿发', desc: '指尖隔着毛巾轻抚嫂子贴在颊侧的湿润青丝，近距离感受其丰润身段【温柔渗透: 借体贴之名拉近物理距离，感受其心跳】' },
+      { title: '目光扫视嫂子风衣下若隐若现的D杯丰腴轮廓', desc: '毫不掩饰地端详被雨水浸透后透明贴身的成熟曲线，让其娇羞垂首【无声施压: 直白展露男性欲望，使其意识到自身的女性魅力价值】' },
+      { title: '催促母女二人轮流进入浴室冲洗热水澡驱寒', desc: '体贴打开浴霸并准备换洗衣物，为后续换上私密便服做铺垫【循序渐进: 营造生活常态，消除借宿的局促感】' }
+    ]
+  },
+  {
+    keywords: ['债', '钱', '哥哥', '失踪', '跑路', '合同', '催债', '账单', '还钱', '高利贷'],
+    branches: [
+      { title: '将茶几上的欠款账单收拢并答应全力托底', desc: '给惊魂未定的嫂子吃下定心丸，承诺由自己来摆平外界的一切麻烦【深情托底: 成为母女唯一的支柱，唤起极致依恋】' },
+      { title: '单独将嫂子拉到一旁追问哥哥失踪前的细节', desc: '支开年幼的侄女，与成熟人妻在私密角落低语探寻真相【私密独处: 制造二人密谋氛围，瓦解长幼防线】' },
+      { title: '严肃立下借宿期间的起居规矩与收留条件', desc: '居高临下提出同居期间的分工与权责，以理性契约掌控生活节奏【威严立约: 确立一家之主威信，让母女习惯顺从】' }
+    ]
+  },
+  {
+    keywords: ['嫂子', '若宁', '侄女', '沙发', '更衣', 'T恤', '睡衣', '短裤', '同居', '借宿'],
+    branches: [
+      { title: '端来两碗热气腾腾的热汤面递到母女手中', desc: '用最温暖的生活烟火气抚平惊惶，看着两人狼吞虎咽的动人模样【暖心攻防: 瓦解客气伪装，融化内心的最后防备】' },
+      { title: '打趣换上自己宽大白T恤后曲线毕露的嫂子', desc: '看着嫂子不着寸缕仅罩着自己宽大T恤的饱满丰臀，坏笑着调侃【挑动春心: 制造居家暧昧，让其意识到春光已然失守】' },
+      { title: '伸手捏了捏一旁爱挑衅使坏的侄女周若宁脸颊', desc: '逗弄这位刚满18岁、爱使坏的雌小鬼侄女，敲打其不可越界的嚣张气焰【逗弄小鬼: 掌握主动节奏，建立独特的叔侄暧昧】' }
+    ]
+  }
+];
+
+// ☣️ 《末世求生录》主题分支库
+const APOCALYPSE_SURVIVAL_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  {
+    keywords: ['水', '喝水', '口渴', '饼干', '食物', '饿', '干渴', '物资', '压缩饼干', '抗生素'],
+    branches: [
+      { title: '拧开瓶盖倒出一小盅清水放在脚边命令其饮用', desc: '用珍贵的水源施压，命令高傲的昔日校花跪地俯首接受恩赐【绝境调教: 用生存必需品击碎自尊，确立绝对从属】' },
+      { title: '掰下半块军用高能压缩饼干慢慢喂到她干裂嘴边', desc: '指尖捏着高热量饼干轻触其唇瓣，看着她贪婪小口吞咽的顺从姿态【温柔驯养: 施以微小恩惠，唤起对生存救世主的依赖】' },
+      { title: '把水壶递给她并明确告知每一口水的代价', desc: '残酷挑明废土交易法则，让其亲口承诺用肉体与服务偿还所有物资【等价交换: 剥除幻想，建立残酷而稳定的生存契约】' }
+    ]
+  },
+  {
+    keywords: ['枪', '门', '防爆门', '安全屋', '防空洞', '丧尸', '酸雨', '辐射', '危险', '检疫', '感染'],
+    branches: [
+      { title: '举枪冷酷命令她举起双手褪下衣物接受感染排查', desc: '以防爆防疫为铁律，命令其在白炽灯下脱光衣物仔细核查每一处抓伤【严苛检疫: 杜绝致命威胁，顺理成章阅尽完美肉体】' },
+      { title: '反锁合金防爆大门彻底隔绝外界的一切丧尸低吼', desc: '当着她的面锁死安全屋，让她彻底意识到此刻唯一的生路只有屈从【封死退路: 营造绝对孤岛心理，摧毁任何反抗幻想】' },
+      { title: '擦拭着枪械冷眼审视其在地上发抖的狼狈姿态', desc: '在冰冷的机械声与火药味中保持绝对威压，以静制动观察其崩溃极点【心理施压: 展现铁血力量，让其在恐惧中彻底臣服】' }
+    ]
+  },
+  {
+    keywords: ['跪', '屈服', '衣服', '扯破', '锁骨', '床上', '占有', '臣服', '身体', '求饶'],
+    branches: [
+      { title: '粗暴挑起她白皙下巴命令她宣誓成为私人资产', desc: '大手扣住其娇嫩面颊，逼其亲口承认放弃昔日名媛身份甘为奴仆【精神征服: 彻底碾碎文明阶级，烙下终身私有印记】' },
+      { title: '一把扯掉她残破的衣物将其按在弹药箱上占有', desc: '在冰冷的军火物资旁粗暴行使领主初夜特权，彻底剥夺其贞操【肉体霸占: 用原始野蛮的力量宣告领地与女人的所有权】' },
+      { title: '事后赏赐一套干燥保暖的军用风衣披在她身上', desc: '在占有之后施以庇护的温暖，让这个孤立无援的女人获得归宿感【胡萝卜大棒: 恩威并施，将其牢牢栓在安全屋身侧】' }
+    ]
+  }
+];
+
 const GENERIC_ACTION_POOLS: Branch[] = [
   { tag: 'A', title: '顺势深入掌控当下主动局面', desc: '抓住对方话语与微表情中的动摇瞬间，步步紧逼占据绝对心理主动' },
   { tag: 'B', title: '转换谈话节奏轻声耳语试探', desc: '打破当下的沉默与僵局，用柔和又带着压迫感的话语探寻其真实心意' },
@@ -498,6 +584,18 @@ export function generateContextualBranches(
     deckKey === 'deck_atour_app' ||
     deckKey.includes('1ad4e5fd') ||
     deckKey.includes('atour');
+  const isHeisiDaughter =
+    deckKey === 'deck_heisi_daughter' ||
+    deckKey.includes('c78de7d8') ||
+    deckKey.includes('heisi');
+  const isSisterInLawNiece =
+    deckKey === 'deck_sister_in_law_niece' ||
+    deckKey.includes('432a57e9') ||
+    deckKey.includes('sister_in_law');
+  const isApocalypse =
+    deckKey === 'deck_apocalypse_survival' ||
+    deckKey.includes('059217c9') ||
+    deckKey.includes('apocalypse');
 
   let semanticGroups: SemanticActionGroup[] = [];
   if (isCoser) semanticGroups = COSER_SEMANTIC_GROUPS;
@@ -510,6 +608,9 @@ export function generateContextualBranches(
   else if (isFriendSister) semanticGroups = FRIEND_SISTER_SEMANTIC_GROUPS;
   else if (isJiangshiAyane) semanticGroups = JIANGSHI_AYANE_SEMANTIC_GROUPS;
   else if (isAtour) semanticGroups = ATOUR_SEMANTIC_GROUPS;
+  else if (isHeisiDaughter) semanticGroups = HEISI_DAUGHTER_SEMANTIC_GROUPS;
+  else if (isSisterInLawNiece) semanticGroups = SISTER_IN_LAW_NIECE_SEMANTIC_GROUPS;
+  else if (isApocalypse) semanticGroups = APOCALYPSE_SURVIVAL_SEMANTIC_GROUPS;
 
   const combinedContext = (storyText + ' ' + userAction).toLowerCase();
 
