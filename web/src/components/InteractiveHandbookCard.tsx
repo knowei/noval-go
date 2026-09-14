@@ -97,6 +97,10 @@ export function InteractiveHandbookCard({
     return html + bridgeScript;
   }, [html]);
 
+  useEffect(() => {
+    setIsExpanded(defaultExpanded);
+  }, [defaultExpanded]);
+
   // 监听来自 iframe 内部的 postMessage 消息
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
@@ -110,6 +114,7 @@ export function InteractiveHandbookCard({
         if (text) {
           setAppliedNotice('已应用并填入开局设定！');
           setTimeout(() => setAppliedNotice(null), 3000);
+          setIsExpanded(false);
           if (onStartStory) {
             onStartStory(text);
           }

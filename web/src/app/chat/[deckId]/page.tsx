@@ -138,6 +138,11 @@ export default function ChatPage() {
   else if (isJiangshiAyane) bgClass = 'jiangshi-ayane-bg';
   else if (isYuzuki) bgClass = 'yuzuki-bg';
 
+  const hasCustomHtml = Boolean(currentDeck?.customHtml);
+  const hasUserTurns = conversationHistory.some((t) => t.isUser);
+  // 当剧本自带专属卡片时，未进行任何对话前不渲染冗余的预设轮次，彻底避免卡片下方内容重复突兀
+  const showDialogueTurns = !hasCustomHtml || hasUserTurns;
+
   const getFallbackStory = (actionText: string, turnIdx: number, prevBranches?: Branch[]) => {
     const act = actionText.replace(/【.*?】：?/, '').trim();
     let baseStory = '';
@@ -665,12 +670,12 @@ export default function ChatPage() {
                 onStartStory={(customPrompt) => {
                   handleSend(customPrompt);
                 }}
-                defaultExpanded={conversationHistory.length <= 1}
+                defaultExpanded={!hasUserTurns}
               />
             </div>
           )}
 
-          {conversationHistory.map((turn, idx) => {
+          {showDialogueTurns && conversationHistory.map((turn, idx) => {
             const isLatestUserTurn = turn.isUser && (idx === conversationHistory.length - 1 || idx === conversationHistory.length - 2);
 
             if (turn.isUser) {
