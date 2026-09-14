@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { fetchPlazaFeatured, fetchPlazaCategories } from '@/lib/api';
+import { fetchPlazaFeatured } from '@/lib/api';
 import { PlazaCard } from '@/lib/types';
 import { StoryCard } from '@/components/plaza/StoryCard';
 import { SearchBar } from '@/components/plaza/SearchBar';
@@ -10,10 +10,21 @@ import Link from 'next/link';
 
 export default function PlazaPage() {
   const [cards, setCards] = useState<PlazaCard[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
   const [activeCategory, setActiveCategory] = useState('全部');
   const [keyword, setKeyword] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+
+  const THEME_CATEGORIES = [
+    '全部',
+    '🔥 热门推荐',
+    '🎀 纯爱甜宠',
+    '🏙️ 都市同居',
+    '⚡ 反差破甲',
+    '👻 艳尸/悬疑',
+    '📱 现实掌控',
+    '👩‍👧 熟女母女',
+    '🌸 二次元骨科'
+  ];
 
   const loadCards = async (searchKw: string = '') => {
     setIsLoading(true);
@@ -23,21 +34,53 @@ export default function PlazaPage() {
   };
 
   useEffect(() => {
-    fetchPlazaCategories().then(setCategories);
     loadCards();
   }, []);
 
-  const categoryList = Array.from(
-    new Set([
-      '全部',
-      ...categories.map((c: any) => (typeof c === 'string' ? c : c.name || '')),
-    ])
-  ).filter(Boolean);
+  const matchCategory = (card: PlazaCard, cat: string) => {
+    if (cat === '全部') return true;
+    const cleanCat = cat.replace(/^[^\w\u4e00-\u9fa5]+/, '').trim();
 
-  const filteredCards = cards.filter((c) => {
-    if (activeCategory === '全部') return true;
-    return c.category === activeCategory;
-  });
+    if (cleanCat === '热门推荐') {
+      return card.is_featured === 1 || Number(card.rating || '5.0') >= 9.8;
+    }
+
+    const themeKeywords: Record<string, string[]> = {
+      '纯爱甜宠': ['纯爱', '甜宠', '同桌', '恋爱', '可爱', '情侣', '37.1℃', '试衣'],
+      '都市同居': ['都市', '同居', '合租', '借住', '租房', '公寓', '便利店', '家政'],
+      '反差破甲': ['反差', '破甲', '求饶', '冷萌', '高潮', '学妹', '傲娇', '大冒险'],
+      '艳尸/悬疑': ['艳尸', '中式恐怖', '还魂夜', '规则怪谈', '悬疑', '榨精', '绫音', '尸'],
+      '现实掌控': ['修改器', '现实修改', '掌控', '因果律', '全知全能', '支配', '金手指'],
+      '熟女母女': ['家政', '熟女', '母女', '贵妇', '水汇', '理疗', '母亲', '姑姑'],
+      '二次元骨科': ['妹妹', '姐姐', '兄妹', '骨科', 'coser', '缘之空', '禁忌', '禁断', '悠月', '表妹']
+    };
+
+    const keywords = themeKeywords[cleanCat] || [cleanCat];
+
+    // 1. Direct category match
+    if (card.category && (card.category === cleanCat || keywords.includes(card.category))) {
+      return true;
+    }
+
+    // 2. Tags match
+    const tags = Array.isArray(card.tags) ? card.tags : [];
+    for (const tag of tags) {
+      const tagStr = typeof tag === 'string' ? tag : (tag as any).name || '';
+      if (keywords.some(kw => tagStr.includes(kw) || kw.includes(tagStr))) {
+        return true;
+      }
+    }
+
+    // 3. Title or Desc match
+    const content = `${card.title || ''} ${card.desc || ''}`;
+    if (keywords.some(kw => content.includes(kw))) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const filteredCards = cards.filter((c) => matchCategory(c, activeCategory));
 
   return (
     <div className="flex-1 p-3 sm:p-8 pt-16 md:pt-6 pb-20 md:pb-8 max-w-7xl mx-auto w-full space-y-6 sm:space-y-8">
@@ -90,7 +133,7 @@ export default function PlazaPage() {
 
       {/* Category Pills */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar border-b border-[#232532] pb-3">
-        {categoryList.map((cat) => (
+        {THEME_CATEGORIES.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}

@@ -62,6 +62,12 @@ def init_db():
     try:
         c.execute("ALTER TABLE users ADD COLUMN updated_at TIMESTAMP")
     except Exception: pass
+    try:
+        c.execute("ALTER TABLE stories ADD COLUMN category TEXT DEFAULT '都市'")
+    except Exception: pass
+    try:
+        c.execute("ALTER TABLE plaza_cards ADD COLUMN category TEXT DEFAULT '都市'")
+    except Exception: pass
 
     # 2. 会话/存档表
     c.execute("""
@@ -530,11 +536,12 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             tags = s.get('tags') or []
             if isinstance(tags, str):
                 tags = [t.strip() for t in tags.split(',') if t.strip()]
+            category = s.get('category') or '都市'
             c.execute("""
             INSERT OR REPLACE INTO plaza_cards (
                 id, deck_id, title, badge, badge_color, author,
-                desc, rating, tags_json, heat, is_featured, order_index
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                desc, rating, tags_json, heat, is_featured, order_index, category
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 f"p_{deck_id}",
                 deck_id,
@@ -547,7 +554,8 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                 json.dumps(tags, ensure_ascii=False),
                 'NEW · 刚刚创作',
                 1,
-                1
+                1,
+                category
             ))
 
             conn.commit()

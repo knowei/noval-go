@@ -15,8 +15,18 @@ interface ChatInputProps {
 const ACTION_CAPSULES = [
   '主动上前打破沉默',
   '静观其变，捕捉细微线索',
+  '试探对方真实心理防线',
   '轻声安抚对方的情绪',
   '直接表明真实意图'
+];
+
+const SURPRISE_EVENTS = [
+  '🎲【突发心跳】：房间光线突然微晃，彼此距离骤然拉近，连呼吸声都清晰可辨',
+  '🎲【因果律微调】：视线不经意扫过对方被水汽与汗珠微微浸润的衣角',
+  '🎲【测谎真心话】：直接直视对方微颤的双眼：“看着我，回答我一个问题”',
+  '🎲【突发失衡】：脚下不经意轻微踉跄，下意识扶住对方温热纤细的腰肢',
+  '🎲【微表情解构】：捕捉到对方耳根深处那一抹无法掩饰的潮红与局促',
+  '🎲【越界试探】：抬手轻轻挑开散落在对方额前的凌乱发丝，试探反应'
 ];
 
 export function ChatInput({
@@ -48,8 +58,8 @@ export function ChatInput({
   };
 
   const handleRandomDice = () => {
-    const randomAction = ACTION_CAPSULES[Math.floor(Math.random() * ACTION_CAPSULES.length)];
-    onSend(randomAction);
+    const randomEvent = SURPRISE_EVENTS[Math.floor(Math.random() * SURPRISE_EVENTS.length)];
+    onSend(randomEvent);
   };
 
   const scrollToBottom = () => {
