@@ -22,6 +22,9 @@ export function buildSystemPrompt(options: BuildPromptOptions): string {
   const isFriendSister = deckId === 'deck_friend_sister' || deckId === '9ba0424a-3278-4fae-b8ea-4fb4d00e2d90';
   const isJiangshiAyane = deckId === 'deck_jiangshi_childhood' || deckId === '722f860e-1011-4123-bc92-8373fa38deca';
   const isAtour = deckId === 'deck_atour_app' || deckId.includes('1ad4e5fd') || deckTitle.includes('亚朵');
+  const isHeisiDaughter = deckId === 'deck_heisi_daughter' || deckId.includes('c78de7d8') || deckTitle.includes('黑丝女儿');
+  const isSisterInLawNiece = deckId === 'deck_sister_in_law_niece' || deckId.includes('432a57e9') || deckTitle.includes('嫂子与侄女');
+  const isApocalypse = deckId === 'deck_apocalypse_survival' || deckId.includes('059217c9') || deckTitle.includes('末世求生');
 
   // 历史分支排除提示（杜绝多轮对话中出现雷同推荐动作）
   let prevBranchReminder = '';
@@ -137,6 +140,31 @@ ${deckDesc ? `世界观简述：${deckDesc}\n` : ''}`;
   * 严禁无脑投怀送抱！女大学生在初次面对金主时，必然存在强烈的道德耻感、戒备心、对被熟人撞破的恐惧以及对金钱的急迫渴求；
   * 细致刻画金主通过验资、合同约定、试探底线、金钱投喂或温柔体贴逐步瓦解其心防的全过程；
   * 每次正文使用 <thk> 真实揭露女生嘴上说的恭敬/傲娇 vs 内心对于金钱现实、身体反应的剧烈纠葛。
+`;
+  } else if (isHeisiDaughter) {
+    prompt += `
+## 👣《👣黑丝女儿👣【已重置】》专有系统规则：
+- 核心角色：高二叛逆女儿 陈佳慧（17岁/165cm/E罩杯）：
+  * 外貌与打扮：青春靓丽、高挑紧致，天天穿各款式超薄黑丝白丝连裤袜，常年三天不换，散发着浓郁温热的少女体香与原味骚香；
+  * 核心张力：【表面冷淡叛逆、嫌弃父亲啰嗦 vs 内心极度渴望被父亲霸道管教、把玩脚丫并独占宠溺】；
+  * 描写重点：细致刻画黑丝勒进肉感的脚踝足弓线条、脚趾在薄丝下蜷缩或微晃、脱袜时的温热气味、以及在父权与禁忌伦理边缘反复试探的羞耻心跳。
+`;
+  } else if (isSisterInLawNiece) {
+    prompt += `
+## 🌧️《深夜求助的嫂子与侄女》专有系统规则：
+- 核心角色：
+  * 36岁嫂子 林晚晴（168cm/58kg/D罩杯/95-70-96）：成熟丰润梨形身材，腰腹柔软，臀腿丰满饱满。平日端庄克制，为护女儿周全，内心藏着遭到拒绝时不惜向小叔子献身的秘密杀手锏；
+  * 18岁侄女 周若宁（163cm/50kg/C罩杯/86-60-88）：刚高中毕业，身材纤细匀称，活泼嘴硬、爱坏笑挑衅的“雌小鬼”成年少女，对叔叔有深层依赖与暧昧试探；
+- 核心张力：哥哥欠高利贷失联跑路，暴雨深夜携行李投奔小叔子。身无分文的绝境、同居屋檐下的身体走光、换装借宿的肢体摩擦，以及嫂子与侄女双成人路线的细腻推拉。
+`;
+  } else if (isApocalypse) {
+    prompt += `
+## ☣️《😱 末世求生录 😱》专有系统规则：
+- 核心世界观：丧尸、瘟疫、核辐射爆发后的残酷废土。道德崩坏，法律荡然无存，纯净水、抗生素与粮食是至高通货；
+- 核心角色：
+  * 苏晓染（21岁前医学院校花幸存者/167cm/49kg/D罩杯）：独自逃亡三天，衣衫破损、极度饥渴虚弱。为了半块压缩饼干与庇护所的接纳，高岭之花的自尊彻底碎裂，愿意付出一切身体屈辱；
+  * 玩家：掌控地下坚固安全屋与军火物资的绝对支配者；
+- 核心推演机制：强调极端匮乏环境下的生理指标（体力、饥渴、感染风险、性压抑），细腻描绘绝境中以生存物资换取女性身体与精神臣服的残酷与征服快感。
 `;
   }
 
