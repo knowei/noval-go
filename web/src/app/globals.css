@@ -129,6 +129,14 @@ body {
   background-repeat: no-repeat !important;
 }
 
+/* 亚朵APP校园包养豪华行政套房与城市雨夜壁纸 */
+.atour-app-bg {
+  background-image: linear-gradient(to bottom, rgba(22, 10, 20, 0.88), rgba(12, 6, 14, 0.97)), url('https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1600&q=80') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
 .reality-modifier-card {
   background: rgba(22, 24, 31, 0.95) !important;
   backdrop-filter: blur(16px);

@@ -385,6 +385,50 @@ const JIANGSHI_AYANE_SEMANTIC_GROUPS: SemanticActionGroup[] = [
   }
 ];
 
+// 💞 《亚朵APP：包养您喜欢的女大》主题分支库
+const ATOUR_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  // 1. 酒店套房/玄关初见/验明正身/学生证/防备
+  {
+    keywords: ['门', '套房', '玄关', '进来', '开门', '雨', '学生证', '证件', '帆布包', '紧张', '发抖', '初次', '下单', '订单', '金主', '包养'],
+    branches: [
+      { title: '侧身示意进屋并随手反锁套房防盗链', desc: '以居高临下的从容姿态让她踏入地毯，顺手反锁门锁切断其退缩心理【稳健掌控: 迅速确立领地主权，压制临阵退缩】' },
+      { title: '要求当面出示学生证件核实学籍真实性', desc: '靠在玄关柜旁翻看她的学生证和一卡通，核实真实院系与未虚报的清白背景【审慎摸底: 戳破一切侥幸心理，建立契约威严】' },
+      { title: '递上温热毛巾顺手替她接过微湿的帆布包', desc: '温和地接过她沉甸甸的包，将热毛巾递到她发凉的掌心化解初次下海的窘迫【温和攻心: 缓解受惊小兽般的防御，降低戒备】' },
+      { title: '托起她微颤发烫的下颌直视慌乱明眸', desc: '指尖微抬迫使她迎上视线，近距离审视她未经雕琢的青涩脸庞与剧烈心跳【激进突破: 极易激起羞耻动摇，瞬间夺取主动】' }
+    ]
+  },
+  // 2. 现金信封/契约约法三章/自尊破防/价格谈判
+  {
+    keywords: ['钱', '现金', '协议', '包养', '价格', '学费', '条件', '底线', '规则', '自尊', '拜金', '虚荣', '买', '包', '转账'],
+    branches: [
+      { title: '将厚厚一叠崭新现钞与保密协议摆上茶几', desc: '不疾不徐地把整叠未拆封的现金推到她面前，用直白的阶级现实撕破最后遮羞布【现实破防: 直面金钱诱惑，迅速瓦解自尊防备】' },
+      { title: '语气冷峻地立下专属包养的纪律与红线', desc: '居高临下明确规定在校期间的交际规则与随叫随到的专属依附契约【威严立约: 杜绝左右逢源，确立绝对所有权】' },
+      { title: '允诺全额承担其家庭债务与每月丰厚津贴', desc: '直切其现实痛点给予远超预期的慷慨金钱承诺，以救世主之姿给予十足底气【深层归心: 解决燃眉之急，唤起深层感恩与服从】' },
+      { title: '玩味调侃她平日在学校里端着的高冷架子', desc: '坏笑着打趣平日里万人追捧的校花学霸在金主面前的局促反差【挑动羞耻: 直击软肋痛处，剥离虚荣与骄傲】' }
+    ]
+  },
+  // 3. 浴室更衣/换上私密服饰/肢体战栗/触碰试探
+  {
+    keywords: ['洗澡', '浴室', '换衣服', '睡袍', '毛巾', '发丝', '锁骨', '坐下', '沙发', '靠近', '触碰', '心跳', '羞耻', '脱'],
+    branches: [
+      { title: '指令她先去大理石浴室洗漱换上真丝睡袍', desc: '递过酒店备好的轻薄真丝睡袍，要求她洗净身上的雨水与尘世防备【循序渐进: 剥离日常外衣伪装，逐步瓦解羞耻心】' },
+      { title: '站在浴室门外听着淅沥水声随口闲聊打消疑虑', desc: '隔着磨砂玻璃有一搭没一搭地聊着学校日常，营造极其危险而暧昧的心理试探【制造张力: 维持高压暧昧，促使其在独处中自我动摇】' },
+      { title: '握住她微微发凉的柔荑拉到大床边坐下', desc: '牵过她泛着微潮的纤手拉到床沿并肩坐下，感受她浑身肌肉紧绷的轻微战栗【温柔突破: 物理距离瞬间归零，直接打破生理安全区】' },
+      { title: '伸手解开她领口第一枚纽扣试探服从底线', desc: '指尖缓缓拂过她泛红的锁骨，动作从容地解开第一枚纽扣观察其受辱反应【极限越界: 触发应激防线，直接测试其真实服从度】' }
+    ]
+  },
+  // 4. 深度征服/反差破防/情动落泪/完全依附
+  {
+    keywords: ['抱住', '吻', '床上', '压下', '抽插', '做爱', '高潮', '流泪', '求饶', '沉沦', '母狗', '娇喘', '臣服', '占有'],
+    branches: [
+      { title: '强势翻身将她压在柔软大床上俯身深吻', desc: '以绝对的力量差封住她欲言又止的唇瓣，撕碎一切多余的推拉试探【强势征服: 彻底打破言语抗拒，将肉体完全掌握】' },
+      { title: '抚平她眼角泛起的水汽低声温柔诱哄', desc: '吻去她睫毛上羞耻动情的泪滴，在耳畔用最具安全感的声调抚慰其身心【深层抚慰: 将屈辱感转化为极致依恋与被爱渴求】' },
+      { title: '逼她在快感失速中亲口承认专属金主地位', desc: '在她意乱情迷、花心剧颤的临界点上，逼其娇声喊出令人心颤的依恋称谓【精神臣服: 摧毁最后心防，确立无法自拔的依赖】' },
+      { title: '事后揽入怀中点燃一支烟许诺长期庇护', desc: '在欢愉退潮的静谧套房里将她紧拥入怀，给予这个迷茫女大安稳的庇护港湾【长线固化: 扫除一切后顾之忧，将其彻底纳入私人禁脔】' }
+    ]
+  }
+];
+
 const GENERIC_ACTION_POOLS: Branch[] = [
   { tag: 'A', title: '顺势深入掌控当下主动局面', desc: '抓住对方话语与微表情中的动摇瞬间，步步紧逼占据绝对心理主动' },
   { tag: 'B', title: '转换谈话节奏轻声耳语试探', desc: '打破当下的沉默与僵局，用柔和又带着压迫感的话语探寻其真实心意' },
@@ -450,6 +494,10 @@ export function generateContextualBranches(
   const isJiangshiAyane =
     deckKey === 'deck_jiangshi_childhood' ||
     deckKey === '722f860e-1011-4123-bc92-8373fa38deca';
+  const isAtour =
+    deckKey === 'deck_atour_app' ||
+    deckKey.includes('1ad4e5fd') ||
+    deckKey.includes('atour');
 
   let semanticGroups: SemanticActionGroup[] = [];
   if (isCoser) semanticGroups = COSER_SEMANTIC_GROUPS;
@@ -461,6 +509,7 @@ export function generateContextualBranches(
   else if (isCousinStay) semanticGroups = COUSIN_STAY_SEMANTIC_GROUPS;
   else if (isFriendSister) semanticGroups = FRIEND_SISTER_SEMANTIC_GROUPS;
   else if (isJiangshiAyane) semanticGroups = JIANGSHI_AYANE_SEMANTIC_GROUPS;
+  else if (isAtour) semanticGroups = ATOUR_SEMANTIC_GROUPS;
 
   const combinedContext = (storyText + ' ' + userAction).toLowerCase();
 
