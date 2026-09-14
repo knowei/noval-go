@@ -5,22 +5,27 @@ interface BuildPromptOptions {
   deckTitle?: string;
   deckDesc?: string;
   previousBranches?: Branch[];
+  allHistoryBranches?: Branch[];
   turnIndex: number;
 }
 
 export function buildSystemPrompt(options: BuildPromptOptions): string {
-  const { deckId, deckTitle = '互动小说', deckDesc = '', previousBranches = [], turnIndex } = options;
+  const { deckId, deckTitle = '互动小说', deckDesc = '', previousBranches = [], allHistoryBranches = [], turnIndex } = options;
 
   const isCoser = deckId === 'deck_coser_sister';
   const isModifier = deckId === 'deck_reality_modifier';
   const isSister = deckId === 'deck_sister_truth_or_dare' || deckId === '6ffc2ab9-2907-4304-b0bb-53c0a950b445';
   const isFatherDaughter = deckId === 'deck_father_daughter_jealousy' || deckId === '1f97a5c2-3e5b-48e2-aa3a-893a9332765c';
 
-  // 上一轮分支排除提示
+  // 历史分支排除提示（杜绝多轮对话中出现雷同推荐动作）
   let prevBranchReminder = '';
-  if (previousBranches && previousBranches.length > 0) {
-    const prevTitles = previousBranches.map((b) => `“${b.title}”`).join('、');
-    prevBranchReminder = `\n【⚠️ 严禁与上一轮选项重复】：上一轮分支为 [${prevTitles}]，本轮必须根据最新剧情设计 3-4 项完全不同的新行动！`;
+  const recentHistoryTitles = Array.from(
+    new Set([...allHistoryBranches.map((b) => b.title.trim()), ...previousBranches.map((b) => b.title.trim())])
+  ).slice(-12);
+
+  if (recentHistoryTitles.length > 0) {
+    const titleList = recentHistoryTitles.map((t) => `“${t}”`).join('、');
+    prevBranchReminder = `\n【⚠️ 全局绝密禁忌·严禁与历史选项重复】：历史已出现的动作分支包括：[${titleList}]。本轮在结尾输出 <opt><suggested_questions> 时，必须根据最新发展的剧情细节，设计 4 项独一无二、从未出现过的全新【玩家可选行动】！严禁与上述历史选项有任何一处字句雷同！`;
   }
 
   // 1. 全局底层通用协议与叙事骨架 (风月同款高沉浸架构)

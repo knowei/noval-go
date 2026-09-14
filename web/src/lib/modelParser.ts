@@ -1,145 +1,235 @@
 import { Turn, Branch, TurnStatus } from './types';
 
 // ============================================================================
-// 1. 丰富多元的剧本情境动作库 (按轮次与情境动态轮转，杜绝千篇一律)
+// 1. 丰富多元的剧本情境动作库与语义关键词映射 (50+ 超大库，杜绝千篇一律)
 // ============================================================================
 
-const COSER_ACTION_POOLS: Branch[][] = [
-  // 阶段 0: 装扮与物理触碰
-  [
-    { tag: 'A', title: '走上前替她系好后背系带', desc: '走上前伸手帮知念整理后背微敞的系带，指尖不经意触碰她泛红微热的后颈' },
-    { tag: 'B', title: '认真回应她的专属承诺', desc: '凝视着她慌乱躲闪的双眼：“如果我说很喜欢……你真的愿意以后只穿给我一个人看？”' },
-    { tag: 'C', title: '拿出相机拍私人专属返图', desc: '拿出相机：“别换下来，我帮你拍一组专属特写，只存在我手机里的那种。”' },
-    { tag: 'D', title: '轻揉发顶化解羞怯', desc: '笑着走上前揉揉她略显凌乱的发丝，称赞她今天哪怕没摆姿势也最可爱' }
-  ],
-  // 阶段 1: 试探与言语调侃
-  [
-    { tag: 'A', title: '跨前一步低语质问', desc: '故意凑近她耳边：“刚才在房间里小声嘟囔什么呢？是不是在偷偷练习怎么跟我撒娇？”' },
-    { tag: 'B', title: '夸赞她的洛丽塔反差', desc: '“网上几千个粉丝夸你，都不如我夸一句对不对？小笨蛋，耳朵都红透了。”' },
-    { tag: 'C', title: '体贴递过湿纸巾卸妆', desc: '用温热的湿巾轻轻替她擦拭眼尾残留的亮粉，近距离注视她微促轻颤的睫毛' },
-    { tag: 'D', title: '约定漫展独占陪同', desc: '“既然只穿给我看，那下次去漫展，全程都得乖乖跟在我身边寸步不离。”' }
-  ],
-  // 阶段 2: 深入独处与情感羁绊
-  [
-    { tag: 'A', title: '拉着她的手坐到床沿', desc: '牵起她微凉的小手坐到更衣镜旁的床沿，语气认真地问她是不是有心事' },
-    { tag: 'B', title: '提出换下一套私密装扮', desc: '指着衣柜里挂着的另一套女仆装：“既然要试，不如把那套我也一直想看的换上？”' },
-    { tag: 'C', title: '用零食与夜宵安抚赌气', desc: '“好啦不逗你了，去洗个手，我给你做了你最喜欢的水蜜桃果冻和夜宵。”' },
-    { tag: 'D', title: '给她一个安心的拥抱', desc: '伸手轻轻环住少女略显单薄的肩膀，打破兄妹之间最后一丝羞于言说的隔阂' }
-  ],
-  // 阶段 3: 情绪升温与双轨心动
-  [
-    { tag: 'A', title: '直视镜子里的两个人', desc: '站在她身后一同望向落地镜：“你看，镜子里我们俩站在一起，多像一对真的恋人。”' },
-    { tag: 'B', title: '拿走她揪住裙摆的手', desc: '握住她紧张得发白的小手，拇指轻轻摩挲她的手背，让她不要再回避对视' },
-    { tag: 'C', title: '低声允诺今晚陪她', desc: '“今晚不敲代码了，留在你房间陪你看新番，你想看多久都行。”' },
-    { tag: 'D', title: '故意拉开一点距离试探', desc: '假装转身要离开房间，看她会不会着急伸手拉住自己的衣角' }
-  ]
+interface SemanticActionGroup {
+  keywords: string[];
+  branches: Array<{ title: string; desc: string }>;
+}
+
+// 🎀 《我的绝美coser萝莉妹妹》主题分支库
+const COSER_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  // 1. 腿/足/丝袜/微凉/褪下
+  {
+    keywords: ['丝袜', '黑丝', '白丝', '光腿', '腿', '脚', '足', '冷', '凉', '褪', '脱', '冰', '脚踝', '小腿', '膝', '足弓'],
+    branches: [
+      { title: '伸手握住她微凉泛粉的脚踝暖脚', desc: '握住她微凉的脚踝坐到床沿，用掌心的温热替她驱散凉意，低声轻笑她的敏感' },
+      { title: '顺着膝窝轻柔抚触她紧绷的小腿', desc: '指尖顺着纤细优美的小腿线条轻轻摩挲，感受她皮肤轻微的战栗与深层羞涩' },
+      { title: '拿床头的毛毯盖住她微凉的双腿', desc: '体贴拉过被角盖住她泛粉的双足，假装一本正经地调侃她像只受惊的小动物' },
+      { title: '顺手帮她把另一侧丝袜也褪下', desc: '俯下身动作自然地替她褪下另一侧微卷的蕾丝袜，指尖不经意划过细腻的脚背' },
+      { title: '故意轻呵一口温热气息在她脚心', desc: '恶作剧般凑近她泛凉的双足呵了一口热气，欣赏少女急促收回小腿的娇羞求饶' },
+      { title: '夸赞她脚背线条在落地镜前好看', desc: '凝视着落地镜前交叠的双足：“明明比例这么完美，刚才在台上怎么还不敢露？”' },
+      { title: '把她泛凉的双足拉到怀里捂热', desc: '不容分说把她小巧的玉足抱在怀中，隔着衣物用胸口体温替她细细捂热' },
+      { title: '端详她脚踝上系着的蝴蝶结细绳', desc: '伸出手指拨弄系在她脚踝上随动作微晃的黑色蕾丝绳结，赞叹装扮的细致' }
+    ]
+  },
+  // 2. 换装/系带/后背拉链/女仆/洛丽塔
+  {
+    keywords: ['换装', '衣服', '装扮', '洛丽塔', '女仆', '系带', '后背', '拉链', '解开', '穿上', '脱下', '裙摆', '领口', '后颈', '勒'],
+    branches: [
+      { title: '走上前替她系好后背微敞的系带', desc: '走上前伸手帮知念整理后背微敞的系带，指尖不经意触碰她泛红微热的后颈' },
+      { title: '帮她拉上卡在腰间的隐形拉链', desc: '帮她拉上卡在腰间的隐形拉链，低头近距离感受少女慌乱急促的体香' },
+      { title: '提出换上衣柜里更私密的那套', desc: '指着衣柜深处那套更惹火的短款兽耳女仆装：“既然要试，不如把那套也穿上？”' },
+      { title: '轻轻提起她略显拖地的蕾丝裙摆', desc: '蹲下身替她整理微乱的层叠裙摆，近距离端详这套二次元装扮的每一处细节' },
+      { title: '借检查领口之名凑近端详', desc: '假装挑剔衣服的小细节，凑近她微敞的锁骨领口，打趣她是不是偷垫了胸垫' },
+      { title: '解开她脖颈上略紧的蕾丝项圈', desc: '伸手轻轻松开勒得她呼吸微促的黑色天鹅绒项圈，指尖划过微烫的颈动脉' },
+      { title: '替她摘下头上略显歪斜的兽耳发箍', desc: '抬手替她扶正头顶毛茸茸的猫耳发箍，顺便轻轻捏了捏逼真的毛绒尖角' }
+    ]
+  },
+  // 3. 床沿/落地镜/对视/贴近/低语
+  {
+    keywords: ['床', '坐', '躺', '靠', '更衣镜', '镜子', '对视', '低头', '耳', '脸红', '发饰', '贴近', '脸颊', '怀里', '心跳'],
+    branches: [
+      { title: '坐在床沿直视她慌乱的双眼', desc: '坐在床沿直视她慌乱躲闪的明眸：“心跳这么快，小笨蛋你在紧张什么？”' },
+      { title: '站在落地镜身后一同看向镜子', desc: '站在她身后一同望向落地镜：“你看，镜子里我们俩站在一起，多像一对真的恋人。”' },
+      { title: '抬手替她理好额前散乱的碎发', desc: '抬手把她垂落在泛红脸颊边的浅金色发丝挽到耳后，指尖轻触滚烫的耳垂' },
+      { title: '故意俯身凑近她泛红的耳垂低语', desc: '伏在她耳畔低语：“网上几千个粉丝夸你，都不如我夸一句对不对？”' },
+      { title: '握住她攥紧裙角发白的小手', desc: '握住她紧张得发白的小手，拇指轻轻摩挲她的手背，让她不要再回避对视' },
+      { title: '顺势将娇羞的她拥入怀中', desc: '伸手轻轻环住少女略显单薄的肩膀，打破兄妹之间最后一丝羞于言说的隔阂' },
+      { title: '逼她喊一声甜甜的“好哥哥”', desc: '挑起她小巧的下巴，带着宠溺的坏笑逼她当面叫一声能把人骨头喊酥的称呼' },
+      { title: '假装转身要离开房间试探挽留', desc: '作势要回自己房间敲代码，看她会不会慌忙伸手拉住自己的衣角不放' }
+    ]
+  },
+  // 4. 拍照/专属返图/手机私信/漫展独占
+  {
+    keywords: ['拍', '照', '相机', '手机', '返图', '私信', '粉丝', '漫展', '网络', '动态', '评论'],
+    branches: [
+      { title: '拿出手机拍私人专属特写返图', desc: '拿出手机：“别换下来，我帮你拍一组专属特写，只存在我手机里的那种。”' },
+      { title: '查看她刚拍的原图夸赞撩人', desc: '接过她的相机翻看未修的原图，指着某一张微咬下唇的照片夸她神态最勾人' },
+      { title: '霸道宣布这套装扮严禁外发', desc: '认真盯紧她：“这套太犯规了，漫展不能去，网上也不准发，只能穿给我看。”' },
+      { title: '教她几个更凸显身段的专属摆拍', desc: '亲自上前指导她摆姿势，手把手纠正她腰肢与双腿的摆放弧度' },
+      { title: '抢过相机翻看未公开私藏自拍', desc: '趁她不备拿过相机相册，调侃她平时偷偷对着镜子练习卖萌的独家黑历史' }
+    ]
+  },
+  // 5. 夜宵/口渴/疲惫/体贴照顾
+  {
+    keywords: ['累', '饿', '夜宵', '渴', '喝水', '困', '晚', '夜', '洗澡', '水蜜桃', '果冻'],
+    branches: [
+      { title: '倒一杯温水亲自喂到她嘴边', desc: '倒了一杯冒着热气的温水递到她唇边，看着她乖巧小口吮吸的可爱模样' },
+      { title: '下楼给她做最爱吃的水蜜桃夜宵', desc: '“好啦不逗你了，去洗个手，我给你做了你最喜欢的水蜜桃果冻和夜宵。”' },
+      { title: '体贴帮她按摩酸胀的小腿肌肉', desc: '让她靠在枕头上，双手轻重适度地替她按压因穿高跟鞋站久而酸痛的小腿' },
+      { title: '关掉顶灯只留床头微暗暖光台灯', desc: '按灭刺眼的吊灯，仅留一盏昏黄暧昧的床头灯，营造静谧窒息的独处氛围' },
+      { title: '低声允诺今晚留在房间陪她看番', desc: '“今晚不敲代码了，留在你房间陪你看新番，你想看多久都行。”' }
+    ]
+  }
 ];
 
-const MODIFIER_ACTION_POOLS: Branch[][] = [
-  // 阶段 0: 初始建立常识覆写
-  [
-    { tag: 'A', title: '加深现实修改与常识覆写', desc: '在手机APP追加因果律规则，将对方潜意识认定当前亲昵接触完全合乎常理' },
-    { tag: 'B', title: '指令在场女神主动靠近', desc: '顺应当前升温局势，指令对方主动走上前来，做出更加顺从大胆的亲昵举措' },
-    { tag: 'C', title: '调出小改改系统战术监控', desc: '查看当前剩余修改点数，让小改改实时扫描在场目标的羞耻崩溃度与心防指标' },
-    { tag: 'D', title: '发动因果律召唤其他后宫', desc: '修改现实因果律，让隔壁成熟总监苏寒月或清纯学妹顾小梦在关键时刻敲门' }
-  ],
-  // 阶段 1: 肢体接触与因果深化
-  [
-    { tag: 'A', title: '行使支配特权解除抗拒', desc: '覆写身体感知，让对方的每一次触碰与呼吸都伴随着数倍放大的快感与依恋' },
-    { tag: 'B', title: '拉到沙发上近距离审问', desc: '以邻居/学长身份要求对方坐到身边，近距离审视她被常识覆写后的迷离神态' },
-    { tag: 'C', title: '修改自身外貌魅力参数', desc: '直接将自身的男性荷尔蒙与吸引力调至神级，让目标产生无法自拔的崇拜迷恋' },
-    { tag: 'D', title: '下达专属私密服务指令', desc: '输入指令，让对方将为主角提供贴身照料视作唯一天职与莫大荣幸' }
-  ],
-  // 阶段 2: 深入掌控与多女主修罗场
-  [
-    { tag: 'A', title: '启动时间暂停特权整蛊', desc: '按下时停按键，在静止的时空里从容端详女神凝固在半空的羞耻神态与体态' },
-    { tag: 'B', title: '设定双人争宠因果律', desc: '修改规则让在场的苏婉清与顾小梦产生强烈的互妒占有欲，争相讨好主角' },
-    { tag: 'C', title: '彻底破除最后一丝遮羞布', desc: '让小改改锁定常识清零状态，引导对方自愿褪去多余束缚展现最本真的顺从' },
-    { tag: 'D', title: '建立长效后宫契约印记', desc: '将当前关系永久固化为专属契约后宫，永不衰退且自动免疫外界怀疑' }
-  ],
-  // 阶段 3: 极致欢愉与绝对主宰
-  [
-    { tag: 'A', title: '顺应高潮局势深入推演', desc: '不再克制因果律输出，与目标深入探索都市极乐体验的下一篇章' },
-    { tag: 'B', title: '温柔耳语击溃最后防线', desc: '拥住她敏感颤抖的身躯，用温柔的低语给予其在绝对支配下的深层安心感' },
-    { tag: 'C', title: '切换至职场总监苏寒月线', desc: '指令冷艳女总监今晚以考评为由主动带着红酒来到公寓单独汇报' },
-    { tag: 'D', title: '清算并回满每日修改点数', desc: '让小改改兑现本幕攻略成就奖励，解锁更高阶的空间与物质重构特权' }
-  ]
+// 📱 《现实修改器》主题分支库
+const MODIFIER_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  // 1. APP常识修改/因果律覆写
+  {
+    keywords: ['覆写', '修改', '常识', '因果律', '手机', 'app', '潜意识', '设定', '点数'],
+    branches: [
+      { title: '在APP中追加极乐常识覆写', desc: '在手机APP追加因果律规则，将对方潜意识认定当前亲昵接触完全合乎常理' },
+      { title: '修改自身外貌荷尔蒙吸引力参数', desc: '直接将自身的男性荷尔蒙与吸引力调至神级，让目标产生无法自拔的崇拜迷恋' },
+      { title: '指令小改改实时扫描心防沦陷度', desc: '调出全息修改面板，让小改改实时监控在场目标的羞耻崩溃度与沦陷百分比' },
+      { title: '固化专属后宫契约永久生效', desc: '将当前关系永久固化为专属契约后宫，永不衰退且自动免疫外界所有怀疑' }
+    ]
+  },
+  // 2. 肢体接触/沙发/顺从/亲昵
+  {
+    keywords: ['顺从', '沙发', '靠近', '抱', '亲', '抚摸', '身体', '呼吸', '膝枕', '跪'],
+    branches: [
+      { title: '行使支配特权指令目标主动贴近', desc: '顺应当前升温局势，指令对方主动走上前来，做出更加顺从大胆的贴身侍奉' },
+      { title: '拉到沙发上近距离审视迷离神态', desc: '以居高临下的姿态让对方坐到身边，近距离审视她被常识覆写后的迷离微表情' },
+      { title: '温柔耳语彻底瓦解最后防线', desc: '拥住她敏感颤抖的身躯，用温柔的低语给予其在绝对支配下的深层安心感' },
+      { title: '要求目标提供专属贴身舒压侍奉', desc: '输入指令，让对方将为主角提供贴身捏肩按摩视作至高天职与莫大荣幸' }
+    ]
+  },
+  // 3. 时停/定身/全景检查
+  {
+    keywords: ['时停', '暂停', '时间', '静止', '定身', '检查', '小改改', '扫描'],
+    branches: [
+      { title: '启动时间暂停特权从容打量', desc: '按下时停按键，在静止的时空里从容端详女神凝固在半空的羞耻神态与曼妙身姿' },
+      { title: '在静止时空里调换目标的随身物件', desc: '恶作剧般将对方手中的物品替换，解除时停后观察她茫然失措的可爱反差' },
+      { title: '近距离记录时停状态下的心跳读数', desc: '借由小改改的高维探测器，细细分析目标在时停前瞬间对主角的隐秘心动' },
+      { title: '解除时停瞬间捕捉对方惊惶眼神', desc: '从容坐回原位按下恢复键，欣赏对方在感知断层中微张红唇的迷茫模样' }
+    ]
+  },
+  // 4. 多女修罗场/敲门/隔壁总监/学妹
+  {
+    keywords: ['苏寒月', '苏婉清', '顾小梦', '总监', '学妹', '修罗场', '门外', '敲门', '邻居'],
+    branches: [
+      { title: '发动因果律召唤成熟总监苏寒月', desc: '修改现实因果律，让隔壁冷艳高傲的女总监苏寒月借故带着红酒前来敲门' },
+      { title: '设定双人争宠修罗场因果律', desc: '修改规则让在场的苏婉清与顾小梦产生强烈的互妒占有欲，争相讨好主角' },
+      { title: '让学妹躲在屏风后目睹一切', desc: '给清纯学妹顾小梦下达禁声指令，让她在咫尺距离目睹主角与熟女邻居的亲昵' },
+      { title: '顺水推舟将修罗场升级为全员顺从', desc: '一口气消耗每日修改点数，将公寓内的所有女性角色同时纳入极乐支配领域' }
+    ]
+  }
 ];
 
-const SISTER_ACTION_POOLS: Branch[][] = [
-  [
-    { tag: 'A', title: '逼迫姐姐宋晚立即履行惩罚', desc: '直视脸颊通红的姐姐：“大冒险的规矩可是你定的，愿赌服输，不许耍赖~”' },
-    { tag: 'B', title: '矛头转向煽风点火的夏绮', desc: '挑眉坏笑看向夏绮：“既然你笑得这么开心，不如替我姐来接受惩罚？”' },
-    { tag: 'C', title: '试探角落害羞的林初', desc: '走到一直低头拽着易拉罐的林初身旁坐下，轻声耳语打趣她的羞涩反应' },
-    { tag: 'D', title: '反向提出升级大冒险玩法', desc: '坐到三人中央的地毯上，提出把下一轮大冒险由自己亲自指定惩罚目标' }
-  ],
-  [
-    { tag: 'A', title: '拍拍身侧沙发勒令坐近', desc: '“既然要受罚，离那么远怎么算？宋晚，坐到我旁边来当面回答。”' },
-    { tag: 'B', title: '抓住夏绮递酒的手不放', desc: '接过易拉罐时故意握住夏绮温热纤细的手指，看这位平日大胆的闺蜜如何脸红' },
-    { tag: 'C', title: '替林初化解尴尬以退为进', desc: '主动递过纸巾帮林初擦拭洒出的啤酒：“初初脸皮薄，你们别总拿她开玩笑。”' },
-    { tag: 'D', title: '假意起身回房欲擒故纵', desc: '站起身作势要回卧室关门：“看来你们不敢玩真的，那我回去打游戏了。”' }
-  ],
-  [
-    { tag: 'A', title: '直接提出真心话最致命问题', desc: '“真心话：你们三个谁在心里偷偷幻想过我？限时五秒必须说实话。”' },
-    { tag: 'B', title: '提出三人同受惩罚新局', desc: '“既然是一个宿舍的好闺蜜，不如愿赌服输，三个人一起接受大冒险惩罚？”' },
-    { tag: 'C', title: '靠在姐姐肩头温热耳语', desc: '借着客厅微醺昏暗的灯光，附在宋晚耳边问她今晚是不是故意找借口叫自己出来' },
-    { tag: 'D', title: '开启下半场客厅真心话决战', desc: '把空酒瓶放在地毯正中央：“转到谁算谁，谁也不准借酒装醉耍赖。”' }
-  ]
+// 🎲 《真心话大冒险修罗场》主题分支库
+const SISTER_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  // 1. 惩罚/规则/输赢/耍赖
+  {
+    keywords: ['惩罚', '大冒险', '真心话', '规则', '输', '转盘', '骰子', '耍赖', '投降'],
+    branches: [
+      { title: '逼迫姐姐宋晚立即履行大冒险惩罚', desc: '直视脸颊通红的姐姐：“大冒险的规矩可是你定的，愿赌服输，不许耍赖~”' },
+      { title: '直接抛出真心话最致命隐私问题', desc: '“真心话：你们三个谁在心里偷偷幻想过我？限时五秒必须说实话。”' },
+      { title: '反向提出升级大冒险玩法筹码', desc: '坐到三人中央的地毯上，提出把下一轮大冒险由自己亲自指定惩罚目标与动作' },
+      { title: '提出三人同受惩罚的连带新局', desc: '“既然是一个宿舍的好闺蜜，不如愿赌服输，三个人一起接受大冒险惩罚？”' }
+    ]
+  },
+  // 2. 啤酒/微醺/沙发/地毯
+  {
+    keywords: ['酒', '易拉罐', '啤酒', '微醺', '醉', '沙发', '地毯', '杯', '茶几'],
+    branches: [
+      { title: '抓住夏绮递酒的手不放直视她', desc: '接过易拉罐时故意握住夏绮温热纤细的手指，看这位平日大胆的闺蜜如何脸红' },
+      { title: '替害羞的林初化解尴尬以退为进', desc: '主动递过纸巾帮林初擦拭洒出的啤酒：“初初脸皮薄，你们别总拿她开玩笑。”' },
+      { title: '靠在姐姐肩头温热耳语打破界限', desc: '借着客厅微醺昏暗的灯光，附在宋晚耳边问她今晚是不是故意找借口叫自己出来' },
+      { title: '把空酒瓶放在地毯中央开启决战', desc: '把空酒瓶放在地毯正中央用力一转：“转到谁算谁，谁也不准借酒装醉耍赖。”' }
+    ]
+  },
+  // 3. 闺蜜反差/害羞/调侃
+  {
+    keywords: ['夏绮', '林初', '宋晚', '闺蜜', '学妹', '大胆', '害羞', '低头', '偷看'],
+    branches: [
+      { title: '矛头转向煽风点火的夏绮反将一军', desc: '挑眉坏笑看向夏绮：“既然你笑得这么开心，不如替我姐来接受这个贴身惩罚？”' },
+      { title: '坐到角落害羞的林初身旁轻声耳语', desc: '走到一直低头拽着衣角的林初身旁坐下，轻声耳语打趣她泛红的耳垂与心跳' },
+      { title: '假意起身回房欲擒故纵诱导挽留', desc: '站起身作势要回卧室关门：“看来你们不敢玩真的，那我回去打游戏了。”' },
+      { title: '拍拍身侧沙发勒令姐姐坐到身边', desc: '“既然要受罚，离那么远怎么算？宋晚，坐到我旁边来当面回答。”' }
+    ]
+  }
 ];
 
-const FATHER_DAUGHTER_ACTION_POOLS: Branch[][] = [
-  [
-    { tag: 'A', title: '严肃质问并行使家长威权', desc: '坐在床沿直视女儿泛红的双眼，厉声追问她与同学的全部隐秘细节' },
-    { tag: 'B', title: '当面检查手机私密记录', desc: '勒令女儿交出手机，逐条核对聊天记录，当面勒令其断绝往来' },
-    { tag: 'C', title: '收敛怒气以爱意温柔诱导', desc: '轻抚女儿紧绷颤抖的肩头：“爸爸只是太在乎你，过来坐到爸爸怀里”' },
-    { tag: 'D', title: '勒令今晚贴身反省惩戒', desc: '反锁卧室房门：“小小年纪不学好，罚你今晚留在我房间好好反省”' }
-  ],
-  [
-    { tag: 'A', title: '厉声勒令交出卧室钥匙', desc: '“以后不准反锁房门，写作业必须在客厅我能看得到的地方进行。”' },
-    { tag: 'B', title: '拉近距离审视慌乱神态', desc: '握住她纤细的手腕，逼近她的面庞，不放过她眼中闪烁的任何一丝心虚' },
-    { tag: 'C', title: '替女儿擦拭眼角的泪水', desc: '语气放缓替她理好凌乱的睡衣领口：“别哭了，知道自己错在哪了吗？”' },
-    { tag: 'D', title: '当面拨通男同学电话问罪', desc: '拿起女儿手机当着她的面回拨过去，勒令对方以后远离自己的女儿' }
-  ],
-  [
-    { tag: 'A', title: '要求女儿做出绝对顺从承诺', desc: '“想让我不生气？那你以后必须保证什么事情都第一个告诉我，能做到吗？”' },
-    { tag: 'B', title: '坐在书桌前进行深刻谈话', desc: '拉开椅子坐下，让她站在面前，逐条清算最近逃课与早恋的全部经过' },
-    { tag: 'C', title: '假意离开发动心理战', desc: '叹了口气转身走向房门：“我对你太失望了”，看女儿是否会慌乱挽留' },
-    { tag: 'D', title: '行使家庭宵禁贴身规训', desc: '宣布没收全部电子设备，今晚就在身边寸步不离完成检讨' }
-  ]
+// 🥀 《占有欲女儿的禁忌界限》主题分支库
+const FATHER_DAUGHTER_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  // 1. 查房/手机/秘密/日记
+  {
+    keywords: ['手机', '聊天', '同学', '秘密', '日记', '早恋', '问罪', '锁', '微信'],
+    branches: [
+      { title: '当面勒令交出手机核对私密记录', desc: '勒令女儿交出手机，逐条核对聊天记录，当面勒令其断绝与可疑男生的往来' },
+      { title: '坐在书桌前进行深刻而严厉的谈话', desc: '拉开椅子坐下，让她站在面前，逐条清算最近逃课与频繁看手机的全部经过' },
+      { title: '当面拨通男同学电话当场问罪', desc: '拿起女儿手机当着她的面回拨过去，用不容置疑的家长威严勒令对方远离' },
+      { title: '翻开书桌抽屉检查私密日记本', desc: '手指按在她藏着秘密的抽屉锁扣上，凝视她因极度心虚而颤抖的长睫毛' }
+    ]
+  },
+  // 2. 家规威权/反锁/宵禁/规训
+  {
+    keywords: ['家规', '威权', '严厉', '反省', '规训', '钥匙', '反锁', '检讨', '不听话'],
+    branches: [
+      { title: '严肃质问并行使严厉家长威权', desc: '坐在床沿直视女儿泛红的双眼，厉声追问她与同学隐瞒的所有细节' },
+      { title: '厉声勒令交出卧室钥匙取消反锁特权', desc: '“以后不准反锁房门，写作业必须在客厅我随时看得到的地方进行。”' },
+      { title: '勒令今晚留在此处贴身反省惩戒', desc: '反锁卧室房门：“小小年纪不学好，罚你今晚就在我房间好好反省”' },
+      { title: '要求女儿做出绝对顺从服从承诺', desc: '“想让我不生气？那你以后保证所有事情都第一个告诉我，能做到吗？”' }
+    ]
+  },
+  // 3. 委屈眼泪/温柔安慰/拥抱
+  {
+    keywords: ['哭', '泪', '拥抱', '怀里', '原谅', '安慰', '体温', '床沿', '委屈'],
+    branches: [
+      { title: '收敛怒气以爱意温柔诱导坐入怀中', desc: '轻抚女儿紧绷颤抖的肩头：“爸爸只是太在乎你，过来坐到爸爸怀里”' },
+      { title: '语气放缓替女儿擦拭眼角的委屈泪水', desc: '语气放缓替她理好凌乱的睡衣领口：“别哭了，知道自己错在哪了吗？”' },
+      { title: '假意离开发动心理战逼她挽留', desc: '叹了口气转身走向房门：“我对你太失望了”，看女儿是否会慌乱哭着拉住衣角' },
+      { title: '拉近距离细致审视她慌乱的心虚神态', desc: '握住她纤细的手腕拉到面前，居高临下不放过她眼中闪烁的任何一丝情绪' }
+    ]
+  }
 ];
 
-const GENERIC_ACTION_POOLS: Branch[][] = [
-  [
-    { tag: 'A', title: '顺势深入掌控主动', desc: '抓住对方话语与微表情中的动摇瞬间，步步紧逼占据心理主动' },
-    { tag: 'B', title: '转换节奏轻声试探', desc: '打破当下的沉默与僵局，用柔和又带着压迫感的话语探寻其真实心意' },
-    { tag: 'C', title: '以退为进静观其变', desc: '稍稍拉开距离，暗中观察对方在失去支撑后的失落与慌乱反应' },
-    { tag: 'D', title: '做出出人意料的果断举动', desc: '打破既定推演轨迹，采取大胆反制的举动彻底改写当下的局势' }
-  ],
-  [
-    { tag: 'A', title: '打破暧昧挑明关系', desc: '不再兜圈子，直视对方双眼直接抛出最核心的利害或情感诉求' },
-    { tag: 'B', title: '利用周围环境制造独处', desc: '关上房门阻隔外界声响，营造更加私密窒息的二人独处气场' },
-    { tag: 'C', title: '反客为主设下全新条件', desc: '化被动为主动，提出让对方不得不接受的交换条件或博弈规则' },
-    { tag: 'D', title: '给出温柔而坚定的承诺', desc: '用最真诚的眼神和低语抚平对方心底所有的顾虑与惶恐' }
-  ],
-  [
-    { tag: 'A', title: '果断出手反制防线', desc: '在对方防备最松懈的刹那果断行动，一举夺取关键的主导地位' },
-    { tag: 'B', title: '拉长沉默制造心理施压', desc: '一言不发地注视着对方，用无声的压迫感促使对方率先妥协交底' },
-    { tag: 'C', title: '出言安抚化解敌意', desc: '适度展露善意与体贴，让紧绷的气氛稍稍缓和，以图长远突破' },
-    { tag: 'D', title: '抛出悬念转身试探', desc: '留下一句引人遐想的话语作势欲走，观察对方是否会主动出声挽留' }
-  ]
+// 🌐 通用推演主题分支库 (涵盖各种剧本通用心动、博弈与反差)
+const GENERIC_ACTION_POOLS: Branch[] = [
+  { tag: 'A', title: '顺势深入掌控当下主动局面', desc: '抓住对方话语与微表情中的动摇瞬间，步步紧逼占据绝对心理主动' },
+  { tag: 'B', title: '转换谈话节奏轻声耳语试探', desc: '打破当下的沉默与僵局，用柔和又带着压迫感的话语探寻其真实心意' },
+  { tag: 'C', title: '以退为进拉开距离静观其变', desc: '稍稍拉开身体距离，暗中观察对方在失去依托后的失落与慌乱反应' },
+  { tag: 'D', title: '做出出人意料的大胆亲昵举动', desc: '打破既定推演轨迹，采取出其不意的反制举动彻底改写当下的暧昧局势' },
+  { tag: 'A', title: '直视对方双眼挑明隐秘关系', desc: '不再兜圈子，直视对方双眼直接抛出最核心的私密情感诉求' },
+  { tag: 'B', title: '关上房门营造私密二人独处', desc: '顺手反锁房门阻隔外界声响，营造更加私密窒息的二人独处气场' },
+  { tag: 'C', title: '反客为主提出不可拒绝的新条件', desc: '化被动为主动，提出让对方不得不顺从接受的交互条件或契约规则' },
+  { tag: 'D', title: '给出温柔而令人心安的坚定承诺', desc: '用最真诚的眼神和低语抚平对方心底所有的顾虑、羞耻与惶恐' },
+  { tag: 'A', title: '在对方防备松懈瞬间果断反制', desc: '在对方心防最薄弱的刹那果断采取行动，一举夺取关键的绝对掌控权' },
+  { tag: 'B', title: '拉长无声沉默制造深层心理施压', desc: '一言不发地注视着对方，用无声的深情凝视促使对方率先妥协交底' },
+  { tag: 'C', title: '适度展露善意体贴化解心防抵触', desc: '适度展现体贴入微的关怀，让紧绷的气氛稍稍缓和，以图更深层次的突破' },
+  { tag: 'D', title: '留下一句引人遐想的低语转身欲走', desc: '留下一句耐人寻味的轻语作势欲走，观察对方是否会急促出声挽留' }
 ];
 
 // ============================================================================
-// 2. 动态情境推荐选项生成器（防重复机制）
+// 2. 动态故事语义推荐选项合成器 (关键词驱动 + 全局历史绝对去重)
 // ============================================================================
 
 export function generateContextualBranches(
   deckKey: string,
-  storyText: string,
-  turnIndex: number,
+  storyText: string = '',
+  turnIndex: number = 0,
   userAction: string = '',
-  previousBranches?: Branch[]
+  previousBranches?: Branch[],
+  allHistoryBranches?: Branch[]
 ): Branch[] {
+  // 1. 建立全局历史已用标题集合 (防止任何轮次之间出现一模一样的选项)
+  const usedTitles = new Set<string>();
+  if (allHistoryBranches && allHistoryBranches.length > 0) {
+    allHistoryBranches.forEach((b) => {
+      if (b?.title) usedTitles.add(b.title.trim());
+    });
+  }
+  if (previousBranches && previousBranches.length > 0) {
+    previousBranches.forEach((b) => {
+      if (b?.title) usedTitles.add(b.title.trim());
+    });
+  }
+
+  // 2. 判定剧本类型
   const isCoser = deckKey === 'deck_coser_sister';
   const isModifier = deckKey === 'deck_reality_modifier';
   const isSister =
@@ -149,31 +239,95 @@ export function generateContextualBranches(
     deckKey === 'deck_father_daughter_jealousy' ||
     deckKey === '1f97a5c2-3e5b-48e2-aa3a-893a9332765c';
 
-  let pools: Branch[][] = GENERIC_ACTION_POOLS;
-  if (isCoser) pools = COSER_ACTION_POOLS;
-  else if (isModifier) pools = MODIFIER_ACTION_POOLS;
-  else if (isSister) pools = SISTER_ACTION_POOLS;
-  else if (isFatherDaughter) pools = FATHER_DAUGHTER_ACTION_POOLS;
+  let semanticGroups: SemanticActionGroup[] = [];
+  if (isCoser) semanticGroups = COSER_SEMANTIC_GROUPS;
+  else if (isModifier) semanticGroups = MODIFIER_SEMANTIC_GROUPS;
+  else if (isSister) semanticGroups = SISTER_SEMANTIC_GROUPS;
+  else if (isFatherDaughter) semanticGroups = FATHER_DAUGHTER_SEMANTIC_GROUPS;
 
-  // 根据当前轮次动态循环选择候选池
-  const poolIndex = turnIndex % pools.length;
-  let selectedBranches = pools[poolIndex];
+  const combinedContext = (storyText + ' ' + userAction).toLowerCase();
 
-  // 严格防重：如果选中的分支与上一轮有相同标题，切换到下一候选池
-  if (previousBranches && previousBranches.length > 0) {
-    const prevTitles = new Set(previousBranches.map((b) => b.title.trim()));
-    const hasOverlap = selectedBranches.some((b) => prevTitles.has(b.title.trim()));
-    if (hasOverlap) {
-      const altIndex = (poolIndex + 1) % pools.length;
-      selectedBranches = pools[altIndex];
+  // 3. 收集契合当前故事情境的候选分支 (优先关键词语义匹配)
+  const matchedCandidates: Array<{ title: string; desc: string }> = [];
+  const secondaryCandidates: Array<{ title: string; desc: string }> = [];
+
+  for (const group of semanticGroups) {
+    const isMatched = group.keywords.some((kw) => combinedContext.includes(kw.toLowerCase()));
+    for (const b of group.branches) {
+      if (!usedTitles.has(b.title.trim())) {
+        if (isMatched) {
+          matchedCandidates.push(b);
+        } else {
+          secondaryCandidates.push(b);
+        }
+      }
     }
   }
 
-  return selectedBranches;
+  // 洗牌辅助函数
+  const shuffle = <T>(arr: T[]): T[] => {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  };
+
+  const selectedList: Array<{ title: string; desc: string }> = [];
+  const shuffledMatched = shuffle(matchedCandidates);
+  const shuffledSecondary = shuffle(secondaryCandidates);
+
+  // 优先填充语义高匹配分支
+  for (const item of shuffledMatched) {
+    if (selectedList.length >= 4) break;
+    selectedList.push(item);
+    usedTitles.add(item.title.trim());
+  }
+
+  // 若不足4个，用该剧本未使用的其他分支补充
+  for (const item of shuffledSecondary) {
+    if (selectedList.length >= 4) break;
+    selectedList.push(item);
+    usedTitles.add(item.title.trim());
+  }
+
+  // 若仍不足4个，用通用推演分支补充
+  if (selectedList.length < 4) {
+    const shuffledGeneric = shuffle(GENERIC_ACTION_POOLS);
+    for (const item of shuffledGeneric) {
+      if (selectedList.length >= 4) break;
+      if (!usedTitles.has(item.title.trim())) {
+        selectedList.push({ title: item.title, desc: item.desc || item.title });
+        usedTitles.add(item.title.trim());
+      }
+    }
+  }
+
+  // 如果依然凑不齐（极长对话导致库耗尽），加入轮次动态修饰后缀保证不重复
+  let padIndex = 1;
+  while (selectedList.length < 4) {
+    const fallbackItem = GENERIC_ACTION_POOLS[padIndex % GENERIC_ACTION_POOLS.length];
+    const uniqueTitle = `${fallbackItem.title} · 变奏${padIndex}`;
+    if (!usedTitles.has(uniqueTitle)) {
+      selectedList.push({ title: uniqueTitle, desc: fallbackItem.desc || fallbackItem.title });
+      usedTitles.add(uniqueTitle);
+    }
+    padIndex++;
+  }
+
+  // 统一分配 A, B, C, D 标签
+  const finalBranches: Branch[] = selectedList.slice(0, 4).map((item, idx) => ({
+    tag: String.fromCharCode(65 + idx),
+    title: item.title,
+    desc: item.desc
+  }));
+
+  return finalBranches;
 }
 
 // ============================================================================
-// 3. 超鲁棒大模型输出解析器（全方位提取正文、推荐分支、状态机与心防）
+// 3. 超鲁棒大模型输出解析器 (支持风月标准规范 + 全局强去重)
 // ============================================================================
 
 export function parseModelOutput(
@@ -181,7 +335,8 @@ export function parseModelOutput(
   deckKey: string,
   turnIndex: number,
   userAction: string = '',
-  previousBranches?: Branch[]
+  previousBranches?: Branch[],
+  allHistoryBranches?: Branch[]
 ): Partial<Turn> {
   const turn: Partial<Turn> = {
     rawText: rawText,
@@ -190,7 +345,14 @@ export function parseModelOutput(
 
   if (!rawText || !rawText.trim()) {
     turn.story = '';
-    turn.branches = generateContextualBranches(deckKey, '', turnIndex, userAction, previousBranches);
+    turn.branches = generateContextualBranches(
+      deckKey,
+      '',
+      turnIndex,
+      userAction,
+      previousBranches,
+      allHistoryBranches
+    );
     return turn;
   }
 
@@ -284,18 +446,15 @@ export function parseModelOutput(
     }
   }
 
-  // 8. 智能提取大模型生成的真实推荐分支
-  // 匹配更广泛的标题标记，如：【推荐互动抉择】、### 推荐互动、**下一步行动** 等
-  const branchHeaderRegex = /(?:🎲|🎯|💡|🎮|\*|#|-)?\s*【?(?:推荐互动抉择|行动分支选项|下一步行动抉择|推荐互动|推荐行动|下一步行动|行动抉择|行动建议|行动选项|互动选项|分支选项|建议互动选项|可选行动|建议下一步|后续剧情选择|可执行行动|推荐选项)】?\]?[:：\s]*([\s\S]*$)/i;
-  const branchMatch = rawText.match(branchHeaderRegex);
-
+  // 8. 智能提取大模型生成的推荐分支 (风月标签规范 + Markdown 列表 + 无前缀文本兜底)
   const parsedBranches: Branch[] = [];
 
   const parseLineToBranch = (rawLine: string): Branch | null => {
-    // 移除包裹的 <d> 和 </d> 标签
+    // 移除包裹的 <d> 和 </d> 标签及 Markdown 符号
     const line = rawLine.replace(/<\/?d>/gi, '').trim();
     if (!line) return null;
-    // 匹配格式 1: A. [标题] - 描述 或 A. 标题：描述 或 A. 标题 - 描述 或 【A】 标题：描述
+
+    // 格式 1: A. [标题] - 描述 或 A. 标题：描述 或 A. 标题 - 描述 或 【A】 标题：描述
     const m1 = line.match(/^(?:(?:[【\[]?([A-D\d])[】\]]?)|(?:([A-D\d])))(?:[\.、:：\s\-\*]+)(?:\[(.*?)\]|【(.*?)】|\*\*(.*?)\*\*|(.*?))(?:\s*[-—–~:：\s]\s*(.*))?$/);
     if (m1) {
       const tag = (m1[1] || m1[2] || '◆').toUpperCase();
@@ -306,7 +465,8 @@ export function parseModelOutput(
         return { tag, title, desc };
       }
     }
-    // 匹配格式 2: 【标题】：“描述”
+
+    // 格式 2: 【标题】：“描述”
     const m2 = line.match(/^【(.*?)】[：:]*[“"「]?(.*?)[”"」]?$/);
     if (m2) {
       const title = m2[1].trim();
@@ -315,21 +475,68 @@ export function parseModelOutput(
         return { tag: '◆', title, desc };
       }
     }
+
+    // 格式 3: 纯文本动作描述 (例如风月原格式: <d>顺着黑丝边缘慢慢往上抚摸她的腿</d>)
+    if (line.length >= 3 && !line.startsWith('<') && !line.startsWith('#')) {
+      const splitIdx = line.search(/[-—–~:：]/);
+      let title = '';
+      let desc = '';
+      if (splitIdx > 1 && splitIdx < 25) {
+        title = line.substring(0, splitIdx).replace(/^[A-Za-z0-9\.\、\s【】\[\]\*\-]+/, '').trim();
+        desc = line.substring(splitIdx + 1).trim();
+      } else {
+        title = line.length > 18 ? line.slice(0, 16) + '...' : line;
+        desc = line;
+      }
+      if (title && title.length >= 2) {
+        return { tag: '◆', title, desc };
+      }
+    }
+
     return null;
   };
 
-  if (branchMatch && branchMatch[1].trim()) {
-    const branchLines = branchMatch[1].split('\n').map((l) => l.trim()).filter(Boolean);
-    for (const line of branchLines) {
-      const b = parseLineToBranch(line);
-      if (b) {
-        if (b.tag === '◆') b.tag = String.fromCharCode(65 + parsedBranches.length);
-        parsedBranches.push(b);
+  // 优先级 A: 匹配风月标准规范的 <opt><suggested_questions> 或 <suggested_questions> 或 <options> 标签
+  const sqMatch = rawText.match(/(?:<opt>)?\s*<suggested_questions>([\s\S]*?)<\/suggested_questions>\s*(?:<\/opt>)?/i);
+  if (sqMatch && sqMatch[1].trim()) {
+    const dMatches = sqMatch[1].match(/<d>([\s\S]*?)<\/d>/gi);
+    if (dMatches && dMatches.length > 0) {
+      for (const dLine of dMatches) {
+        const b = parseLineToBranch(dLine);
+        if (b) {
+          if (b.tag === '◆') b.tag = String.fromCharCode(65 + parsedBranches.length);
+          parsedBranches.push(b);
+        }
+      }
+    } else {
+      const sqLines = sqMatch[1].split('\n').map((l) => l.trim()).filter(Boolean);
+      for (const line of sqLines) {
+        const b = parseLineToBranch(line);
+        if (b) {
+          if (b.tag === '◆') b.tag = String.fromCharCode(65 + parsedBranches.length);
+          parsedBranches.push(b);
+        }
       }
     }
   }
 
-  // 若带标题匹配未果，尝试从文本最后 15 行无标头兜底解析 A. B. C. D. 列表
+  // 优先级 B: 匹配 Markdown 标头结构，如 【推荐互动抉择】、### 推荐互动、**下一步行动** 等
+  if (parsedBranches.length === 0) {
+    const branchHeaderRegex = /(?:🎲|🎯|💡|🎮|\*|#|-)?\s*【?(?:推荐互动抉择|行动分支选项|下一步行动抉择|推荐互动|推荐行动|下一步行动|行动抉择|行动建议|行动选项|互动选项|分支选项|建议互动选项|可选行动|建议下一步|后续剧情选择|可执行行动|推荐选项)】?\]?[:：\s]*([\s\S]*$)/i;
+    const branchMatch = rawText.match(branchHeaderRegex);
+    if (branchMatch && branchMatch[1].trim()) {
+      const branchLines = branchMatch[1].split('\n').map((l) => l.trim()).filter(Boolean);
+      for (const line of branchLines) {
+        const b = parseLineToBranch(line);
+        if (b) {
+          if (b.tag === '◆') b.tag = String.fromCharCode(65 + parsedBranches.length);
+          parsedBranches.push(b);
+        }
+      }
+    }
+  }
+
+  // 优先级 C: 扫描正文末尾 15 行无标头的 A. B. C. D. 选项
   if (parsedBranches.length === 0) {
     const allLines = rawText.split('\n').map((l) => l.trim()).filter(Boolean);
     const tailLines = allLines.slice(-15);
@@ -344,37 +551,38 @@ export function parseModelOutput(
     }
   }
 
-  // 优先支持 <suggested_questions> / <opt> 标签 (风月标准规范)
-  if (parsedBranches.length === 0) {
-    const sqMatch = rawText.match(/(?:<opt>)?\s*<suggested_questions>([\s\S]*?)<\/suggested_questions>\s*(?:<\/opt>)?/i);
-    if (sqMatch) {
-      const dMatches = sqMatch[1].match(/<d>([\s\S]*?)<\/d>/gi);
-      if (dMatches && dMatches.length > 0) {
-        for (const dLine of dMatches) {
-          const b = parseLineToBranch(dLine);
-          if (b) {
-            if (b.tag === '◆') b.tag = String.fromCharCode(65 + parsedBranches.length);
-            parsedBranches.push(b);
-          }
-        }
-      } else {
-        const sqLines = sqMatch[1].split('\n').map((l) => l.trim()).filter(Boolean);
-        for (const line of sqLines) {
-          const b = parseLineToBranch(line);
-          if (b) {
-            if (b.tag === '◆') b.tag = String.fromCharCode(65 + parsedBranches.length);
-            parsedBranches.push(b);
-          }
-        }
-      }
-    }
+  // 4. 全局去重校验与有效性决策
+  const usedTitles = new Set<string>();
+  if (allHistoryBranches && allHistoryBranches.length > 0) {
+    allHistoryBranches.forEach((b) => {
+      if (b?.title) usedTitles.add(b.title.trim());
+    });
+  }
+  if (previousBranches && previousBranches.length > 0) {
+    previousBranches.forEach((b) => {
+      if (b?.title) usedTitles.add(b.title.trim());
+    });
   }
 
-  // 模型真实生成的有效分支使用，否则由动态情境引擎补充（杜绝轮次间完全重复）
-  if (parsedBranches.length >= 2) {
-    turn.branches = parsedBranches.slice(0, 4);
+  // 过滤掉与历史轮次完全重复的模型输出
+  const nonDuplicateParsed = parsedBranches.filter((b) => !usedTitles.has(b.title.trim()));
+
+  if (nonDuplicateParsed.length >= 2) {
+    // 重新标注 A, B, C, D 标签
+    turn.branches = nonDuplicateParsed.slice(0, 4).map((b, idx) => ({
+      ...b,
+      tag: String.fromCharCode(65 + idx)
+    }));
   } else {
-    turn.branches = generateContextualBranches(deckKey, rawText, turnIndex, userAction, previousBranches);
+    // 若模型未输出分支或与历史严重重复，启用高沉浸语义动态合成器
+    turn.branches = generateContextualBranches(
+      deckKey,
+      rawText,
+      turnIndex,
+      userAction,
+      previousBranches,
+      allHistoryBranches
+    );
   }
 
   // 9. 纯净化小说正文抽取（支持风月 <article> 标准容器与结构标签剔除）

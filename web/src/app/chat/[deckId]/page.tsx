@@ -164,7 +164,8 @@ export default function ChatPage() {
 窗外的夜色如墨，灯光在两人之间洒下斑驳的光影。对方抬起眼帘凝视着你，眼底闪过复杂的情绪波动，似乎正在重新审视你与彼此之间的界限。随着沉默的打破，彼此的距离在不知不觉中悄然拉近。`;
     }
 
-    const branches = generateContextualBranches(deckId, baseStory, turnIdx, act, prevBranches);
+    const allHistoryBranches = conversationHistory.flatMap((t: Turn) => t.branches || []);
+    const branches = generateContextualBranches(deckId, baseStory, turnIdx, act, prevBranches, allHistoryBranches);
     return {
       story: baseStory,
       branches
@@ -177,6 +178,9 @@ export default function ChatPage() {
     const lastUserTurn = historyContext[historyContext.length - 1];
     const userActionText = lastUserTurn?.text || '';
     const aiTurnIndex = historyContext.length;
+
+    // 全局历史分支搜集，用于全局强防重
+    const allHistoryBranches = historyContext.flatMap((t: Turn) => t.branches || []);
 
     // 获取最近一轮带有推荐分支的 AI 回复，用于严格去重与分支递进
     const prevAiTurn = [...historyContext].reverse().find((h) => !h.isUser && h.branches && h.branches.length > 0);
@@ -198,6 +202,7 @@ export default function ChatPage() {
           deckTitle: currentDeck?.title,
           deckDesc: currentDeck?.desc,
           previousBranches: prevBranches,
+          allHistoryBranches,
           turnIndex: aiTurnIndex
         });
 
@@ -210,7 +215,7 @@ export default function ChatPage() {
             const isLast = idx === arr.length - 1;
             let content = h.text || h.story || '';
             if (isLast && h.isUser) {
-              content = `【用户最新推进指令】：${content}。\n（请严格遵循防抢话原则，严禁替玩家发号施令或做心理决策；输出高质量感官与情绪拉扯描写，结尾输出<opt><suggested_questions>全新不重复互动分支）`;
+              content = `【用户最新推进指令】：${content}。\n【核心执行纪律】：\n1. 严格遵循防抢话原则，严禁替玩家说台词或做心理决策；输出高质量感官与情绪张力描写；\n2. 🎲【互动抉择必达要求】：正文推演结束后，必须在末尾输出 <opt><suggested_questions> 标签，包含4项紧密结合当前最新情节、完全不同于历史选项的全新【玩家可选行动】（使用 <d> 标签包裹），严禁省略！`;
             }
             return {
               role: h.isUser ? 'user' : 'assistant',
@@ -297,7 +302,7 @@ export default function ChatPage() {
           }
 
           if (hasLiveStreamSuccess && streamedStory) {
-            const parsed = parseModelOutput(streamedStory, deckId, aiTurnIndex, userActionText, prevBranches);
+            const parsed = parseModelOutput(streamedStory, deckId, aiTurnIndex, userActionText, prevBranches, allHistoryBranches);
             updateTurn(aiTurnIndex, {
               isUser: false,
               model: activeModel,
@@ -305,7 +310,7 @@ export default function ChatPage() {
               story: parsed.story || streamedStory,
               branches: parsed.branches && parsed.branches.length > 0
                 ? parsed.branches
-                : generateContextualBranches(deckId, streamedStory, aiTurnIndex, userActionText, prevBranches),
+                : generateContextualBranches(deckId, streamedStory, aiTurnIndex, userActionText, prevBranches, allHistoryBranches),
               npcThought: parsed.npcThought,
               modReport: parsed.modReport,
               npcClothes: parsed.npcClothes,
@@ -500,7 +505,6 @@ export default function ChatPage() {
         ref={chatContainerRef}
         onDoubleClick={handleContainerDoubleClick}
         className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto bg-transparent"
-        title="双击空白处可快速滑动至最后一条记录"
       >
         {currentDeck?.customCss && (
           <style dangerouslySetInnerHTML={{ __html: currentDeck.customCss }} />
