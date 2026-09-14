@@ -59,6 +59,7 @@ export interface StoryDeck {
   firstTurnDemo?: Turn;
   handbook?: StoryHandbook;
   customCss?: string;
+  customHtml?: string;
   desc?: string;
   author?: string;
   rating?: string;

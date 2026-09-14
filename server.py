@@ -695,7 +695,8 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                         'scenes': json.loads(s['scenes_json'] or '[]'),
                         'styles': json.loads(s['styles_json'] or '[]'),
                         'firstTurnDemo': json.loads(s['first_turn_demo_json'] or '{}'),
-                        'customCss': s.get('custom_css') or ''
+                        'customCss': s.get('custom_css') or '',
+                        'customHtml': s.get('custom_html') or ''
                     }
                     self.send_json(res)
                 else:
@@ -723,7 +724,8 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                         'scenes': json.loads(s['scenes_json'] or '[]'),
                         'styles': json.loads(s['styles_json'] or '[]'),
                         'firstTurnDemo': json.loads(s['first_turn_demo_json'] or '{}'),
-                        'customCss': s.get('custom_css') or ''
+                        'customCss': s.get('custom_css') or '',
+                        'customHtml': s.get('custom_html') or ''
                     }
                 response_payload = {'stories': result_map}
                 response_payload.update(result_map)

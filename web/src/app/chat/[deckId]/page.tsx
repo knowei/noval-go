@@ -19,6 +19,7 @@ import { FatherDaughterJealousyCard } from '@/components/chat/FatherDaughterJeal
 import { GenericCard } from '@/components/chat/GenericCard';
 import { UserTurnActionBar } from '@/components/chat/UserTurnActionBar';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
+import { InteractiveHandbookCard } from '@/components/InteractiveHandbookCard';
 
 export default function ChatPage() {
   const params = useParams();
@@ -498,11 +499,18 @@ export default function ChatPage() {
     handleScrollToBottom(true);
   };
 
+  const handleOpenHandbook = () => {
+    const el = document.getElementById('handbook-card-anchor');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div className="flex-1 flex min-h-screen">
       {/* Secondary Scenario & Saves Sidebar (Desktop: 270px) */}
       <div className="hidden md:block shrink-0">
-        <ScenarioSidebar />
+        <ScenarioSidebar onOpenHandbook={handleOpenHandbook} />
       </div>
 
       {/* Mobile Slide-out Drawer for Scenario Sidebar */}
@@ -513,7 +521,10 @@ export default function ChatPage() {
             onClick={() => setIsMobileScenarioOpen(false)}
           />
           <div className="relative z-10 w-72 max-w-[85vw] bg-[#121319] h-full shadow-2xl animate-in slide-in-from-left duration-200">
-            <ScenarioSidebar onClose={() => setIsMobileScenarioOpen(false)} />
+            <ScenarioSidebar
+              onClose={() => setIsMobileScenarioOpen(false)}
+              onOpenHandbook={handleOpenHandbook}
+            />
           </div>
         </div>
       )}
@@ -622,6 +633,17 @@ export default function ChatPage() {
               <span className="hidden sm:inline text-[11px]">重新开卷</span>
             </button>
 
+            {currentDeck?.customHtml && (
+              <button
+                onClick={handleOpenHandbook}
+                className="px-2 sm:px-2.5 py-1 rounded-xl bg-purple-950/60 hover:bg-purple-900/70 border border-purple-500/40 text-purple-300 hover:text-white text-xs flex items-center gap-1 transition cursor-pointer shrink-0"
+                title="查看作者专属排版作品详情与人物卡"
+              >
+                <BookOpen className="w-3.5 h-3.5 text-purple-400" />
+                <span className="hidden sm:inline text-[11px]">作品详情</span>
+              </button>
+            )}
+
             <button
               onClick={() => setIsDrawerOpen(true)}
               className="px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-pink-300 text-xs flex items-center gap-1 transition cursor-pointer"
@@ -634,6 +656,20 @@ export default function ChatPage() {
 
         {/* Main Dialogue Stream */}
         <div className="flex-1 max-w-3xl mx-auto w-full p-3 sm:p-6 space-y-5 sm:space-y-6 pb-28">
+          {/* Author-designed Interactive Character Card & Handbook */}
+          {currentDeck?.customHtml && (
+            <div id="handbook-card-anchor" className="scroll-mt-14">
+              <InteractiveHandbookCard
+                html={currentDeck.customHtml}
+                deckTitle={currentDeck.title}
+                onStartStory={(customPrompt) => {
+                  handleSend(customPrompt);
+                }}
+                defaultExpanded={conversationHistory.length <= 1}
+              />
+            </div>
+          )}
+
           {conversationHistory.map((turn, idx) => {
             const isLatestUserTurn = turn.isUser && (idx === conversationHistory.length - 1 || idx === conversationHistory.length - 2);
 
