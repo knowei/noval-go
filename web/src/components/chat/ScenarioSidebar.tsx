@@ -9,9 +9,10 @@ import { ArrowLeft, Plus, Trash2, ArrowUpDown, Clock, Heart, Award, Sparkles, X 
 
 interface ScenarioSidebarProps {
   onClose?: () => void;
+  onOpenHandbook?: () => void;
 }
 
-export function ScenarioSidebar({ onClose }: ScenarioSidebarProps) {
+export function ScenarioSidebar({ onClose, onOpenHandbook }: ScenarioSidebarProps) {
   const {
     currentDeckKey,
     currentDeck,
@@ -105,7 +106,14 @@ export function ScenarioSidebar({ onClose }: ScenarioSidebarProps) {
 
         {/* Quick Action Buttons */}
         <div className="grid grid-cols-3 gap-1.5 pt-1 text-[11px]">
-          <button className="py-1.5 rounded-lg bg-[#191b24] hover:bg-[#222432] border border-[#2b2d3d] text-gray-300 hover:text-white transition cursor-pointer text-center">
+          <button
+            onClick={() => {
+              if (onOpenHandbook) onOpenHandbook();
+              if (onClose) onClose();
+            }}
+            className="py-1.5 rounded-lg bg-[#191b24] hover:bg-purple-900/40 border border-[#2b2d3d] hover:border-purple-500/40 text-purple-300 hover:text-white transition cursor-pointer text-center font-medium"
+            title="查看作者专属排版作品详情与人物卡"
+          >
             作品详情
           </button>
           <button className="py-1.5 rounded-lg bg-[#191b24] hover:bg-[#222432] border border-[#2b2d3d] text-gray-300 hover:text-pink-300 transition cursor-pointer text-center flex items-center justify-center gap-1">
