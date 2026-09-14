@@ -337,6 +337,54 @@ const FRIEND_SISTER_SEMANTIC_GROUPS: SemanticActionGroup[] = [
   }
 ];
 
+// 🧟‍♀️ 《死去的青梅竹马变成艳尸疯狂炸精》主题分支库
+const JIANGSHI_AYANE_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  // 1. 初见与肉体异化/水雾浴室/沉甸甸巨乳/冷香
+  {
+    keywords: ['浴室', '花洒', '水汽', '冷香', '水雾', '冰凉', '紫发', '巨乳', '水滴', '身材', '异化', '冷萌', '复活', '还魂'],
+    branches: [
+      { title: '伸手关掉花洒拿大浴巾裹住她冰凉的身躯', desc: '关掉哗哗流淌的冷水，抽下大浴巾将绫音浑身发抖的身子裹进怀里拭干水珠' },
+      { title: '双手托起她胸前沉甸甸的水滴巨乳试探心跳', desc: '掌心贴在她饱满深陷的胸脯上，感受那惊人触感与深处寂静无声的反差' },
+      { title: '指尖抚过她雪白脖颈与锁骨确认艳尸真相', desc: '指尖摩挲她毫无体温的细腻肌肤，轻声确认她是否真的打破生死归来' },
+      { title: '扣住她冰凉纤细的手掌拉入温暖的怀抱', desc: '将她柔若无骨的冰冷双手拢进自己温热的掌心哈气取暖' },
+      { title: '双手用力揉捏她肥美极品的蜜桃翘臀', desc: '双手环过她纤细的腰肢，用力揉捏饱满肥硕的臀肉，确认肉体惊人的弹性' }
+    ]
+  },
+  // 2. 极度饥饿/虚弱惨白/僵硬哀求/口交喂食
+  {
+    keywords: ['饿', '饥饿', '惨白', '僵硬', '痛苦', '哀求', '养料', '虚弱', '撑不住', '救我', '阳气', '旧衬衫', '含住'],
+    branches: [
+      { title: '解开裤链掏出灼热肉棒直接抵上她冰润唇瓣', desc: '解开衣扣迎着她渴望的目光，将滚烫发硬的昂扬递到她毫无血色的小嘴前' },
+      { title: '把她抱上沙发温柔揉搓她发僵的四肢喂食', desc: '横抱起身体渐趋冰冷迟缓的绫音放在沙发上，一边搓揉她发僵的四肢一边喂食' },
+      { title: '按住她后脑勺任由她贪婪吮吸龟头吞咽精液', desc: '掌心扣住她柔软的紫发，由着她像饿极的幼兽般将整根肉棒吞入口腔深处疯狂吸吮' },
+      { title: '侧身将她搂在身前俯身亲吻她冰凉的唇瓣', desc: '低头覆上她泛灰微颤的薄唇，用舌尖撬开贝齿渡去一口温热的阳气' },
+      { title: '托起她下巴深情注视并许诺绝不再让她离开', desc: '直视她蓄满水汽的紫色眼眸：“只要我活着，就绝不会再让你挨饿消失。”' }
+    ]
+  },
+  // 3. 跨坐深骑/白虎粉穴/滚烫吸吮/冷热反差
+  {
+    keywords: ['口交', '坐下', '骑', '粉穴', '白虎', '进食', '滚烫', '绞紧', '吸吮', '吞入', '严丝合缝', '抽插', '肉棒', '插入'],
+    branches: [
+      { title: '扶着她柔韧的腰肢挺身一口气贯入滚烫深处', desc: '扶住她纤细柔韧的腰肢，对准无毛白虎粉穴一口气顶入那滚烫绞紧的花心深处' },
+      { title: '仰躺任由面无表情的冷萌青梅贪婪起伏深骑', desc: '双手枕在脑后，看着面无表情却眼泛媚态的冷萌青梅沉沦地上下套弄' },
+      { title: '托起她两条雪白修长的大腿狠狠向深处冲撞', desc: '将她修长的大腿架在肩头，借着体温反差狠狠撞击那贪得无厌的紧致软肉' },
+      { title: '伸手揉捻她水滴巨乳上挺立发硬的深红乳头', desc: '在激烈的抽插中握住沉甸甸的乳肉，指腹反复揉捻那因为快感而挺立的乳晕' },
+      { title: '附在她耳畔咬着耳垂逼问她这具艳尸的快感', desc: '一边大力抽送一边在她泛红的耳廓吹气，逼这位平日清冷的青梅交底求饶' }
+    ]
+  },
+  // 4. 彻底内射/饱腹回温/潮红红润/相拥温存
+  {
+    keywords: ['射', '内射', '高潮', '饱腹', '回温', '潮红', '精液', '浓精', '吃饱', '体温', '拌嘴', '天亮', '赖床'],
+    branches: [
+      { title: '狠狠顶在花心最深处将滚烫浓精全数灌入', desc: '紧紧压在子宫颈口，将积蓄的炽热浓精全数射入她贪婪索求的花心深处' },
+      { title: '紧紧拥抱她渐渐回温发烫的娇柔肉躯温存', desc: '感受她胸口传来的微弱假象心跳与回暖的体温，久久不愿拔出' },
+      { title: '刮刮她恢复粉嫩红润的鼻尖打趣她的饭量', desc: '看着她脸颊泛起酡红、恢复冷萌傲娇的模样，笑着捏捏她的脸颊' },
+      { title: '抱起吃饱瘫软的绫音回卧室拉严遮光厚窗帘', desc: '横抱起心满意足的青梅走回大床，细心拉严厚重的窗帘替她阻隔阳光' },
+      { title: '替她套上宽大的旧衬衫抚摸她凌乱的紫发', desc: '替她套上自己宽大的旧衬衫，看着她露出的雪白大腿相拥入眠' }
+    ]
+  }
+];
+
 const GENERIC_ACTION_POOLS: Branch[] = [
   { tag: 'A', title: '顺势深入掌控当下主动局面', desc: '抓住对方话语与微表情中的动摇瞬间，步步紧逼占据绝对心理主动' },
   { tag: 'B', title: '转换谈话节奏轻声耳语试探', desc: '打破当下的沉默与僵局，用柔和又带着压迫感的话语探寻其真实心意' },
@@ -399,6 +447,9 @@ export function generateContextualBranches(
   const isFriendSister =
     deckKey === 'deck_friend_sister' ||
     deckKey === '9ba0424a-3278-4fae-b8ea-4fb4d00e2d90';
+  const isJiangshiAyane =
+    deckKey === 'deck_jiangshi_childhood' ||
+    deckKey === '722f860e-1011-4123-bc92-8373fa38deca';
 
   let semanticGroups: SemanticActionGroup[] = [];
   if (isCoser) semanticGroups = COSER_SEMANTIC_GROUPS;
@@ -409,6 +460,7 @@ export function generateContextualBranches(
   else if (isNudeHousekeeping) semanticGroups = NUDE_HOUSEKEEPING_SEMANTIC_GROUPS;
   else if (isCousinStay) semanticGroups = COUSIN_STAY_SEMANTIC_GROUPS;
   else if (isFriendSister) semanticGroups = FRIEND_SISTER_SEMANTIC_GROUPS;
+  else if (isJiangshiAyane) semanticGroups = JIANGSHI_AYANE_SEMANTIC_GROUPS;
 
   const combinedContext = (storyText + ' ' + userAction).toLowerCase();
 
