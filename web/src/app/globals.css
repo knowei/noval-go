@@ -49,12 +49,12 @@ body {
   font-weight: 600;
 }
 
-/* 现实修改器专属沉浸背景与面板样式 (1:1 像素级复刻) */
+/* 现实修改器专属沉浸背景与面板样式 */
 .reality-modifier-bg {
   background-image: linear-gradient(to bottom, rgba(16, 17, 20, 0.85), rgba(16, 17, 20, 0.95)), url('https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=1600&q=80') !important;
   background-size: cover !important;
   background-position: center !important;
-  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
 }
 
 /* 绝美coser妹妹专属落日黄昏与更衣室壁纸 */
@@ -62,7 +62,7 @@ body {
   background-image: linear-gradient(to bottom, rgba(17, 12, 26, 0.88), rgba(17, 12, 26, 0.96)), url('https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1600&q=80') !important;
   background-size: cover !important;
   background-position: center !important;
-  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
 }
 
 /* 真心话大冒险修罗场微醺客厅壁纸 */
@@ -70,7 +70,7 @@ body {
   background-image: linear-gradient(to bottom, rgba(22, 16, 24, 0.88), rgba(22, 16, 24, 0.96)), url('https://images.unsplash.com/photo-1540518614846-7ede433c4ef5?w=1600&q=80') !important;
   background-size: cover !important;
   background-position: center !important;
-  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
 }
 
 /* 占有欲女儿月夜深邃卧室壁纸 */
@@ -78,7 +78,7 @@ body {
   background-image: linear-gradient(to bottom, rgba(20, 16, 16, 0.90), rgba(20, 16, 16, 0.97)), url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1600&q=80') !important;
   background-size: cover !important;
   background-position: center !important;
-  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
 }
 
 /* 神崎夕月日系和室看护壁纸 */
@@ -86,15 +86,30 @@ body {
   background-image: linear-gradient(to bottom, rgba(24, 15, 20, 0.88), rgba(24, 15, 20, 0.96)), url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=1600&q=80') !important;
   background-size: cover !important;
   background-position: center !important;
-  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
 }
 
 .reality-modifier-card {
   background: rgba(22, 24, 31, 0.95) !important;
-  backdrop-filter: blur(16px) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid #383b46 !important;
   border-radius: 16px !important;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* 移动端性能急救：禁用高耗能 backdrop-filter 避免手机浏览器闪退 */
+@media (max-width: 768px) {
+  .reality-modifier-card {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: #15171e !important;
+  }
+  .sticky {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: #0e0f14 !important;
+  }
 }
 
 .reality-panels-container {

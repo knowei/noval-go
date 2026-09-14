@@ -8,7 +8,7 @@ interface RichStoryRendererProps {
   deckId?: string;
 }
 
-export function RichStoryRenderer({ rawStory, className = '', deckId = '' }: RichStoryRendererProps) {
+export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStory, className = '', deckId = '' }: RichStoryRendererProps) {
   if (!rawStory) return null;
 
   const isModifier = deckId === 'deck_reality_modifier';
@@ -178,4 +178,4 @@ export function RichStoryRenderer({ rawStory, className = '', deckId = '' }: Ric
       </div>
     </div>
   );
-}
+});

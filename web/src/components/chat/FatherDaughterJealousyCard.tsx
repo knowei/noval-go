@@ -17,7 +17,7 @@ interface FatherDaughterJealousyCardProps {
   onEdit?: (index: number, newStory: string) => void;
 }
 
-export function FatherDaughterJealousyCard({
+export const FatherDaughterJealousyCard = React.memo(function FatherDaughterJealousyCard({
   turn,
   index,
   onSendAction,
@@ -339,4 +339,4 @@ export function FatherDaughterJealousyCard({
       />
     </div>
   );
-}
+});

@@ -16,7 +16,7 @@ interface SisterTruthOrDareCardProps {
   onEdit?: (index: number, newStory: string) => void;
 }
 
-export function SisterTruthOrDareCard({
+export const SisterTruthOrDareCard = React.memo(function SisterTruthOrDareCard({
   turn,
   index,
   onSendAction,
@@ -294,4 +294,4 @@ export function SisterTruthOrDareCard({
       />
     </div>
   );
-}
+});
