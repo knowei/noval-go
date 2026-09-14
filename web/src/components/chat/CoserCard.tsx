@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { CardTurnActionBar } from './CardTurnActionBar';
+import { RichStoryRenderer } from './RichStoryRenderer';
 import { Turn } from '@/lib/types';
 import { generateContextualBranches } from '@/lib/modelParser';
 import { Sparkles, BookOpen, Copy, Check } from 'lucide-react';
@@ -446,7 +447,7 @@ export function CoserCard({
         </div>
       ) : (
         <div className="novel-text space-y-1">
-          {renderDialogue(storyText)}
+          <RichStoryRenderer rawStory={storyText} />
         </div>
       )}
 

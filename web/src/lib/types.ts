@@ -27,6 +27,8 @@ export interface Turn {
   modifyEffect?: string;
   modReport?: string;
   rawOutputSnippet?: string;
+  cot?: string;
+  tl?: string;
 }
 
 export interface StoryScene {

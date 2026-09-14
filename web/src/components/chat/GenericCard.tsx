@@ -5,6 +5,7 @@ import { CardTurnActionBar } from './CardTurnActionBar';
 import { Turn } from '@/lib/types';
 import { generateContextualBranches } from '@/lib/modelParser';
 import { MapPin } from 'lucide-react';
+import { RichStoryRenderer } from './RichStoryRenderer';
 
 interface GenericCardProps {
   turn: Turn;
@@ -111,7 +112,7 @@ export function GenericCard({
         </div>
       ) : (
         <div className="novel-text space-y-1">
-          {renderStoryParagraphs(storyText)}
+          <RichStoryRenderer rawStory={storyText} />
         </div>
       )}
 

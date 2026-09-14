@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Turn } from '@/lib/types';
 import { generateContextualBranches } from '@/lib/modelParser';
 import { CardTurnActionBar } from './CardTurnActionBar';
+import { RichStoryRenderer } from './RichStoryRenderer';
 
 interface RealityModifierCardProps {
   turn: Turn;
@@ -210,7 +211,7 @@ export function RealityModifierCard({
         </div>
       ) : (
         <div className="novel-text space-y-1">
-          {renderStoryParagraphs(storyRaw)}
+          <RichStoryRenderer rawStory={storyRaw} />
         </div>
       )}
 
