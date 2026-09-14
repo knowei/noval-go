@@ -62,12 +62,36 @@ def init_db():
     try:
         c.execute("ALTER TABLE users ADD COLUMN updated_at TIMESTAMP")
     except Exception: pass
-    try:
-        c.execute("ALTER TABLE stories ADD COLUMN category TEXT DEFAULT '都市'")
-    except Exception: pass
-    try:
-        c.execute("ALTER TABLE plaza_cards ADD COLUMN category TEXT DEFAULT '都市'")
-    except Exception: pass
+    # stories 扩展字段平滑迁移
+    for col, col_def in [
+        ("custom_css", "TEXT DEFAULT ''"),
+        ("custom_html", "TEXT DEFAULT ''"),
+        ("category", "TEXT DEFAULT '都市'")
+    ]:
+        try:
+            c.execute(f"ALTER TABLE stories ADD COLUMN {col} {col_def}")
+        except Exception: pass
+
+    # plaza_cards 扩展字段平滑迁移
+    for col, col_def in [
+        ("deck_id", "TEXT"),
+        ("badge", "TEXT"),
+        ("badge_color", "TEXT"),
+        ("author", "TEXT"),
+        ("desc", "TEXT"),
+        ("rating", "TEXT DEFAULT '5.0'"),
+        ("tags_json", "TEXT"),
+        ("heat", "TEXT"),
+        ("order_index", "INTEGER DEFAULT 0"),
+        ("cover_image", "TEXT DEFAULT ''"),
+        ("image_tag", "TEXT DEFAULT ''"),
+        ("badge_type", "TEXT DEFAULT 'fire'"),
+        ("is_featured", "INTEGER DEFAULT 0"),
+        ("category", "TEXT DEFAULT '都市'")
+    ]:
+        try:
+            c.execute(f"ALTER TABLE plaza_cards ADD COLUMN {col} {col_def}")
+        except Exception: pass
 
     # 2. 会话/存档表
     c.execute("""
@@ -174,7 +198,49 @@ def init_db():
 
     # 检查并从已有的 stories_data.js 迁移数据入库
     migrate_default_data_if_needed()
+    # 自动从随代码更新的 seed 数据库增补/同步官方剧本与广场卡片（平滑支持 Docker 挂载数据卷）
+    sync_from_seed_db()
     studio_api.initialize(get_db)
+
+def sync_from_seed_db():
+    seed_db = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'noval_data.db')
+    if not os.path.exists(seed_db) or os.path.abspath(DB_FILE) == os.path.abspath(seed_db):
+        return
+    try:
+        s_conn = sqlite3.connect(seed_db)
+        s_c = s_conn.cursor()
+        t_conn = sqlite3.connect(DB_FILE)
+        t_c = t_conn.cursor()
+
+        # 动态同步官方系统表数据，保持用户表 users 与会话表 conversations 绝不被覆盖
+        sync_tables = ['stories', 'plaza_cards', 'plaza_categories', 'community_articles', 'system_notices']
+        for tbl in sync_tables:
+            try:
+                t_c.execute(f"PRAGMA table_info({tbl})")
+                t_cols = set(r[1] for r in t_c.fetchall())
+                s_c.execute(f"PRAGMA table_info({tbl})")
+                s_cols = [r[1] for r in s_c.fetchall() if r[1] in t_cols]
+                if not s_cols:
+                    continue
+
+                col_str = ', '.join(s_cols)
+                placeholders = ', '.join(['?'] * len(s_cols))
+                update_clause = ', '.join([f"{col}=excluded.{col}" for col in s_cols if col not in ('id', 'created_at')])
+
+                s_c.execute(f"SELECT {col_str} FROM {tbl}")
+                rows = s_c.fetchall()
+                if rows:
+                    sql = f"INSERT INTO {tbl} ({col_str}) VALUES ({placeholders}) ON CONFLICT(id) DO UPDATE SET {update_clause}"
+                    t_c.executemany(sql, rows)
+            except Exception as te:
+                print(f"[DB Auto-Sync] table {tbl} notice: {te}")
+
+        t_conn.commit()
+        s_conn.close()
+        t_conn.close()
+        print("[DB Auto-Sync] Successfully synced latest official decks and plaza cards from seed database.")
+    except Exception as e:
+        print(f"[DB Auto-Sync Warning] Failed to sync from seed_db: {e}")
 
 def migrate_default_data_if_needed():
     conn = get_db()
