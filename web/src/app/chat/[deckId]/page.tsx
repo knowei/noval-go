@@ -122,6 +122,7 @@ export default function ChatPage() {
   const isNudeHousekeeping = deckId === 'deck_nude_housekeeping' || deckId === '239451db-b3db-48ff-9849-836c928fc402';
   const isCousinStay = deckId === 'deck_cousin_stay' || deckId === '433116bf-627e-441b-9add-cb99a3ee0349';
   const isFriendSister = deckId === 'deck_friend_sister' || deckId === '9ba0424a-3278-4fae-b8ea-4fb4d00e2d90';
+  const isJiangshiAyane = deckId === 'deck_jiangshi_childhood' || deckId === '722f860e-1011-4123-bc92-8373fa38deca';
   const isYuzuki = deckId === 'deck_yuzuki';
 
   let bgClass = '';
@@ -133,6 +134,7 @@ export default function ChatPage() {
   else if (isNudeHousekeeping) bgClass = 'nude-housekeeping-bg';
   else if (isCousinStay) bgClass = 'cousin-stay-bg';
   else if (isFriendSister) bgClass = 'friend-sister-bg';
+  else if (isJiangshiAyane) bgClass = 'jiangshi-ayane-bg';
   else if (isYuzuki) bgClass = 'yuzuki-bg';
 
   const getFallbackStory = (actionText: string, turnIdx: number, prevBranches?: Branch[]) => {
@@ -190,6 +192,14 @@ export default function ChatPage() {
 客房门内，刚刚经历失望的林若曦听到动静猛然抬头，发丝凌乱地贴在潮红的脸侧，那双平日冷若冰霜的美眸在与你对视的刹那闪过一丝惊慌与无法言说的炽热渴求。她没有立刻拉起床单遮掩自己白腻迷人的E罩杯躯体，反而下意识挺直了腰肢。
 
 而在走廊深处，母亲苏青岚房中那声压抑的低咽也戛然而止，空气中弥漫着让人血脉偾张的危险与偷窥刺激。`;
+    } else if (isJiangshiAyane) {
+      baseStory = `面对你的互动【${act || '抚慰死而复生的青梅'}】，弥漫着冷香的水汽在狭小的空间里轻轻打旋。
+
+绫音那双淡紫色的眼眸微微睁大，那张平日习惯了面无表情的“冷萌脸”上，浮现出一抹无法言喻的依恋与战栗。她那具常年维持在10℃冰冷的躯体顺从地依偎在你掌心，胸前沉甸甸的H罩杯巨乳随着呼吸轻轻贴覆着你的胸口，触感细腻冰凉得宛如最高等的羊脂玉石。
+
+“唔……身体好冷……可是碰着你，里面好像又在发烫……”她轻启冰润的唇瓣，微弱地喘息着，紧贴着你的双腿不自觉地微微内扣，毫无杂草的白虎粉穴深处渗出贪婪的温润，整个人如溺水者抓住救命稻草般死死抱住你的腰身：“……求你……快点喂我……别让我再变僵硬了……”
+
+感受着她胸腔里寂静无声的死寂与肉体对精液近乎本能的渴望，这场跨越生死的契约让空气中的危险与诱惑达到了极致。`;
     } else {
       baseStory = `针对你的行动【${act || '深入推进'}】，场间的气氛产生了明显的微妙变化。
 
