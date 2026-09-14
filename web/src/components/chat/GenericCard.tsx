@@ -55,11 +55,9 @@ export const GenericCard = React.memo(function GenericCard({
 
   const hasStatus = turn.status && Object.keys(turn.status).length > 0;
   const hasMemory = turn.memory && turn.memory.length > 0;
-    const isPlaceholderBranches = !turn.branches || turn.branches.length === 0 ||
-    (turn.branches.length <= 2 && turn.branches.some(b => b.title.includes('顺应') || b.title.includes('试探心意')));
-  const activeBranches = isPlaceholderBranches
-    ? generateContextualBranches('generic', storyText, index)
-    : turn.branches!;
+  const activeBranches = turn.branches && turn.branches.length > 0
+    ? turn.branches
+    : generateContextualBranches('generic', storyText, index);
   const hasBranches = activeBranches && activeBranches.length > 0;
   const hasAnyPanel = hasStatus || hasMemory || hasBranches;
 

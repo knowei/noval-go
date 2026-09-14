@@ -196,11 +196,9 @@ export const FatherDaughterJealousyCard = React.memo(function FatherDaughterJeal
 
   const hasStatus = turn.status && Object.keys(turn.status).length > 0;
   const hasMemory = turn.memory && turn.memory.length > 0;
-    const isPlaceholderBranches = !turn.branches || turn.branches.length === 0 ||
-    (turn.branches.length <= 2 && turn.branches.some(b => b.title.includes('顺应') || b.title.includes('试探心意')));
-  const activeBranches = isPlaceholderBranches
-    ? generateContextualBranches('deck_father_daughter_jealousy', storyText, index)
-    : turn.branches!;
+  const activeBranches = turn.branches && turn.branches.length > 0
+    ? turn.branches
+    : generateContextualBranches('deck_father_daughter_jealousy', storyText, index);
   const hasBranches = activeBranches && activeBranches.length > 0;
   const hasAnyPanel = hasStatus || hasMemory || hasBranches;
 

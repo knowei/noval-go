@@ -393,11 +393,9 @@ export const CoserCard = React.memo(function CoserCard({
   // Turn > 0: Subsequent rounds with standardized 1:1 collapsible accordions
   const hasStatus = !!(turn.status || turn.npcThought);
   const hasMemory = turn.memory && turn.memory.length > 0;
-    const isPlaceholderBranches = !turn.branches || turn.branches.length === 0 ||
-    (turn.branches.length <= 2 && turn.branches.some(b => b.title.includes('顺应') || b.title.includes('试探心意')));
-  const activeBranches = isPlaceholderBranches
-    ? generateContextualBranches('deck_coser_sister', storyText, index)
-    : turn.branches!;
+  const activeBranches = turn.branches && turn.branches.length > 0
+    ? turn.branches
+    : generateContextualBranches('deck_coser_sister', storyText, index);
   const hasBranches = activeBranches && activeBranches.length > 0;
   const hasAnyPanel = hasStatus || hasMemory || hasBranches;
 
