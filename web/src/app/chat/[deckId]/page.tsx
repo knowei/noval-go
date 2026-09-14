@@ -203,6 +203,7 @@ export default function ChatPage() {
   const isCousinStay = deckId === 'deck_cousin_stay' || deckId === '433116bf-627e-441b-9add-cb99a3ee0349';
   const isFriendSister = deckId === 'deck_friend_sister' || deckId === '9ba0424a-3278-4fae-b8ea-4fb4d00e2d90';
   const isJiangshiAyane = deckId === 'deck_jiangshi_childhood' || deckId === '722f860e-1011-4123-bc92-8373fa38deca';
+  const isAtour = deckId === 'deck_atour_app' || deckId === '1ad4e5fd-7d79-4dd4-a3f3-d9581110c81a';
   const isYuzuki = deckId === 'deck_yuzuki';
 
   let bgClass = '';
@@ -215,6 +216,7 @@ export default function ChatPage() {
   else if (isCousinStay) bgClass = 'cousin-stay-bg';
   else if (isFriendSister) bgClass = 'friend-sister-bg';
   else if (isJiangshiAyane) bgClass = 'jiangshi-ayane-bg';
+  else if (isAtour) bgClass = 'atour-app-bg';
   else if (isYuzuki) bgClass = 'yuzuki-bg';
 
   const hasCustomHtml = Boolean(currentDeck?.customHtml);
@@ -285,6 +287,14 @@ export default function ChatPage() {
 “唔……身体好冷……可是碰着你，里面好像又在发烫……”她轻启冰润的唇瓣，微弱地喘息着，紧贴着你的双腿不自觉地微微内扣，毫无杂草的白虎粉穴深处渗出贪婪的温润，整个人如溺水者抓住救命稻草般死死抱住你的腰身：“……求你……快点喂我……别让我再变僵硬了……”
 
 感受着她胸腔里寂静无声的死寂与肉体对精液近乎本能的渴望，这场跨越生死的契约让空气中的危险与诱惑达到了极致。`;
+    } else if (isAtour) {
+      baseStory = `面对你的举措【${act || '行使金主特权深入互动'}】，豪华行政套房内原本紧绷的气氛骤然收紧。
+
+站在玄关地毯上的女生身子猛然一僵，原本紧攥着帆布包背带的纤细指节因为用力而微微发白。她偷偷抬眼打量着你的神色，在触及你深邃而带着压迫感的目光时，又触电般慌忙低下头去，耳根与修长的脖颈迅速泛起一抹羞耻与紧张交织的潮红。
+
+“我……我既然拿了APP的定金，就会遵守约定的……”她轻咬下唇，声音带着一丝不易察觉的轻颤。尽管内心对于初次涉足这种关系的耻感还在激烈翻涌，但在你强大的金主气场与现实金钱的威慑下，少女的防线正不可逆转地步步瓦解。
+
+落地窗外，整座城市的万家灯火在雨幕中迷离闪烁，套房内的奢华与私密，正在为这场金钱与欲望的契约揭开最隐秘的一幕。`;
     } else {
       baseStory = `针对你的行动【${act || '深入推进'}】，场间的气氛产生了明显的微妙变化。
 

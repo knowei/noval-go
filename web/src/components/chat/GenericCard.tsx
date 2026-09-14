@@ -174,16 +174,50 @@ export const GenericCard = React.memo(function GenericCard({
                   💡 点击直接执行行动，推进剧情发展：
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {activeBranches.map((b, bi) => (
-                    <button
-                      key={bi}
-                      onClick={() => onSendAction(`【${b.title}】：${b.desc || b.title}`)}
-                      className="p-2.5 rounded-xl bg-[#1d1f2b] hover:bg-[#252838] border border-[#2d3142] hover:border-amber-500/60 text-left text-xs text-gray-200 hover:text-amber-200 transition group flex items-center justify-between cursor-pointer"
-                    >
-                      <span><strong>【{b.tag || '◆'}】</strong> {b.title}</span>
-                      <span className="text-[10px] text-amber-400 opacity-0 group-hover:opacity-100 transition">➔</span>
-                    </button>
-                  ))}
+                  {activeBranches.map((b, bi) => {
+                    const fullText = (b.desc || b.title || '').trim();
+                    const riskMatch = fullText.match(/【([^】]*(?:风险|策略|代价|评估|掌控|攻心|破防|试探)[^】]*)】/);
+                    const riskTag = riskMatch ? riskMatch[1] : null;
+                    const cleanDesc = riskMatch ? fullText.replace(riskMatch[0], '').trim() : fullText;
+
+                    const isHighRisk = riskTag && (riskTag.includes('激进') || riskTag.includes('高危') || riskTag.includes('破防') || riskTag.includes('代价'));
+                    const isSafe = riskTag && (riskTag.includes('稳健') || riskTag.includes('温和') || riskTag.includes('攻心') || riskTag.includes('安全'));
+
+                    return (
+                      <button
+                        key={bi}
+                        onClick={() => onSendAction(`【${b.title}】：${b.desc || b.title}`)}
+                        className="p-3 rounded-xl bg-[#1d1f2b] hover:bg-[#252838] border border-[#2d3142] hover:border-amber-500/60 text-left text-xs text-gray-200 hover:text-amber-200 transition group flex flex-col justify-between cursor-pointer shadow-sm gap-1.5"
+                      >
+                        <div className="flex items-start justify-between w-full gap-2">
+                          <span className="font-semibold text-gray-100 group-hover:text-amber-300 leading-snug">
+                            <strong className="text-amber-400 mr-1 font-mono">【{b.tag || '◆'}】</strong>
+                            {b.title}
+                          </span>
+                          <span className="text-[10px] text-amber-400 opacity-0 group-hover:opacity-100 transition shrink-0 mt-0.5">➔</span>
+                        </div>
+                        {cleanDesc && cleanDesc !== b.title && (
+                          <div className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed">
+                            {cleanDesc}
+                          </div>
+                        )}
+                        {riskTag && (
+                          <div className="mt-0.5">
+                            <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium border ${
+                              isHighRisk
+                                ? 'bg-rose-950/50 border-rose-600/40 text-rose-300'
+                                : isSafe
+                                ? 'bg-emerald-950/50 border-emerald-600/40 text-emerald-300'
+                                : 'bg-purple-950/50 border-purple-600/40 text-purple-300'
+                            }`}>
+                              <span>⚖️</span>
+                              <span>{riskTag}</span>
+                            </span>
+                          </div>
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </details>

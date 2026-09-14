@@ -100,14 +100,19 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
         );
       }
 
-      // 3. 内心真实独白与心理活动 (<thk>)
+      // 3. 潜意识心声与微观生理反应 (<thk>)
       if (/^<thk>([\s\S]*?)<\/thk>$/i.test(part)) {
         const inner = part.replace(/<\/?thk>/gi, '').trim();
         return (
-          <span key={idx} className="novel-thk-box inline-block my-1 px-2.5 py-1 rounded-lg bg-purple-950/40 border-l-2 border-purple-400 text-purple-200/90 text-[13px] font-sans italic tracking-wide">
-            <span className="text-purple-400 mr-1.5 not-italic">💭</span>
-            {inner}
-          </span>
+          <div key={idx} className="novel-thk-card my-2 p-2.5 sm:p-3 rounded-xl bg-gradient-to-r from-purple-950/40 via-[#181629] to-purple-950/20 border border-purple-500/30 text-purple-200/95 text-[12.5px] sm:text-[13px] font-sans shadow-md">
+            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-purple-300/90 mb-1 select-none">
+              <span className="text-purple-400">💭</span>
+              <span>潜意识心声 · 隐秘动摇与微观生理应激:</span>
+            </div>
+            <p className="leading-relaxed pl-3 border-l-2 border-purple-400/50 italic font-serif text-purple-100/90">
+              {inner}
+            </p>
+          </div>
         );
       }
 
