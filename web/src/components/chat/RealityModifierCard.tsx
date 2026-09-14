@@ -150,12 +150,8 @@ export function RealityModifierCard({
       "【询问助手小改改】：“调出附近其他两位高分目标（苏寒月、顾小梦）的资料给我看看。”"
     ];
   } else {
-    dynamicActionList = [
-      "【顺应局势深入掌控】：“继续行使修改器特权，进一步加深对方的羞耻服从与快感沉沦”",
-      "【下达全新修改指令】：“在手机输入新规则，将当前场景与因果律推向更加极致的欢愉”",
-      "【切换/召唤其他后宫】：“发动修改器因果律，让公司总监苏寒月或学妹顾小梦介入当前剧情”",
-      "【温情爱抚安抚心防】：“拥住她敏感颤抖的身躯，用温柔的耳语彻底击溃她最后的心理壁垒”"
-    ];
+    const fallbackBranches = generateContextualBranches('deck_reality_modifier', storyRaw, index);
+    dynamicActionList = fallbackBranches.map((b) => `【${b.title}】：“${b.desc || b.title}”`);
   }
 
   const renderStoryParagraphs = (text: string) => {
