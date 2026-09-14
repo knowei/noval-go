@@ -500,6 +500,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             scenes = json.dumps(s.get('scenes', []), ensure_ascii=False)
             styles = json.dumps(s.get('styles', []), ensure_ascii=False)
             demo = json.dumps(s.get('firstTurnDemo', {}), ensure_ascii=False)
+            custom_html = s.get('customHtml') or s.get('custom_html') or ''
 
             conn = get_db()
             c = conn.cursor()
@@ -507,8 +508,8 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             INSERT INTO stories (
                 id, title, badge, cover_icon, cover_title, cover_subtitle,
                 logo, theme_color, btn_gradient, handbook_json, roles_json,
-                scenes_json, styles_json, first_turn_demo_json, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                scenes_json, styles_json, first_turn_demo_json, custom_html, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
             ON CONFLICT(id) DO UPDATE SET
                 title = excluded.title,
                 badge = excluded.badge,
@@ -520,8 +521,35 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                 scenes_json = excluded.scenes_json,
                 styles_json = excluded.styles_json,
                 first_turn_demo_json = excluded.first_turn_demo_json,
+                custom_html = excluded.custom_html,
                 updated_at = CURRENT_TIMESTAMP
-            """, (deck_id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook, roles, scenes, styles, demo))
+            """, (deck_id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook, roles, scenes, styles, demo, custom_html))
+
+            # 同步写入/更新 plaza_cards 广场卡片，让新创作的剧本即刻在首页展示
+            desc = s.get('desc') or (s.get('handbook') or {}).get('desc') or title
+            tags = s.get('tags') or []
+            if isinstance(tags, str):
+                tags = [t.strip() for t in tags.split(',') if t.strip()]
+            c.execute("""
+            INSERT OR REPLACE INTO plaza_cards (
+                id, deck_id, title, badge, badge_color, author,
+                desc, rating, tags_json, heat, is_featured, order_index
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                f"p_{deck_id}",
+                deck_id,
+                title,
+                badge,
+                theme_color,
+                s.get('author', '原创作者'),
+                desc,
+                '9.9',
+                json.dumps(tags, ensure_ascii=False),
+                'NEW · 刚刚创作',
+                1,
+                1
+            ))
+
             conn.commit()
             conn.close()
 
