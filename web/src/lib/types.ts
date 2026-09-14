@@ -84,6 +84,7 @@ export interface PlazaCard {
   tags?: string[];
   category?: string;
   badge_type?: string;
+  is_featured?: number;
 }
 
 export interface ConversationSave {

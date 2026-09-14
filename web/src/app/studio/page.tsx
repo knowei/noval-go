@@ -65,6 +65,25 @@ export default function StudioPage() {
     '突如其来的暴雨淹没了回家的末班车。她浑身湿透站在门前，睫毛上挂着水珠，单薄的白衬衫被雨水紧贴在身上：“那个……我今晚能在你这儿借宿一晚吗？”'
   );
 
+  // Existing stories library for loading/editing
+  const [existingStories, setExistingStories] = useState<Array<{ id: string; title: string }>>([]);
+  const [loadedDeckId, setLoadedDeckId] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/stories')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.stories) {
+          const list = Object.values(data.stories).map((s: any) => ({
+            id: s.id,
+            title: s.title
+          }));
+          setExistingStories(list);
+        }
+      })
+      .catch(err => console.error('Failed to load existing stories:', err));
+  }, []);
+
   // Status Gauges (仪表盘数值)
   const [statusGauges, setStatusGauges] = useState<StatusGauge[]>([
     { label: '好感心动指数', value: 88, max: 100, unit: '%' },
@@ -227,15 +246,72 @@ export default function StudioPage() {
     ]);
   };
 
-  // Save to SQLite database API & test
-  const handleSaveAndTest = async () => {
+  // Load existing story template for editing
+  const handleLoadExistingStory = async (deckId: string) => {
+    if (!deckId) {
+      setLoadedDeckId(null);
+      return;
+    }
+    try {
+      const resp = await fetch(`/api/stories?id=${encodeURIComponent(deckId)}`);
+      if (!resp.ok) return;
+      const s = await resp.json();
+      setLoadedDeckId(deckId);
+      setTitle(s.title || '');
+      setBadge(s.badge || '独家力作');
+      setCategory(s.category || '都市');
+      if (s.tags) {
+        setTags(Array.isArray(s.tags) ? s.tags.join(', ') : s.tags);
+      }
+      const summaryText = s.desc || s.coverSubtitle || (s.handbook && s.handbook.desc) || '';
+      setDesc(summaryText);
+      if (Array.isArray(s.roles) && s.roles.length > 0) {
+        setRoles(s.roles.map((r: any) => ({
+          name: r.name || '登场角色',
+          role: r.role || r.identity || '重要人物',
+          desc: r.desc || '',
+          appearance: r.appearance || '',
+          traits: r.traits || ''
+        })));
+      }
+      if (Array.isArray(s.scenes) && s.scenes.length > 0) {
+        setMechanisms(s.scenes.map((sc: any) => ({
+          tag: sc.tag || '场景',
+          title: sc.title || '',
+          desc: sc.desc || ''
+        })));
+      }
+      if (s.themeColor && ['cyber', 'contract', 'notebook', 'classic'].includes(s.themeColor)) {
+        setThemePreset(s.themeColor as ThemePreset);
+      }
+      if (s.customHtml) {
+        setCustomHtml(s.customHtml);
+        setIsHtmlDirty(true);
+      }
+      if (s.firstTurnDemo?.branches && s.firstTurnDemo.branches.length > 0) {
+        const ops = [
+          { tag: '主线 · 第一幕开局', text: s.firstTurnDemo.story || '' },
+          ...s.firstTurnDemo.branches.map((b: any) => ({
+            tag: b.title || '走向分支',
+            text: b.desc || ''
+          }))
+        ];
+        setOpenings(ops);
+      }
+    } catch (e) {
+      console.error('Load story error:', e);
+    }
+  };
+
+  // Save to SQLite database API & test (supports update existing or save as new)
+  const handleSaveAndTest = async (isSaveAsNew: boolean = false) => {
     if (!title.trim()) {
       alert('请填写剧本标题');
       return;
     }
 
     setIsSaving(true);
-    const deckId = 'deck_user_' + Date.now();
+    const deckId = (!isSaveAsNew && loadedDeckId) ? loadedDeckId : ('deck_user_' + Date.now());
 
     const finalHtml = customHtml || generateCustomHtmlCard({
       title,
@@ -306,47 +382,95 @@ export default function StudioPage() {
     <div className="flex-1 p-3 sm:p-8 pt-16 md:pt-6 pb-24 max-w-6xl mx-auto w-full space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#252836] pb-5">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold mb-1 border border-purple-500/30">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold border border-purple-500/30">
             <Feather className="w-3.5 h-3.5" />
             <span>剧本创作工坊 · 自由积木排版设计系统</span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-gray-100 font-mono">
             自定义属于你的专属剧本与互动设定卡
           </h1>
-          <p className="text-xs text-gray-400 mt-1">
-            模块自由拼装 · 玩家表单任意增减 · 4大独立骨架引擎 · 实时沙盒渲染
-          </p>
+          <div className="flex flex-wrap items-center gap-3 text-xs text-gray-400">
+            <span>模块自由拼装 · 玩家表单任意增减 · 4大独立骨架引擎 · 实时沙盒渲染</span>
+            {loadedDeckId && (
+              <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-mono">
+                ✏️ 正在编辑已有剧本: {loadedDeckId}
+              </span>
+            )}
+          </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2.5">
+        {/* Action Buttons & Template Loader */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Existing Deck Selector */}
+          <div className="flex items-center gap-1.5 bg-[#171822] px-2.5 py-1.5 rounded-xl border border-[#2b2d3c]">
+            <BookOpen className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+            <select
+              value={loadedDeckId || ''}
+              onChange={(e) => handleLoadExistingStory(e.target.value)}
+              className="bg-transparent text-xs text-gray-200 outline-none cursor-pointer max-w-[160px] truncate"
+              title="选择全库已有剧本载入编辑器进行二次修改或作为模板另存为"
+            >
+              <option value="" className="bg-[#1a1b24] text-gray-300">-- 载入已有剧本模板 --</option>
+              {existingStories.map((st) => (
+                <option key={st.id} value={st.id} className="bg-[#1a1b24] text-gray-200">
+                  {st.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <button
             onClick={handleRegenerateHtml}
-            className="px-3.5 py-2 rounded-xl bg-[#202230] hover:bg-[#2b2e40] border border-[#34384e] text-purple-300 hover:text-purple-200 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-sm"
+            className="px-3 py-2 rounded-xl bg-[#202230] hover:bg-[#2b2e40] border border-[#34384e] text-purple-300 hover:text-purple-200 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-sm"
             title="根据当前配置重新编译排版卡"
           >
             <Wand2 className="w-3.5 h-3.5 text-purple-400" />
-            <span>重新编译排版</span>
+            <span>重新编译</span>
           </button>
 
-          <button
-            onClick={handleSaveAndTest}
-            disabled={isSaving}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-500 hover:to-rose-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-purple-600/25 transition cursor-pointer disabled:opacity-50"
-          >
-            {savedSuccess ? (
-              <>
-                <Check className="w-4 h-4" />
-                <span>已保存入库，跳转中...</span>
-              </>
-            ) : (
-              <>
-                <Play className="w-4 h-4" />
-                <span>保存入库并立即推演</span>
-              </>
-            )}
-          </button>
+          {/* Dual Save Options when editing loaded deck */}
+          {loadedDeckId ? (
+            <>
+              <button
+                onClick={() => handleSaveAndTest(false)}
+                disabled={isSaving}
+                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-amber-600/25 transition cursor-pointer disabled:opacity-50"
+                title="直接更新保存当前剧本资产"
+              >
+                {savedSuccess ? <Check className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                <span>覆盖更新原剧本</span>
+              </button>
+
+              <button
+                onClick={() => handleSaveAndTest(true)}
+                disabled={isSaving}
+                className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-purple-600/25 transition cursor-pointer disabled:opacity-50"
+                title="以此为模板另存为新剧本（生成全新ID）"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>另存为新剧本</span>
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => handleSaveAndTest(false)}
+              disabled={isSaving}
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-500 hover:to-rose-500 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-purple-600/25 transition cursor-pointer disabled:opacity-50"
+            >
+              {savedSuccess ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  <span>已保存入库，跳转中...</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-4 h-4" />
+                  <span>保存入库并立即推演</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
 

@@ -3,13 +3,27 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, RotateCcw, History, Sparkles } from 'lucide-react';
+import {
+  ArrowLeft,
+  BookOpen,
+  RotateCcw,
+  History,
+  Sparkles,
+  Share2,
+  Download,
+  Copy,
+  Check,
+  X,
+  Volume2,
+  VolumeX
+} from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
 import { fetchStory, fetchConversations, fetchConversation } from '@/lib/api';
 import { parseModelOutput, generateContextualBranches } from '@/lib/modelParser';
 import { buildSystemPrompt } from '@/lib/promptEngine';
 import { Turn, Branch } from '@/lib/types';
+import { soundEngine } from '@/lib/soundEngine';
 import { ScenarioSidebar } from '@/components/chat/ScenarioSidebar';
 import { ChatInput } from '@/components/chat/ChatInput';
 import { CoserCard } from '@/components/chat/CoserCard';
@@ -47,11 +61,76 @@ export default function ChatPage() {
   const [inputText, setInputText] = useState('');
   const [isMobileScenarioOpen, setIsMobileScenarioOpen] = useState(false);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
+  const [isRainActive, setIsRainActive] = useState(false);
+
+  // Stop ambient sound on unmount
+  useEffect(() => {
+    return () => {
+      soundEngine.stopRain();
+    };
+  }, []);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const latestUserTurnRef = useRef<HTMLDivElement>(null);
   const streamBottomRef = useRef<HTMLDivElement>(null);
   const hasInitialScrolledRef = useRef(false);
+
+  const generateStoryExportText = () => {
+    const title = currentDeck?.title || '沉浸式推演剧本';
+    const lines = [
+      `# 《${title}》· 剧情推演全景录`,
+      `> 导出时间：${new Date().toLocaleString('zh-CN')} | 共 ${conversationHistory.length} 幕互动\n`,
+      '---',
+      ''
+    ];
+
+    conversationHistory.forEach((t, i) => {
+      if (t.isUser) {
+        lines.push(`### 🧑 第 ${i + 1} 幕 · 玩家抉择\n`);
+        lines.push(`${t.text || ''}\n`);
+      } else {
+        lines.push(`### 📖 第 ${i + 1} 幕 · 剧场演进\n`);
+        lines.push(`${t.story || ''}\n`);
+        if (t.npcThought) {
+          lines.push(`> 💭 角色内心动摇：${t.npcThought}\n`);
+        }
+        if (t.branches && t.branches.length > 0) {
+          lines.push('**可选走向分支：**');
+          t.branches.forEach((b, bi) => {
+            lines.push(`- 分支 ${bi + 1} [${b.title}]: ${b.desc || ''}`);
+          });
+          lines.push('');
+        }
+      }
+      lines.push('---\n');
+    });
+
+    return lines.join('\n');
+  };
+
+  const handleCopyStory = () => {
+    const text = generateStoryExportText();
+    navigator.clipboard.writeText(text);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  const handleDownloadStory = (format: 'txt' | 'md') => {
+    const text = generateStoryExportText();
+    const blob = new Blob([text], {
+      type: format === 'md' ? 'text/markdown;charset=utf-8' : 'text/plain;charset=utf-8'
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${(currentDeck?.title || '剧情推演').replace(/[/\\?%*:|"<>]/g, '_')}_推演全景记录.${format}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   // Reset initial scroll flag when entering or switching conversations
   useEffect(() => {
@@ -335,6 +414,7 @@ export default function ChatPage() {
                       // 节流更新 (60ms)，避免移动端每秒触发上百次重绘导致 JS 堆内存暴涨崩溃
                       if (now - lastUpdateTime >= 60 || done) {
                         lastUpdateTime = now;
+                        soundEngine.playTypewriterClick();
                         updateTurn(aiTurnIndex, {
                           isUser: false,
                           model: activeModel,
@@ -397,6 +477,7 @@ export default function ChatPage() {
         currentLen = Math.min(currentLen + chunkSize, fullStory.length);
         const currentSlice = fullStory.slice(0, currentLen);
         const isComplete = currentLen >= fullStory.length;
+        soundEngine.playTypewriterClick();
 
         updateTurn(aiTurnIndex, {
           isUser: false,
@@ -620,6 +701,33 @@ export default function ChatPage() {
 
           {/* Action Controls */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Ambient Rain White Noise Toggle */}
+            <button
+              onClick={() => {
+                const active = soundEngine.toggleRain();
+                setIsRainActive(active);
+              }}
+              className={`px-2 sm:px-2.5 py-1 rounded-xl border text-xs flex items-center gap-1 transition cursor-pointer shrink-0 ${
+                isRainActive
+                  ? 'bg-sky-500/20 text-sky-300 border-sky-500/50 shadow-sm animate-pulse'
+                  : 'bg-[#1b1d28] hover:bg-[#252838] border-[#2e3142] text-gray-400 hover:text-gray-200'
+              }`}
+              title={isRainActive ? '点击关闭沉浸雨夜白噪音' : '点击开启沉浸雨夜白噪音'}
+            >
+              <span>{isRainActive ? '🌧️' : '🎧'}</span>
+              <span className="hidden sm:inline text-[11px]">{isRainActive ? '雨声开' : '氛围音效'}</span>
+            </button>
+
+            {/* Export Story Full Record */}
+            <button
+              onClick={() => setIsExportModalOpen(true)}
+              className="px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-amber-500/50 text-gray-300 hover:text-amber-300 text-xs flex items-center gap-1 transition cursor-pointer shrink-0"
+              title="导出或复制整场推演故事长文记录"
+            >
+              <Share2 className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline text-[11px]">导出长文</span>
+            </button>
+
             <button
               onClick={() => setIsSettingsOpen(true)}
               className="px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-emerald-500/50 text-gray-300 hover:text-emerald-300 text-xs flex items-center gap-1 transition cursor-pointer"
@@ -786,6 +894,60 @@ export default function ChatPage() {
           onScrollToBottom={handleScrollToBottom}
         />
       </div>
+
+      {/* Export Story Full Record Modal */}
+      {isExportModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-xs">
+          <div className="w-full max-w-2xl bg-[#161720] border border-[#2c2f3e] rounded-3xl p-5 sm:p-6 shadow-2xl text-gray-200 flex flex-col max-h-[85vh] space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-[#252836] pb-3">
+              <div className="flex items-center gap-2">
+                <Share2 className="w-5 h-5 text-amber-400" />
+                <h2 className="font-bold text-sm sm:text-base text-gray-100 truncate">
+                  导出《{currentDeck?.title || '剧情推演'}》全景长文记录
+                </h2>
+              </div>
+              <button
+                onClick={() => setIsExportModalOpen(false)}
+                className="p-1 rounded-lg hover:bg-[#232634] text-gray-400 hover:text-white transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs text-gray-400">
+              <span>共包含 {conversationHistory.length} 幕互动对话与剧场演进</span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleCopyStory}
+                  className="px-3 py-1.5 rounded-xl bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/40 text-purple-200 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer shadow-sm"
+                >
+                  {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{isCopied ? '已复制全景文本！' : '一键复制 Markdown'}</span>
+                </button>
+                <button
+                  onClick={() => handleDownloadStory('txt')}
+                  className="px-3 py-1.5 rounded-xl bg-[#202230] hover:bg-[#2b2e40] border border-gray-700 text-gray-200 text-xs flex items-center gap-1.5 transition cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>下载 .txt</span>
+                </button>
+                <button
+                  onClick={() => handleDownloadStory('md')}
+                  className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5 text-amber-400" />
+                  <span>下载 .md</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Preview area */}
+            <div className="flex-1 overflow-y-auto bg-[#0f1015] border border-[#252834] rounded-2xl p-4 font-mono text-xs text-gray-300 whitespace-pre-wrap leading-relaxed select-text min-h-[220px]">
+              {generateStoryExportText()}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
