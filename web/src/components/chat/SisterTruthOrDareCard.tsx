@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { CardTurnActionBar } from './CardTurnActionBar';
+import { RichStoryRenderer } from './RichStoryRenderer';
 import { Turn } from '@/lib/types';
 import { generateContextualBranches } from '@/lib/modelParser';
 
@@ -196,7 +197,7 @@ export function SisterTruthOrDareCard({
         </div>
       ) : (
         <div className="novel-text space-y-1">
-          {formatDialogue(storyText)}
+          <RichStoryRenderer rawStory={storyText} />
         </div>
       )}
 

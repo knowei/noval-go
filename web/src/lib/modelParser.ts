@@ -194,6 +194,22 @@ export function parseModelOutput(
     return turn;
   }
 
+  // 0. 抽取思维链 (CoT)
+  const cotMatch = rawText.match(/<details>\s*<summary>\s*思维链\s*<\/summary>([\s\S]*?)<\/details>/i);
+  if (cotMatch && cotMatch[1].trim()) {
+    turn.cot = cotMatch[1].replace(/<!--|-->/g, '').trim();
+  }
+
+  // 0.1 抽取顶部场景时间栏 (<tl>)
+  const tlMatch = rawText.match(/<tl>([\s\S]*?)<\/tl>/i);
+  if (tlMatch && tlMatch[1].trim()) {
+    turn.tl = tlMatch[1].trim();
+    const cleanTl = tlMatch[1].replace(/<br\s*\/?>/gi, ' | ').replace(/[\r\n]+/g, ' ').trim();
+    if (cleanTl) {
+      turn.location = cleanTl;
+    }
+  }
+
   // 1. 抽取 NPC 内心想法
   const thoughtMatch = rawText.match(
     /(?:(?:💡|💭)?\s*【?(?:NPC内心真实想法|知念内心真实独白|内心真实独白|NPC内心想法|内心真实想法|内心想法|内心独白|心理想法|女性内心)】?[:：\s]*)([\s\S]*?)(?=(?:📡|🚨|📊|👗|👚|💋|👑|📍|📖|📝|🎲|\[|#)?【?(?:小改改|当前服装|当前装扮|身上的修改效果|修改效果|后宫名册|本幕记忆|行动推荐|行动分支选项|推荐互动抉择|场景与时间状态|正文描写|记忆区|实时物理状态栏|兄妹羁绊)|$)/i
@@ -275,7 +291,10 @@ export function parseModelOutput(
 
   const parsedBranches: Branch[] = [];
 
-  const parseLineToBranch = (line: string): Branch | null => {
+  const parseLineToBranch = (rawLine: string): Branch | null => {
+    // 移除包裹的 <d> 和 </d> 标签
+    const line = rawLine.replace(/<\/?d>/gi, '').trim();
+    if (!line) return null;
     // 匹配格式 1: A. [标题] - 描述 或 A. 标题：描述 或 A. 标题 - 描述 或 【A】 标题：描述
     const m1 = line.match(/^(?:(?:[【\[]?([A-D\d])[】\]]?)|(?:([A-D\d])))(?:[\.、:：\s\-\*]+)(?:\[(.*?)\]|【(.*?)】|\*\*(.*?)\*\*|(.*?))(?:\s*[-—–~:：\s]\s*(.*))?$/);
     if (m1) {
@@ -325,16 +344,27 @@ export function parseModelOutput(
     }
   }
 
-  // 也支持 <suggested_questions> 标签
+  // 优先支持 <suggested_questions> / <opt> 标签 (风月标准规范)
   if (parsedBranches.length === 0) {
-    const sqMatch = rawText.match(/<suggested_questions>([\s\S]*?)<\/suggested_questions>/i);
+    const sqMatch = rawText.match(/(?:<opt>)?\s*<suggested_questions>([\s\S]*?)<\/suggested_questions>\s*(?:<\/opt>)?/i);
     if (sqMatch) {
-      const sqLines = sqMatch[1].split('\n').map((l) => l.trim()).filter(Boolean);
-      for (const line of sqLines) {
-        const b = parseLineToBranch(line);
-        if (b) {
-          if (b.tag === '◆') b.tag = String.fromCharCode(65 + parsedBranches.length);
-          parsedBranches.push(b);
+      const dMatches = sqMatch[1].match(/<d>([\s\S]*?)<\/d>/gi);
+      if (dMatches && dMatches.length > 0) {
+        for (const dLine of dMatches) {
+          const b = parseLineToBranch(dLine);
+          if (b) {
+            if (b.tag === '◆') b.tag = String.fromCharCode(65 + parsedBranches.length);
+            parsedBranches.push(b);
+          }
+        }
+      } else {
+        const sqLines = sqMatch[1].split('\n').map((l) => l.trim()).filter(Boolean);
+        for (const line of sqLines) {
+          const b = parseLineToBranch(line);
+          if (b) {
+            if (b.tag === '◆') b.tag = String.fromCharCode(65 + parsedBranches.length);
+            parsedBranches.push(b);
+          }
         }
       }
     }
@@ -347,21 +377,26 @@ export function parseModelOutput(
     turn.branches = generateContextualBranches(deckKey, rawText, turnIndex, userAction, previousBranches);
   }
 
-  // 9. 纯净化小说正文抽取（剔除末尾的所有元数据结构标签与分支块）
+  // 9. 纯净化小说正文抽取（支持风月 <article> 标准容器与结构标签剔除）
   let cleanStory = rawText;
-  const storyMatch = rawText.match(
-    /(?:📖|\[)?【?(?:正文描写|正文|剧情正文)】?\]?[:：\s]*([\s\S]*?)(?=(?:📝|📊|🎲|💡|📡|👗|👚|💋|\[|#)?【?(?:记忆区|关键记忆|记忆|实时物理状态栏|行动分支选项|推荐互动抉择|NPC内心|知念内心|小改改|当前服装)|$)/i
-  );
-  if (storyMatch && storyMatch[1].trim()) {
-    cleanStory = storyMatch[1].trim();
+  const articleMatch = rawText.match(/<article>([\s\S]*?)<\/article>/i);
+  if (articleMatch && articleMatch[1].trim()) {
+    cleanStory = articleMatch[1].trim();
   } else {
-    const splitIdx = rawText.search(
-      /(?:📝|📊|🎲|💡|📡|👗|👚|💋|\[|#)?【?(?:记忆区|关键记忆|实时物理状态栏|行动分支选项|推荐互动抉择|推荐互动|下一步行动|NPC内心真实想法|知念内心真实独白|小改改实时监控|当前服装状态|兄妹羁绊)/i
+    const storyMatch = rawText.match(
+      /(?:📖|\[)?【?(?:正文描写|正文|剧情正文)】?\]?[:：\s]*([\s\S]*?)(?=(?:📝|📊|🎲|💡|📡|👗|👚|💋|\[|#|<details|<opt)?【?(?:记忆区|关键记忆|记忆|实时物理状态栏|行动分支选项|推荐互动抉择|NPC内心|知念内心|小改改|当前服装)|$)/i
     );
-    if (splitIdx !== -1) {
-      cleanStory = rawText.substring(0, splitIdx);
+    if (storyMatch && storyMatch[1].trim()) {
+      cleanStory = storyMatch[1].trim();
+    } else {
+      const splitIdx = rawText.search(
+        /(?:📝|📊|🎲|💡|📡|👗|👚|💋|\[|#)?【?(?:记忆区|关键记忆|实时物理状态栏|行动分支选项|推荐互动抉择|推荐互动|下一步行动|NPC内心真实想法|知念内心真实独白|小改改实时监控|当前服装状态|兄妹羁绊)|<details\s*>\s*<summary>\s*(?:玩家状态|角色档案|当前互动|星记忆回廊|<opt)/i
+      );
+      if (splitIdx !== -1) {
+        cleanStory = rawText.substring(0, splitIdx);
+      }
+      cleanStory = cleanStory.replace(/(?:📍|\[)?【?(?:场景与时间状态|场景状态)】?\]?[:：\s]*.*?\n/g, '').trim();
     }
-    cleanStory = cleanStory.replace(/(?:📍|\[)?【?(?:场景与时间状态|场景状态)】?\]?[:：\s]*.*?\n/g, '').trim();
   }
 
   turn.story = cleanStory || rawText.trim();

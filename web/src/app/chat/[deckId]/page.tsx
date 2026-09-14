@@ -8,6 +8,7 @@ import { ArrowLeft, BookOpen, RotateCcw, History, Sparkles } from 'lucide-react'
 import { useAppStore } from '@/lib/store';
 import { fetchStory, fetchConversations, fetchConversation } from '@/lib/api';
 import { parseModelOutput, generateContextualBranches } from '@/lib/modelParser';
+import { buildSystemPrompt } from '@/lib/promptEngine';
 import { Turn, Branch } from '@/lib/types';
 import { ScenarioSidebar } from '@/components/chat/ScenarioSidebar';
 import { ChatInput } from '@/components/chat/ChatInput';
@@ -185,38 +186,13 @@ export default function ChatPage() {
 
     if (isRealApiKey) {
       try {
-        let systemPromptText = `你是一名顶级私人叙事编纂官。当前正在推演文学剧本《${currentDeck?.title || '未命名'}》。
-你必须根据用户的行动忠实推进下一幕高质量剧情，细致刻画肢体细节、心理波动、微表情与情绪变化。
-正文描写请保持连贯饱满。
-
-【🎲 推荐互动抉择铁律：每轮必须根据最新剧情设计全新分支，严禁与上一轮重复】
-在小说正文描写完成后，你必须严格输出 3-4 项具体的下一步互动分支：
-- 必须紧密贴合本轮刚刚发生的最新剧情转折、现场人物反应、情绪变化或道具线索；
-- 严禁重复上一轮或之前出现过的选项标题与描述；
-- 格式规范：
-🎲【推荐互动抉择】
-A. [具体行动标题] - 具体的行动举措或带有台词的交互说明
-B. [具体行动标题] - 具体的行动举措或带有台词的交互说明
-C. [具体行动标题] - 具体的行动举措或带有台词的交互说明
-D. [具体行动标题] - 具体的行动举措或带有台词的交互说明
-`;
-
-        if (isCoser) {
-          systemPromptText += `\n【🎀 《我的绝美coser萝莉妹妹》专有沉浸规范】
-女主角林知念（16岁·高中生，小有名气的二次元coser妹）。
-核心机制在于【外在万众瞩目 vs 唯独想被哥哥注视与占有的依赖】。
-在正文结尾请同时输出：
-💡【知念内心真实独白】：（以知念第一人称，写出她内心的羞耻心跳、对哥哥注视的渴望）
-👗【当前装扮与体态】：（描写知念此刻身上的cos装扮/家居服细节与微表情）
-`;
-        } else if (isModifier) {
-          systemPromptText += `\n【📱 《现实修改器 v6.9》专有输出规范】
-在正文结尾请同时输出：
-💡【NPC内心真实想法】：（以女性第一人称写出她面对因果律常识覆写后的心理独白）
-📡【小改改实时监控与战术报告】：（以小改改活泼俏皮的语气分析当前目标沦陷度与战术）
-👗【当前服装状态】：（当前NPC此刻的最新真实服装与修改效果）
-`;
-        }
+        const systemPromptText = buildSystemPrompt({
+          deckId,
+          deckTitle: currentDeck?.title,
+          deckDesc: currentDeck?.desc,
+          previousBranches: prevBranches,
+          turnIndex: aiTurnIndex
+        });
 
         const promptMessages = [
           {
@@ -227,7 +203,7 @@ D. [具体行动标题] - 具体的行动举措或带有台词的交互说明
             const isLast = idx === arr.length - 1;
             let content = h.text || h.story || '';
             if (isLast && h.isUser) {
-              content = `【用户最新推进指令】：${content}。\n（请在描写完高质量小说正文后，根据当前最新情节给出 3-4 个全新不重复的【推荐互动抉择】）`;
+              content = `【用户最新推进指令】：${content}。\n（请严格遵循防抢话原则，严禁替玩家发号施令或做心理决策；输出高质量感官与情绪拉扯描写，结尾输出<opt><suggested_questions>全新不重复互动分支）`;
             }
             return {
               role: h.isUser ? 'user' : 'assistant',
@@ -322,6 +298,8 @@ D. [具体行动标题] - 具体的行动举措或带有台词的交互说明
               modifyEffect: parsed.modifyEffect,
               memory: parsed.memory,
               status: parsed.status,
+              cot: parsed.cot,
+              tl: parsed.tl,
             });
           }
         }
