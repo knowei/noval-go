@@ -250,6 +250,7 @@ export default function ChatPage() {
           let done = false;
           let streamedStory = '';
           let isFirstToken = true;
+          let lastUpdateTime = 0;
 
           while (!done) {
             const { value, done: doneReading } = await reader.read();
@@ -275,13 +276,19 @@ export default function ChatPage() {
                         story: streamedStory,
                         branches: initialBranches
                       });
+                      lastUpdateTime = Date.now();
                     } else {
-                      updateTurn(aiTurnIndex, {
-                        isUser: false,
-                        model: activeModel,
-                        location: currentDeck?.title,
-                        story: streamedStory
-                      });
+                      const now = Date.now();
+                      // 节流更新 (60ms)，避免移动端每秒触发上百次重绘导致 JS 堆内存暴涨崩溃
+                      if (now - lastUpdateTime >= 60 || done) {
+                        lastUpdateTime = now;
+                        updateTurn(aiTurnIndex, {
+                          isUser: false,
+                          model: activeModel,
+                          location: currentDeck?.title,
+                          story: streamedStory
+                        });
+                      }
                     }
                   }
                 } catch (e) {}
@@ -330,9 +337,9 @@ export default function ChatPage() {
         branches: []
       });
 
-      // Typewriter stream smoothly at 30ms interval
-      let currentLen = 16;
-      const chunkSize = 16;
+      // Typewriter stream smoothly at 45ms interval with larger chunks (mobile friendly)
+      let currentLen = 24;
+      const chunkSize = 24;
       while (currentLen < fullStory.length) {
         currentLen = Math.min(currentLen + chunkSize, fullStory.length);
         const currentSlice = fullStory.slice(0, currentLen);
@@ -347,7 +354,7 @@ export default function ChatPage() {
         });
 
         if (!isComplete) {
-          await new Promise((r) => setTimeout(r, 30));
+          await new Promise((r) => setTimeout(r, 45));
         }
       }
     }
@@ -479,11 +486,20 @@ export default function ChatPage() {
         onCancel={() => setIsResetConfirmOpen(false)}
       />
 
+      {/* 硬件加速独立背景层：脱离滚动流，避免手机端显存溢出与重绘崩溃 */}
+      {bgClass && (
+        <div
+          aria-hidden="true"
+          className={`fixed inset-0 pointer-events-none -z-10 ${bgClass}`}
+          style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+        />
+      )}
+
       {/* Main Chat Canvas with container ref & double-click listener */}
       <div
         ref={chatContainerRef}
         onDoubleClick={handleContainerDoubleClick}
-        className={`flex-1 flex flex-col min-w-0 h-screen overflow-y-auto ${bgClass}`}
+        className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto bg-transparent"
         title="双击空白处可快速滑动至最后一条记录"
       >
         {currentDeck?.customCss && (

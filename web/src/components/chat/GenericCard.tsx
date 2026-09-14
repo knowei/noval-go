@@ -17,7 +17,7 @@ interface GenericCardProps {
   onEdit?: (index: number, newStory: string) => void;
 }
 
-export function GenericCard({
+export const GenericCard = React.memo(function GenericCard({
   turn,
   index,
   onSendAction,
@@ -206,4 +206,4 @@ export function GenericCard({
       />
     </div>
   );
-}
+});

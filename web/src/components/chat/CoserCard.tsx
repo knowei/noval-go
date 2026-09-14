@@ -17,7 +17,7 @@ interface CoserCardProps {
   onEdit?: (index: number, newStory: string) => void;
 }
 
-export function CoserCard({
+export const CoserCard = React.memo(function CoserCard({
   turn,
   index,
   onSendAction,
@@ -551,4 +551,4 @@ export function CoserCard({
       />
     </div>
   );
-}
+});

@@ -118,7 +118,7 @@ function deriveRealtimeModReport(storyText: string, turnIndex: number, targetNpc
   return '“报告主人！现实修改器因果律已全面接入，当前在场目标的心防正在雪崩般消解，建议立即采取下一步行动！”';
 }
 
-export function RealityModifierCard({
+export const RealityModifierCard = React.memo(function RealityModifierCard({
   turn,
   index,
   onSendAction,
@@ -446,4 +446,4 @@ export function RealityModifierCard({
       />
     </div>
   );
-}
+});
