@@ -118,7 +118,14 @@ export default function ChatPage() {
   const isModifier = deckId === 'deck_reality_modifier';
   const isSister = deckId === 'deck_sister_truth_or_dare' || deckId === '6ffc2ab9-2907-4304-b0bb-53c0a950b445';
   const isFatherDaughter = deckId === 'deck_father_daughter_jealousy' || deckId === '1f97a5c2-3e5b-48e2-aa3a-893a9332765c';
-  const bgClass = isCoser ? 'coser-sister-bg' : (isModifier ? 'reality-modifier-bg' : '');
+  const isYuzuki = deckId === 'deck_yuzuki';
+
+  let bgClass = '';
+  if (isCoser) bgClass = 'coser-sister-bg';
+  else if (isModifier) bgClass = 'reality-modifier-bg';
+  else if (isSister) bgClass = 'sister-truth-bg';
+  else if (isFatherDaughter) bgClass = 'father-daughter-bg';
+  else if (isYuzuki) bgClass = 'yuzuki-bg';
 
   const getFallbackStory = (actionText: string, turnIdx: number, prevBranches?: Branch[]) => {
     const act = actionText.replace(/【.*?】：?/, '').trim();
@@ -479,6 +486,10 @@ export default function ChatPage() {
         className={`flex-1 flex flex-col min-w-0 h-screen overflow-y-auto ${bgClass}`}
         title="双击空白处可快速滑动至最后一条记录"
       >
+        {currentDeck?.customCss && (
+          <style dangerouslySetInnerHTML={{ __html: currentDeck.customCss }} />
+        )}
+
         {/* Theater Sticky Header */}
         <div className="sticky top-0 z-20 border-b border-[#20222e] bg-[#0e0f14]/90 backdrop-blur-md px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">

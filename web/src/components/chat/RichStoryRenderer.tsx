@@ -5,10 +5,32 @@ import React from 'react';
 interface RichStoryRendererProps {
   rawStory: string;
   className?: string;
+  deckId?: string;
 }
 
-export function RichStoryRenderer({ rawStory, className = '' }: RichStoryRendererProps) {
+export function RichStoryRenderer({ rawStory, className = '', deckId = '' }: RichStoryRendererProps) {
   if (!rawStory) return null;
+
+  const isModifier = deckId === 'deck_reality_modifier';
+  const isSister = deckId === 'deck_sister_truth_or_dare' || deckId.includes('445');
+  const isFatherDaughter = deckId === 'deck_father_daughter_jealousy' || deckId.includes('65c');
+
+  // 专属气泡样式
+  const wStyle = isModifier
+    ? "bg-purple-500/15 border-purple-500/35 text-purple-300 shadow-[0_0_12px_rgba(168,85,247,0.2)]"
+    : isSister
+    ? "bg-rose-500/15 border-rose-500/35 text-rose-300 shadow-[0_0_12px_rgba(244,63,94,0.2)]"
+    : isFatherDaughter
+    ? "bg-amber-500/15 border-amber-500/35 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.2)]"
+    : "bg-pink-500/15 border-pink-500/35 text-pink-300 shadow-[0_0_12px_rgba(244,114,182,0.2)]";
+
+  const fxStyle = isModifier
+    ? "bg-cyan-500/15 border-cyan-500/40 text-cyan-300 shadow-[0_0_10px_rgba(6,182,212,0.2)]"
+    : isSister
+    ? "bg-rose-500/15 border-rose-500/40 text-rose-300 shadow-[0_0_10px_rgba(244,63,94,0.2)]"
+    : isFatherDaughter
+    ? "bg-orange-500/15 border-orange-500/40 text-orange-300 shadow-[0_0_10px_rgba(249,115,22,0.2)]"
+    : "bg-amber-500/15 border-amber-500/40 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.2)]";
 
   // 1. 抽取思维链 (CoT)
   let text = rawStory;
@@ -58,10 +80,10 @@ export function RichStoryRenderer({ rawStory, className = '' }: RichStoryRendere
       if (/^<w>([\s\S]*?)<\/w>$/i.test(part)) {
         const inner = part.replace(/<\/?w>/gi, '').trim();
         return (
-          <span key={idx} className="novel-w-dialogue inline-block mx-0.5 px-2 py-0.5 rounded-lg bg-pink-500/15 border border-pink-500/35 text-pink-300 font-medium shadow-[0_0_12px_rgba(244,114,182,0.15)]">
-            <span className="text-pink-400/80 mr-1 text-xs">“</span>
+          <span key={idx} className={`novel-w-dialogue inline-block mx-0.5 px-2 py-0.5 rounded-lg border font-medium ${wStyle}`}>
+            <span className="opacity-80 mr-1 text-xs">“</span>
             {inner.replace(/^[“"「]/, '').replace(/[”"」]$/, '')}
-            <span className="text-pink-400/80 ml-1 text-xs">”</span>
+            <span className="opacity-80 ml-1 text-xs">”</span>
           </span>
         );
       }
@@ -93,8 +115,8 @@ export function RichStoryRenderer({ rawStory, className = '' }: RichStoryRendere
       if (/^<fx>([\s\S]*?)<\/fx>$/i.test(part)) {
         const inner = part.replace(/<\/?fx>/gi, '').trim();
         return (
-          <span key={idx} className="novel-fx-tag inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/40 text-amber-300 text-[12px] font-mono font-bold tracking-wider shadow-[0_0_10px_rgba(245,158,11,0.2)]">
-            <span className="text-amber-400">⚡</span>
+          <span key={idx} className={`novel-fx-tag inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-full border text-[12px] font-mono font-bold tracking-wider ${fxStyle}`}>
+            <span>⚡</span>
             {inner}
           </span>
         );
