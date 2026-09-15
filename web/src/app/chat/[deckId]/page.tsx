@@ -403,6 +403,7 @@ export default function ChatPage() {
             model: apiModel,
             messages: promptMessages,
             temperature: modelSettings.temperature || 0.85,
+            max_tokens: 4096,
             stream: true
           }),
           signal: controller.signal

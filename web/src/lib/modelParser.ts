@@ -879,10 +879,10 @@ export function parseModelOutput(
     return null;
   };
 
-  // 优先级 A: 匹配风月标准规范的 <opt><suggested_questions> 或 <suggested_questions> 或 <options> 标签
-  const sqMatch = rawText.match(/(?:<opt>)?\s*<suggested_questions>([\s\S]*?)<\/suggested_questions>\s*(?:<\/opt>)?/i);
+  // 优先级 A: 匹配风月标准规范的 <opt><suggested_questions> 或 <suggested_questions> 或 <options> 标签（即便末尾被轻微截断亦可鲁棒提取）
+  const sqMatch = rawText.match(/(?:<opt>)?\s*<suggested_questions>([\s\S]*?)(?:<\/suggested_questions>|<\/opt>|$)/i);
   if (sqMatch && sqMatch[1].trim()) {
-    const dMatches = sqMatch[1].match(/<d>([\s\S]*?)<\/d>/gi);
+    const dMatches = sqMatch[1].match(/<d>([\s\S]*?)(?:<\/d>|$)/gi);
     if (dMatches && dMatches.length > 0) {
       for (const dLine of dMatches) {
         const b = parseLineToBranch(dLine);
