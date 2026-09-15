@@ -20,7 +20,7 @@ export function ModelSettingsModal() {
   const [model, setModel] = useState(modelSettings.model || 'deepseek-flash');
   const [baseUrl, setBaseUrl] = useState(modelSettings.baseUrl || 'https://api.deepseek.com/v1');
   const [apiKey, setApiKey] = useState(modelSettings.apiKey || '');
-  const [temperature, setTemperature] = useState(modelSettings.temperature ?? 0.85);
+  const [temperature, setTemperature] = useState(modelSettings.temperature ?? 0.7);
 
   const [isTesting, setIsTesting] = useState(false);
   const [isFetchingModels, setIsFetchingModels] = useState(false);
@@ -35,7 +35,7 @@ export function ModelSettingsModal() {
       setModel(modelSettings.model || 'deepseek-flash');
       setBaseUrl(modelSettings.baseUrl || 'https://api.deepseek.com/v1');
       setApiKey(modelSettings.apiKey || '');
-      setTemperature(modelSettings.temperature ?? 0.85);
+      setTemperature(modelSettings.temperature ?? 0.7);
       setTestStatus(null);
     }
   }, [isSettingsOpen, modelSettings]);
@@ -296,6 +296,9 @@ export function ModelSettingsModal() {
               onChange={(e) => setTemperature(parseFloat(e.target.value))}
               className="w-full accent-amber-500 cursor-pointer"
             />
+            <p className="text-[10px] text-gray-400 mt-1">
+              💡 推荐设置 0.65 ~ 0.75。温度过高易导致生造词或多层定语堆叠，0.70 文笔最自然通顺。
+            </p>
           </div>
         </div>
 

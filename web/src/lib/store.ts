@@ -47,7 +47,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     model: typeof window !== 'undefined' ? localStorage.getItem('rp_api_model') || 'deepseek-flash' : 'deepseek-flash',
     baseUrl: typeof window !== 'undefined' ? localStorage.getItem('rp_api_base_url') || 'https://api.openai.com/v1' : 'https://api.openai.com/v1',
     apiKey: typeof window !== 'undefined' ? localStorage.getItem('rp_api_key') || '' : '',
-    temperature: 0.85,
+    temperature: 0.7,
     topP: 0.95
   },
   isSettingsOpen: false,
