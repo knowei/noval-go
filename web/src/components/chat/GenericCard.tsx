@@ -16,6 +16,7 @@ interface GenericCardProps {
   onRegenerate?: (index: number) => void;
   onContinueWriting?: (index: number) => void;
   onEdit?: (index: number, newStory: string) => void;
+  onSwipeChange?: (index: number, newSwipeIndex: number) => void;
 }
 
 export const GenericCard = React.memo(function GenericCard({
@@ -27,6 +28,7 @@ export const GenericCard = React.memo(function GenericCard({
   onRegenerate,
   onContinueWriting,
   onEdit,
+  onSwipeChange,
 }: GenericCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedStory, setEditedStory] = useState(turn.story || turn.text || '');
@@ -240,6 +242,9 @@ export const GenericCard = React.memo(function GenericCard({
         onEditToggle={() => setIsEditing(!isEditing)}
         onDelete={onDelete}
         isEditing={isEditing}
+        swipes={turn.swipes}
+        swipeIndex={turn.swipeIndex}
+        onSwipeChange={onSwipeChange}
       />
     </div>
   );

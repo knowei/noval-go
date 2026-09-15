@@ -7,10 +7,21 @@ interface BuildPromptOptions {
   previousBranches?: Branch[];
   allHistoryBranches?: Branch[];
   turnIndex: number;
+  activeLoreText?: string;
+  milestoneMemoryText?: string;
 }
 
 export function buildSystemPrompt(options: BuildPromptOptions): string {
-  const { deckId, deckTitle = '互动小说', deckDesc = '', previousBranches = [], allHistoryBranches = [], turnIndex } = options;
+  const {
+    deckId,
+    deckTitle = '互动小说',
+    deckDesc = '',
+    previousBranches = [],
+    allHistoryBranches = [],
+    turnIndex,
+    activeLoreText = '',
+    milestoneMemoryText = ''
+  } = options;
 
   const isCoser = deckId === 'deck_coser_sister';
   const isModifier = deckId === 'deck_reality_modifier';
@@ -168,7 +179,17 @@ ${deckDesc ? `世界观简述：${deckDesc}\n` : ''}`;
 `;
   }
 
-  // 3. 结构化标签与思维链规范 (100% 兼容风月规范)
+  // 3. 渐进式里程碑长效记忆 (Progressive Milestone Memory)
+  if (milestoneMemoryText) {
+    prompt += `\n${milestoneMemoryText}\n`;
+  }
+
+  // 4. 世界书背景词条动态触发 (Lorebook Active Knowledge)
+  if (activeLoreText) {
+    prompt += `\n${activeLoreText}\n`;
+  }
+
+  // 5. 结构化标签与思维链规范 (100% 兼容风月规范)
   prompt += `
 # 严格输出格式要求
 你的每一次回复必须严格按照以下标签结构进行格式化输出，禁止省略：

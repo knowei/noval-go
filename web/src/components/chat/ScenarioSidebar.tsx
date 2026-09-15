@@ -10,9 +10,10 @@ import { ArrowLeft, Plus, Trash2, ArrowUpDown, Clock, Heart, Award, Sparkles, X 
 interface ScenarioSidebarProps {
   onClose?: () => void;
   onOpenHandbook?: () => void;
+  onOpenLorebook?: () => void;
 }
 
-export function ScenarioSidebar({ onClose, onOpenHandbook }: ScenarioSidebarProps) {
+export function ScenarioSidebar({ onClose, onOpenHandbook, onOpenLorebook }: ScenarioSidebarProps) {
   const {
     currentDeckKey,
     currentDeck,
@@ -116,9 +117,16 @@ export function ScenarioSidebar({ onClose, onOpenHandbook }: ScenarioSidebarProp
           >
             作品详情
           </button>
-          <button className="py-1.5 rounded-lg bg-[#191b24] hover:bg-[#222432] border border-[#2b2d3d] text-gray-300 hover:text-pink-300 transition cursor-pointer text-center flex items-center justify-center gap-1">
-            <Heart className="w-3 h-3 text-pink-400" />
-            <span>打赏</span>
+          <button
+            onClick={() => {
+              if (onOpenLorebook) onOpenLorebook();
+              if (onClose) onClose();
+            }}
+            className="py-1.5 rounded-lg bg-[#191b24] hover:bg-indigo-900/40 border border-[#2b2d3d] hover:border-indigo-500/40 text-indigo-300 hover:text-white transition cursor-pointer text-center font-medium flex items-center justify-center gap-1"
+            title="查看与管理世界书词条与背景设定"
+          >
+            <Sparkles className="w-3 h-3 text-indigo-400" />
+            <span>世界书</span>
           </button>
           <button className="py-1.5 rounded-lg bg-[#191b24] hover:bg-[#222432] border border-[#2b2d3d] text-gray-300 hover:text-amber-300 transition cursor-pointer text-center flex items-center justify-center gap-1">
             <Award className="w-3 h-3 text-amber-400" />

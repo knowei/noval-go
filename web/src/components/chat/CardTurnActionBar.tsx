@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Copy, Check, Play, RotateCcw, Edit2, Trash2 } from 'lucide-react';
+import { Copy, Check, Play, RotateCcw, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
+import { Turn } from '@/lib/types';
 
 interface CardTurnActionBarProps {
   index: number;
@@ -13,6 +14,9 @@ interface CardTurnActionBarProps {
   onEditToggle?: (index: number) => void;
   onDelete?: (index: number) => void;
   isEditing?: boolean;
+  swipes?: Turn[];
+  swipeIndex?: number;
+  onSwipeChange?: (index: number, newSwipeIndex: number) => void;
 }
 
 export function CardTurnActionBar({
@@ -24,6 +28,9 @@ export function CardTurnActionBar({
   onEditToggle,
   onDelete,
   isEditing = false,
+  swipes,
+  swipeIndex = 0,
+  onSwipeChange,
 }: CardTurnActionBarProps) {
   const { modelSettings } = useAppStore();
   const [isCopied, setIsCopied] = useState(false);
@@ -43,13 +50,40 @@ export function CardTurnActionBar({
 
   return (
     <div className="pt-2.5 border-t border-[#232535] flex items-center justify-between gap-2 text-xs select-none flex-wrap">
-      {/* Left: 第 N 幕 + 模型标识 Pill */}
-      <div className="flex items-center gap-2">
+      {/* Left: 第 N 幕 + 模型标识 Pill + Swipe Switcher */}
+      <div className="flex items-center gap-2 flex-wrap">
         <span className="text-gray-400 font-mono text-[11px]">第 {index + 1} 幕</span>
         <span className="px-2 py-0.5 rounded-full bg-[#181a24] border border-gray-700/60 text-[10px] text-sky-300 font-mono flex items-center gap-1.5 shadow-xs">
           <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
           <span className="max-w-[110px] truncate">{displayModel}</span>
         </span>
+
+        {/* 🔀 多版本滑动切换 (Swipe Regeneration) */}
+        {swipes && swipes.length > 1 && (
+          <div className="flex items-center gap-1 bg-indigo-950/40 border border-indigo-500/40 px-1.5 py-0.5 rounded-lg text-[10px] font-mono shadow-xs">
+            <button
+              type="button"
+              disabled={swipeIndex <= 0}
+              onClick={() => onSwipeChange?.(index, swipeIndex - 1)}
+              className="p-0.5 text-indigo-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+              title="切换到上一个生成版本"
+            >
+              <ChevronLeft className="w-3 h-3" />
+            </button>
+            <span className="text-indigo-200 font-semibold px-0.5">
+              {swipeIndex + 1} / {swipes.length}
+            </span>
+            <button
+              type="button"
+              disabled={swipeIndex >= swipes.length - 1}
+              onClick={() => onSwipeChange?.(index, swipeIndex + 1)}
+              className="p-0.5 text-indigo-300 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition"
+              title="切换到下一个生成版本"
+            >
+              <ChevronRight className="w-3 h-3" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Right: 1:1 对齐截图操作组 [复制] [接着写/补全剧情] [重新回复] [编辑] [删除] */}
