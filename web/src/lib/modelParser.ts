@@ -515,6 +515,118 @@ const APOCALYPSE_SURVIVAL_SEMANTIC_GROUPS: SemanticActionGroup[] = [
   }
 ];
 
+// ❤ 《帮兄弟喂养她的新婚魅魔妻子》主题分支库
+const SUCCUBUS_WIFE_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  {
+    keywords: ['精气', '喂养', '饥饿', '虚弱', '发情', '体温', '尾巴', '恶魔角', '恶魔'],
+    branches: [
+      { title: '指尖轻抚她发烫的恶魔双角与心形尾巴尖', desc: '试探魅魔极度敏感的生理弱点，看着她娇躯痉挛发软的动人反应【弱点掌控: 刺激魅魔核心敏感区，加速精气渴求】' },
+      { title: '解开衣扣命令温雅靠近吸食今日的生命精气', desc: '以恩赐者的姿态向饥渴人妻展示纯阳精气，逼其主动俯身索取【喂养仪式: 建立支配与依赖，让人妻甘愿俯首称臣】' },
+      { title: '冷酷指出她背叛明宇的魅魔受孕发情体质', desc: '直白揭露她肉体对精子的诚实渴求，击溃其人妻道德防线【道德攻防: 撕碎贤妻面具，让淫乱本能彻底占领身心】' }
+    ]
+  },
+  {
+    keywords: ['明宇', '兄弟', '电话', '照片', '婚纱照', '结婚', '客厅', '沙发'],
+    branches: [
+      { title: '当着明宇婚纱照的面将温雅揽入怀中深吻', desc: '在象征新婚誓言的相框前肆意掠夺兄弟娇妻，将刺激感拉到极致【NTL宣誓: 当面践踏婚姻象征，确立不可逆的占有关系】' },
+      { title: '拨通明宇出差电话并命令温雅在身下如实汇报', desc: '在电话接通的瞬间挺腰撞击，听着少妇颤抖强忍呻吟的极端刺激【电话偷欢: 挑战伦理极限，在窒息快感中彻底沦陷】' },
+      { title: '拉着温雅在明宇精心挑选的真皮沙发上翻云覆雨', desc: '用浓烈的精液气味覆盖兄弟的新房印记，将其彻底改造成专属母狗【领地侵染: 抹杀兄弟痕迹，完成对人妻与新居的双重占有】' }
+    ]
+  },
+  {
+    keywords: ['受孕', '内射', '子宫', '契约', '顺从', '堕落', '母狗', '高潮'],
+    branches: [
+      { title: '按住她小腹低语要让魅魔怀上兄弟以外的种', desc: '将浓厚精液注入魅魔渴望受孕的子宫深处，唤醒深层繁衍母性【魅魔播种: 满足异种族受孕渴望，烙下永久性专属羁绊】' },
+      { title: '迫使温雅戴上项圈亲口承认自己是专属的榨精母畜', desc: '彻底摧毁名牌大学毕业人妻的高贵自尊，将其彻底驯化为代喂养玩偶【人格摧毁: 剥夺人妻身份，完成对魅魔本性的终极调教】' },
+      { title: '在温雅耳边柔声低语明宇永远无法满足她的秘密', desc: '用无与伦比的雄性力量摧毁她对丈夫的幻想，让其身心彻底依赖自己【身心俘获: 从肉体征服到灵魂依附，彻底取代丈夫地位】' }
+    ]
+  }
+];
+
+// 💖 《完美少女の救赎/堕落计划》主题分支库
+const PERFECT_GIRL_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  {
+    keywords: ['会长', '清雪', '把柄', '秘密', '照片', '手机', '勒索', '教室', '讲台'],
+    branches: [
+      { title: '拿出手机里拍到的私密证据在苏清雪眼前轻轻晃动', desc: '用无可辩驳的堕落把柄击溃高岭之花的清高防线，掌握绝对生杀大权【铁证如山: 摧毁完美伪装，将学生会长推入命运绝境】' },
+      { title: '命令紧闭教室内反锁的大门并走到讲台前接受惩处', desc: '在肃穆神圣的教学讲台前迫使其褪下伪装，营造强烈的禁断压迫感【领地支配: 污染神圣权威，建立绝对从属的私密契约】' },
+      { title: '冷酷勒令她当场脱掉象征优等生的黑色连裤袜', desc: '当场剥夺其作为模范生的标志性装束，欣赏少女在羞耻中发抖的肉体【尊严剥夺: 从细节瓦解心防，撕开完美外表的第一道裂隙】' }
+    ]
+  },
+  {
+    keywords: ['救赎', '堕落', '调教', '服从', '优等生', '屈服', '惩罚', '下跪', '侍奉'],
+    branches: [
+      { title: '轻佻挑起她精致的下巴冷笑指出她的双标与虚伪', desc: '直击少女内心深处的阴暗与欲望，让她不得不直面自己堕落的本质【心理击溃: 诛心之论打破心理防线，让其自甘沉沦】' },
+      { title: '命令苏清雪跪在课桌下用樱唇为主人奉献侍奉', desc: '将受万人敬仰的高贵大小姐踩在脚下，命令其用嘴唇吞吐雄性象征【权欲践踏: 彻底颠倒阶级地位，享受征服高岭之花的快感】' },
+      { title: '假意许诺只要听话今天就不会将视频上传到校园论坛', desc: '施以虚假的宽容与希望，如同悬顶之剑般牢牢掌控少女的每一次呼吸【悬顶之剑: 施加深层恐惧，让其为保守秘密而百依百顺】' }
+    ]
+  },
+  {
+    keywords: ['大小姐', '家族', '联姻', '傲娇', '崩溃', '泪水', '臣服', '誓词'],
+    branches: [
+      { title: '将崩溃抽泣的清雪拉入怀中施以温柔却致命的抚慰', desc: '在彻底击碎自尊后给予怀抱的温暖，制造经典的斯德哥尔摩依恋【驯养终章: 恩威并施完成深度烙印，将完美少女变为专属私宠】' },
+      { title: '在黑板前逼迫苏清雪亲笔写下甘愿堕落为母狗的誓词', desc: '用白色的粉笔留下永久的羞耻罪证，将其灵魂彻底钉在堕落的耻辱柱上【誓约烙印: 精神层面的永恒臣服，再无翻盘逃脱之机】' },
+      { title: '让清雪整理好凌乱的校服挂着微笑走出教室接待同学', desc: '欣赏少女刚刚被内射灌满却要在门外同学面前强颜欢笑的极致反差【双重人格: 在人前与人后的极限拉扯中品尝极致扭曲快感】' }
+    ]
+  }
+];
+
+// 🍓 《爸爸我下面好痒帮我磨一磨吧》主题分支库
+const DAUGHTER_MORNING_WOOD_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  {
+    keywords: ['痒', '止痒', '磨', '晨勃', '鸡巴', '大肉棒', '被窝', '床', '蹭'],
+    branches: [
+      { title: '掀开被子把念念不安分的小屁股按在晨勃的热物上磨蹭', desc: '顺应女儿娇憨的止痒索求，任由娇小滑腻的花蕊在滚烫硬物上摩擦【顺水推舟: 借止痒之名打破伦理界限，品尝娇嫩果实的摩擦快感】' },
+      { title: '大手探入丝绸睡裙直接按住女儿泥泞湿润的花核', desc: '用粗糙的指腹精准按压幼嫩的核心，听着女儿在怀里发出一声尖锐娇喘【精准止痒: 亲自验明泥泞春潮，让亲生女儿无处遁形】' },
+      { title: '哑声质问女儿到底从什么时候开始用爸爸的身体止痒的', desc: '以威严的父权口吻逼问私密秘密，在羞耻与禁断的拉扯中刺激情欲【伦理拷问: 逼其坦白隐秘依赖，将父女关系推向质变边缘】' }
+    ]
+  },
+  {
+    keywords: ['女儿', '念念', '爸爸', '娇喘', '湿', '睡衣', '撒娇', '亲亲'],
+    branches: [
+      { title: '扣住念念纤细的腰肢将坚挺的龟头抵在狭窄的花穴口', desc: '不再满足于隔靴搔痒的摩擦，用最灼热粗硕的锋芒抵住禁断的秘境【突破防线: 试探终极禁忌，将晨勃的欲望彻底具象化】' },
+      { title: '翻身将娇小的女儿完全压在身下霸道堵住她的小嘴', desc: '用滚烫的长吻封死所有的撒娇与嘤咛，用成年男性的绝对重量统治一切【霸道支配: 剥夺幼兽的一切反抗能力，确立绝对肉体支配】' },
+      { title: '捏着她软糯的小脸蛋命令她用两只小手握住肉棒套弄', desc: '教导纯洁不谙世事的女儿如何侍奉父亲，欣赏她满眼好奇与羞涩的姿态【禁忌启蒙: 以父之名传授肉欲侍奉，满足最深层的占有欲】' }
+    ]
+  },
+  {
+    keywords: ['破处', '内射', '怀孕', '抽插', '白浆', '痉挛', '堕落', '父女'],
+    branches: [
+      { title: '猛然挺腰一口气冲破薄薄的阻碍彻底贯穿女儿的娇躯', desc: '将禁断的人伦铁律彻底撕碎，将热血与精气一并灌注进最亲近的血脉深处【血脉交融: 冲破最后伦理禁忌，将亲生女儿变成专属女人】' },
+      { title: '在女儿急促的哭腔娇喘中大幅度抽送直抵花心深处', desc: '每一次撞击都伴随着清脆的肉体拍打声，将小巧的花房填得满满当当【狂野撞击: 用极致粗暴的快感淹没理智，让女儿在高潮中痉挛】' },
+      { title: '毫无保留地将滚烫浓稠的白浆全部射入念念娇嫩的子宫', desc: '用浓浓的父爱精华灌满女儿的子宫，让这具娇嫩的肉体从此只属于父亲【永恒烙印: 极致内射封印，彻底建立永恒不可分割的禁忌羁绊】' }
+    ]
+  }
+];
+
+// 🪙 《十块肏一次的巨乳肥臀校花青梅》主题分支库
+const TEN_YUAN_CHILDHOOD_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  {
+    keywords: ['十块', '钱', '交易', '便宜', '零花钱', '钞票', '校花', '青梅'],
+    branches: [
+      { title: '从钱包里抽出两张崭新的百元大钞直接塞进小悠文胸里', desc: '用远超预期的巨款狠狠冲击青梅的金钱观，看着她双眼发光的贪婪神情【金钱轰炸: 用廉价交易反衬少女贪念，彻底买断校花尊严】' },
+      { title: '捏着皱巴巴的十块钱纸币在她滑腻娇艳的脸蛋上轻轻拍打', desc: '用最廉价的面额羞辱万人追捧的高傲校花，欣赏她敢怒不敢言的娇羞【廉价羞辱: 放大十元交易的荒谬感，享受践踏女神的高潮】' },
+      { title: '调侃全校男生眼中的梦中情人居然只要十块钱就能随便玩', desc: '用刻薄戏谑的言语戳破她的清纯人设，逼她承认自己廉价肉便器的身份【言语凌辱: 撕碎校花光环，将青梅竹马变成明码标价的玩物】' }
+    ]
+  },
+  {
+    keywords: ['巨乳', '肥臀', '小悠', '肉感', '校服', '百褶裙', '丰满', '奶子'],
+    branches: [
+      { title: '粗暴解开她的校服衬衫将沉甸甸的白腻大奶捧在手里肆意揉捏', desc: '尽情把玩那对发育超标的丰满巨乳，感受惊人的弹性与软糯触感【巨乳狂宴: 尽情享受十元换来的极致肉感，揉出诱人的红痕】' },
+      { title: '把小悠按在书桌上掀起百褶裙狠狠拍打她肥厚多肉的雪白屁股', desc: '在圆润饱满的肥臀上拍出一道道红印，听着她吃痛又带着快感的娇吟【肥臀鞭挞: 宣泄野蛮兽欲，用清脆的肉体撞击声调教骚肉】' },
+      { title: '命令小悠跪在地上用丰满的深沟为自己进行乳交侍奉', desc: '将滚烫的肉棒埋进她深不见底的雪白乳沟中，享受极致温软的包夹【乳交极乐: 开发巨乳特长，让青梅用身体最骄傲的部分服务】' }
+    ]
+  },
+  {
+    keywords: ['肏', '内射', '后入', '操弄', '破处', '精液', '照顾生意', '沦陷'],
+    branches: [
+      { title: '握住她丰腴饱满的肉臀从身后粗暴地一口气贯穿到底', desc: '用最野蛮的后入姿势彻底占领青梅湿热的花径，将十元交易推向肉欲顶峰【狂暴占有: 蛮横贯穿丰腴肉体，让校花在剧烈撞击下失神尖叫】' },
+      { title: '一边疯狂抽插一边逼小悠保证以后只能接自己一个人的单', desc: '在激烈的肉搏中强行买断她的独家专享权，彻底垄断青梅的身体【独家垄断: 从廉价散客到唯一金主，将校花彻底收为私人专属性奴】' },
+      { title: '把滚烫的浓精全部内射进小悠体内并笑称这是给小费', desc: '将滚烫浊白喷满她深处的花房，在金钱与精液的双重洗礼下让青梅彻底沉沦【精液小费: 荒唐契约的终极升华，让校花青梅的身心永驻深渊】' }
+    ]
+  }
+];
+
 const GENERIC_ACTION_POOLS: Branch[] = [
   { tag: 'A', title: '顺势深入掌控当下主动局面', desc: '抓住对方话语与微表情中的动摇瞬间，步步紧逼占据绝对心理主动' },
   { tag: 'B', title: '转换谈话节奏轻声耳语试探', desc: '打破当下的沉默与僵局，用柔和又带着压迫感的话语探寻其真实心意' },
@@ -596,6 +708,22 @@ export function generateContextualBranches(
     deckKey === 'deck_apocalypse_survival' ||
     deckKey.includes('059217c9') ||
     deckKey.includes('apocalypse');
+  const isSuccubusWife =
+    deckKey === 'deck_succubus_wife' ||
+    deckKey.includes('4881f4b1') ||
+    deckKey.includes('succubus');
+  const isPerfectGirl =
+    deckKey === 'deck_perfect_girl_plan' ||
+    deckKey.includes('eb85f366') ||
+    deckKey.includes('perfect_girl');
+  const isDaughterMorningWood =
+    deckKey === 'deck_daughter_morning_wood' ||
+    deckKey.includes('b64f6c60') ||
+    deckKey.includes('morning_wood');
+  const isTenYuanChildhood =
+    deckKey === 'deck_ten_yuan_childhood_friend' ||
+    deckKey.includes('6575c840') ||
+    deckKey.includes('ten_yuan');
 
   let semanticGroups: SemanticActionGroup[] = [];
   if (isCoser) semanticGroups = COSER_SEMANTIC_GROUPS;
@@ -611,6 +739,10 @@ export function generateContextualBranches(
   else if (isHeisiDaughter) semanticGroups = HEISI_DAUGHTER_SEMANTIC_GROUPS;
   else if (isSisterInLawNiece) semanticGroups = SISTER_IN_LAW_NIECE_SEMANTIC_GROUPS;
   else if (isApocalypse) semanticGroups = APOCALYPSE_SURVIVAL_SEMANTIC_GROUPS;
+  else if (isSuccubusWife) semanticGroups = SUCCUBUS_WIFE_SEMANTIC_GROUPS;
+  else if (isPerfectGirl) semanticGroups = PERFECT_GIRL_SEMANTIC_GROUPS;
+  else if (isDaughterMorningWood) semanticGroups = DAUGHTER_MORNING_WOOD_SEMANTIC_GROUPS;
+  else if (isTenYuanChildhood) semanticGroups = TEN_YUAN_CHILDHOOD_SEMANTIC_GROUPS;
 
   const combinedContext = (storyText + ' ' + userAction).toLowerCase();
 

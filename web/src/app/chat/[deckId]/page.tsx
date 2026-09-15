@@ -212,6 +212,10 @@ export default function ChatPage() {
   const isSisterInLawNiece = deckId === 'deck_sister_in_law_niece' || deckId === '432a57e9-8f8a-4e4e-80fc-83eb9ebc71eb';
   const isApocalypse = deckId === 'deck_apocalypse_survival' || deckId === '059217c9-213b-48e7-b660-0c04f78ede48';
   const isYuzuki = deckId === 'deck_yuzuki';
+  const isSuccubusWife = deckId === 'deck_succubus_wife' || deckId === '4881f4b1-dfd0-45cb-8e3a-f7b880f66635';
+  const isPerfectGirl = deckId === 'deck_perfect_girl_plan' || deckId === 'eb85f366-919b-466e-a7ff-8d8dbc4ed29b';
+  const isDaughterMorningWood = deckId === 'deck_daughter_morning_wood' || deckId === 'b64f6c60-f3b0-438b-91ef-51362dbb4ce4';
+  const isTenYuanChildhood = deckId === 'deck_ten_yuan_childhood_friend' || deckId === '6575c840-e7d2-4fdc-a752-b111d9bdf5b8';
 
   let bgClass = '';
   if (isCoser) bgClass = 'coser-sister-bg';
@@ -228,6 +232,10 @@ export default function ChatPage() {
   else if (isSisterInLawNiece) bgClass = 'sister-in-law-bg';
   else if (isApocalypse) bgClass = 'apocalypse-survival-bg';
   else if (isYuzuki) bgClass = 'yuzuki-bg';
+  else if (isSuccubusWife) bgClass = 'succubus-wife-bg';
+  else if (isPerfectGirl) bgClass = 'perfect-girl-bg';
+  else if (isDaughterMorningWood) bgClass = 'daughter-morning-bg';
+  else if (isTenYuanChildhood) bgClass = 'ten-yuan-bg';
 
   const hasCustomHtml = Boolean(currentDeck?.customHtml);
   const hasUserTurns = conversationHistory.some((t) => t.isUser);
@@ -323,6 +331,30 @@ export default function ChatPage() {
 跪倒在水泥地上的昔日校花苏晓染浑身剧烈颤抖，干裂泛白的嘴唇死死咬住，屈辱的眼泪在布满灰尘的脸颊上冲出两道清晰的泪痕。残破的衬衫难以遮掩她发育绝佳的D罩杯傲人曲线，在冰冷的枪口与纯净水源的巨大诱惑面前，昔日万人追捧的高岭之花终于低下了骄傲的头颅。
 
 “我……我听你的……只要给我水喝……我什么都答应……”她颤抖着向前挪动膝盖，双手伏在你的军靴旁，将残存的文明自尊彻底碾碎在废土的尘埃中，沦为这间安全屋专属的私人禁脔。`;
+    } else if (isSuccubusWife) {
+      baseStory = `面对你的举动【${act || '行使代喂养特权深入互动'}】，昏暗的客厅里空气温度骤然升高，弥漫开一股如蜜糖般浓郁诱人的魅魔冷香。
+
+原本因饥渴而瘫软在沙发上的温雅身子猛地战栗，那对小巧精致的恶魔角微颤，心形尾巴尖在你的大腿处不安分地勾缠摩挲。她羞愤欲绝地咬住下唇，美眸泛着迷离水雾，胸前呼之欲出的硕大雪乳在单薄睡袍下剧烈起伏：“阿言……求你别看了……我、我真的快要克制不住吸食精气的本能了……明宇他还在外面出差，要是被他知道……”
+
+嘴上虽然还在维持着作为新婚人妻的最后一丝道德挣扎，但魅魔受孕发情体质带来的本能反应却背叛了一切，湿润温热的气息直往你颈间喷洒，禁断狂乱的NTL暗流彻底决堤。`;
+    } else if (isPerfectGirl) {
+      baseStory = `针对你的互动【${act || '推演少女的救赎与堕落'}】，安静的教室内夕阳斜照，投下狭长暧昧的阴影。
+
+作为全校仰慕的学生会长与完美大小姐，苏清雪此刻端坐在座位上，纤细的手指死死攥着平整的百褶裙摆，指节泛白。原本平静从容的美眸深处剧烈动摇，白皙如玉的脸颊与耳垂染透了羞耻的红晕，微张的樱唇间呼出滚烫凌乱的喘息：“你……你以为掌握了这种把柄……就能随意支配我了吗……”
+
+虽然语气里还带着高岭之花的清冷与倔强，但随着你的步步紧逼，她挺直的脊背却在微不可察地发颤，内心深处那座名为“完美”的骄傲堡垒，正不可逆转地滑向彻底顺从与堕落的深渊。`;
+    } else if (isDaughterMorningWood) {
+      baseStory = `面对你清晨的反应【${act || '纵容女儿的危险止痒试探'}】，主卧大床上被窝里的热度瞬间攀升到了极点。
+
+念念整个人像只黏人的小奶猫般趴在你怀里，薄薄的丝绸睡裙早已在蹭动中卷到了纤细的腰际。她娇小的身躯死死贴着你晨勃挺立的热物，一边磨蹭着自己又痒又湿的幼嫩花蕊，一边扬起那张不谙世事却又媚态天成的清纯小脸，眼角挂着水汽，奶声娇喘：“呜……爸爸……好舒服……可是里面还是好痒……爸爸的大鸡巴好硬好热，快帮念念彻底磨一磨嘛……”
+
+听着亲生女儿毫无防备的荒谬索求，感受着大腿间那抹滑腻泥泞的湿痕，清晨的道德伦理防线在娇软身躯的疯狂摩擦下摇摇欲坠。`;
+    } else if (isTenYuanChildhood) {
+      baseStory = `面对你的交易指令【${act || '支付十块钱行使青梅特权'}】，略显局促的卧室里瞬间安静下来，只剩下粗重的呼吸与窗外的蝉鸣。
+
+林小悠小心翼翼地把刚收到的皱巴巴十块钱纸币塞进小钱包，随后像是下定决心般缓缓抬起眼眸。这位全校知名的巨乳肥臀校花，此刻双颊红得仿佛能滴出血来，颤巍巍地解开校服领口的纽扣，一对呼之欲出的饱满巨乳伴随着白腻的深沟沉甸甸地弹跳出来，丰腴饱满的肉感臀瓣局促地挪动着：“那……阿伟……说好了就十块钱一次哦……你不许告诉其他人……要是舒服的话，以后……以后也可以经常照顾我生意的……”
+
+看着眼前为了零花钱而彻底沦陷的青梅竹马，纯真与低廉肉体交易的反差感在这一刻引爆了最原始的冲动。`;
     } else {
       baseStory = `针对你的行动【${act || '深入推进'}】，场间的气氛产生了明显的微妙变化。
 

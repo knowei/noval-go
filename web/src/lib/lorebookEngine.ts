@@ -175,6 +175,134 @@ export const DEFAULT_LOREBOOKS: Record<string, LoreEntry[]> = {
       category: 'rule',
       content: '神崎夕月在学校是清冷高不可攀的学生会长，私下里却对哥哥有病态的占有欲。借着哥哥轻微发热的由头，反锁房门步步紧逼，用量体温的冰冷水银计与湿毛巾反复测试两人的伦理防线。'
     }
+  ],
+
+  // 😈 ❤帮兄弟喂养她的新婚魅魔妻子❤
+  deck_succubus_wife: [
+    {
+      id: 'succubus_cup',
+      keys: ['飞机杯', '采精', '大强', '洗手间', '备用钥匙', '杯子', '交代'],
+      title: '大强留下的专用飞机杯与采精规矩',
+      category: 'item',
+      content: '好兄弟大强远赴海上油田封闭出差3个月，临走前在洗手间镜柜下留了一个未开封的高级硅胶飞机杯。大强嘱咐你每次去卫生间采精后倒进瓷碗端给莉莉饮用，用冰冷的硅胶隔绝肉体直接接触，作为防范出轨的第一道安全防线。'
+    },
+    {
+      id: 'succubus_hands',
+      keys: ['用手', '手交', '手帮我', '帮我弄', '手掌', '嫂子用手', '握住'],
+      title: '大强交代的第二许可：拜托嫂子亲手排精',
+      category: 'rule',
+      content: '大强在电话里曾尴尬地补充叮嘱：如果兄弟实在用不惯假硅胶飞机杯，也可以客气地请嫂子莉莉用柔嫩的双手帮忙套弄排精。这一句无心的退让，成为了撕开两人叔嫂伦理与私密肢体接触的致命缺口。'
+    },
+    {
+      id: 'succubus_feeding_need',
+      keys: ['精气', '喂养', '精液', '发热', '口渴', '摄入', '空虚', '体温', '饿'],
+      title: '新婚魅魔特异体质与每日精气摄入本能',
+      category: 'rule',
+      content: '莉莉是血统纯正的魅魔人妻，每天必须摄入新鲜浓郁的男性精气来维持肉体机能。若超过24小时未摄入，她的体温会急剧上升至滚烫发情状态，双腿发软多汁，理智逐渐被本能撕碎，甚至会不顾一切地主动纠缠身边的健康男性。'
+    },
+    {
+      id: 'succubus_h_breast',
+      keys: ['巨乳', '胸', 'H罩杯', '工字背心', '激凸', '乳头', '白背心', '白发'],
+      title: '莉莉的H罩杯绝美肉体与居家工字背心',
+      category: 'character',
+      content: '20岁新婚少妇，拥有一头及腰的丝滑纯白长发与梦幻紫眸。水滴型H罩杯饱满浑圆、深粉色大乳晕与挺拔肉粒。在家习惯穿轻薄微透的白色工字背心，随着呼吸剧烈颤动，两颗激凸清晰可见，散发着诱人堕落的魅魔奶香。'
+    },
+    {
+      id: 'succubus_outdoor',
+      keys: ['户外', '公园', '放置', '车上', '海边', '露出', '泳装'],
+      title: '满好感度解锁的户外放置与极限羞耻玩法',
+      category: 'secret',
+      content: '莉莉虽然表面害羞保守，但骨子里深埋着魅魔一族对极度刺激的潜意识渴望。当好感度与堕落度突破临界后，她会顺从地跟随你前往深夜无人公园、海边沙滩或私家车后排，在随时可能被路人撞破的恐慌与快感中放浪承欢。'
+    }
+  ],
+
+  // 💖 完美少女の救赎/堕落计划
+  deck_perfect_girl_plan: [
+    {
+      id: 'perfect_tear_report',
+      keys: ['成绩单', '第二', '考试', '年级第二', '风月高中', '学生会', '第二名'],
+      title: '江怀月被揉皱的年级第二名期末成绩单',
+      category: 'item',
+      content: '那张被泪水湿透、死死攥在掌心的重点高中成绩单。原本蝉联三年年级第一的高冷学霸女神，在期末考试中以两分之差跌落至第二名，成为击垮她维持多年完美人设与承受家庭压力的最后一根稻草。'
+    },
+    {
+      id: 'perfect_sugar_milktea',
+      keys: ['全糖', '奶茶', '红柚', '笔记本', '涂鸦', '甜品', '热奶茶'],
+      title: '偷偷珍藏的全糖奶茶与叛逆涂鸦日记',
+      category: 'item',
+      content: '为了迎合父母严格的形体与自律要求，她从未当众碰过一口垃圾食品。但私底下书包最内层夹层里，却藏着一杯常温全糖奶茶的消费小票，以及画满颓废反叛摇滚涂鸦的私密笔记本，是她唯一的宣泄窗口。'
+    },
+    {
+      id: 'perfect_family_pressure',
+      keys: ['父母', '家里', '期望', '书香门第', '有条件', '听话', '完美', '枷锁'],
+      title: '书香门第家庭窒息的“有条件的爱”',
+      category: 'rule',
+      content: '江怀月的父母皆为知名大学教授，奉行严苛冰冷的功利主义教育。只要她考第一就是骄傲，一旦有任何微小失误就会换来无休止的冷暴力与失望叹息，让她从小患上严重的被抛弃恐惧症。'
+    },
+    {
+      id: 'perfect_dual_route',
+      keys: ['救赎', '堕落', '纯爱', '调教', '依赖', '崩溃', '掌控'],
+      title: '救赎与堕落的双轨命运分支律',
+      category: 'rule',
+      content: '【纯爱救赎】：给予毫无保留的关怀与安全感，帮她打破第一名执念，换来她一生一世的忠贞依恋；【诱导堕落】：逐步引诱她放纵叛逆欲，撕碎纯洁自尊，将平日不可一世的校花学霸改造成只对你摇尾乞怜的精神玩偶。'
+    }
+  ],
+
+  // 🛌 爸爸我下面好痒帮我磨一磨吧
+  deck_daughter_morning_wood: [
+    {
+      id: 'daughter_strawberry_pants',
+      keys: ['草莓', '睡裤', '止痒', '痒', '磨一磨', '内裤', '蹭', '撅着屁股'],
+      title: '陈小涵的草莓纯棉睡裤与天真止痒举动',
+      category: 'item',
+      content: '16岁独生女儿陈小涵最喜欢的浅粉色草莓印花睡裤，纯棉材质极其轻薄柔软。清晨隔着这层薄布，将双腿间娇嫩的花径紧紧压在父亲高耸的硬肉棒上，前后扭动磨蹭止痒，摩擦产生的温热体香与水渍极度刺激。'
+    },
+    {
+      id: 'daughter_kitchen_mom',
+      keys: ['妈妈', '母亲', '洗漱', '厨房', '水声', '做饭', '脚步声', '开水'],
+      title: '近在咫尺的厨房水声与被窝偷情刺激',
+      category: 'location',
+      content: '主卧大门半掩，厨房仅隔着一条三米长的走廊。母亲正在水槽前洗菜烧水，抽油烟机与碗筷碰撞声清晰可闻。被窝里父女二人任何过激的声响与动作都有可能被突然推门的妻子当场撞破。'
+    },
+    {
+      id: 'daughter_morning_erection',
+      keys: ['晨勃', '鸡巴', '肉棒', '立起来', '硬棒子', '顶起', '被窝', '棒子'],
+      title: '父亲一柱擎天的晨勃与假正经防线',
+      category: 'rule',
+      content: '成年男性早晨旺盛的生理晨勃，硬如铁棍顶起棉被。面对女儿天真无邪的主动磨蹭，父亲内心在伦理道德的羞愧申斥与生理本能的极乐快感间剧烈挣扎，身体不敢大幅动弹却又不由自主地挺腰迎合。'
+    }
+  ],
+
+  // 🪙 十块肏一次的巨乳肥臀校花青梅
+  deck_ten_yuan_childhood_friend: [
+    {
+      id: 'ten_yuan_contract',
+      keys: ['十块', '十元', '纸币', '内射', '加钱', '契约', '零花钱', '交易'],
+      title: '十块钱肏一次但严禁内射的荒唐规则',
+      category: 'rule',
+      content: '苏沐橙因网购月光后提出的荒唐同居契约：十块钱基础款只管插入肏一次，限时约5分钟，射完穿裤子，严禁内射；若想升级口交需五十元，乳交足交全套需一百元，内射必须额外大额加价。'
+    },
+    {
+      id: 'ten_yuan_vacuum_tshirt',
+      keys: ['不穿内衣', '真空', '大T恤', 'T恤', '激凸', '白虎', '走光', '没穿'],
+      title: '合租公寓里从不穿内衣内裤的放浪习惯',
+      category: 'character',
+      content: '在外是白衬衫扣子系到领口的清纯校花，但在合租屋里因为从小对青梅竹马的极度信任，常年只套一件宽大的灰色男士短袖T恤。里面彻底真空，走动时H罩杯剧烈晃荡，坐下时饱满紧致无毛的白虎粉穴若隐若现。'
+    },
+    {
+      id: 'ten_yuan_h_curves',
+      keys: ['H罩杯', '巨乳', '肥臀', '蜜桃臀', '大白兔', '肉感', '苏沐橙'],
+      title: '苏沐橙的H罩杯水滴巨乳与蜜桃肥臀',
+      category: 'character',
+      content: '18岁高三校花，165cm，三围96-58-94。腰肢极细，却长着一对罕见的天然水滴形H罩杯大巨乳，臀部极其肥厚饱满，走起路来微颤，后入时肉浪翻滚，是无数男生可望而不可即的梦中尤物。'
+    },
+    {
+      id: 'ten_yuan_secret_diary',
+      keys: ['账本', '日记', '暗恋', '偷偷', '花呗', '买单', '包月', '喜欢'],
+      title: '藏在床头柜里的十元交易记账本与暗恋心事',
+      category: 'secret',
+      content: '苏沐橙床头夹缝里藏着一本粉色日记本。上面详细记录着每次交易的时间、姿势、时长和你给钱时的表情。其实她从初中起就深爱着你，借着缺钱十元一次的荒唐借口，只是为了让两人的关系名正言顺地更进一步。'
+    }
   ]
 };
 
@@ -183,7 +311,16 @@ export const DEFAULT_LOREBOOKS: Record<string, LoreEntry[]> = {
 // ============================================================================
 
 export function getDeckLorebook(deckId: string, customLore?: LoreEntry[]): LoreEntry[] {
-  const defaultEntries = DEFAULT_LOREBOOKS[deckId] || [];
+  let defaultEntries = DEFAULT_LOREBOOKS[deckId] || [];
+  if (defaultEntries.length === 0) {
+    if (deckId === '4881f4b1-dfd0-45cb-8e3a-f7b880f66635') defaultEntries = DEFAULT_LOREBOOKS['deck_succubus_wife'] || [];
+    else if (deckId === 'eb85f366-919b-466e-a7ff-8d8dbc4ed29b') defaultEntries = DEFAULT_LOREBOOKS['deck_perfect_girl_plan'] || [];
+    else if (deckId === 'b64f6c60-f3b0-438b-91ef-51362dbb4ce4') defaultEntries = DEFAULT_LOREBOOKS['deck_daughter_morning_wood'] || [];
+    else if (deckId === '6575c840-e7d2-4fdc-a752-b111d9bdf5b8') defaultEntries = DEFAULT_LOREBOOKS['deck_ten_yuan_childhood_friend'] || [];
+    else if (deckId === 'c78de7d8-7353-467e-bc71-5e6f2c870679') defaultEntries = DEFAULT_LOREBOOKS['deck_heisi_daughter'] || [];
+    else if (deckId === '432a57e9-8f8a-4e4e-80fc-83eb9ebc71eb') defaultEntries = DEFAULT_LOREBOOKS['deck_sister_in_law_niece'] || [];
+    else if (deckId === '059217c9-213b-48e7-b660-0c04f78ede48') defaultEntries = DEFAULT_LOREBOOKS['deck_apocalypse_survival'] || [];
+  }
   const customEntries = Array.isArray(customLore) ? customLore : [];
 
   const entryMap = new Map<string, LoreEntry>();
