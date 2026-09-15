@@ -950,12 +950,34 @@ export function parseModelOutput(
   // 过滤掉与历史轮次完全重复的模型输出
   const nonDuplicateParsed = parsedBranches.filter((b) => !usedTitles.has(b.title.trim()));
 
-  if (nonDuplicateParsed.length >= 2) {
-    // 重新标注 A, B, C, D 标签
-    turn.branches = nonDuplicateParsed.slice(0, 4).map((b, idx) => ({
+  if (nonDuplicateParsed.length >= 1) {
+    // 优先保留大模型实时生成的所有专属分支
+    const aiBranches: Branch[] = nonDuplicateParsed.slice(0, 4).map((b, idx) => ({
       ...b,
       tag: String.fromCharCode(65 + idx)
     }));
+
+    // 若大模型在末尾被轻微截断仅输出了 1~3 项，则仅对缺失的差额分支进行智能补齐，绝不舍弃 AI 生成的任何专属灵感
+    if (aiBranches.length < 4) {
+      const fallbackBranches = generateContextualBranches(
+        deckKey,
+        rawText,
+        turnIndex,
+        userAction,
+        aiBranches,
+        allHistoryBranches
+      );
+      for (const fb of fallbackBranches) {
+        if (aiBranches.length >= 4) break;
+        if (!aiBranches.some((b) => b.title.trim() === fb.title.trim())) {
+          aiBranches.push({
+            ...fb,
+            tag: String.fromCharCode(65 + aiBranches.length)
+          });
+        }
+      }
+    }
+    turn.branches = aiBranches;
   } else {
     // 若模型未输出分支或与历史严重重复，启用高沉浸语义动态合成器
     turn.branches = generateContextualBranches(
