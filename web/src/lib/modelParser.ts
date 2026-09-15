@@ -631,11 +631,27 @@ export function generateContextualBranches(
     }
   }
 
-  // 洗牌辅助函数
+  // 伪随机数发生器（基于剧本、轮次与故事内容哈希种子，确保相同情境下渲染结果绝对稳定，不会随打字输入跳动）
+  const getHash = (str: string) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash);
+  };
+
+  const seed = getHash(`${deckKey}_${turnIndex}_${(storyText || '').slice(0, 100)}`);
+  let prngState = seed || 1234567;
+  const pseudoRandom = () => {
+    prngState = (prngState * 1664525 + 1013904223) % 4294967296;
+    return prngState / 4294967296;
+  };
+
   const shuffle = <T>(arr: T[]): T[] => {
     const copy = [...arr];
     for (let i = copy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(pseudoRandom() * (i + 1));
       [copy[i], copy[j]] = [copy[j], copy[i]];
     }
     return copy;

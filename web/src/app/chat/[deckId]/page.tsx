@@ -906,6 +906,7 @@ export default function ChatPage() {
                 key={idx}
                 turn={turn}
                 index={idx}
+                deckId={deckId}
                 onSendAction={handleSend}
                 onDelete={(dIdx) => truncateHistory(dIdx)}
                 onRegenerate={handleRegenerate}
