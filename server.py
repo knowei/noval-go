@@ -31,8 +31,14 @@ if not os.path.exists(DB_FILE) and os.path.exists(seed_db) and os.path.abspath(D
     shutil.copy2(seed_db, DB_FILE)
 
 def get_db():
-    conn = sqlite3.connect(DB_FILE)
+    conn = sqlite3.connect(DB_FILE, timeout=30.0)
     conn.row_factory = sqlite3.Row
+    try:
+        conn.execute("PRAGMA journal_mode=WAL;")
+        conn.execute("PRAGMA synchronous=NORMAL;")
+        conn.execute("PRAGMA busy_timeout=5000;")
+    except Exception:
+        pass
     return conn
 
 def init_db():
