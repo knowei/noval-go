@@ -216,6 +216,9 @@ export default function ChatPage() {
   const isPerfectGirl = deckId === 'deck_perfect_girl_plan' || deckId === 'eb85f366-919b-466e-a7ff-8d8dbc4ed29b';
   const isDaughterMorningWood = deckId === 'deck_daughter_morning_wood' || deckId === 'b64f6c60-f3b0-438b-91ef-51362dbb4ce4';
   const isTenYuanChildhood = deckId === 'deck_ten_yuan_childhood_friend' || deckId === '6575c840-e7d2-4fdc-a752-b111d9bdf5b8';
+  const isGirlsDormitory = deckId === 'deck_girls_dormitory' || deckId === 'e59fe31f-98c7-4b85-9f84-262f5d13bc32';
+  const isHousewifeApartment = deckId === 'deck_housewife_apartment' || deckId === '57879274-30f5-4411-957f-2a33bdd2e031';
+  const isNudeGirlsSchool = deckId === 'deck_nude_girls_school' || deckId === '087637dd-b4ba-4588-ac91-cd6361d47be0';
 
   let bgClass = '';
   if (isCoser) bgClass = 'coser-sister-bg';
@@ -236,6 +239,9 @@ export default function ChatPage() {
   else if (isPerfectGirl) bgClass = 'perfect-girl-bg';
   else if (isDaughterMorningWood) bgClass = 'daughter-morning-bg';
   else if (isTenYuanChildhood) bgClass = 'ten-yuan-bg';
+  else if (isGirlsDormitory) bgClass = 'girls-dormitory-bg';
+  else if (isHousewifeApartment) bgClass = 'housewife-apartment-bg';
+  else if (isNudeGirlsSchool) bgClass = 'nude-girls-school-bg';
 
   const hasCustomHtml = Boolean(currentDeck?.customHtml);
   const hasUserTurns = conversationHistory.some((t) => t.isUser);
@@ -355,6 +361,24 @@ export default function ChatPage() {
 林小悠小心翼翼地把刚收到的皱巴巴十块钱纸币塞进小钱包，随后像是下定决心般缓缓抬起眼眸。这位全校知名的巨乳肥臀校花，此刻双颊红得仿佛能滴出血来，颤巍巍地解开校服领口的纽扣，一对呼之欲出的饱满巨乳伴随着白腻的深沟沉甸甸地弹跳出来，丰腴饱满的肉感臀瓣局促地挪动着：“那……阿伟……说好了就十块钱一次哦……你不许告诉其他人……要是舒服的话，以后……以后也可以经常照顾我生意的……”
 
 看着眼前为了零花钱而彻底沦陷的青梅竹马，纯真与低廉肉体交易的反差感在这一刻引爆了最原始的冲动。`;
+    } else if (isGirlsDormitory) {
+      baseStory = `面对你的举动【${act || '小心掩饰男儿身深入周旋'}】，女寝302室空气中弥漫的甜腻沐浴水汽骤然变得焦灼危险。
+
+苏小可正拉扯着薄薄的棉质睡裙下摆，一双圆溜溜的杏眼闪烁着恶作剧的光芒，冷不防伸出软绵绵的小手勾住你的纤细手腕：“哎呀新来的，大家都是平胸好姐妹，有什么好害羞的嘛！走，跟小可一起去洗澡去~”
+
+而在书桌前，穿着黑丝包臀裙的高冷大姐大凌玥敏锐地眯起狭长眼眸，指间夹着细烟轻轻吐出一缕白雾，意味深长地上下审视着你紧绷的身体；刚洗完澡裹着单薄浴巾的清纯校花叶芷柔更是羞红了脸颊，温软的体温与若隐若现的锁骨在水汽中蒸腾。身处这片脂粉香艳却危机四伏的温柔乡，你下体那根沉睡的肉棒正如铁棍般疯狂胀痛，随时面临彻底暴露的悬崖边缘。`;
+    } else if (isHousewifeApartment) {
+      baseStory = `行使着作为月桂庄公寓管理员的特权【${act || '刷卡突击查房深入调教'}】，万能主卡在门锁上发出清脆的“滴——”一声轻鸣。
+
+房门推开，暖黄的廊灯洒在玄关地毯上，屋内的人妻娇躯剧烈一颤。面对你居高临下的巡视目光，平日里高高在上的人妻慌乱地揪住单薄睡袍的领口，成熟丰腴的娇躯止不住地轻微战栗。丈夫常年异地出差所积压的无尽空虚，在这一刻化作了滚烫的泪水与隐秘的渴望。
+
+“管理员先生……这么晚了……您、您怎么突然来巡查了……”她咬着下唇，声音带着一丝不易察觉的轻颤与哀求，而你反手将房门反锁的咔哒声，彻底将这间充斥着成熟肉欲的私密囚笼与外界隔绝开来。`;
+    } else if (isNudeGirlsSchool) {
+      baseStory = `顺应着圣伊甸女子学园不可违抗的至高铁律【${act || '全裸特招生的校园支配'}】，你缓缓褪去了身上最后一件衣物。
+
+恒温26℃的微风轻拂过你精壮赤裸的身躯，校门林荫道两旁，成百上千名一丝不挂的贵族少女们齐刷刷投来震惊、羞怯与极度好奇的目光。全校三千名平日里只习惯了百合相亲相爱的纯洁名媛，此刻第一次近距离目睹真正成年雄性的肌肉线条与粗硕雄性象征，整座校园的私密气氛瞬间被引爆。
+
+讲台前，戴着金丝眼镜的巨乳女教师嘴角扬起玩味的笑意，在教案上轻轻敲动指节；而一丝不挂的女校长塞西莉亚优雅地端着茶杯，深邃的美眸中满是探寻与期待——这场属于唯一男性的肉体征服盛宴，正式拉开帷幕。`;
     } else {
       baseStory = `针对你的行动【${act || '深入推进'}】，场间的气氛产生了明显的微妙变化。
 

@@ -303,6 +303,102 @@ export const DEFAULT_LOREBOOKS: Record<string, LoreEntry[]> = {
       category: 'secret',
       content: '苏沐橙床头夹缝里藏着一本粉色日记本。上面详细记录着每次交易的时间、姿势、时长和你给钱时的表情。其实她从初中起就深爱着你，借着缺钱十元一次的荒唐借口，只是为了让两人的关系名正言顺地更进一步。'
     }
+  ],
+
+  // 🌸 长得太清秀，被迫入住大学女生宿舍！
+  deck_girls_dormitory: [
+    {
+      id: 'gd_male_disguise',
+      keys: ['身份证', '女生宿舍', '302', '男扮女装', '男儿身', '鸡巴', '暴露', '清秀'],
+      title: '比女生还美貌的男儿身秘密与暴露危机',
+      category: 'rule',
+      content: '主角容貌雌雄莫辨、清纯绝美，因父母从小按女孩抚养、身份证登记乌龙，被分入女寝302。虽外表清秀如仙女，却拥有发育完全的粗壮男根。一旦在宿舍被发现真实性别将面临身败名裂的极端危机。'
+    },
+    {
+      id: 'gd_suxiaoke_pranks',
+      keys: ['苏小可', '双丸子头', '恶作剧', '贴贴', '一起洗澡', '上厕所', 'B罩杯', '小可'],
+      title: '元气腹黑少女苏小可的无防备肢体贴贴',
+      category: 'character',
+      content: '双丸子头元气少女，可爱调皮，喜好恶作剧。因自己是B罩杯平胸，对同样“纤瘦平胸”的主角天生亲近，经常毫无防备地拽着主角一起挤单人浴室洗澡、更衣、上厕所或被窝贴贴。'
+    },
+    {
+      id: 'gd_lingyue_curves',
+      keys: ['凌玥', '御姐', '黑丝', '包臀裙', '跆拳道', '大长腿', 'D罩杯', '大姐大'],
+      title: '高冷黑丝大姐大凌玥的敏锐直觉与火辣身材',
+      category: 'character',
+      content: '大三冷艳御姐，身穿紧身黑丝包臀裙，D罩杯丰满大长腿，曾是高中不良大姐大且为跆拳道黑带。敏锐聪明、洞察力极强，表面冷漠话少，实际上总在用锐利的眼神打量主角过于害羞的异常举止。'
+    },
+    {
+      id: 'gd_yezhirou_elegance',
+      keys: ['叶芷柔', '芷柔', '校花', '黑长直', '温婉', '浴巾', '出浴', '书香门第'],
+      title: '清纯校花叶芷柔的出浴水汽与端庄反差',
+      category: 'character',
+      content: '出身书香名门的大一校花，黑长直发、眉目清丽绝俗。性格恬静温柔、容易害羞脸红。洗完澡后仅裹着一条粉白浴巾在宿舍走动，湿漉漉的锁骨与诱人体香无意中对主角施加着极限折磨。'
+    }
+  ],
+
+  // 🏢 我住的公寓竟全是人妻看我把她们全部肏成RBP
+  deck_housewife_apartment: [
+    {
+      id: 'ha_master_privilege',
+      keys: ['房卡', '管理员', '万能钥匙', '查房', '巡查', '月桂庄', '监控', '检修'],
+      title: '月桂庄公寓管理员的万能房卡与绝对特权',
+      category: 'rule',
+      content: '主角身为月桂庄高级公寓新任管理员，拥有全楼12层所有房间的万能主卡、全覆盖高清监控权限与入户检修权。借助丈夫们出差或加班的便利，可以随时以安全排查为名敲开并刷开任何一扇人妻的房门。'
+    },
+    {
+      id: 'ha_hancock_emptiness',
+      keys: ['汉库克', '波雅', '1201', '顶楼', '女帝', '出差', '寂寞', '受孕', '播种'],
+      title: '1201室高傲女帝汉库克的深夜空虚与受孕渴望',
+      category: 'character',
+      content: '顶层奢华复式女主人，美艳不可方物的高傲女帝。丈夫常年异界远征，每当深夜独卧2米大床时饱受彻骨空虚煎熬，内心深处极度渴望被强壮刚猛的雄性彻底征服并受孕播种。'
+    },
+    {
+      id: 'ha_gu_bingyan_crack',
+      keys: ['顾冰颜', '905', '女总裁', '商业联姻', '厌男', '电梯', '冰山', '裂痕'],
+      title: '905室冰山总裁顾冰颜的防线裂纹',
+      category: 'character',
+      content: '跨国集团冰山女总裁，商业联姻的牺牲品，对丈夫与一切男性抱有冷漠厌恶。但在公寓电梯突发故障或幽闭独处施压时，其高贵自矜的外壳会产生剧烈裂痕，流露出窒息无助的依赖渴求。'
+    },
+    {
+      id: 'ha_uzaki_temptation',
+      keys: ['宇崎月', '501', '借盐', '邻家太太', '丰满', '乳沟', '眯眯眼', '脑补'],
+      title: '501室丰满太太宇崎月的弯腰借盐诱惑',
+      category: 'character',
+      content: '温柔可人的邻家人妻，眯眯眼脑补狂魔。总幻想年轻力壮的管理员对自己心怀不轨，却又忍不住在借盐、送汤时特意换上低胸围裙，借着弯腰之机将深不见底的雪白乳沟展露无遗。'
+    }
+  ],
+
+  // 🏫 全裸女校，只有你是特招
+  deck_nude_girls_school: [
+    {
+      id: 'ngs_naked_rule',
+      keys: ['全裸', '校规', '脱衣', '更衣室', '穹顶', '26℃', '一丝不挂', '圣伊甸'],
+      title: '入校即全裸的铁律与恒温26℃单向透视穹顶',
+      category: 'rule',
+      content: '圣伊甸贵族女子学园不可抗拒的至高法则：踏入校门的一刻起，所有人必须卸去全部衣物，全身赤裸行动。校园穹顶单向透视防窥，常年维持26℃最舒适微风，三千名名门千金皆坦诚相见。'
+    },
+    {
+      id: 'ngs_shared_bathroom',
+      keys: ['女浴室', '女厕所', '公共浴室', '共用', '洗澡', '好奇', '围观', '卫生间'],
+      title: '唯一的男生与全校共用公共女浴室',
+      category: 'location',
+      content: '学校未设男卫与男浴，身为全校唯一的特招男学生，主角洗漱排泄必须与成群裸体女生共用女卫与大浴池。在蒸腾的水雾中，无数双纯洁或好奇的美眸无时不刻不在注视着唯一的一具雄性肉体。'
+    },
+    {
+      id: 'ngs_principal_cecilia',
+      keys: ['塞西莉亚', '校长', '成熟', '35岁', '巡视', '实验体', '压迫感', '玩味'],
+      title: '一丝不挂的女校长塞西莉亚的玩味巡视',
+      category: 'character',
+      content: '35岁圣伊甸绝对掌控者，自身亦严格恪守全裸校规，常以熟透美艳、丰腴高贵的裸体姿态在全校巡视。将主角破例招入并安排与女生同浴，带有一种居高临下观赏“独苗雄性小白鼠反应”的上位者恶趣味。'
+    },
+    {
+      id: 'ngs_biology_teacher',
+      keys: ['生理课', '解剖', '讲台', '教具', '实操', '金丝眼镜', '28岁', '抚摸'],
+      title: '生理课女教师的活体解剖教具实操演示',
+      category: 'character',
+      content: '28岁戴金丝眼镜的知性巨乳御姐教师。在健康形体与生理教育课上，公然将主角叫上讲台当作实物教具，指导台下贵族女生轮流上台触摸感知男性的肌肉、体温与勃起生理变化。'
+    }
   ]
 };
 
@@ -317,6 +413,9 @@ export function getDeckLorebook(deckId: string, customLore?: LoreEntry[]): LoreE
     else if (deckId === 'eb85f366-919b-466e-a7ff-8d8dbc4ed29b') defaultEntries = DEFAULT_LOREBOOKS['deck_perfect_girl_plan'] || [];
     else if (deckId === 'b64f6c60-f3b0-438b-91ef-51362dbb4ce4') defaultEntries = DEFAULT_LOREBOOKS['deck_daughter_morning_wood'] || [];
     else if (deckId === '6575c840-e7d2-4fdc-a752-b111d9bdf5b8') defaultEntries = DEFAULT_LOREBOOKS['deck_ten_yuan_childhood_friend'] || [];
+    else if (deckId === 'e59fe31f-98c7-4b85-9f84-262f5d13bc32') defaultEntries = DEFAULT_LOREBOOKS['deck_girls_dormitory'] || [];
+    else if (deckId === '57879274-30f5-4411-957f-2a33bdd2e031') defaultEntries = DEFAULT_LOREBOOKS['deck_housewife_apartment'] || [];
+    else if (deckId === '087637dd-b4ba-4588-ac91-cd6361d47be0') defaultEntries = DEFAULT_LOREBOOKS['deck_nude_girls_school'] || [];
     else if (deckId === 'c78de7d8-7353-467e-bc71-5e6f2c870679') defaultEntries = DEFAULT_LOREBOOKS['deck_heisi_daughter'] || [];
     else if (deckId === '432a57e9-8f8a-4e4e-80fc-83eb9ebc71eb') defaultEntries = DEFAULT_LOREBOOKS['deck_sister_in_law_niece'] || [];
     else if (deckId === '059217c9-213b-48e7-b660-0c04f78ede48') defaultEntries = DEFAULT_LOREBOOKS['deck_apocalypse_survival'] || [];

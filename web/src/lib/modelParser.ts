@@ -627,6 +627,90 @@ const TEN_YUAN_CHILDHOOD_SEMANTIC_GROUPS: SemanticActionGroup[] = [
   }
 ];
 
+// 🌸 《长得太清秀，被迫入住大学女生宿舍！》主题分支库
+const GIRLS_DORMITORY_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  {
+    keywords: ['洗澡', '浴室', '换衣服', '更衣', '贴贴', '双丸子头', '苏小可', '小可'],
+    branches: [
+      { title: '借口衣服脏了借苏小可的睡裙并拉上床帘换衣', desc: '当着元气舍友的面小心翼翼褪去外衣，极力用衣物遮挡下体【极限更衣: 挑战女寝心跳极限，在暴露边缘疯狂试探】' },
+      { title: '装作受惊慌乱地拒绝苏小可一起挤单人浴室的洗澡邀请', desc: '娇羞捂胸推脱共浴要求，反让腹黑萝莉更加激起恶作剧贴贴的兴致【欲拒还迎: 扮演柔弱小女生，让舍友产生无微不至的保护欲】' },
+      { title: '任由苏小可抱着自己的腰在单人床上肆意翻滚撒娇', desc: '感受少女柔软的娇躯隔着睡衣亲密贴合，强忍着下身勃起的剧烈胀痛【被窝温存: 享受无防备的同床共枕，克制男儿本能的煎熬】' }
+    ]
+  },
+  {
+    keywords: ['黑丝', '包臀裙', '凌玥', '御姐', '敏锐', '怀疑', '试探', '抽烟'],
+    branches: [
+      { title: '迎着高冷御姐凌玥审视的目光低头假装整理书桌', desc: '在黑丝大姐大强大的气场下保持楚楚可怜，巧妙化解对方敏锐的怀疑【心战攻防: 伪装纯洁无害，让冷艳御姐放下戒心】' },
+      { title: '在阳台独处时轻声关切被前男友短信骚扰的凌玥', desc: '趁虚而入给予暖心宽慰，触动高冷不良大姐大内心深处最柔软的脆弱【破冰攻略: 走进御姐心房，建立超越普通室友的私密羁绊】' },
+      { title: '帮换上黑丝长靴的凌玥拉上包臀裙后背拉链', desc: '指尖微颤滑过御姐细腻紧致的美背肌肤，近距离体会D罩杯成熟诱惑【指尖触碰: 借举手之劳行暧昧试探，感受御姐身体的细微战栗】' }
+    ]
+  },
+  {
+    keywords: ['校花', '叶芷柔', '芷柔', '出浴', '浴巾', '黑长直', '暴露', '破防', '占有'],
+    branches: [
+      { title: '在叶芷柔不慎滑落浴巾的刹那下意识闭眼却还是尽收眼底', desc: '阅尽名门校花绝美无瑕的粉嫩玉体，在彼此惊呼失措中拉近隐秘距离【春光乍泄: 撞破校花至高机密，将纯情暧昧推向爆发点】' },
+      { title: '在书桌前帮芷柔吹干柔顺如瀑的湿漉黑长直发丝', desc: '站在清纯校花身后轻柔抚摸发丝，闻着她身上甜美的栀子花沐浴清香【温情脉脉: 营造浪漫唯美的二人世界，让校花彻底卸下防备】' },
+      { title: '在被窝中被舍友无意触碰到下身隆起的硬物时反客为主', desc: '撕碎长久以来的伪装，在黑暗的寝室里用粗硕的男根彻底贯穿舍友【身份揭晓: 从男娘伪装到雄性征服，引爆女寝禁断狂欢】' }
+    ]
+  }
+];
+
+// 🏢 《我住的公寓竟全是人妻看我把她们全部肏成RBP》主题分支库
+const HOUSEWIFE_APARTMENT_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  {
+    keywords: ['房卡', '管理员', '查房', '巡查', '走廊', '监控', '检修', '月桂庄'],
+    branches: [
+      { title: '掏出万能总房卡在门锁上轻轻一刷推门而入', desc: '行使整栋大楼唯一的进出特权，当面打破人妻房间的绝对私密感【特权入侵: 用管理员身份施压，建立居高临下的掌控权】' },
+      { title: '以排查燃气安全与水管老化为由反锁房门步步紧逼', desc: '堂而皇之地将日常检修转化为密室调教，切断外界所有救援退路【密室封锁: 封死人妻心理退路，营造窒息独处的暧昧气场】' },
+      { title: '借口调取走廊监控指出某位人妻深夜的不规矩举止', desc: '用掌握的监控画面作为不可反驳的私密把柄，逼迫人妻俯首顺从【把柄掌控: 击溃人妻端庄伪装，将其推向命运的悬崖边缘】' }
+    ]
+  },
+  {
+    keywords: ['汉库克', '顾冰颜', '宇崎月', '邻家', '人妻', '借盐', '巨乳', '寂寞'],
+    branches: [
+      { title: '在1201室将空虚寂寞的高傲女帝逼至落地窗前深吻', desc: '当着万家灯火的面撕开女帝的高冷面具，直击她渴求受孕的本能【女帝征服: 彻底降服高贵异界人妻，用雄性力量填满她的空虚】' },
+      { title: '在故障暂停的幽闭电梯里把冰山总裁顾冰颜揽入怀中', desc: '在电梯狭小的密闭空间里突破厌男女总裁的心防，抚慰其颤抖身躯【电梯破防: 攻破商业女王的自尊堡垒，享受高岭之花的依附】' },
+      { title: '拉过501室借盐的邻家太太宇崎月将其按在玄关揉弄深沟', desc: '顺应人妻自我攻略的低胸诱惑，把粗糙的大手伸进围裙肆意揉捏巨乳【邻家极乐: 惩罚人妻的放浪试探，在玄关开启狂野亵玩】' }
+    ]
+  },
+  {
+    keywords: ['内射', '播种', '堕落', '出差', '丈夫', '绿帽', '狂操', '沦陷'],
+    branches: [
+      { title: '在人妻与出差丈夫通电话时从身后将其狂暴贯穿', desc: '在电话连线中疯狂抽插肥美肉臀，听着少妇捂嘴强忍娇喘的极致刺激【电话NTL: 践踏婚姻誓言，品尝凌驾于丈夫之上的征服快感】' },
+      { title: '将滚烫的精液一股脑射满人妻渴望受孕的子宫深处', desc: '用最滚烫的生命精华完成对人妻肉体的彻底侵染，烙下永久性归属【子宫播种: 满足极品人妻繁衍渴求，将其彻底驯化为专属母畜】' },
+      { title: '让人妻穿上性感的开档黑丝和颈圈亲口称呼自己为主播种者', desc: '彻底摧毁良家妇女的道德底线，完成月桂庄全员人妻的终极堕落攻略【全员臣服: 建立后宫私宠领地，成为整座公寓唯一的男主人】' }
+    ]
+  }
+];
+
+// 🏫 《全裸女校，只有你是特招》主题分支库
+const NUDE_GIRLS_SCHOOL_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  {
+    keywords: ['全裸', '脱衣', '穹顶', '校规', '围观', '赤裸', '一丝不挂', '羞耻', '圣伊甸'],
+    branches: [
+      { title: '在校门口当着女校长与众人的面坦然解开全部衣扣', desc: '以毫不退缩的雄性气魄褪下所有遮蔽，任由刚猛健硕的肉体展露在全校目光下【坦诚相见: 顺应全裸铁律，展现雄性阳刚本色震撼全场】' },
+      { title: '在恒温26℃的林荫道上昂首阔步迎面走向赤裸的学妹们', desc: '无视周遭纯洁少女们的惊呼与羞红眼眸，享受全校唯一男性的绝对焦点待遇【校园巡礼: 漫步于肉体花园，建立君临女校的强大自信】' },
+      { title: '直视身旁两位互相亲吻抚摸的百合女生并大方加入交流', desc: '打破百合少女们的日常自赏，以真实雄性的存在强力介入女性禁区【打破禁忌: 颠覆女校封闭生态，引入雄性荷尔蒙风暴】' }
+    ]
+  },
+  {
+    keywords: ['浴室', '女厕', '共用', '洗澡', '水汽', '塞西莉亚', '观察', '实验'],
+    branches: [
+      { title: '跨入弥漫着甜腻水汽的大浴池在成群赤裸女生中间坐下', desc: '在白花花的娇躯与娇滴滴的私语中坦然清洗，引爆浴室最高警戒【浴池交锋: 攻入女校最私密的核心堡垒，近距离领略万种风情】' },
+      { title: '在塞西莉亚校长巡视时大胆迎上她玩味挑逗的目光', desc: '与一丝不挂的成熟校长展开目光与气场博弈，反客为主质问特招目的【上位对决: 拒绝充当玩偶小白鼠，向女王宣告雄性主权】' },
+      { title: '在公共女卫狭小的隔间前帮助害羞不敢出来的特优生', desc: '隔着门扉抚慰因初次见到男性肉体而心跳过载的单纯少女【温柔抚慰: 融化纯情学妹心防，俘获女校第一批忠诚追随者】' }
+    ]
+  },
+  {
+    keywords: ['讲台', '生理课', '教具', '实操', '抚摸', '勃起', '破甲', '狂操'],
+    branches: [
+      { title: '被生理课老师叫上讲台配合进行男性解剖活体实操', desc: '在全班女生屏息注视下任由女老师戴着手套的手指抚过每一寸敏感肌肉【讲台授业: 公然充当生理示范教具，在众目睽睽下勃起破防】' },
+      { title: '让前排最好奇的贵族大小姐走上讲台亲手握住滚烫的男根', desc: '打破理论教学，引导纯洁的名门千金零距离感知男性的粗大与滚烫【实操教学: 用最直观的肉体冲击震撼少女心灵，播下情欲火种】' },
+      { title: '在课后无人的保健室将意犹未尽的女老师按在病床上贯穿', desc: '撕碎知性御姐的教师威严，用粗暴狂野的抽送让她亲身体会男性的真正威力【课后辅导: 反向征服求知欲旺盛的教师，将其收为私人玩物】' }
+    ]
+  }
+];
+
 const GENERIC_ACTION_POOLS: Branch[] = [
   { tag: 'A', title: '顺势深入掌控当下主动局面', desc: '抓住对方话语与微表情中的动摇瞬间，步步紧逼占据绝对心理主动' },
   { tag: 'B', title: '转换谈话节奏轻声耳语试探', desc: '打破当下的沉默与僵局，用柔和又带着压迫感的话语探寻其真实心意' },
@@ -724,6 +808,23 @@ export function generateContextualBranches(
     deckKey === 'deck_ten_yuan_childhood_friend' ||
     deckKey.includes('6575c840') ||
     deckKey.includes('ten_yuan');
+  const isGirlsDormitory =
+    deckKey === 'deck_girls_dormitory' ||
+    deckKey.includes('e59fe31f') ||
+    deckKey.includes('girls_dormitory') ||
+    deckKey.includes('女生宿舍');
+  const isHousewifeApartment =
+    deckKey === 'deck_housewife_apartment' ||
+    deckKey.includes('57879274') ||
+    deckKey.includes('housewife_apartment') ||
+    deckKey.includes('全是人妻') ||
+    deckKey.includes('月桂庄');
+  const isNudeGirlsSchool =
+    deckKey === 'deck_nude_girls_school' ||
+    deckKey.includes('087637dd') ||
+    deckKey.includes('nude_girls_school') ||
+    deckKey.includes('全裸女校') ||
+    deckKey.includes('圣伊甸');
 
   let semanticGroups: SemanticActionGroup[] = [];
   if (isCoser) semanticGroups = COSER_SEMANTIC_GROUPS;
@@ -743,6 +844,9 @@ export function generateContextualBranches(
   else if (isPerfectGirl) semanticGroups = PERFECT_GIRL_SEMANTIC_GROUPS;
   else if (isDaughterMorningWood) semanticGroups = DAUGHTER_MORNING_WOOD_SEMANTIC_GROUPS;
   else if (isTenYuanChildhood) semanticGroups = TEN_YUAN_CHILDHOOD_SEMANTIC_GROUPS;
+  else if (isGirlsDormitory) semanticGroups = GIRLS_DORMITORY_SEMANTIC_GROUPS;
+  else if (isHousewifeApartment) semanticGroups = HOUSEWIFE_APARTMENT_SEMANTIC_GROUPS;
+  else if (isNudeGirlsSchool) semanticGroups = NUDE_GIRLS_SCHOOL_SEMANTIC_GROUPS;
 
   const combinedContext = (storyText + ' ' + userAction).toLowerCase();
 
