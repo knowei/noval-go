@@ -479,7 +479,10 @@ export default function ChatPage() {
           body: JSON.stringify({
             model: apiModel,
             messages: promptMessages,
-            temperature: modelSettings.temperature || 0.85,
+            temperature: modelSettings.temperature ?? 0.7,
+            top_p: modelSettings.topP ?? 0.95,
+            frequency_penalty: 0.1,
+            presence_penalty: 0.1,
             max_tokens: 4096,
             stream: true
           }),
