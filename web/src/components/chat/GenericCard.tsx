@@ -10,6 +10,7 @@ import { RichStoryRenderer } from './RichStoryRenderer';
 interface GenericCardProps {
   turn: Turn;
   index: number;
+  deckId?: string;
   onSendAction: (action: string) => void;
   onDelete: (index: number) => void;
   onRegenerate?: (index: number) => void;
@@ -20,6 +21,7 @@ interface GenericCardProps {
 export const GenericCard = React.memo(function GenericCard({
   turn,
   index,
+  deckId,
   onSendAction,
   onDelete,
   onRegenerate,
@@ -55,9 +57,12 @@ export const GenericCard = React.memo(function GenericCard({
 
   const hasStatus = turn.status && Object.keys(turn.status).length > 0;
   const hasMemory = turn.memory && turn.memory.length > 0;
-  const activeBranches = turn.branches && turn.branches.length > 0
-    ? turn.branches
-    : generateContextualBranches('generic', storyText, index);
+  const cardDeckKey = deckId || 'generic';
+  const activeBranches = React.useMemo(() => {
+    return turn.branches && turn.branches.length > 0
+      ? turn.branches
+      : generateContextualBranches(cardDeckKey, storyText, index);
+  }, [turn.branches, cardDeckKey, storyText, index]);
   const hasBranches = activeBranches && activeBranches.length > 0;
   const hasAnyPanel = hasStatus || hasMemory || hasBranches;
 

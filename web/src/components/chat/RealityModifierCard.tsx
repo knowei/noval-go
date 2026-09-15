@@ -140,20 +140,21 @@ export const RealityModifierCard = React.memo(function RealityModifierCard({
   const xiaomengLove = Math.min(100, 30 + Math.floor(index / 2));
   const xiaomengSink = Math.min(100, 15 + Math.floor(index / 3));
 
-  let dynamicActionList: string[] = [];
-  if (turn.branches && turn.branches.length > 0) {
-    dynamicActionList = turn.branches.map((b) => `【${b.title}】：“${b.desc || b.title}”`);
-  } else if (index === 0) {
-    dynamicActionList = [
-      "【尝试第一次修改】：“让对门邻居林婉柔在五分钟内主动来敲我的门借调味品。”",
-      "【直接登门拜访】：“装作外卖送错了，端着一盒热披萨去敲对门302室的房门。”",
-      "【修改自身参数】：“将自己的外貌魅力和身体各项属性直接提升为男神水准。”",
-      "【询问助手小改改】：“调出附近其他两位高分目标（苏寒月、顾小梦）的资料给我看看。”"
-    ];
-  } else {
-    const fallbackBranches = generateContextualBranches('deck_reality_modifier', storyRaw, index);
-    dynamicActionList = fallbackBranches.map((b) => `【${b.title}】：“${b.desc || b.title}”`);
-  }
+  const dynamicActionList = React.useMemo(() => {
+    if (turn.branches && turn.branches.length > 0) {
+      return turn.branches.map((b) => `【${b.title}】：“${b.desc || b.title}”`);
+    } else if (index === 0) {
+      return [
+        "【尝试第一次修改】：“让对门邻居林婉柔在五分钟内主动来敲我的门借调味品。”",
+        "【直接登门拜访】：“装作外卖送错了，端着一盒热披萨去敲对门302室的房门。”",
+        "【修改自身参数】：“将自己的外貌魅力和身体各项属性直接提升为男神水准。”",
+        "【询问助手小改改】：“调出附近其他两位高分目标（苏寒月、顾小梦）的资料给我看看。”"
+      ];
+    } else {
+      const fallbackBranches = generateContextualBranches('deck_reality_modifier', storyRaw, index);
+      return fallbackBranches.map((b) => `【${b.title}】：“${b.desc || b.title}”`);
+    }
+  }, [turn.branches, index, storyRaw]);
 
   const renderStoryParagraphs = (text: string) => {
     return text.split('\n').map((line, li) => {

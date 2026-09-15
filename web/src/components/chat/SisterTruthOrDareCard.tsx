@@ -151,9 +151,11 @@ export const SisterTruthOrDareCard = React.memo(function SisterTruthOrDareCard({
 
   const hasStatus = turn.status && Object.keys(turn.status).length > 0;
   const hasMemory = turn.memory && turn.memory.length > 0;
-  const activeBranches = turn.branches && turn.branches.length > 0
-    ? turn.branches
-    : generateContextualBranches('deck_sister_truth_or_dare', storyText, index);
+  const activeBranches = React.useMemo(() => {
+    return turn.branches && turn.branches.length > 0
+      ? turn.branches
+      : generateContextualBranches('deck_sister_truth_or_dare', storyText, index);
+  }, [turn.branches, storyText, index]);
   const hasBranches = activeBranches && activeBranches.length > 0;
   const hasAnyPanel = hasStatus || hasMemory || hasBranches;
 

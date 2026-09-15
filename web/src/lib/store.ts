@@ -21,7 +21,7 @@ interface AppState {
   setConversationHistory: (history: Turn[]) => void;
   setCurrentConversationId: (id: string) => void;
   addTurn: (turn: Turn) => void;
-  updateTurn: (index: number, turn: Turn) => void;
+  updateTurn: (index: number, turn: Partial<Turn>) => void;
   truncateHistory: (fromIndex: number) => void;
   setSavedConversations: (saves: ConversationSave[]) => void;
   setModelSettings: (settings: Partial<ModelSettings>) => void;
@@ -86,7 +86,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   updateTurn: (index, turn) => {
     set((state) => {
       const next = [...state.conversationHistory];
-      next[index] = turn;
+      if (next[index]) {
+        next[index] = { ...next[index], ...turn };
+      } else {
+        next[index] = turn as Turn;
+      }
       return { conversationHistory: next };
     });
     get().autoSave();
