@@ -109,9 +109,9 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
               <span className="text-purple-400">💭</span>
               <span>潜意识心声 · 隐秘动摇与微观生理应激:</span>
             </div>
-            <p className="leading-relaxed pl-3 border-l-2 border-purple-400/50 italic font-serif text-purple-100/90">
+            <div className="leading-relaxed pl-3 border-l-2 border-purple-400/50 italic font-serif text-purple-100/90">
               {inner}
-            </p>
+            </div>
           </div>
         );
       }
@@ -176,9 +176,9 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
       {/* ③ 正文段落渲染 */}
       <div className="novel-text space-y-3 select-text font-serif leading-[1.95] text-[14.5px] sm:text-[15px] text-gray-200">
         {paragraphs.map((p, pi) => (
-          <p key={pi} className="tracking-[0.015em] mb-2.5">
+          <div key={pi} className="tracking-[0.015em] mb-2.5">
             {renderParagraphContent(p)}
-          </p>
+          </div>
         ))}
       </div>
     </div>
