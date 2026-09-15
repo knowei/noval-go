@@ -99,6 +99,23 @@ def init_db():
             c.execute(f"ALTER TABLE plaza_cards ADD COLUMN {col} {col_def}")
         except Exception: pass
 
+    # plaza_cards 自动去重与唯一索引防护 (杜绝同名剧本卡片重复渲染)
+    try:
+        c.execute("""
+        DELETE FROM plaza_cards 
+        WHERE id NOT IN (
+            SELECT id FROM (
+                SELECT id, ROW_NUMBER() OVER (
+                    PARTITION BY title 
+                    ORDER BY CASE WHEN id LIKE 'deck_%' THEN 0 ELSE 1 END, id ASC
+                ) as rn 
+                FROM plaza_cards
+            ) WHERE rn = 1
+        )
+        """)
+        c.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_plaza_cards_title ON plaza_cards(title)")
+    except Exception: pass
+
     # 2. 会话/存档表
     c.execute("""
     CREATE TABLE IF NOT EXISTS conversations (
