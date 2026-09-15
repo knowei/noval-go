@@ -22,8 +22,9 @@ import { useAppStore } from '@/lib/store';
 import { fetchStory, fetchConversations, fetchConversation } from '@/lib/api';
 import { parseModelOutput, generateContextualBranches } from '@/lib/modelParser';
 import { buildSystemPrompt } from '@/lib/promptEngine';
-import { Turn, Branch } from '@/lib/types';
+import { Turn, Branch, LoreEntry } from '@/lib/types';
 import { soundEngine } from '@/lib/soundEngine';
+import { retrieveActiveLore, compactMilestoneMemory } from '@/lib/lorebookEngine';
 import { ScenarioSidebar } from '@/components/chat/ScenarioSidebar';
 import { ChatInput } from '@/components/chat/ChatInput';
 import { CoserCard } from '@/components/chat/CoserCard';
@@ -33,6 +34,7 @@ import { FatherDaughterJealousyCard } from '@/components/chat/FatherDaughterJeal
 import { GenericCard } from '@/components/chat/GenericCard';
 import { UserTurnActionBar } from '@/components/chat/UserTurnActionBar';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
+import { LorebookModal } from '@/components/chat/LorebookModal';
 import { InteractiveHandbookCard } from '@/components/InteractiveHandbookCard';
 
 export default function ChatPage() {
@@ -64,6 +66,8 @@ export default function ChatPage() {
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [isRainActive, setIsRainActive] = useState(false);
+  const [isLorebookOpen, setIsLorebookOpen] = useState(false);
+  const [activeLoreEntries, setActiveLoreEntries] = useState<LoreEntry[]>([]);
 
   // Stop ambient sound on unmount
   useEffect(() => {
@@ -333,7 +337,7 @@ export default function ChatPage() {
     };
   };
 
-  const runGeneration = async (historyContext: Turn[]) => {
+  const runGeneration = async (historyContext: Turn[], existingSwipes?: Turn[]) => {
     setIsLoading(true);
     const activeModel = modelSettings.model || 'deepseek-flash';
     const lastUserTurn = historyContext[historyContext.length - 1];
@@ -358,13 +362,30 @@ export default function ChatPage() {
 
     if (isRealApiKey) {
       try {
+        // 动态检索当前交互动作与最新上下文命中的世界书背景词条
+        const lastAiTurn = [...historyContext].reverse().find((h) => !h.isUser);
+        const contextForLore = `${userActionText} ${lastAiTurn?.story || ''}`;
+        const { activeEntries, formattedPrompt: activeLoreText } = retrieveActiveLore(
+          deckId,
+          contextForLore,
+          currentDeck?.lorebook
+        );
+        if (activeEntries && activeEntries.length > 0) {
+          setActiveLoreEntries(activeEntries);
+        }
+
+        // 自动将较早轮次（前6轮之前）沉淀为事实里程碑，彻底解决长剧本失忆
+        const milestoneMemoryText = compactMilestoneMemory(historyContext, 6);
+
         const systemPromptText = buildSystemPrompt({
           deckId,
           deckTitle: currentDeck?.title,
           deckDesc: currentDeck?.desc,
           previousBranches: prevBranches,
           allHistoryBranches,
-          turnIndex: aiTurnIndex
+          turnIndex: aiTurnIndex,
+          activeLoreText,
+          milestoneMemoryText
         });
 
         const promptMessages = [
@@ -466,7 +487,7 @@ export default function ChatPage() {
 
           if (hasLiveStreamSuccess && streamedStory) {
             const parsed = parseModelOutput(streamedStory, deckId, aiTurnIndex, userActionText, prevBranches, allHistoryBranches);
-            updateTurn(aiTurnIndex, {
+            const currentGeneratedTurn: Turn = {
               isUser: false,
               model: activeModel,
               location: currentDeck?.title || '室内场景',
@@ -474,6 +495,7 @@ export default function ChatPage() {
               branches: parsed.branches && parsed.branches.length > 0
                 ? parsed.branches
                 : generateContextualBranches(deckId, streamedStory, aiTurnIndex, userActionText, prevBranches, allHistoryBranches),
+              activeLoreEntries: activeEntries,
               npcThought: parsed.npcThought,
               modReport: parsed.modReport,
               npcClothes: parsed.npcClothes,
@@ -482,6 +504,16 @@ export default function ChatPage() {
               status: parsed.status,
               cot: parsed.cot,
               tl: parsed.tl,
+            };
+
+            const finalSwipes = existingSwipes && existingSwipes.length > 0
+              ? [...existingSwipes, currentGeneratedTurn]
+              : undefined;
+
+            updateTurn(aiTurnIndex, {
+              ...currentGeneratedTurn,
+              swipes: finalSwipes,
+              swipeIndex: finalSwipes ? finalSwipes.length - 1 : undefined,
             });
           }
         }
@@ -514,12 +546,22 @@ export default function ChatPage() {
         const isComplete = currentLen >= fullStory.length;
         soundEngine.playTypewriterClick();
 
-        updateTurn(aiTurnIndex, {
+        const fallbackTurn: Turn = {
           isUser: false,
           model: activeModel || '本地沉浸推演引擎',
           location: currentDeck?.title || '室内场景',
           story: currentSlice,
           branches: isComplete ? fallback.branches : []
+        };
+
+        const finalSwipes = isComplete && existingSwipes && existingSwipes.length > 0
+          ? [...existingSwipes, fallbackTurn]
+          : undefined;
+
+        updateTurn(aiTurnIndex, {
+          ...fallbackTurn,
+          swipes: finalSwipes,
+          swipeIndex: finalSwipes ? finalSwipes.length - 1 : undefined,
         });
 
         if (!isComplete) {
@@ -549,9 +591,29 @@ export default function ChatPage() {
 
   const handleRegenerate = async (turnIndex: number) => {
     if (isLoading) return;
+    const existingTurn = conversationHistory[turnIndex];
+    if (!existingTurn) return;
+
+    // Preserves existing version in swipes list if not already there
+    const existingSwipes = existingTurn.swipes && existingTurn.swipes.length > 0
+      ? [...existingTurn.swipes]
+      : [{ ...existingTurn }];
+
     const truncated = conversationHistory.slice(0, turnIndex);
     setConversationHistory(truncated);
-    await runGeneration(truncated);
+    await runGeneration(truncated, existingSwipes);
+  };
+
+  const handleSwipeChange = (turnIndex: number, newSwipeIndex: number) => {
+    const existing = conversationHistory[turnIndex];
+    if (!existing || !existing.swipes || !existing.swipes[newSwipeIndex]) return;
+
+    const target = existing.swipes[newSwipeIndex];
+    updateTurn(turnIndex, {
+      ...target,
+      swipes: existing.swipes,
+      swipeIndex: newSwipeIndex
+    });
   };
 
   const handleContinueWriting = async (turnIndex: number) => {
@@ -631,7 +693,10 @@ export default function ChatPage() {
     <div className="flex-1 flex min-h-screen">
       {/* Secondary Scenario & Saves Sidebar (Desktop: 270px) */}
       <div className="hidden md:block shrink-0">
-        <ScenarioSidebar onOpenHandbook={handleOpenHandbook} />
+        <ScenarioSidebar
+          onOpenHandbook={handleOpenHandbook}
+          onOpenLorebook={() => setIsLorebookOpen(true)}
+        />
       </div>
 
       {/* Mobile Slide-out Drawer for Scenario Sidebar */}
@@ -645,6 +710,7 @@ export default function ChatPage() {
             <ScenarioSidebar
               onClose={() => setIsMobileScenarioOpen(false)}
               onOpenHandbook={handleOpenHandbook}
+              onOpenLorebook={() => setIsLorebookOpen(true)}
             />
           </div>
         </div>
@@ -753,6 +819,23 @@ export default function ChatPage() {
               <span className="hidden sm:inline text-[11px]">{isRainActive ? '雨声开' : '氛围音效'}</span>
             </button>
 
+            {/* Lorebook World Archive Modal Trigger */}
+            <button
+              onClick={() => setIsLorebookOpen(true)}
+              className={`px-2 sm:px-2.5 py-1 rounded-xl border text-xs flex items-center gap-1.5 transition cursor-pointer shrink-0 ${
+                activeLoreEntries.length > 0
+                  ? 'bg-indigo-950/70 hover:bg-indigo-900/80 border-indigo-500/60 text-indigo-200 shadow-sm'
+                  : 'bg-[#1b1d28] hover:bg-[#252838] border-[#2e3142] text-gray-300 hover:text-indigo-300'
+              }`}
+              title="打开世界书背景设定与自定义词条"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="hidden sm:inline text-[11px]">世界书</span>
+              {activeLoreEntries.length > 0 && (
+                <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              )}
+            </button>
+
             {/* Export Story Full Record */}
             <button
               onClick={() => setIsExportModalOpen(true)}
@@ -853,6 +936,7 @@ export default function ChatPage() {
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
+                  onSwipeChange={handleSwipeChange}
                 />
               );
             }
@@ -868,6 +952,7 @@ export default function ChatPage() {
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
+                  onSwipeChange={handleSwipeChange}
                 />
               );
             }
@@ -883,6 +968,7 @@ export default function ChatPage() {
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
+                  onSwipeChange={handleSwipeChange}
                 />
               );
             }
@@ -898,6 +984,7 @@ export default function ChatPage() {
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
+                  onSwipeChange={handleSwipeChange}
                 />
               );
             }
@@ -913,6 +1000,7 @@ export default function ChatPage() {
                 onRegenerate={handleRegenerate}
                 onContinueWriting={handleContinueWriting}
                 onEdit={handleEditTurn}
+                onSwipeChange={handleSwipeChange}
               />
             );
           })}
@@ -984,6 +1072,15 @@ export default function ChatPage() {
           </div>
         </div>
       )}
+
+      {/* Lorebook World Architecture Modal */}
+      <LorebookModal
+        isOpen={isLorebookOpen}
+        onClose={() => setIsLorebookOpen(false)}
+        deckId={deckId}
+        deck={currentDeck}
+        activeEntries={activeLoreEntries}
+      />
     </div>
   );
 }

@@ -29,6 +29,9 @@ export interface Turn {
   rawOutputSnippet?: string;
   cot?: string;
   tl?: string;
+  activeLoreEntries?: LoreEntry[];
+  swipes?: Turn[];
+  swipeIndex?: number;
 }
 
 export interface StoryScene {
@@ -42,6 +45,15 @@ export interface StoryHandbook {
   quote?: string;
   originHtml?: string;
   castHtml?: string;
+}
+
+export interface LoreEntry {
+  id: string;
+  keys: string[];
+  title: string;
+  content: string;
+  category?: 'item' | 'character' | 'location' | 'secret' | 'rule';
+  enabled?: boolean;
 }
 
 export interface StoryDeck {
@@ -58,6 +70,7 @@ export interface StoryDeck {
   scenes?: StoryScene[];
   firstTurnDemo?: Turn;
   handbook?: StoryHandbook;
+  lorebook?: LoreEntry[];
   customCss?: string;
   customHtml?: string;
   desc?: string;

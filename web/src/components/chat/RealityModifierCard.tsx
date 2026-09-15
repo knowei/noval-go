@@ -14,6 +14,7 @@ interface RealityModifierCardProps {
   onRegenerate?: (index: number) => void;
   onContinueWriting?: (index: number) => void;
   onEdit?: (index: number, newStory: string) => void;
+  onSwipeChange?: (index: number, newSwipeIndex: number) => void;
 }
 
 const REALITY_NPC_PROFILES: Record<string, {
@@ -126,6 +127,7 @@ export const RealityModifierCard = React.memo(function RealityModifierCard({
   onRegenerate,
   onContinueWriting,
   onEdit,
+  onSwipeChange,
 }: RealityModifierCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedStory, setEditedStory] = useState(turn.story || turn.text || '');
@@ -444,6 +446,9 @@ export const RealityModifierCard = React.memo(function RealityModifierCard({
         onEditToggle={() => setIsEditing(!isEditing)}
         onDelete={onDelete}
         isEditing={isEditing}
+        swipes={turn.swipes}
+        swipeIndex={turn.swipeIndex}
+        onSwipeChange={onSwipeChange}
       />
     </div>
   );

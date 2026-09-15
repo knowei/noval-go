@@ -15,6 +15,7 @@ interface FatherDaughterJealousyCardProps {
   onRegenerate?: (index: number) => void;
   onContinueWriting?: (index: number) => void;
   onEdit?: (index: number, newStory: string) => void;
+  onSwipeChange?: (index: number, newSwipeIndex: number) => void;
 }
 
 export const FatherDaughterJealousyCard = React.memo(function FatherDaughterJealousyCard({
@@ -25,6 +26,7 @@ export const FatherDaughterJealousyCard = React.memo(function FatherDaughterJeal
   onRegenerate,
   onContinueWriting,
   onEdit,
+  onSwipeChange,
 }: FatherDaughterJealousyCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedStory, setEditedStory] = useState(turn.story || turn.text || '');
@@ -336,6 +338,9 @@ export const FatherDaughterJealousyCard = React.memo(function FatherDaughterJeal
         onEditToggle={() => setIsEditing(!isEditing)}
         onDelete={onDelete}
         isEditing={isEditing}
+        swipes={turn.swipes}
+        swipeIndex={turn.swipeIndex}
+        onSwipeChange={onSwipeChange}
       />
     </div>
   );

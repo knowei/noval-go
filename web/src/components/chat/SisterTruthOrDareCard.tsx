@@ -14,6 +14,7 @@ interface SisterTruthOrDareCardProps {
   onRegenerate?: (index: number) => void;
   onContinueWriting?: (index: number) => void;
   onEdit?: (index: number, newStory: string) => void;
+  onSwipeChange?: (index: number, newSwipeIndex: number) => void;
 }
 
 export const SisterTruthOrDareCard = React.memo(function SisterTruthOrDareCard({
@@ -24,6 +25,7 @@ export const SisterTruthOrDareCard = React.memo(function SisterTruthOrDareCard({
   onRegenerate,
   onContinueWriting,
   onEdit,
+  onSwipeChange,
 }: SisterTruthOrDareCardProps) {
   const [userName, setUserName] = useState('阿浩');
   const [isEditing, setIsEditing] = useState(false);
@@ -291,6 +293,9 @@ export const SisterTruthOrDareCard = React.memo(function SisterTruthOrDareCard({
         onEditToggle={() => setIsEditing(!isEditing)}
         onDelete={onDelete}
         isEditing={isEditing}
+        swipes={turn.swipes}
+        swipeIndex={turn.swipeIndex}
+        onSwipeChange={onSwipeChange}
       />
     </div>
   );

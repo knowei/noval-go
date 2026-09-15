@@ -15,6 +15,7 @@ interface CoserCardProps {
   onRegenerate?: (index: number) => void;
   onContinueWriting?: (index: number) => void;
   onEdit?: (index: number, newStory: string) => void;
+  onSwipeChange?: (index: number, newSwipeIndex: number) => void;
 }
 
 export const CoserCard = React.memo(function CoserCard({
@@ -25,6 +26,7 @@ export const CoserCard = React.memo(function CoserCard({
   onRegenerate,
   onContinueWriting,
   onEdit,
+  onSwipeChange,
 }: CoserCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedStory, setEditedStory] = useState(turn.story || turn.text || '');
@@ -385,6 +387,9 @@ export const CoserCard = React.memo(function CoserCard({
           onEditToggle={() => setIsEditing(!isEditing)}
           onDelete={onDelete}
           isEditing={isEditing}
+          swipes={turn.swipes}
+          swipeIndex={turn.swipeIndex}
+          onSwipeChange={onSwipeChange}
         />
       </div>
     );
@@ -548,6 +553,9 @@ export const CoserCard = React.memo(function CoserCard({
         onEditToggle={() => setIsEditing(!isEditing)}
         onDelete={onDelete}
         isEditing={isEditing}
+        swipes={turn.swipes}
+        swipeIndex={turn.swipeIndex}
+        onSwipeChange={onSwipeChange}
       />
     </div>
   );
