@@ -32,6 +32,8 @@ export interface Turn {
   activeLoreEntries?: LoreEntry[];
   swipes?: Turn[];
   swipeIndex?: number;
+  isError?: boolean;
+  error?: string;
 }
 
 export interface StoryScene {

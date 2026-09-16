@@ -33,6 +33,7 @@ import { SisterTruthOrDareCard } from '@/components/chat/SisterTruthOrDareCard';
 import { FatherDaughterJealousyCard } from '@/components/chat/FatherDaughterJealousyCard';
 import { GenericCard } from '@/components/chat/GenericCard';
 import { UserTurnActionBar } from '@/components/chat/UserTurnActionBar';
+import { ErrorCard } from '@/components/chat/ErrorCard';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { LorebookModal } from '@/components/chat/LorebookModal';
 import { InteractiveHandbookCard } from '@/components/InteractiveHandbookCard';
@@ -409,223 +410,228 @@ export default function ChatPage() {
 
     let hasLiveStreamSuccess = false;
 
-    // Determine if real API can be attempted
-    const isRealApiKey = Boolean(
-      modelSettings.apiKey &&
-      modelSettings.apiKey.trim().length > 10 &&
-      !modelSettings.apiKey.startsWith('sk-demo')
+    // 检查是否配置了 API Key 或指定了服务地址
+    const hasApiKey = Boolean(modelSettings.apiKey && modelSettings.apiKey.trim().length > 0);
+    const hasCustomBaseUrl = Boolean(
+      modelSettings.baseUrl &&
+      modelSettings.baseUrl.trim().length > 0 &&
+      !modelSettings.baseUrl.includes('api.openai.com')
     );
 
-    if (isRealApiKey) {
-      try {
-        // 动态检索当前交互动作与最新上下文命中的世界书背景词条
-        const lastAiTurn = [...historyContext].reverse().find((h) => !h.isUser);
-        const contextForLore = `${userActionText} ${lastAiTurn?.story || ''}`;
-        const { activeEntries, formattedPrompt: activeLoreText } = retrieveActiveLore(
-          deckId,
-          contextForLore,
-          currentDeck?.lorebook
-        );
-        if (activeEntries && activeEntries.length > 0) {
-          setActiveLoreEntries(activeEntries);
+    if (!hasApiKey && !hasCustomBaseUrl) {
+      addTurn({
+        isUser: false,
+        isError: true,
+        error: '未配置大模型 API Key。请点击右上角【设置】或卡片上的【检查模型设置】填入 API Key 与 Base URL，然后再开启剧情推演。',
+        model: activeModel,
+        location: currentDeck?.title || '系统提示'
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // 动态检索当前交互动作与最新上下文命中的世界书背景词条
+      const lastAiTurn = [...historyContext].reverse().find((h) => !h.isUser);
+      const contextForLore = `${userActionText} ${lastAiTurn?.story || ''}`;
+      const { activeEntries, formattedPrompt: activeLoreText } = retrieveActiveLore(
+        deckId,
+        contextForLore,
+        currentDeck?.lorebook
+      );
+      if (activeEntries && activeEntries.length > 0) {
+        setActiveLoreEntries(activeEntries);
+      }
+
+      // 自动将较早轮次（前6轮之前）沉淀为事实里程碑，彻底解决长剧本失忆
+      const milestoneMemoryText = compactMilestoneMemory(historyContext, 6);
+
+      const systemPromptText = buildSystemPrompt({
+        deckId,
+        deckTitle: currentDeck?.title,
+        deckDesc: currentDeck?.desc,
+        previousBranches: prevBranches,
+        allHistoryBranches,
+        turnIndex: aiTurnIndex,
+        activeLoreText,
+        milestoneMemoryText
+      });
+
+      const promptMessages = [
+        {
+          role: 'system',
+          content: systemPromptText
+        },
+        ...historyContext.slice(-6).map((h, idx, arr) => {
+          const isLast = idx === arr.length - 1;
+          let content = h.text || h.story || '';
+          if (isLast && h.isUser) {
+            content = `【用户最新推进指令】：${content}。\n【核心执行纪律】：\n1. 严格遵循防抢话原则，严禁替玩家说台词或做心理决策；输出高质量感官与情绪张力描写；\n2. 🎲【互动抉择必达要求】：正文推演结束后，必须在末尾输出 <opt><suggested_questions> 标签，包含4项紧密结合当前最新情节、完全不同于历史选项的全新【玩家可选行动】（使用 <d> 标签包裹），严禁省略！`;
+          }
+          return {
+            role: h.isUser ? 'user' : 'assistant',
+            content
+          };
+        })
+      ];
+
+      const targetUrl = `${modelSettings.baseUrl || 'https://api.openai.com/v1'}/chat/completions`;
+      const apiModel = targetUrl.includes('deepseek.com') && (activeModel === 'deepseek-flash' || activeModel === 'deepseek-v4-pro')
+        ? 'deepseek-chat'
+        : activeModel;
+
+      const controller = new AbortController();
+      // 客户端等待上限设为 120 秒，适应 DeepSeek 等推理模型长上下文的高思考延迟
+      const timeoutId = setTimeout(() => controller.abort(), 120000);
+
+      const resp = await fetch(`/proxy?target=${encodeURIComponent(targetUrl)}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${modelSettings.apiKey || ''}`
+        },
+        body: JSON.stringify({
+          model: apiModel,
+          messages: promptMessages,
+          temperature: modelSettings.temperature ?? 0.7,
+          top_p: modelSettings.topP ?? 0.95,
+          frequency_penalty: 0.1,
+          presence_penalty: 0.1,
+          max_tokens: 4096,
+          stream: true
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!resp.ok) {
+        let errDetail = `模型服务响应异常 (HTTP ${resp.status})`;
+        try {
+          const errData = await resp.json();
+          if (errData?.error) {
+            errDetail = typeof errData.error === 'string' ? errData.error : (errData.error.message || JSON.stringify(errData.error));
+          } else if (errData?.message) {
+            errDetail = errData.message;
+          }
+        } catch {
+          try {
+            const rawText = await resp.text();
+            if (rawText) errDetail = `${errDetail}: ${rawText.slice(0, 200)}`;
+          } catch {}
         }
 
-        // 自动将较早轮次（前6轮之前）沉淀为事实里程碑，彻底解决长剧本失忆
-        const milestoneMemoryText = compactMilestoneMemory(historyContext, 6);
-
-        const systemPromptText = buildSystemPrompt({
-          deckId,
-          deckTitle: currentDeck?.title,
-          deckDesc: currentDeck?.desc,
-          previousBranches: prevBranches,
-          allHistoryBranches,
-          turnIndex: aiTurnIndex,
-          activeLoreText,
-          milestoneMemoryText
+        addTurn({
+          isUser: false,
+          isError: true,
+          error: errDetail,
+          model: activeModel,
+          location: currentDeck?.title || '推演异常'
         });
+        setIsLoading(false);
+        return;
+      }
 
-        const promptMessages = [
-          {
-            role: 'system',
-            content: systemPromptText
-          },
-          ...historyContext.slice(-6).map((h, idx, arr) => {
-            const isLast = idx === arr.length - 1;
-            let content = h.text || h.story || '';
-            if (isLast && h.isUser) {
-              content = `【用户最新推进指令】：${content}。\n【核心执行纪律】：\n1. 严格遵循防抢话原则，严禁替玩家说台词或做心理决策；输出高质量感官与情绪张力描写；\n2. 🎲【互动抉择必达要求】：正文推演结束后，必须在末尾输出 <opt><suggested_questions> 标签，包含4项紧密结合当前最新情节、完全不同于历史选项的全新【玩家可选行动】（使用 <d> 标签包裹），严禁省略！`;
-            }
-            return {
-              role: h.isUser ? 'user' : 'assistant',
-              content
-            };
-          })
-        ];
+      if (resp.body) {
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+        let streamedStory = '';
+        let isFirstToken = true;
+        let lastUpdateTime = 0;
 
-        const targetUrl = `${modelSettings.baseUrl || 'https://api.openai.com/v1'}/chat/completions`;
-        const apiModel = targetUrl.includes('deepseek.com') && (activeModel === 'deepseek-flash' || activeModel === 'deepseek-v4-pro')
-          ? 'deepseek-chat'
-          : activeModel;
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+          const chunkValue = decoder.decode(value);
+          const lines = chunkValue.split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+              try {
+                const parsed = JSON.parse(line.slice(6));
+                const delta = parsed.choices?.[0]?.delta?.content || '';
+                if (delta) {
+                  streamedStory += delta;
+                  hasLiveStreamSuccess = true;
 
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 25000);
-
-        const resp = await fetch(`/proxy?target=${encodeURIComponent(targetUrl)}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${modelSettings.apiKey}`
-          },
-          body: JSON.stringify({
-            model: apiModel,
-            messages: promptMessages,
-            temperature: modelSettings.temperature ?? 0.7,
-            top_p: modelSettings.topP ?? 0.95,
-            frequency_penalty: 0.1,
-            presence_penalty: 0.1,
-            max_tokens: 4096,
-            stream: true
-          }),
-          signal: controller.signal
-        });
-
-        clearTimeout(timeoutId);
-
-        if (resp.ok && resp.body) {
-          const reader = resp.body.getReader();
-          const decoder = new TextDecoder();
-          let done = false;
-          let streamedStory = '';
-          let isFirstToken = true;
-          let lastUpdateTime = 0;
-
-          while (!done) {
-            const { value, done: doneReading } = await reader.read();
-            done = doneReading;
-            const chunkValue = decoder.decode(value);
-            const lines = chunkValue.split('\n');
-            for (const line of lines) {
-              if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-                try {
-                  const parsed = JSON.parse(line.slice(6));
-                  const delta = parsed.choices?.[0]?.delta?.content || '';
-                  if (delta) {
-                    streamedStory += delta;
-                    hasLiveStreamSuccess = true;
-
-                    if (isFirstToken) {
-                      isFirstToken = false;
-                      const initialBranches = generateContextualBranches(deckId, streamedStory, aiTurnIndex, userActionText, prevBranches);
-                      addTurn({
+                  if (isFirstToken) {
+                    isFirstToken = false;
+                    const initialBranches = generateContextualBranches(deckId, streamedStory, aiTurnIndex, userActionText, prevBranches);
+                    addTurn({
+                      isUser: false,
+                      model: activeModel,
+                      location: currentDeck?.title,
+                      story: streamedStory,
+                      branches: initialBranches
+                    });
+                    lastUpdateTime = Date.now();
+                  } else {
+                    const now = Date.now();
+                    // 节流更新 (60ms)，避免移动端每秒触发上百次重绘导致 JS 堆内存暴涨崩溃
+                    if (now - lastUpdateTime >= 60 || done) {
+                      lastUpdateTime = now;
+                      soundEngine.playTypewriterClick();
+                      updateTurn(aiTurnIndex, {
                         isUser: false,
                         model: activeModel,
                         location: currentDeck?.title,
-                        story: streamedStory,
-                        branches: initialBranches
+                        story: streamedStory
                       });
-                      lastUpdateTime = Date.now();
-                    } else {
-                      const now = Date.now();
-                      // 节流更新 (60ms)，避免移动端每秒触发上百次重绘导致 JS 堆内存暴涨崩溃
-                      if (now - lastUpdateTime >= 60 || done) {
-                        lastUpdateTime = now;
-                        soundEngine.playTypewriterClick();
-                        updateTurn(aiTurnIndex, {
-                          isUser: false,
-                          model: activeModel,
-                          location: currentDeck?.title,
-                          story: streamedStory
-                        });
-                      }
                     }
                   }
-                } catch (e) {}
-              }
+                }
+              } catch (e) {}
             }
           }
-
-          if (hasLiveStreamSuccess && streamedStory) {
-            const parsed = parseModelOutput(streamedStory, deckId, aiTurnIndex, userActionText, prevBranches, allHistoryBranches);
-            const currentGeneratedTurn: Turn = {
-              isUser: false,
-              model: activeModel,
-              location: currentDeck?.title || '室内场景',
-              story: parsed.story || streamedStory,
-              branches: parsed.branches && parsed.branches.length > 0
-                ? parsed.branches
-                : generateContextualBranches(deckId, streamedStory, aiTurnIndex, userActionText, prevBranches, allHistoryBranches),
-              activeLoreEntries: activeEntries,
-              npcThought: parsed.npcThought,
-              modReport: parsed.modReport,
-              npcClothes: parsed.npcClothes,
-              modifyEffect: parsed.modifyEffect,
-              memory: parsed.memory,
-              status: parsed.status,
-              cot: parsed.cot,
-              tl: parsed.tl,
-            };
-
-            const finalSwipes = existingSwipes && existingSwipes.length > 0
-              ? [...existingSwipes, currentGeneratedTurn]
-              : undefined;
-
-            updateTurn(aiTurnIndex, {
-              ...currentGeneratedTurn,
-              swipes: finalSwipes,
-              swipeIndex: finalSwipes ? finalSwipes.length - 1 : undefined,
-            });
-          }
         }
-      } catch (err) {
-        // Fast failover to local simulator
+
+        if (hasLiveStreamSuccess && streamedStory) {
+          const parsed = parseModelOutput(streamedStory, deckId, aiTurnIndex, userActionText, prevBranches, allHistoryBranches);
+          const currentGeneratedTurn: Turn = {
+            isUser: false,
+            model: activeModel,
+            location: currentDeck?.title || '室内场景',
+            story: parsed.story || streamedStory,
+            branches: parsed.branches && parsed.branches.length > 0
+              ? parsed.branches
+              : generateContextualBranches(deckId, streamedStory, aiTurnIndex, userActionText, prevBranches, allHistoryBranches),
+            activeLoreEntries: activeEntries,
+            npcThought: parsed.npcThought,
+            modReport: parsed.modReport,
+            npcClothes: parsed.npcClothes,
+            modifyEffect: parsed.modifyEffect,
+            memory: parsed.memory,
+            status: parsed.status,
+            cot: parsed.cot,
+            tl: parsed.tl,
+          };
+
+          const finalSwipes = existingSwipes && existingSwipes.length > 0
+            ? [...existingSwipes, currentGeneratedTurn]
+            : undefined;
+
+          updateTurn(aiTurnIndex, {
+            ...currentGeneratedTurn,
+            swipes: finalSwipes,
+            swipeIndex: finalSwipes ? finalSwipes.length - 1 : undefined,
+          });
+        }
       }
-    }
+    } catch (err: any) {
+      console.error('[Generation Error]:', err);
+      if (!hasLiveStreamSuccess) {
+        const isTimeout = err?.name === 'AbortError' || err?.message?.includes('aborted');
+        const errorMsg = isTimeout
+          ? '模型响应超时 (已等待 120 秒)。大模型长文本处理耗时较长或网络连接中断，请点击下方【重新生成】重试。'
+          : `推演连接异常: ${err?.message || '网络连接发生故障'}`;
 
-    // High-fidelity instant typewriter stream fallback
-    if (!hasLiveStreamSuccess) {
-      const fallback = getFallbackStory(userActionText, aiTurnIndex, prevBranches);
-      const fullStory = fallback.story;
-
-      // Add turn immediately with initial chunk so user sees response instant (<100ms)
-      const initialChars = fullStory.slice(0, 16);
-      addTurn({
-        isUser: false,
-        model: activeModel || '本地沉浸推演引擎',
-        location: currentDeck?.title || '室内场景',
-        story: initialChars,
-        branches: []
-      });
-
-      // Typewriter stream smoothly at 45ms interval with larger chunks (mobile friendly)
-      let currentLen = 24;
-      const chunkSize = 24;
-      while (currentLen < fullStory.length) {
-        currentLen = Math.min(currentLen + chunkSize, fullStory.length);
-        const currentSlice = fullStory.slice(0, currentLen);
-        const isComplete = currentLen >= fullStory.length;
-        soundEngine.playTypewriterClick();
-
-        const fallbackTurn: Turn = {
+        addTurn({
           isUser: false,
-          model: activeModel || '本地沉浸推演引擎',
-          location: currentDeck?.title || '室内场景',
-          story: currentSlice,
-          branches: isComplete ? fallback.branches : []
-        };
-
-        const finalSwipes = isComplete && existingSwipes && existingSwipes.length > 0
-          ? [...existingSwipes, fallbackTurn]
-          : undefined;
-
-        updateTurn(aiTurnIndex, {
-          ...fallbackTurn,
-          swipes: finalSwipes,
-          swipeIndex: finalSwipes ? finalSwipes.length - 1 : undefined,
+          isError: true,
+          error: errorMsg,
+          model: activeModel,
+          location: currentDeck?.title || '推演超时'
         });
-
-        if (!isComplete) {
-          await new Promise((r) => setTimeout(r, 45));
-        }
       }
     }
 
@@ -653,10 +659,10 @@ export default function ChatPage() {
     const existingTurn = conversationHistory[turnIndex];
     if (!existingTurn) return;
 
-    // Preserves existing version in swipes list if not already there
-    const existingSwipes = existingTurn.swipes && existingTurn.swipes.length > 0
+    // Preserves existing version in swipes list if not already there (unless it was an error turn)
+    const existingSwipes = !existingTurn.isError && existingTurn.swipes && existingTurn.swipes.length > 0
       ? [...existingTurn.swipes]
-      : [{ ...existingTurn }];
+      : (!existingTurn.isError && (existingTurn.story || existingTurn.text) ? [{ ...existingTurn }] : undefined);
 
     const truncated = conversationHistory.slice(0, turnIndex);
     setConversationHistory(truncated);
@@ -981,6 +987,19 @@ export default function ChatPage() {
                     {turn.text}
                   </div>
                 </div>
+              );
+            }
+
+            if (turn.isError) {
+              return (
+                <ErrorCard
+                  key={idx}
+                  turn={turn}
+                  index={idx}
+                  onRegenerate={handleRegenerate}
+                  onOpenSettings={() => setIsSettingsOpen(true)}
+                  onDelete={(dIdx) => truncateHistory(dIdx)}
+                />
               );
             }
 
