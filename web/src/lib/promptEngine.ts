@@ -1,4 +1,4 @@
-import { Branch } from './types';
+import { Branch, EnabledMods } from './types';
 
 interface BuildPromptOptions {
   deckId: string;
@@ -10,6 +10,7 @@ interface BuildPromptOptions {
   activeLoreText?: string;
   milestoneMemoryText?: string;
   roleplayMode?: 'realistic' | 'unrestricted';
+  enabledMods?: EnabledMods;
 }
 
 export function buildSystemPrompt(options: BuildPromptOptions): string {
@@ -22,8 +23,13 @@ export function buildSystemPrompt(options: BuildPromptOptions): string {
     turnIndex,
     activeLoreText = '',
     milestoneMemoryText = '',
-    roleplayMode = 'realistic'
+    enabledMods
   } = options;
+
+  // 根据模组开关动态决定角色防御策略
+  const roleplayMode = enabledMods?.antiCoercion === false 
+    ? 'unrestricted' 
+    : (options.roleplayMode || 'realistic');
 
   const isCoser = deckId === 'deck_coser_sister';
   const isModifier = deckId === 'deck_reality_modifier';
@@ -37,7 +43,7 @@ export function buildSystemPrompt(options: BuildPromptOptions): string {
   const isAtour = deckId === 'deck_atour_app' || deckId.includes('1ad4e5fd') || deckTitle.includes('亚朵');
   const isHeisiDaughter = deckId === 'deck_heisi_daughter' || deckId.includes('c78de7d8') || deckTitle.includes('黑丝女儿');
   const isSisterInLawNiece = deckId === 'deck_sister_in_law_niece' || deckId.includes('432a57e9') || deckTitle.includes('嫂子与侄女');
-  const isApocalypse = deckId === 'deck_apocalypse_survival' || deckId.includes('059217c9') || deckTitle.includes('末世求生');
+  const isApocalypse = (deckId === 'deck_apocalypse_survival' || deckId.includes('059217c9') || deckTitle.includes('末世求生')) && (enabledMods ? enabledMods.apocalypseSurvival : true);
   const isSuccubusWife = deckId === 'deck_succubus_wife' || deckId.includes('4881f4b1') || deckTitle.includes('魅魔妻子');
   const isPerfectGirl = deckId === 'deck_perfect_girl_plan' || deckId.includes('eb85f366') || deckTitle.includes('完美少女');
   const isDaughterMorningWood = deckId === 'deck_daughter_morning_wood' || deckId.includes('b64f6c60') || deckTitle.includes('晨勃');
