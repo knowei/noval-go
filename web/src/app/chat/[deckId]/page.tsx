@@ -32,6 +32,7 @@ import { RealityModifierCard } from '@/components/chat/RealityModifierCard';
 import { SisterTruthOrDareCard } from '@/components/chat/SisterTruthOrDareCard';
 import { FatherDaughterJealousyCard } from '@/components/chat/FatherDaughterJealousyCard';
 import { GenericCard } from '@/components/chat/GenericCard';
+import { ApocalypseSurvivalCard } from '@/components/chat/ApocalypseSurvivalCard';
 import { UserTurnActionBar } from '@/components/chat/UserTurnActionBar';
 import { ErrorCard } from '@/components/chat/ErrorCard';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
@@ -56,6 +57,7 @@ export default function ChatPage() {
     setCurrentConversationId,
     startNewStory,
     modelSettings,
+    toggleRoleplayMode,
     setIsSettingsOpen,
     setIsDrawerOpen,
   } = useAppStore();
@@ -454,7 +456,8 @@ export default function ChatPage() {
         allHistoryBranches,
         turnIndex: aiTurnIndex,
         activeLoreText,
-        milestoneMemoryText
+        milestoneMemoryText,
+        roleplayMode: modelSettings.roleplayMode
       });
 
       const promptMessages = [
@@ -863,6 +866,20 @@ export default function ChatPage() {
               <span suppressHydrationWarning className="font-semibold text-xs">{modelSettings.model || 'deepseek-flash'}</span>
               <span className="text-[10px] text-emerald-400 opacity-70 group-hover:opacity-100 transition">▼</span>
             </button>
+
+            {/* 推演风格切换药丸 (真实推拉 vs 绝对顺从) */}
+            <button
+              onClick={toggleRoleplayMode}
+              className={`flex items-center gap-1.5 text-xs px-2.5 sm:px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-xs shrink-0 border ${
+                modelSettings.roleplayMode === 'unrestricted'
+                  ? 'text-pink-300 bg-pink-950/60 hover:bg-pink-900/70 border-pink-500/50 hover:border-pink-400'
+                  : 'text-amber-300 bg-amber-950/60 hover:bg-amber-900/70 border-amber-500/50 hover:border-amber-400'
+              }`}
+              title={modelSettings.roleplayMode === 'unrestricted' ? '当前模式：💖 绝对顺从（点击切换为 🛡️ 真实推拉·硬核底线）' : '当前模式：🛡️ 真实推拉·硬核底线（违背意志强推会自卫逃跑，点击切换为 💖 绝对顺从）'}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${modelSettings.roleplayMode === 'unrestricted' ? 'bg-pink-400' : 'bg-amber-400'} animate-pulse`} />
+              <span className="font-semibold text-xs">{modelSettings.roleplayMode === 'unrestricted' ? '💖 绝对顺从' : '🛡️ 真实推拉'}</span>
+            </button>
           </div>
 
           {/* Action Controls */}
@@ -1054,6 +1071,22 @@ export default function ChatPage() {
             if (isFatherDaughter) {
               return (
                 <FatherDaughterJealousyCard
+                  key={idx}
+                  turn={turn}
+                  index={idx}
+                  onSendAction={handleSend}
+                  onDelete={(dIdx) => truncateHistory(dIdx)}
+                  onRegenerate={handleRegenerate}
+                  onContinueWriting={handleContinueWriting}
+                  onEdit={handleEditTurn}
+                  onSwipeChange={handleSwipeChange}
+                />
+              );
+            }
+
+            if (isApocalypse) {
+              return (
+                <ApocalypseSurvivalCard
                   key={idx}
                   turn={turn}
                   index={idx}

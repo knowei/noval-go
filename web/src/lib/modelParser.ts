@@ -1043,25 +1043,50 @@ export function parseModelOutput(
     if (memLines.length > 0) turn.memory = memLines;
   }
 
-  // 7. 抽取状态栏
+  // 7. 抽取状态栏 (兼容常规状态栏与废土求生专属 <status> 标签)
   const statusMatch = rawText.match(
-    /(?:📊|\[)?【?(?:实时物理状态栏|物理状态栏|状态栏|客厅局势与三人状态|女儿与父亲心态实时监控|兄妹羁绊与心防指数)】?\]?[:：\s]*([\s\S]*?)(?=(?:🎲|\[|#)?【?(?:行动分支选项|行动分支|分支选项|推荐互动抉择|推荐行动|下一步行动抉择)|$)/i
+    /(?:<status>([\s\S]*?)<\/status>|(?:📊|\[)?【?(?:实时物理状态栏|物理状态栏|状态栏|废土生存状态栏|生存者状态栏|客厅局势与三人状态|女儿与父亲心态实时监控|兄妹羁绊与心防指数)】?\]?[:：\s]*([\s\S]*?)(?=(?:🎲|\[|#|<opt|<article)?【?(?:行动分支选项|行动分支|分支选项|推荐互动抉择|推荐行动|下一步行动抉择)|$))/i
   );
-  if (statusMatch && statusMatch[1].trim()) {
-    const statusBlock = statusMatch[1];
-    const statusObj: TurnStatus = {};
-    const clothesM = statusBlock.match(/(?:衣着状态|衣着|服装|装扮)[:：\s]*([^\n]+)/);
-    const postureM = statusBlock.match(/(?:空间体位|体位|姿势|体态)[:：\s]*([^\n]+)/);
-    const statsM = statusBlock.match(/(?:生理\/好感指标|好感指标|生理指标|心跳|好感\/敏感度|独占依赖度)[:：\s]*([^\n]+)/);
-    const riskM = statusBlock.match(/(?:被抓危险度|危机度|危险度|暴露风险|心防)[:：\s]*([^\n]+)/);
+  if (statusMatch) {
+    const statusBlock = statusMatch[1] || statusMatch[2] || '';
+    if (statusBlock.trim()) {
+      const statusObj: TurnStatus = turn.status || {};
+      const clothesM = statusBlock.match(/(?:衣着状态|衣着|服装|装扮)[:：\s]*([^\n|]+)/);
+      const postureM = statusBlock.match(/(?:空间体位|体位|姿势|体态)[:：\s]*([^\n|]+)/);
+      const statsM = statusBlock.match(/(?:生理\/好感指标|好感指标|生理指标|心跳|好感\/敏感度|独占依赖度)[:：\s]*([^\n|]+)/);
+      const riskM = statusBlock.match(/(?:被抓危险度|危机度|危险度|暴露风险|心防)[:：\s]*([^\n|]+)/);
 
-    if (clothesM) statusObj.clothes = clothesM[1].trim();
-    if (postureM) statusObj.posture = postureM[1].trim();
-    if (statsM) statusObj.stats = statsM[1].trim();
-    if (riskM) statusObj.risk = riskM[1].trim();
+      // 废土求生专属生存指标
+      const healthM = statusBlock.match(/(?:\[?生命\]?|\[?生命值\]?|\[?体征\]?|\[?健康\]?)[:：\s]*([^\n|]+)/);
+      const staminaM = statusBlock.match(/(?:\[?体力\]?|\[?精力\]?)[:：\s]*([^\n|]+)/);
+      const hydrationM = statusBlock.match(/(?:\[?口渴\]?|\[?水分\]?|\[?饮水\]?|\[?口渴度\]?)[:：\s]*([^\n|]+)/);
+      const satietyM = statusBlock.match(/(?:\[?饱腹\]?|\[?饥饿\]?|\[?饱腹感\]?|\[?干粮\]?)[:：\s]*([^\n|]+)/);
+      const batteryM = statusBlock.match(/(?:\[?手电电量\]?|\[?手电筒\]?|\[?电量\]?|\[?电池\]?)[:：\s]*([^\n|]+)/);
+      const infectionM = statusBlock.match(/(?:\[?感染风险\]?|\[?感染度\]?|\[?辐射度\]?|\[?感染\]?)[:：\s]*([^\n|]+)/);
+      const threatM = statusBlock.match(/(?:\[?环境威胁\]?|\[?威胁等级\]?|\[?环境风险\]?)[:：\s]*([^\n]+)/);
+      const inventoryM = statusBlock.match(/(?:\[?战术背包\]?|\[?随身背包\]?|\[?背包物品\]?|\[?物资\]?)[:：\s]*([^\n]+)/);
 
-    if (Object.keys(statusObj).length > 0) {
-      turn.status = statusObj;
+      if (clothesM) statusObj.clothes = clothesM[1].trim();
+      if (postureM) statusObj.posture = postureM[1].trim();
+      if (statsM) statusObj.stats = statsM[1].trim();
+      if (riskM) statusObj.risk = riskM[1].trim();
+
+      if (healthM) statusObj.health = healthM[1].trim();
+      if (staminaM) statusObj.stamina = staminaM[1].trim();
+      if (hydrationM) statusObj.hydration = hydrationM[1].trim();
+      if (satietyM) statusObj.satiety = satietyM[1].trim();
+      if (batteryM) statusObj.battery = batteryM[1].trim();
+      if (infectionM) statusObj.infection = infectionM[1].trim();
+      if (threatM) statusObj.threatLevel = threatM[1].trim();
+      if (inventoryM) {
+        const invRaw = inventoryM[1].trim();
+        const items = invRaw.split(/[,，、|]/).map(s => s.trim()).filter(Boolean);
+        if (items.length > 0) statusObj.inventory = items;
+      }
+
+      if (Object.keys(statusObj).length > 0) {
+        turn.status = statusObj;
+      }
     }
   }
 
