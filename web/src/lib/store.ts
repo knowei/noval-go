@@ -1,6 +1,32 @@
 import { create } from 'zustand';
-import { UserProfile, StoryDeck, Turn, ConversationSave, ModelSettings } from './types';
+import { UserProfile, StoryDeck, Turn, ConversationSave, ModelSettings, EnabledMods } from './types';
 import { fetchConversations, saveConversation } from './api';
+
+const defaultMods: EnabledMods = {
+  apocalypseSurvival: true,
+  antiCoercion: true,
+  innerVoice: true,
+  explorationBranches: true,
+};
+
+const getInitialMods = (): EnabledMods => {
+  if (typeof window === 'undefined') return defaultMods;
+  try {
+    const raw = localStorage.getItem('rp_enabled_mods');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return {
+        apocalypseSurvival: parsed.apocalypseSurvival ?? true,
+        antiCoercion: parsed.antiCoercion ?? true,
+        innerVoice: parsed.innerVoice ?? true,
+        explorationBranches: parsed.explorationBranches ?? true,
+      };
+    }
+  } catch (e) {
+    // fallback
+  }
+  return defaultMods;
+};
 
 interface AppState {
   currentUserId: string;
@@ -14,6 +40,8 @@ interface AppState {
   isSettingsOpen: boolean;
   isUserSwitchOpen: boolean;
   isDrawerOpen: boolean;
+  isModCenterOpen: boolean;
+  enabledMods: EnabledMods;
 
   setCurrentUserId: (id: string) => void;
   setCurrentUser: (user: UserProfile | null) => void;
@@ -29,6 +57,9 @@ interface AppState {
   setIsSettingsOpen: (open: boolean) => void;
   setIsUserSwitchOpen: (open: boolean) => void;
   setIsDrawerOpen: (open: boolean) => void;
+  setIsModCenterOpen: (open: boolean) => void;
+  toggleMod: (modKey: keyof EnabledMods) => void;
+  setEnabledMods: (mods: Partial<EnabledMods>) => void;
   refreshSaves: () => Promise<void>;
   startNewStory: (deck: StoryDeck) => void;
   autoSave: () => Promise<void>;
@@ -55,6 +86,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   isSettingsOpen: false,
   isUserSwitchOpen: false,
   isDrawerOpen: false,
+  isModCenterOpen: false,
+  enabledMods: getInitialMods(),
 
   setCurrentUserId: (id: string) => {
     if (typeof window !== 'undefined') {
@@ -122,11 +155,44 @@ export const useAppStore = create<AppState>((set, get) => ({
     const current = get().modelSettings.roleplayMode || 'realistic';
     const next = current === 'realistic' ? 'unrestricted' : 'realistic';
     get().setModelSettings({ roleplayMode: next });
+    get().setEnabledMods({ antiCoercion: next === 'realistic' });
   },
 
   setIsSettingsOpen: (open) => set({ isSettingsOpen: open }),
   setIsUserSwitchOpen: (open) => set({ isUserSwitchOpen: open }),
   setIsDrawerOpen: (open) => set({ isDrawerOpen: open }),
+  setIsModCenterOpen: (open) => set({ isModCenterOpen: open }),
+
+  toggleMod: (modKey) => {
+    set((state) => {
+      const nextVal = !state.enabledMods[modKey];
+      const nextMods = { ...state.enabledMods, [modKey]: nextVal };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('rp_enabled_mods', JSON.stringify(nextMods));
+      }
+      if (modKey === 'antiCoercion') {
+        const nextRp = nextVal ? 'realistic' : 'unrestricted';
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('rp_roleplay_mode', nextRp);
+        }
+        return {
+          enabledMods: nextMods,
+          modelSettings: { ...state.modelSettings, roleplayMode: nextRp }
+        };
+      }
+      return { enabledMods: nextMods };
+    });
+  },
+
+  setEnabledMods: (mods) => {
+    set((state) => {
+      const nextMods = { ...state.enabledMods, ...mods };
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('rp_enabled_mods', JSON.stringify(nextMods));
+      }
+      return { enabledMods: nextMods };
+    });
+  },
 
   refreshSaves: async () => {
     const { currentUserId } = get();

@@ -5,6 +5,7 @@ import { Turn } from '@/lib/types';
 import { generateContextualBranches } from '@/lib/modelParser';
 import { CardTurnActionBar } from './CardTurnActionBar';
 import { RichStoryRenderer } from './RichStoryRenderer';
+import { useAppStore } from '@/lib/store';
 import {
   Activity,
   Droplets,
@@ -42,6 +43,7 @@ export const ApocalypseSurvivalCard = React.memo(function ApocalypseSurvivalCard
   onEdit,
   onSwipeChange,
 }: ApocalypseSurvivalCardProps) {
+  const { setIsModCenterOpen, enabledMods } = useAppStore();
   const [isHudExpanded, setIsHudExpanded] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editedStory, setEditedStory] = useState(turn.story || turn.text || '');
@@ -75,10 +77,16 @@ export const ApocalypseSurvivalCard = React.memo(function ApocalypseSurvivalCard
       {/* 顶栏：位置与时间标记 */}
       <div className="flex items-center justify-between border-b border-orange-500/20 pb-2.5 text-xs text-orange-400 font-mono">
         <div className="flex items-center gap-2">
-          <span className="px-2 py-0.5 rounded bg-orange-950/80 border border-orange-600/40 text-[10px] text-orange-300 font-bold flex items-center gap-1">
-            <Radio className="w-3 h-3 animate-pulse text-orange-400" />
+          <button
+            type="button"
+            onClick={() => setIsModCenterOpen(true)}
+            className="px-2 py-0.5 rounded bg-orange-950/80 hover:bg-orange-900 border border-orange-600/40 text-[10px] text-orange-300 font-bold flex items-center gap-1 cursor-pointer transition shadow-xs group"
+            title="点击打开模组中心 (MOD 插件与机制管理)"
+          >
+            <Radio className="w-3 h-3 animate-pulse text-orange-400 group-hover:scale-110 transition-transform" />
             <span>废土求生 MOD 运行中</span>
-          </span>
+            <span className="text-[9px] text-orange-400/80 underline ml-0.5">配置</span>
+          </button>
           {turn.location && (
             <span className="flex items-center gap-1 text-gray-300">
               <MapPin className="w-3.5 h-3.5 text-orange-400 shrink-0" />
@@ -196,8 +204,8 @@ export const ApocalypseSurvivalCard = React.memo(function ApocalypseSurvivalCard
         )}
       </div>
 
-      {/* 💭 NPC内心动摇 / 绝望心声 */}
-      {turn.npcThought && (
+      {/* 💭 NPC内心动摇 / 绝望心声 (受模组开关控制) */}
+      {enabledMods.innerVoice !== false && turn.npcThought && (
         <div className="p-3 rounded-xl bg-purple-950/25 border border-purple-500/30 text-xs text-purple-200/90 leading-relaxed font-serif">
           <span className="font-bold text-purple-300 mr-1.5">💭 苏晓染的绝望心防与动机：</span>
           <span>{turn.npcThought}</span>
@@ -242,8 +250,32 @@ export const ApocalypseSurvivalCard = React.memo(function ApocalypseSurvivalCard
         <RichStoryRenderer rawStory={storyText} deckId="deck_apocalypse_survival" />
       )}
 
-      {/* 🎲 4 个高风险高回报冒险探索分支 */}
-      {activeBranches && activeBranches.length > 0 && (
+      {/* 📟 随屏生存体征快照（方便阅读长剧情与探索分支时随时掌握状态） */}
+      <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#0d0f14] border border-orange-500/30 text-xs font-mono text-orange-200 shadow-sm">
+        <div className="flex items-center gap-2 truncate flex-1 min-w-0">
+          <span className="text-orange-400 font-bold flex items-center gap-1 shrink-0">
+            <Activity className="w-3.5 h-3.5 text-orange-400" />
+            <span>生存快照:</span>
+          </span>
+          <span className="text-red-300 font-semibold shrink-0">生命 {healthVal}</span>
+          <span className="text-gray-600">|</span>
+          <span className="text-amber-300 font-semibold shrink-0">体力 {staminaVal}</span>
+          <span className="text-gray-600 hidden sm:inline">|</span>
+          <span className="text-cyan-300 truncate hidden sm:inline max-w-[130px]" title={String(hydrationVal)}>水分 {hydrationVal}</span>
+          <span className="text-gray-600 hidden sm:inline">|</span>
+          <span className="text-emerald-300 shrink-0 hidden sm:inline">手电 {batteryVal}</span>
+        </div>
+        <button
+          type="button"
+          onClick={() => setIsHudExpanded(!isHudExpanded)}
+          className="text-orange-400 hover:text-orange-300 text-[11px] underline shrink-0 ml-2 cursor-pointer font-sans"
+        >
+          {isHudExpanded ? '▲ 顶部HUD已展开' : '▼ 展开完整HUD与背包'}
+        </button>
+      </div>
+
+      {/* 🎲 4 个高风险高回报冒险探索分支 (受模组开关控制) */}
+      {enabledMods.explorationBranches !== false && activeBranches && activeBranches.length > 0 && (
         <div className="space-y-2 pt-2 border-t border-orange-500/20">
           <div className="flex items-center gap-1.5 text-xs text-orange-300 font-bold font-mono">
             <Compass className="w-3.5 h-3.5 text-orange-400" />

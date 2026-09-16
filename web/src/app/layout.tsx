@@ -4,6 +4,7 @@ import { PrimarySidebar } from "@/components/layout/PrimarySidebar";
 import { Drawer } from "@/components/layout/Drawer";
 import { ModelSettingsModal } from "@/components/modals/ModelSettingsModal";
 import { UserSwitchModal } from "@/components/modals/UserSwitchModal";
+import { ModCenterModal } from "@/components/modals/ModCenterModal";
 
 export const metadata: Metadata = {
   title: "NOVAL-GO · AI沉浸式角色扮演风月剧场",
@@ -25,6 +26,7 @@ export default function RootLayout({
         <Drawer />
         <ModelSettingsModal />
         <UserSwitchModal />
+        <ModCenterModal />
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">

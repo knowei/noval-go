@@ -141,3 +141,11 @@ export interface UserProfile {
   current_model?: string;
   model_settings?: ModelSettings;
 }
+
+export interface EnabledMods {
+  apocalypseSurvival: boolean;
+  antiCoercion: boolean;
+  innerVoice: boolean;
+  explorationBranches: boolean;
+}
+

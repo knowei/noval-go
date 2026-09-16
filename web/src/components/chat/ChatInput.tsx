@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Dices, ArrowDown, RotateCcw, Sliders, MessageSquare, Send } from 'lucide-react';
+import { useAppStore } from '@/lib/store';
 
 interface ChatInputProps {
   onSend: (text: string) => void;
@@ -87,15 +88,26 @@ export function ChatInput({
     }
   };
 
+  const { setIsModCenterOpen, enabledMods } = useAppStore();
+  const activeModCount = Object.values(enabledMods).filter(Boolean).length;
+
   return (
     <div className="sticky bottom-0 z-30 w-full p-2.5 sm:p-4 bg-gradient-to-t from-[#0b0c10] via-[#0b0c10]/95 to-transparent">
       <div className="max-w-3xl mx-auto space-y-2">
         {/* 1. 顶部悬浮工具条 (1:1 像素级对齐 media_1789310839949.png & media_1789310859945.png) */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-xs no-scrollbar justify-start select-none">
-          <span className="px-2 py-0.5 rounded-lg bg-[#1a1b24] border border-gray-700/60 text-[11px] text-gray-300 font-mono flex items-center gap-1 shrink-0">
-            <span>🗂️</span>
-            <span>Mod</span>
-          </span>
+          <button
+            type="button"
+            onClick={() => setIsModCenterOpen(true)}
+            className="px-2.5 py-0.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/60 hover:border-amber-400 text-[11px] text-amber-200 font-mono flex items-center gap-1.5 shrink-0 transition cursor-pointer shadow-[0_0_10px_rgba(245,158,11,0.25)] group active:scale-95"
+            title="点击打开玩法模组中心 (MOD 插件与机制管理)"
+          >
+            <span className="text-xs group-hover:scale-110 transition-transform">🗂️</span>
+            <span className="font-bold">Mod</span>
+            <span className="px-1 py-0.2 rounded-full text-[9px] bg-amber-400/30 text-amber-200 font-bold border border-amber-400/40">
+              {activeModCount}
+            </span>
+          </button>
 
           <button
             type="button"

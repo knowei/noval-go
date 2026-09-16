@@ -60,6 +60,9 @@ export default function ChatPage() {
     toggleRoleplayMode,
     setIsSettingsOpen,
     setIsDrawerOpen,
+    isModCenterOpen,
+    setIsModCenterOpen,
+    enabledMods,
   } = useAppStore();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -457,7 +460,8 @@ export default function ChatPage() {
         turnIndex: aiTurnIndex,
         activeLoreText,
         milestoneMemoryText,
-        roleplayMode: modelSettings.roleplayMode
+        roleplayMode: modelSettings.roleplayMode,
+        enabledMods
       });
 
       const promptMessages = [
@@ -880,6 +884,19 @@ export default function ChatPage() {
               <span className={`w-1.5 h-1.5 rounded-full ${modelSettings.roleplayMode === 'unrestricted' ? 'bg-pink-400' : 'bg-amber-400'} animate-pulse`} />
               <span className="font-semibold text-xs">{modelSettings.roleplayMode === 'unrestricted' ? '💖 绝对顺从' : '🛡️ 真实推拉'}</span>
             </button>
+
+            {/* 玩法模组中心快捷入口 */}
+            <button
+              onClick={() => setIsModCenterOpen(true)}
+              className="flex items-center gap-1.5 text-xs px-2.5 sm:px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-xs shrink-0 border border-orange-500/50 bg-orange-950/60 hover:bg-orange-900/70 text-orange-300 hover:border-orange-400 group"
+              title="打开玩法模组中心 (MOD 插件与机制管理)"
+            >
+              <span className="text-xs group-hover:rotate-12 transition-transform">🧩</span>
+              <span className="font-semibold text-xs">模组</span>
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-orange-500/30 text-orange-200 border border-orange-500/40">
+                {Object.values(enabledMods).filter(Boolean).length}
+              </span>
+            </button>
           </div>
 
           {/* Action Controls */}
@@ -1084,7 +1101,7 @@ export default function ChatPage() {
               );
             }
 
-            if (isApocalypse) {
+            if (isApocalypse && enabledMods.apocalypseSurvival) {
               return (
                 <ApocalypseSurvivalCard
                   key={idx}
