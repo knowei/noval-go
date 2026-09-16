@@ -225,6 +225,13 @@ export default function ChatPage() {
   const isGirlsDormitory = deckId === 'deck_girls_dormitory' || deckId === 'e59fe31f-98c7-4b85-9f84-262f5d13bc32';
   const isHousewifeApartment = deckId === 'deck_housewife_apartment' || deckId === '57879274-30f5-4411-957f-2a33bdd2e031';
   const isNudeGirlsSchool = deckId === 'deck_nude_girls_school' || deckId === '087637dd-b4ba-4588-ac91-cd6361d47be0';
+  const isIdolSister = deckId === 'deck_idol_sister_debt' || deckId === '3a67a4de-41a4-42ed-8187-af35365d6768';
+  const isTwinIdols = deckId === 'deck_twin_idols_fiancee' || deckId === 'ca94cd1d-74e0-4e13-8ff0-f5ed93688866';
+  const isBrotherLoli = deckId === 'deck_brother_loli_girlfriend' || deckId === '6836f15a-b43f-47a2-b962-d57362fcfd35';
+  const isWhiteTigerSister = deckId === 'deck_white_tiger_sister_night' || deckId === 'e2cb7a3e-dbaa-40a7-831c-2961508083b0';
+  const isGradeFirst = deckId === 'deck_grade_first_demands' || deckId === '2da05c45-b6c2-49a1-89ee-d9c2d732d9ed';
+  const isMysteriousRecovery = deckId === 'deck_mysterious_recovery_ghost' || deckId === '0881314d-a2ed-4e78-a5af-71dc42e9acac';
+  const isMouthFeedSister = deckId === 'deck_mouth_feed_sister' || deckId === '270a0ccb-ac28-4b9b-ac56-f7e6aa8cff41';
 
   let bgClass = '';
   if (isCoser) bgClass = 'coser-sister-bg';
@@ -248,6 +255,13 @@ export default function ChatPage() {
   else if (isGirlsDormitory) bgClass = 'girls-dormitory-bg';
   else if (isHousewifeApartment) bgClass = 'housewife-apartment-bg';
   else if (isNudeGirlsSchool) bgClass = 'nude-girls-school-bg';
+  else if (isIdolSister) bgClass = 'idol-sister-bg';
+  else if (isTwinIdols) bgClass = 'twin-idols-bg';
+  else if (isBrotherLoli) bgClass = 'brother-loli-bg';
+  else if (isWhiteTigerSister) bgClass = 'white-tiger-bg';
+  else if (isGradeFirst) bgClass = 'grade-first-bg';
+  else if (isMysteriousRecovery) bgClass = 'mysterious-recovery-bg';
+  else if (isMouthFeedSister) bgClass = 'mouth-feed-bg';
 
   const hasCustomHtml = Boolean(currentDeck?.customHtml);
   const hasUserTurns = conversationHistory.some((t) => t.isUser);

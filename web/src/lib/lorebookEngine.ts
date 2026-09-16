@@ -399,7 +399,181 @@ export const DEFAULT_LOREBOOKS: Record<string, LoreEntry[]> = {
       category: 'character',
       content: '28岁戴金丝眼镜的知性巨乳御姐教师。在健康形体与生理教育课上，公然将主角叫上讲台当作实物教具，指导台下贵族女生轮流上台触摸感知男性的肌肉、体温与勃起生理变化。'
     }
-  ]
+  ],
+  // 🎤 【图上互动】替父还债成为顶流偶像的妹妹
+  deck_idol_sister_debt: [
+    {
+      id: 'idol_sister_persona',
+      keys: ['江雪见', '江小雪', '小雪', '妹妹', '初恋', '白月光', '偶像'],
+      title: '国民初恋江雪见的双面人格与极度依赖',
+      category: 'character',
+      content: '18岁当红顶流初恋偶像。台上清纯绝美，保镖和粉丝面前冷漠高傲；私底下却是个只喜欢穿男主洗旧宽大男士T恤、光脚爬进男主被窝搂着不放的软糯依赖狂，患有轻度分离焦虑与微病娇占有欲。'
+    },
+    {
+      id: 'idol_sister_contract',
+      keys: ['替父还债', '债务', '经纪公司', '违约金', '黑料', '助理'],
+      title: '沉重债务枷锁与男主贴身助理身份',
+      category: 'rule',
+      content: '父亲破产欠下巨额高利贷失踪，江雪见为了替父还债不得不踏入娱乐圈。男主以私人助理兼保镖身份陪在她身边，只有在深夜狭小出租屋的被窝里，他们才能放下沉重枷锁，汲取彼此唯一的体温。'
+    },
+    {
+      id: 'idol_sister_bed',
+      keys: ['被窝', 'T恤', '洗头', '夜袭', '搂着', '睡觉', '床沿'],
+      title: '深夜被窝里不为人知的私密共处',
+      category: 'location',
+      content: '无论白天在万人体育馆多么风光，深夜回到出租屋，小雪一定会悄悄推开男主卧室门钻进被窝。宽松T恤下不着寸缕的少女曲线、光洁粉嫩的脚丫与耳畔软糯的呼吸，是属于男主一人的绝密领地。'
+    }
+  ],
+
+  // 👯‍♀️ 国民级顶流双胞胎偶像转校生是我的未婚妻？
+  deck_twin_idols_fiancee: [
+    {
+      id: 'twins_sister_yaoyao',
+      keys: ['夏梦瑶', '姐姐', 'Twilight', '黑长直', '清冷', '高贵'],
+      title: 'Twilight姐姐夏梦瑶的清冷与隐秘独占欲',
+      category: 'character',
+      content: '17岁双子偶像姐姐，黑长直如瀑，气质端庄高贵。看似沉稳顾大局，实则对男主的占有欲比妹妹更强烈，课桌下经常用高跟鞋或黑丝足尖轻轻挑逗男主，极力掩饰吃妹妹醋的娇羞反差。'
+    },
+    {
+      id: 'twins_sister_mili',
+      keys: ['夏梦璃', '妹妹', '小恶魔', '双马尾', '腹黑', '老公'],
+      title: 'Twilight妹妹夏梦璃的小恶魔贴蹭与大胆挑逗',
+      category: 'character',
+      content: '17岁双子偶像妹妹，元气灵动的双马尾少女。性格大胆狡黠、天真热烈，喜欢当着全班同学的面用饱满酥胸紧贴男主手臂，娇滴滴地喊老公，把修罗场直接引爆。'
+    },
+    {
+      id: 'twins_contract',
+      keys: ['未婚妻', '婚约', '转校', '订婚', '家族', '法定'],
+      title: '两大豪门自幼订立的双生婚约特权',
+      category: 'rule',
+      content: '男主家族与夏家多年前订下誓约，双胞胎成年后将共同履行婚约。两姐妹以普通转校生身份入住男主隔壁并进入同班，在全校狂热追捧下展开争夺未婚夫宠爱的甜蜜博弈。'
+    }
+  ],
+
+  // 🎹 兄弟的巨乳萝莉女友？是我的了
+  deck_brother_loli_girlfriend: [
+    {
+      id: 'loli_secret_caught',
+      keys: ['许晓娜', '自慰', '琴房', '把柄', '陈伟', '女友', '水手服'],
+      title: '许晓娜琴房自我慰藉被撞破把柄',
+      category: 'secret',
+      content: '兄弟陈伟的极品校花女友，在偏僻废弃的隔音琴房撩起水手服自慰，被男主当场撞破并目睹全过程。极度害怕被陈伟知道并失去清纯声誉，成了她不得不对男主言听计从的致命死穴。'
+    },
+    {
+      id: 'loli_body_features',
+      keys: ['童颜', '巨乳', 'H罩杯', '敏感', '娇小', '肉感', '萝莉'],
+      title: '152cm童颜与H罩杯反差极品敏感体质',
+      category: 'character',
+      content: '身高只有一米五二的娇小萝莉身材，却发育着夸张沉甸甸的H罩杯水滴雪乳。天生体质极度敏感多水，稍加爱抚或言语羞辱便浑身瘫软泛红、淫水泛滥，是极易被攻破调教的极品尤物。'
+    },
+    {
+      id: 'loli_ntr_progression',
+      keys: ['堕落', '背德', '陈伟', '主人', '屈服', '钢琴盖', '调教'],
+      title: '背德感与支配欲交织的沦陷轨迹',
+      category: 'rule',
+      content: '在对不起男友陈伟的强烈道德自责中，许晓娜的肉体却被男主开发得越来越贪恋快感。在钢琴盖上、琴凳前一步步突破底线，最终完全沦为男主专属的肉感玩物。'
+    }
+  ],
+
+  // 🐯 巨乳白虎妹妹每晚夜袭肥鲍迷奸
+  deck_white_tiger_sister_night: [
+    {
+      id: 'white_tiger_persona',
+      keys: ['林溪月', '妹妹', '校花', '白虎', '丹凤眼', '高冷', '黑长直'],
+      title: '高冷校花妹妹林溪月的深夜双面目',
+      category: 'character',
+      content: '全校男生望而生畏的冰山校花，男主的同胞亲妹妹。白天在校对男主形同陌路，夜晚等全家熟睡后却化身贪恋男主体温与肉棒的痴女，掀被钻入被窝主动索求。'
+    },
+    {
+      id: 'white_tiger_traits',
+      keys: ['无毛', '白虎', '蜜穴', '粉嫩', '淫水', '喷水', '水滴巨乳'],
+      title: '天生白虎粉嫩蜜缝与多汁敏感体征',
+      category: 'item',
+      content: '林溪月下体天生没有一丝杂毛，干净白嫩如初生婴儿，且极易动情淌水。夜袭时最爱跨坐男主腰间，用湿透的穴口只半含龟头前后摇摆研磨，享受失控高潮的喷水快感。'
+    },
+    {
+      id: 'white_tiger_complicity',
+      keys: ['装睡', '共犯', '默许', '夜袭', '被窝', '白丝', '足交'],
+      title: '心照不宣的深夜被窝共犯契约',
+      category: 'rule',
+      content: '男主与妹妹之间从未说破的禁忌默契：男主假装熟睡，任由妹妹用白丝小脚套弄、甚至跨坐浅插自慰；妹妹以为男主不知道，放肆享受征服哥哥肉体的伦理刺激。'
+    }
+  ],
+
+  // 👑 成绩至上主义学园：不得拒绝年级第一的任何要求
+  deck_grade_first_demands: [
+    {
+      id: 'grade_first_privilege',
+      keys: ['年级第一', '特权', '校规', '命令', '金卡', '学园', '满分'],
+      title: '学园至尊铁律：年级第一的绝对支配王权',
+      category: 'rule',
+      content: '全封闭极道私立学园唯一最高校规：年级第一拥有支配校内一切师生的绝对特权。凡被年级第一下达的合理或不合理指令，包括脱衣、跪地、口交、侍寝，受令者均不得以任何理由拒绝违抗。'
+    },
+    {
+      id: 'grade_first_fujing',
+      keys: ['苏倾雪', '风纪委员', '校花', '名媛', '短裙', '受罚'],
+      title: '高傲名媛风纪委员长苏倾雪的屈辱服从',
+      category: 'character',
+      content: '17岁全校第一名媛校花，平日铁面无私纠察风纪。在男主满分登顶后被迫在VIP研修室内撩起制服短裙承受特权惩戒，双眼含泪、自尊寸寸崩裂却必须听命承欢。'
+    },
+    {
+      id: 'grade_first_teacher',
+      keys: ['沈曼云', '教导主任', '旗袍', '黑丝', '成熟', '女教师'],
+      title: '高开叉旗袍教导主任沈曼云的私密课业',
+      category: 'character',
+      content: '29岁成熟妖娆的教导主任，常年身着修身开叉黑丝旗袍，E罩杯丰满摇曳。为了保全学园升学声誉，不得不亲自上门向男主汇报“特殊课业”，在男主霸道审视下逐渐沉沦于被支配的快感。'
+    }
+  ],
+
+  // 🕯️ 神秘复苏（是人亦是鬼）
+  deck_mysterious_recovery_ghost: [
+    {
+      id: 'ghost_rules',
+      keys: ['厉鬼', '杀人规律', '鬼无法杀死', '灵异', '驭鬼者', '鬼域'],
+      title: '神秘复苏世界观三大绝望铁律',
+      category: 'rule',
+      content: '1. 鬼是无法被杀死的；2. 能对付鬼的只有鬼；3. 洞察厉鬼的杀人规律才能在绝境中找到生路。驭鬼者每一次使用鬼的能力，都在加速自身被体内厉鬼复苏侵蚀直至死亡。'
+    },
+    {
+      id: 'ghost_knock',
+      keys: ['敲门鬼', '敲门声', '第七中学', '尸臭', '黑暗', '阴霾'],
+      title: '第七中学敲门鬼灵异事件与鬼域蔓延',
+      category: 'secret',
+      content: '身着黑色长衫、浑身干枯腐烂的老人厉鬼。伴随“咚咚咚”三声缓慢沉重的敲门声，听到声音的人将被标记诅咒，整个第七中学已被死寂暗红的浓郁鬼域彻底封锁断绝外界通信。'
+    },
+    {
+      id: 'ghost_candle',
+      keys: ['鬼烛', '红烛', '点燃', '烛光', '安全', '吸引', '燃烧'],
+      title: '保命战备奇物：暗红鬼烛的庇护与代价',
+      category: 'item',
+      content: '总部研发的绝密灵异物资。只要红色烛火还在燃烧，鬼域内的厉鬼就绝对无法伤害烛光范围内的人，但同时散发的阴气会吸引附近所有游荡的厉鬼聚集，烛火燃烧速度与厉鬼威胁程度成正比。'
+    }
+  ],
+
+  // 🍉 嘴对着喂你的巨乳肥臀姐姐
+  deck_mouth_feed_sister: [
+    {
+      id: 'mouth_feed_linxia',
+      keys: ['林夏', '姐姐', '巨乳', 'H罩杯', '肥臀', '呆毛', '废柴'],
+      title: '24岁废柴同居巨乳姐姐林夏的外貌与性格',
+      category: 'character',
+      content: '自由职业插画师，生着夸张H罩杯巨乳与蜜桃丰满肥臀，头顶常年竖着一根压不平的呆毛。极度慵懒、爱撒娇、无戒备心，把使唤照顾弟弟当成天经地义的日常。'
+    },
+    {
+      id: 'mouth_feed_vacuum',
+      keys: ['不穿内裤', '真空', '露肩衬衫', '蜜桃臀', '白虎', '走光'],
+      title: '在家绝对真空不穿内裤与极致走光诱惑',
+      category: 'item',
+      content: '林夏一回到家必定第一时间脱掉内裤，下半身彻底真空，仅套一件男主的宽大露肩白衬衫在客厅晃悠。天生无毛粉嫩蜜穴与雪白肥臀在沙发走动时暴露无遗，毫无防备。'
+    },
+    {
+      id: 'mouth_feed_action_rule',
+      keys: ['嘴对嘴', '喂食', '西瓜', '嚼碎', '渡饭', '树袋熊', '夹腰'],
+      title: '嘴对嘴口渡喂饭与树袋熊式缠腰考验',
+      category: 'rule',
+      content: '林夏懒得端碗时，会把食物（冰西瓜心、布丁、面条）含在嘴里，嘴对嘴直接渡进男主嘴里，甚至用肉感丰满的大腿像树袋熊般死死夹住男主的腰磨蹭撒娇，用肉体全方位考验弟弟的定力。'
+    }
+  ],
 };
 
 // ============================================================================
@@ -419,6 +593,13 @@ export function getDeckLorebook(deckId: string, customLore?: LoreEntry[]): LoreE
     else if (deckId === 'c78de7d8-7353-467e-bc71-5e6f2c870679') defaultEntries = DEFAULT_LOREBOOKS['deck_heisi_daughter'] || [];
     else if (deckId === '432a57e9-8f8a-4e4e-80fc-83eb9ebc71eb') defaultEntries = DEFAULT_LOREBOOKS['deck_sister_in_law_niece'] || [];
     else if (deckId === '059217c9-213b-48e7-b660-0c04f78ede48') defaultEntries = DEFAULT_LOREBOOKS['deck_apocalypse_survival'] || [];
+    else if (deckId === '3a67a4de-41a4-42ed-8187-af35365d6768') defaultEntries = DEFAULT_LOREBOOKS['deck_idol_sister_debt'] || [];
+    else if (deckId === 'ca94cd1d-74e0-4e13-8ff0-f5ed93688866') defaultEntries = DEFAULT_LOREBOOKS['deck_twin_idols_fiancee'] || [];
+    else if (deckId === '6836f15a-b43f-47a2-b962-d57362fcfd35') defaultEntries = DEFAULT_LOREBOOKS['deck_brother_loli_girlfriend'] || [];
+    else if (deckId === 'e2cb7a3e-dbaa-40a7-831c-2961508083b0') defaultEntries = DEFAULT_LOREBOOKS['deck_white_tiger_sister_night'] || [];
+    else if (deckId === '2da05c45-b6c2-49a1-89ee-d9c2d732d9ed') defaultEntries = DEFAULT_LOREBOOKS['deck_grade_first_demands'] || [];
+    else if (deckId === '0881314d-a2ed-4e78-a5af-71dc42e9acac') defaultEntries = DEFAULT_LOREBOOKS['deck_mysterious_recovery_ghost'] || [];
+    else if (deckId === '270a0ccb-ac28-4b9b-ac56-f7e6aa8cff41') defaultEntries = DEFAULT_LOREBOOKS['deck_mouth_feed_sister'] || [];
   }
   const customEntries = Array.isArray(customLore) ? customLore : [];
 
