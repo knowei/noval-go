@@ -25,6 +25,7 @@ interface AppState {
   truncateHistory: (fromIndex: number) => void;
   setSavedConversations: (saves: ConversationSave[]) => void;
   setModelSettings: (settings: Partial<ModelSettings>) => void;
+  toggleRoleplayMode: () => void;
   setIsSettingsOpen: (open: boolean) => void;
   setIsUserSwitchOpen: (open: boolean) => void;
   setIsDrawerOpen: (open: boolean) => void;
@@ -48,7 +49,8 @@ export const useAppStore = create<AppState>((set, get) => ({
     baseUrl: typeof window !== 'undefined' ? localStorage.getItem('rp_api_base_url') || 'https://api.openai.com/v1' : 'https://api.openai.com/v1',
     apiKey: typeof window !== 'undefined' ? localStorage.getItem('rp_api_key') || '' : '',
     temperature: 0.7,
-    topP: 0.95
+    topP: 0.95,
+    roleplayMode: typeof window !== 'undefined' ? (localStorage.getItem('rp_roleplay_mode') as any) || 'realistic' : 'realistic',
   },
   isSettingsOpen: false,
   isUserSwitchOpen: false,
@@ -110,9 +112,16 @@ export const useAppStore = create<AppState>((set, get) => ({
         if (updated.model) localStorage.setItem('rp_api_model', updated.model);
         if (updated.baseUrl) localStorage.setItem('rp_api_base_url', updated.baseUrl);
         if (updated.apiKey !== undefined) localStorage.setItem('rp_api_key', updated.apiKey);
+        if (updated.roleplayMode) localStorage.setItem('rp_roleplay_mode', updated.roleplayMode);
       }
       return { modelSettings: updated };
     });
+  },
+
+  toggleRoleplayMode: () => {
+    const current = get().modelSettings.roleplayMode || 'realistic';
+    const next = current === 'realistic' ? 'unrestricted' : 'realistic';
+    get().setModelSettings({ roleplayMode: next });
   },
 
   setIsSettingsOpen: (open) => set({ isSettingsOpen: open }),

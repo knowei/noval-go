@@ -9,6 +9,14 @@ export interface TurnStatus {
   posture?: string;
   stats?: string;
   risk?: string;
+  health?: number | string;
+  stamina?: number | string;
+  hydration?: number | string;
+  satiety?: number | string;
+  battery?: number | string;
+  infection?: number | string;
+  inventory?: string[];
+  threatLevel?: string;
   [key: string]: any;
 }
 
@@ -121,6 +129,7 @@ export interface ModelSettings {
   temperature?: number;
   topP?: number;
   maxTokens?: number;
+  roleplayMode?: 'realistic' | 'unrestricted';
 }
 
 export interface UserProfile {

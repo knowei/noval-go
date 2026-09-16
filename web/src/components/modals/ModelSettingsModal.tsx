@@ -21,6 +21,7 @@ export function ModelSettingsModal() {
   const [baseUrl, setBaseUrl] = useState(modelSettings.baseUrl || 'https://api.deepseek.com/v1');
   const [apiKey, setApiKey] = useState(modelSettings.apiKey || '');
   const [temperature, setTemperature] = useState(modelSettings.temperature ?? 0.7);
+  const [roleplayMode, setRoleplayMode] = useState<'realistic' | 'unrestricted'>(modelSettings.roleplayMode || 'realistic');
 
   const [isTesting, setIsTesting] = useState(false);
   const [isFetchingModels, setIsFetchingModels] = useState(false);
@@ -36,6 +37,7 @@ export function ModelSettingsModal() {
       setBaseUrl(modelSettings.baseUrl || 'https://api.deepseek.com/v1');
       setApiKey(modelSettings.apiKey || '');
       setTemperature(modelSettings.temperature ?? 0.7);
+      setRoleplayMode(modelSettings.roleplayMode || 'realistic');
       setTestStatus(null);
     }
   }, [isSettingsOpen, modelSettings]);
@@ -111,7 +113,7 @@ export function ModelSettingsModal() {
   };
 
   const handleSave = async () => {
-    const updated = { model, baseUrl, apiKey, temperature };
+    const updated = { model, baseUrl, apiKey, temperature, roleplayMode };
     setModelSettings(updated);
     await saveModelSettings(currentUserId, updated);
     setIsSettingsOpen(false);
@@ -299,6 +301,50 @@ export function ModelSettingsModal() {
             <p className="text-[10px] text-gray-400 mt-1">
               💡 推荐设置 0.65 ~ 0.75。温度过高易导致生造词或多层定语堆叠，0.70 文笔最自然通顺。
             </p>
+          </div>
+
+          {/* 🎭 推演模式选择 (真实推拉 vs 绝对顺从) */}
+          <div className="pt-2 border-t border-[#252836] space-y-2">
+            <label className="block text-gray-300 font-bold text-xs flex items-center justify-between">
+              <span>🎭 角色推演风格与防御机制</span>
+              <span className="text-[10px] text-gray-400 font-normal">支持在聊天顶栏一键切换</span>
+            </label>
+
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setRoleplayMode('realistic')}
+                className={`p-2.5 rounded-xl border text-left transition cursor-pointer ${
+                  roleplayMode === 'realistic'
+                    ? 'bg-amber-950/40 border-amber-500/70 text-amber-200 ring-1 ring-amber-500/50'
+                    : 'bg-[#1a1b25] border-[#2b2e3c] text-gray-400 hover:border-gray-500'
+                }`}
+              >
+                <div className="font-bold text-xs flex items-center gap-1.5 text-amber-300">
+                  <span>🛡️ 真实推拉·硬核防线</span>
+                </div>
+                <p className="text-[10px] text-gray-400 mt-1 leading-normal">
+                  未获许可强推必遭反抗（自卫逃跑/拨打求救电话）；前文同意则羞涩履约。
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setRoleplayMode('unrestricted')}
+                className={`p-2.5 rounded-xl border text-left transition cursor-pointer ${
+                  roleplayMode === 'unrestricted'
+                    ? 'bg-pink-950/40 border-pink-500/70 text-pink-200 ring-1 ring-pink-500/50'
+                    : 'bg-[#1a1b25] border-[#2b2e3c] text-gray-400 hover:border-gray-500'
+                }`}
+              >
+                <div className="font-bold text-xs flex items-center gap-1.5 text-pink-300">
+                  <span>💖 无拘爽文·绝对顺从</span>
+                </div>
+                <p className="text-[10px] text-gray-400 mt-1 leading-normal">
+                  关闭硬核自卫断裂，全员身心易陷。霸道支配直接娇羞瓦解顺从，极速推进。
+                </p>
+              </button>
+            </div>
           </div>
         </div>
 
