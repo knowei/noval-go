@@ -1,0 +1,5 @@
+﻿# 生产级网络关系型数据库可选驱动 (PostgreSQL / Supabase / MySQL)
+# 纯 Python 驱动，无需本地 C 编译器，跨平台 (Windows/macOS/Linux/Docker Alpine) 100% 兼容
+pg8000>=1.30.0
+pymysql>=1.1.0
+cryptography>=41.0.0

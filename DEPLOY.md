@@ -112,17 +112,40 @@ http://<您的服务器公网IP>:3000
 
 ---
 
-## 💾 数据持久化与安全
+## 💾 数据库配置与多模式支持 (PostgreSQL / Supabase / MySQL / SQLite)
 
-- 容器会自动将数据库保存在宿主机的 `./data/noval_data.db`。
-- 初次启动时，系统会自动将项目预设的场景卡、开局设定与历史模板初始化到该数据库中。
-- 即使未来执行 `docker compose down` 升级容器或重启服务器，**所有历史对话、自制角色卡、存档均完整保存在 `./data` 目录中，永不丢失**。
+本项目已完成**网络关系型数据库格式**全面重构，支持两种运行模式：
 
-备份方法：
-```bash
-# 备份数据只需要复制 data 文件夹
-cp -r ./data ./data_backup_$(date +%Y%m%d)
-```
+### 模式 A: 接入网络数据库 (推荐: PostgreSQL / Supabase / MySQL)
+若希望将用户账号、密码鉴权、多端存档与剧本直接存入您服务器现有的 PostgreSQL/MySQL 或云端 Supabase：
+
+1. **在 `docker-compose.yml` 中配置 `DATABASE_URL`**：
+   ```yaml
+   environment:
+     # 连接宿主机现有 PostgreSQL 示例:
+     - DATABASE_URL=postgresql://用户名:密码@172.17.0.1:5432/noval_db
+     # 或连接云端 Supabase 示例:
+     # - DATABASE_URL=postgresql://postgres.xxx:password@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+     # 或连接 MySQL 示例:
+     # - DATABASE_URL=mysql://root:password@172.17.0.1:3306/noval_db
+   ```
+   *(注：Docker 容器访问宿主机端口通常使用网关 IP `172.17.0.1` 或 `host.docker.internal`)*
+
+2. **一键将历史剧本与卡片数据同步入库**：
+   ```bash
+   # 在服务器项目根目录执行一键同步命令
+   python scripts/migrate_to_db.py --target "postgresql://用户名:密码@127.0.0.1:5432/noval_db"
+   ```
+   同步脚本将自动在目标数据库中创建 `users`, `conversations`, `stories`, `plaza_cards`, `system_notices` 等标准表结构，并将 38 部官方大作与广场展示卡片完整导入。
+
+---
+
+### 模式 B: 本地轻量 SQLite 模式 (零依赖开箱即用)
+若不配置 `DATABASE_URL`，系统将自动回退为本地轻量级 SQLite：
+- 数据库保存在宿主机的 `./data/noval_data.db`；
+- 容器升级或重启时，数据均完好保留。
+
+---
 
 ---
 

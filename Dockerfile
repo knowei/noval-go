@@ -24,9 +24,9 @@ RUN npm run build
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-# 使用国内高带宽镜像源加速安装 Python3
+# 使用国内高带宽镜像源加速安装 Python3 与 pip
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
-    apk add --no-cache python3 bash
+    apk add --no-cache python3 py3-pip bash
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -38,7 +38,10 @@ ENV BACKEND_URL=http://127.0.0.1:5173
 
 # 1. 部署后端 Python 源码及资产库
 WORKDIR /app/backend
-COPY server.py studio_api.py stories_data.js dump_pc.json noval_data.db ./
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple --break-system-packages || true
+COPY server.py db_engine.py studio_api.py stories_data.js dump_pc.json noval_data.db schema.sql ./
+COPY scripts/ ./scripts/
 COPY studio/ ./studio/
 
 # 2. 部署前端 Next.js Standalone 生产产物
