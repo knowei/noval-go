@@ -20,6 +20,7 @@ import sys
 import secrets
 from datetime import datetime
 import studio_api
+import db_engine
 
 PORT = int(os.environ.get('NOVAL_PORT', '5173'))
 DB_FILE = os.environ.get('NOVAL_DB_PATH') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'noval_data.db')
@@ -32,15 +33,7 @@ if not os.path.exists(DB_FILE) and os.path.exists(seed_db) and os.path.abspath(D
     shutil.copy2(seed_db, DB_FILE)
 
 def get_db():
-    conn = sqlite3.connect(DB_FILE, timeout=30.0)
-    conn.row_factory = sqlite3.Row
-    try:
-        conn.execute("PRAGMA journal_mode=WAL;")
-        conn.execute("PRAGMA synchronous=NORMAL;")
-        conn.execute("PRAGMA busy_timeout=5000;")
-    except Exception:
-        pass
-    return conn
+    return db_engine.db.get_connection()
 
 def get_user_from_request(headers):
     auth_header = headers.get('Authorization', '')
@@ -245,10 +238,10 @@ def init_db():
     conn.commit()
     conn.close()
 
-    # 检查并从已有的 stories_data.js 迁移数据入库
-    migrate_default_data_if_needed()
-    # 自动从随代码更新的 seed 数据库增补/同步官方剧本与广场卡片（平滑支持 Docker 挂载数据卷）
-    sync_from_seed_db()
+    # 检查并从已有的 stories_data.js 迁移数据入库 (仅在本地 SQLite 模式下需要)
+    if db_engine.db.dialect == 'sqlite':
+        migrate_default_data_if_needed()
+        sync_from_seed_db()
     studio_api.initialize(get_db)
 
 def sync_from_seed_db():

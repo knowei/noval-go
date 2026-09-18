@@ -6,14 +6,40 @@ services:
     container_name: noval-go
     restart: unless-stopped
     ports:
-      # 映射主机端口:容器端口。如果 3000 端口已被占用，可修改为 "3001:3000" 或 "8888:3000"
+      # 映射主机端口:容器端口 (访问 http://localhost:3000)
       - "3000:3000"
     volumes:
-      # 持久化数据目录，保障 SQLite 数据库及历史存档安全
+      # 本地数据持久化目录 (SQLite 模式或本地临时缓存)
       - ./data:/app/data
     environment:
       - PORT=3000
       - NOVAL_PORT=5173
-      - NOVAL_DB_PATH=/app/data/noval_data.db
       - BACKEND_URL=http://127.0.0.1:5173
       - NODE_ENV=production
+      # -------------------------------------------------------------
+      # 数据库连接串 (支持 PostgreSQL / Supabase / MySQL / SQLite):
+      # 1. 留空：默认使用本地 SQLite 数据库 (/app/data/noval_data.db)
+      # 2. Supabase 示例: postgresql://postgres.[project-ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres
+      # 3. 自建 Postgres 示例: postgresql://noval:noval_secret@postgres:5432/noval_db
+      # 4. 自建 MySQL 示例: mysql://root:password@127.0.0.1:3306/noval_db
+      # -------------------------------------------------------------
+      - DATABASE_URL=
+      - NOVAL_DB_PATH=/app/data/noval_data.db
+
+  # -----------------------------------------------------------------
+  # (可选) 自建 PostgreSQL 关系型数据库服务
+  # 如需启用，请取消以下注释，并将上方 noval-go 的 DATABASE_URL 设置为:
+  # postgresql://noval:noval_secret@postgres:5432/noval_db
+  # -----------------------------------------------------------------
+  # postgres:
+  #   image: postgres:16-alpine
+  #   container_name: noval-postgres
+  #   restart: unless-stopped
+  #   environment:
+  #     - POSTGRES_USER=noval
+  #     - POSTGRES_PASSWORD=noval_secret
+  #     - POSTGRES_DB=noval_db
+  #   volumes:
+  #     - ./pgdata:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
