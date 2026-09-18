@@ -15,7 +15,7 @@ const PRESET_MODELS = [
 ];
 
 export function ModelSettingsModal() {
-  const { isSettingsOpen, setIsSettingsOpen, modelSettings, setModelSettings, currentUserId } = useAppStore();
+  const { isSettingsOpen, setIsSettingsOpen, modelSettings, setModelSettings, currentUserId, authToken } = useAppStore();
   
   const [model, setModel] = useState(modelSettings.model || 'deepseek-flash');
   const [baseUrl, setBaseUrl] = useState(modelSettings.baseUrl || 'https://api.deepseek.com/v1');
@@ -115,7 +115,13 @@ export function ModelSettingsModal() {
   const handleSave = async () => {
     const updated = { model, baseUrl, apiKey, temperature, roleplayMode };
     setModelSettings(updated);
-    await saveModelSettings(currentUserId, updated);
+    if (authToken && !currentUserId.startsWith('guest_') && currentUserId !== 'default_user') {
+      try {
+        await saveModelSettings(currentUserId, updated);
+      } catch (e) {
+        console.warn('Failed to sync model settings to cloud:', e);
+      }
+    }
     setIsSettingsOpen(false);
   };
 
@@ -279,6 +285,10 @@ export function ModelSettingsModal() {
               placeholder="sk-..."
               className="w-full px-3.5 py-2.5 rounded-xl bg-[#1a1b25] border border-[#2b2e3c] focus:border-amber-500 text-gray-100 outline-none font-mono text-xs"
             />
+            <div className="mt-1 flex items-center justify-between text-[10px] text-gray-500">
+              <span>{authToken ? '已登录: 密钥已绑定至私有账号加密云同步' : '访客设备模式: 密钥仅保存在本机浏览器 (localStorage)，绝不泄漏给其他访客'}</span>
+              <span className="text-emerald-400/80 font-medium">🔒 设备隐私隔离</span>
+            </div>
           </div>
 
           <div>

@@ -220,7 +220,7 @@ export function PrimarySidebar() {
           className={`w-full p-2 rounded-2xl bg-[#141622] hover:bg-[#1c1f2e] border border-amber-500/20 hover:border-amber-500/50 flex ${
             isMobile ? 'flex-row items-center gap-3' : 'flex-col items-center justify-center'
           } cursor-pointer transition group shadow-md text-center`}
-          title="点击切换角色账号"
+          title="点击打开执笔账号与安全中心"
         >
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-500 via-orange-500 to-rose-600 border border-amber-300/40 flex items-center justify-center text-sm shadow-md group-hover:scale-105 transition shrink-0">
             {currentUser?.avatar || '🎭'}
@@ -228,7 +228,7 @@ export function PrimarySidebar() {
 
           <div className="mt-1 min-w-0">
             <div className="text-[11px] font-bold text-gray-200 group-hover:text-amber-300 truncate max-w-[70px]">
-              {currentUser?.nickname || currentUser?.username || '风月旅行者'}
+              {currentUser?.nickname || currentUser?.username || '设备访客'}
             </div>
             <div className="text-[10px] text-amber-400 font-bold font-mono tracking-tight flex items-center justify-center gap-0.5">
               <span>💎</span>
