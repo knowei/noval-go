@@ -28,9 +28,21 @@ const getInitialMods = (): EnabledMods => {
   return defaultMods;
 };
 
+const getOrCreateUserId = (): string => {
+  if (typeof window === 'undefined') return 'guest_default';
+  let uid = localStorage.getItem('rp_current_user_id') || localStorage.getItem('noval_user_id');
+  if (!uid || uid === 'default_user') {
+    uid = 'guest_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+    localStorage.setItem('rp_current_user_id', uid);
+    localStorage.setItem('noval_user_id', uid);
+  }
+  return uid;
+};
+
 interface AppState {
   currentUserId: string;
   currentUser: UserProfile | null;
+  authToken: string | null;
   currentDeckKey: string;
   currentDeck: StoryDeck | null;
   currentConversationId: string;
@@ -45,6 +57,8 @@ interface AppState {
 
   setCurrentUserId: (id: string) => void;
   setCurrentUser: (user: UserProfile | null) => void;
+  login: (user: UserProfile, token: string) => void;
+  logout: () => void;
   setCurrentDeck: (deckKey: string, deck: StoryDeck | null) => void;
   setConversationHistory: (history: Turn[]) => void;
   setCurrentConversationId: (id: string) => void;
@@ -66,10 +80,9 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
-  currentUserId: typeof window !== 'undefined'
-    ? localStorage.getItem('rp_current_user_id') || localStorage.getItem('noval_user_id') || 'default_user'
-    : 'default_user',
+  currentUserId: getOrCreateUserId(),
   currentUser: null,
+  authToken: typeof window !== 'undefined' ? localStorage.getItem('rp_auth_token') : null,
   currentDeckKey: 'deck_coser_sister',
   currentDeck: null,
   currentConversationId: '',
@@ -98,15 +111,68 @@ export const useAppStore = create<AppState>((set, get) => ({
     get().refreshSaves();
   },
 
+  login: (user: UserProfile, token: string) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('rp_auth_token', token);
+      localStorage.setItem('rp_current_user_id', user.id);
+      localStorage.setItem('noval_user_id', user.id);
+    }
+    set({
+      currentUserId: user.id,
+      currentUser: user,
+      authToken: token,
+      conversationHistory: [],
+      currentConversationId: '',
+    });
+    if ((user as any).model_config) {
+      const cfg = (user as any).model_config;
+      if (cfg.api_key || cfg.api_base || cfg.api_model) {
+        get().setModelSettings({
+          model: cfg.api_model || get().modelSettings.model,
+          baseUrl: cfg.api_base || get().modelSettings.baseUrl,
+          apiKey: cfg.api_key || get().modelSettings.apiKey,
+        });
+      }
+    }
+    get().refreshSaves();
+  },
+
+  logout: () => {
+    const newGuestId = 'guest_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('rp_auth_token');
+      localStorage.setItem('rp_current_user_id', newGuestId);
+      localStorage.setItem('noval_user_id', newGuestId);
+    }
+    set({
+      currentUserId: newGuestId,
+      currentUser: {
+        id: newGuestId,
+        username: 'guest',
+        nickname: '设备访客',
+        avatar: '🎭',
+        role: 'guest',
+        is_guest: true
+      },
+      authToken: null,
+      conversationHistory: [],
+      currentConversationId: '',
+      savedConversations: []
+    });
+    get().refreshSaves();
+  },
+
   setCurrentUser: (user) => {
     set({ currentUser: user });
     if (user && (user as any).model_config) {
       const cfg = (user as any).model_config;
-      get().setModelSettings({
-        model: cfg.api_model || get().modelSettings.model,
-        baseUrl: cfg.api_base || get().modelSettings.baseUrl,
-        apiKey: cfg.api_key !== undefined ? cfg.api_key : get().modelSettings.apiKey,
-      });
+      if (cfg.api_key || cfg.api_base || cfg.api_model) {
+        get().setModelSettings({
+          model: cfg.api_model || get().modelSettings.model,
+          baseUrl: cfg.api_base || get().modelSettings.baseUrl,
+          apiKey: cfg.api_key || get().modelSettings.apiKey,
+        });
+      }
     }
   },
   setCurrentDeck: (deckKey, deck) => set({ currentDeckKey: deckKey, currentDeck: deck }),

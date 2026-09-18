@@ -39,9 +39,61 @@ export async function fetchStory(id: string): Promise<StoryDeck | null> {
   }
 }
 
+export function getAuthToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('rp_auth_token');
+}
+
+export function getAuthHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  const token = getAuthToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+export async function loginApi(username: string, password: string): Promise<{ success: boolean; token?: string; user?: any; error?: string }> {
+  try {
+    const resp = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await resp.json();
+    if (!resp.ok) {
+      return { success: false, error: data.error || '登录失败' };
+    }
+    return data;
+  } catch (e: any) {
+    return { success: false, error: e.message || '网络请求异常' };
+  }
+}
+
+export async function registerApi(username: string, password: string, nickname?: string): Promise<{ success: boolean; token?: string; user?: any; error?: string }> {
+  try {
+    const resp = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password, nickname })
+    });
+    const data = await resp.json();
+    if (!resp.ok) {
+      return { success: false, error: data.error || '注册失败' };
+    }
+    return data;
+  } catch (e: any) {
+    return { success: false, error: e.message || '网络请求异常' };
+  }
+}
+
 export async function fetchConversations(userId: string): Promise<ConversationSave[]> {
   try {
-    const resp = await fetch(`/api/conversations?user_id=${encodeURIComponent(userId)}`);
+    const resp = await fetch(`/api/conversations?user_id=${encodeURIComponent(userId)}`, {
+      headers: getAuthHeaders()
+    });
     if (!resp.ok) return [];
     const data = await resp.json();
     return Array.isArray(data) ? data : [];
@@ -53,7 +105,9 @@ export async function fetchConversations(userId: string): Promise<ConversationSa
 
 export async function fetchConversation(id: string): Promise<ConversationSave | null> {
   try {
-    const resp = await fetch(`/api/conversations?id=${encodeURIComponent(id)}`);
+    const resp = await fetch(`/api/conversations?id=${encodeURIComponent(id)}`, {
+      headers: getAuthHeaders()
+    });
     if (!resp.ok) return null;
     return await resp.json();
   } catch (e) {
@@ -72,7 +126,7 @@ export async function saveConversation(payload: {
   try {
     const resp = await fetch('/api/conversations', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(payload)
     });
     return resp.ok;
@@ -85,7 +139,7 @@ export async function deleteConversation(id: string): Promise<boolean> {
   try {
     const resp = await fetch('/api/conversations/delete', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ id })
     });
     return resp.ok;
@@ -96,7 +150,9 @@ export async function deleteConversation(id: string): Promise<boolean> {
 
 export async function fetchUserList(): Promise<UserProfile[]> {
   try {
-    const resp = await fetch('/api/user/list');
+    const resp = await fetch('/api/user/list', {
+      headers: getAuthHeaders()
+    });
     if (!resp.ok) return [];
     const data = await resp.json();
     return Array.isArray(data) ? data : [];
@@ -107,7 +163,9 @@ export async function fetchUserList(): Promise<UserProfile[]> {
 
 export async function fetchUserProfile(userId: string): Promise<UserProfile | null> {
   try {
-    const resp = await fetch(`/api/user/profile?user_id=${encodeURIComponent(userId)}`);
+    const resp = await fetch(`/api/user/profile?user_id=${encodeURIComponent(userId)}`, {
+      headers: getAuthHeaders()
+    });
     if (!resp.ok) return null;
     return await resp.json();
   } catch (e) {
@@ -119,8 +177,18 @@ export async function saveModelSettings(userId: string, settings: ModelSettings)
   try {
     const resp = await fetch('/api/user/model-settings', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: userId, ...settings })
+      headers: getAuthHeaders(),
+      body: JSON.stringify({
+        user_id: userId,
+        model_config: {
+          api_model: settings.model,
+          api_base: settings.baseUrl,
+          api_key: settings.apiKey,
+          roleplay_mode: settings.roleplayMode,
+          temperature: settings.temperature,
+          top_p: settings.topP
+        }
+      })
     });
     return resp.ok;
   } catch (e) {

@@ -17,6 +17,7 @@ import hashlib
 import sqlite3
 import os
 import sys
+import secrets
 from datetime import datetime
 import studio_api
 
@@ -41,6 +42,27 @@ def get_db():
         pass
     return conn
 
+def get_user_from_request(headers):
+    auth_header = headers.get('Authorization', '')
+    token = ''
+    if auth_header.startswith('Bearer '):
+        token = auth_header[7:].strip()
+    if not token:
+        token = headers.get('X-Auth-Token', '').strip()
+    if not token:
+        return None
+    try:
+        conn = get_db()
+        c = conn.cursor()
+        c.execute('SELECT id, username, nickname, avatar, points, model_config_json, auth_token FROM users WHERE auth_token = ? AND auth_token != ""', (token,))
+        row = c.fetchone()
+        conn.close()
+        if row:
+            return dict(row)
+    except Exception:
+        pass
+    return None
+
 def init_db():
     conn = get_db()
     c = conn.cursor()
@@ -55,6 +77,7 @@ def init_db():
         avatar TEXT,
         points INTEGER DEFAULT 9999,
         model_config_json TEXT DEFAULT '',
+        auth_token TEXT DEFAULT '',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP
     )
@@ -64,6 +87,9 @@ def init_db():
     except Exception: pass
     try:
         c.execute("ALTER TABLE users ADD COLUMN model_config_json TEXT DEFAULT ''")
+    except Exception: pass
+    try:
+        c.execute("ALTER TABLE users ADD COLUMN auth_token TEXT DEFAULT ''")
     except Exception: pass
     try:
         c.execute("ALTER TABLE users ADD COLUMN updated_at TIMESTAMP")
@@ -458,17 +484,15 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             body = json.loads(self.rfile.read(content_len).decode('utf-8'))
             username = (body.get('username') or '').strip()
             password = body.get('password') or ''
-            nickname = (body.get('nickname') or username or '新晋旅行者').strip()
+            nickname = (body.get('nickname') or username or '新晋执笔者').strip()
             avatar = body.get('avatar') or '🌟'
-            model_config = body.get('model_config') or {
-                'api_base': 'https://api.deepseek.com/v1',
-                'api_key': '',
-                'api_model': 'deepseek-flash',
-                'provider': 'custom'
-            }
+            model_config = body.get('model_config') or {}
 
             if not username:
                 self.send_json({'error': '用户名不能为空'}, 400)
+                return
+            if not password:
+                self.send_json({'error': '密码不能为空'}, 400)
                 return
 
             conn = get_db()
@@ -476,21 +500,23 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             c.execute('SELECT id FROM users WHERE username = ?', (username,))
             if c.fetchone():
                 conn.close()
-                self.send_json({'error': '用户名已存在，请直接登录或换一个用户名'}, 400)
+                self.send_json({'error': '用户名已存在，请直接登录或更换用户名'}, 400)
                 return
 
-            new_id = f"user_{int(datetime.now().timestamp()*1000)}"
-            pw_hash = hashlib.sha256(password.encode('utf-8')).hexdigest() if password else ''
+            new_id = f"user_{secrets.token_hex(6)}"
+            pw_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
+            token = f"tok_{secrets.token_hex(20)}"
 
             c.execute("""
-            INSERT INTO users (id, username, password_hash, nickname, avatar, points, model_config_json)
-            VALUES (?, ?, ?, ?, ?, 9999, ?)
-            """, (new_id, username, pw_hash, nickname, avatar, json.dumps(model_config, ensure_ascii=False)))
+            INSERT INTO users (id, username, password_hash, nickname, avatar, points, model_config_json, auth_token)
+            VALUES (?, ?, ?, ?, ?, 9999, ?, ?)
+            """, (new_id, username, pw_hash, nickname, avatar, json.dumps(model_config, ensure_ascii=False), token))
             conn.commit()
             conn.close()
 
             self.send_json({
                 'success': True,
+                'token': token,
                 'user': {
                     'id': new_id,
                     'username': username,
@@ -512,17 +538,23 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             c = conn.cursor()
             c.execute('SELECT id, username, password_hash, nickname, avatar, points, model_config_json FROM users WHERE username = ?', (username,))
             row = c.fetchone()
-            conn.close()
 
             if not row:
-                self.send_json({'error': '该用户不存在，请先注册'}, 404)
+                conn.close()
+                self.send_json({'error': '该账号不存在，请先注册'}, 404)
                 return
 
             pw_hash = hashlib.sha256(password.encode('utf-8')).hexdigest() if password else ''
             stored_hash = row['password_hash']
             if stored_hash and stored_hash != pw_hash:
+                conn.close()
                 self.send_json({'error': '密码错误，请重新输入'}, 401)
                 return
+
+            token = f"tok_{secrets.token_hex(20)}"
+            c.execute('UPDATE users SET auth_token = ? WHERE id = ?', (token, row['id']))
+            conn.commit()
+            conn.close()
 
             cfg = {}
             if row['model_config_json']:
@@ -533,6 +565,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
 
             self.send_json({
                 'success': True,
+                'token': token,
                 'user': {
                     'id': row['id'],
                     'username': row['username'],
@@ -547,8 +580,18 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
         if self.path == '/api/user/model-settings':
             content_len = int(self.headers.get('Content-Length', 0))
             body = json.loads(self.rfile.read(content_len).decode('utf-8'))
-            user_id = body.get('user_id') or self.headers.get('X-User-Id') or 'default_user'
+            user_id = body.get('user_id') or self.headers.get('X-User-Id')
             model_config = body.get('model_config') or {}
+
+            # 访客账号或 default_user 仅在前端设备本地持久化，禁止写入共享数据库
+            if not user_id or user_id == 'default_user' or str(user_id).startswith('guest_'):
+                self.send_json({'success': True, 'id': user_id, 'is_guest': True})
+                return
+
+            current_auth_user = get_user_from_request(self.headers)
+            if not current_auth_user or current_auth_user['id'] != user_id:
+                self.send_json({'error': '无权同步非本人账号的模型配置，请先登录'}, 401)
+                return
 
             conn = get_db()
             c = conn.cursor()
@@ -565,7 +608,16 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             body = json.loads(self.rfile.read(content_len).decode('utf-8'))
             nickname = body.get('nickname', '风月旅行者')
             avatar = body.get('avatar', '🎭')
-            user_id = body.get('user_id') or self.headers.get('X-User-Id') or 'default_user'
+            user_id = body.get('user_id') or self.headers.get('X-User-Id')
+
+            if not user_id or user_id == 'default_user' or str(user_id).startswith('guest_'):
+                self.send_json({'success': True, 'id': user_id or 'guest', 'nickname': nickname, 'avatar': avatar})
+                return
+
+            current_auth_user = get_user_from_request(self.headers)
+            if not current_auth_user or current_auth_user['id'] != user_id:
+                self.send_json({'error': '无权修改该用户资料'}, 401)
+                return
 
             conn = get_db()
             c = conn.cursor()
@@ -722,7 +774,23 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
         if self.path.startswith('/api/auth/me') or self.path.startswith('/api/user/profile'):
             parsed = urllib.parse.urlparse(self.path)
             params = urllib.parse.parse_qs(parsed.query)
-            user_id = params.get('user_id', [None])[0] or self.headers.get('X-User-Id') or 'default_user'
+            user_id = params.get('user_id', [None])[0] or self.headers.get('X-User-Id')
+            current_auth_user = get_user_from_request(self.headers)
+
+            if not user_id and current_auth_user:
+                user_id = current_auth_user['id']
+
+            if not user_id or user_id == 'default_user' or str(user_id).startswith('guest_'):
+                self.send_json({
+                    'id': user_id or 'guest_default',
+                    'username': 'guest',
+                    'nickname': '设备访客',
+                    'avatar': '🎭',
+                    'points': 9999,
+                    'is_guest': True,
+                    'model_config': {}
+                })
+                return
 
             conn = get_db()
             c = conn.cursor()
@@ -732,25 +800,31 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             if row:
                 u = dict(row)
                 cfg = {}
-                if u.get('model_config_json'):
-                    try:
-                        cfg = json.loads(u['model_config_json'])
-                    except Exception:
-                        pass
+                # 只有携带本人有效 auth_token 时才返回私密 model_config (包含 API Key)
+                if current_auth_user and current_auth_user['id'] == u['id']:
+                    if u.get('model_config_json'):
+                        try:
+                            cfg = json.loads(u['model_config_json'])
+                        except Exception:
+                            pass
                 u['model_config'] = cfg
                 u.pop('model_config_json', None)
                 self.send_json(u)
             else:
-                self.send_json({'id': 'default_user', 'username': 'player', 'nickname': '风月旅行者', 'avatar': '🎭', 'points': 9999, 'model_config': {}})
+                self.send_json({
+                    'id': user_id,
+                    'username': 'guest',
+                    'nickname': '设备访客',
+                    'avatar': '🎭',
+                    'points': 9999,
+                    'is_guest': True,
+                    'model_config': {}
+                })
             return
 
         if self.path == '/api/user/list':
-            conn = get_db()
-            c = conn.cursor()
-            c.execute('SELECT id, username, nickname, avatar, points, updated_at FROM users ORDER BY updated_at DESC, created_at DESC')
-            rows = c.fetchall()
-            conn.close()
-            self.send_json([dict(r) for r in rows])
+            # 杜绝公开暴露全站用户账号列表与敏感信息
+            self.send_json([])
             return
 
         # 3. 获取会话列表或单个会话 GET /api/conversations (支持按 user_id 严格物理隔离)
@@ -759,6 +833,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             params = urllib.parse.parse_qs(parsed.query)
             conv_id = params.get('id', [None])[0]
             user_id = params.get('user_id', [None])[0] or self.headers.get('X-User-Id')
+            current_auth_user = get_user_from_request(self.headers)
 
             conn = get_db()
             c = conn.cursor()
@@ -771,21 +846,45 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                 conn.close()
                 if row:
                     data = dict(row)
+                    # 校验私密权限：若是已注册用户存档，需验证本人 token
+                    row_uid = data.get('user_id')
+                    if row_uid and not row_uid.startswith('guest_') and row_uid != 'default_user':
+                        if not current_auth_user or current_auth_user['id'] != row_uid:
+                            self.send_json({'error': '无权访问该私密存档'}, 403)
+                            return
                     data['history'] = json.loads(data.pop('history_json') or '[]')
                     self.send_json(data)
                 else:
                     self.send_json({'error': 'Conversation not found'}, 404)
             else:
-                if user_id and user_id != 'all':
+                # 严格物理隔离查询：
+                if user_id:
+                    if str(user_id).startswith('guest_'):
+                        c.execute("""
+                        SELECT id, user_id, deck_id, deck_title, title, turn_count, created_at, updated_at 
+                        FROM conversations WHERE user_id = ? ORDER BY updated_at DESC
+                        """, (user_id,))
+                    else:
+                        # 已注册用户需校验本人身份
+                        if current_auth_user and current_auth_user['id'] == user_id:
+                            c.execute("""
+                            SELECT id, user_id, deck_id, deck_title, title, turn_count, created_at, updated_at 
+                            FROM conversations WHERE user_id = ? ORDER BY updated_at DESC
+                            """, (user_id,))
+                        else:
+                            conn.close()
+                            self.send_json([])
+                            return
+                elif current_auth_user:
                     c.execute("""
                     SELECT id, user_id, deck_id, deck_title, title, turn_count, created_at, updated_at 
                     FROM conversations WHERE user_id = ? ORDER BY updated_at DESC
-                    """, (user_id,))
+                    """, (current_auth_user['id'],))
                 else:
-                    c.execute("""
-                    SELECT id, user_id, deck_id, deck_title, title, turn_count, created_at, updated_at 
-                    FROM conversations ORDER BY updated_at DESC
-                    """)
+                    conn.close()
+                    self.send_json([])
+                    return
+
                 rows = c.fetchall()
                 conn.close()
                 self.send_json([dict(r) for r in rows])

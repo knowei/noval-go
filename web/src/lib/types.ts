@@ -138,6 +138,8 @@ export interface UserProfile {
   nickname?: string;
   avatar?: string;
   role?: string;
+  points?: number;
+  is_guest?: boolean;
   current_model?: string;
   model_settings?: ModelSettings;
 }
