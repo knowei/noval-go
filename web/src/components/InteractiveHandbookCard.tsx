@@ -30,6 +30,12 @@ export function InteractiveHandbookCard({
     if (!html) return '';
 
     const bridgeScript = `
+<style>
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+::-webkit-scrollbar-thumb { background: rgba(244,63,94,0.3); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(244,63,94,0.6); }
+</style>
 <script>
 (function() {
   function notifyHeight() {
@@ -61,9 +67,10 @@ export function InteractiveHandbookCard({
       if (copyWrap) {
         var startBtn = document.createElement('button');
         startBtn.className = 'copy-btn';
-        startBtn.style.background = 'linear-gradient(135deg, #ec4899, #8b5cf6)';
-        startBtn.style.boxShadow = '0 14px 34px rgba(236, 72, 153, 0.4)';
+        startBtn.style.background = 'linear-gradient(135deg, #f43f5e, #a855f7)';
+        startBtn.style.boxShadow = '0 12px 32px rgba(244, 63, 94, 0.45)';
         startBtn.style.marginTop = '12px';
+        startBtn.style.borderRadius = '14px';
         startBtn.textContent = '🚀 填入并以此设定开局';
         startBtn.addEventListener('click', function(e) {
           e.preventDefault();
@@ -132,23 +139,23 @@ export function InteractiveHandbookCard({
   if (!html) return null;
 
   return (
-    <div className="w-full my-4 rounded-2xl border border-purple-500/30 bg-[#12111a]/95 shadow-[0_10px_40px_rgba(0,0,0,0.6)] overflow-hidden transition-all duration-300">
+    <div className="w-full my-4 rounded-2xl border border-rose-500/30 bg-[#12111a]/95 shadow-[0_12px_44px_rgba(0,0,0,0.7)] overflow-hidden transition-all duration-300">
       {/* 顶部标题栏 / 折叠控制栏 */}
-      <div className="px-4 py-3 bg-gradient-to-r from-purple-950/60 via-[#1a1528]/80 to-pink-950/40 border-b border-purple-500/20 flex items-center justify-between gap-3">
+      <div className="px-4 py-3 bg-gradient-to-r from-rose-950/70 via-[#1a1325]/85 to-purple-950/60 border-b border-rose-500/25 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white shadow-sm shrink-0">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-rose-500 to-purple-600 flex items-center justify-center text-white shadow-sm shrink-0">
             <BookOpen className="w-4 h-4" />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-sm text-purple-100 truncate">
+              <span className="font-bold text-sm text-rose-100 truncate">
                 {deckTitle} · 作品设定与角色卡
               </span>
-              <span className="hidden sm:inline px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+              <span className="hidden sm:inline px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30">
                 可交互设定卡
               </span>
             </div>
-            <p className="text-[11px] text-purple-300/70 truncate hidden sm:block">
+            <p className="text-[11px] text-rose-300/70 truncate hidden sm:block">
               包含完整人物小传、生理机制、开场白选择与自定义玩家档案
             </p>
           </div>
@@ -165,7 +172,7 @@ export function InteractiveHandbookCard({
 
           <button
             onClick={() => setIsFullscreen(true)}
-            className="p-1.5 rounded-lg bg-[#201c30] hover:bg-purple-900/40 text-purple-300 hover:text-white border border-purple-500/30 text-xs transition cursor-pointer"
+            className="p-1.5 rounded-lg bg-[#201726] hover:bg-rose-900/40 text-rose-300 hover:text-white border border-rose-500/30 text-xs transition cursor-pointer"
             title="全屏阅读设定卡"
           >
             <Maximize2 className="w-3.5 h-3.5" />
@@ -173,7 +180,7 @@ export function InteractiveHandbookCard({
 
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="px-2.5 py-1 rounded-lg bg-purple-600/20 hover:bg-purple-600/30 text-purple-200 hover:text-white border border-purple-500/40 text-xs font-medium flex items-center gap-1 transition cursor-pointer"
+            className="px-2.5 py-1 rounded-lg bg-rose-600/20 hover:bg-rose-600/30 text-rose-200 hover:text-white border border-rose-500/40 text-xs font-medium flex items-center gap-1 transition cursor-pointer"
           >
             {isExpanded ? (
               <>
@@ -192,7 +199,7 @@ export function InteractiveHandbookCard({
 
       {/* 折叠区：嵌入式 iframe 渲染作者专属排版与交互逻辑 */}
       {isExpanded && (
-        <div className="relative w-full bg-[#fdfcf8] transition-all duration-300">
+        <div className="relative w-full bg-[#0c0b14] transition-all duration-300">
           <iframe
             ref={iframeRef}
             srcDoc={enhancedHtml}
@@ -210,7 +217,7 @@ export function InteractiveHandbookCard({
       {/* 全屏弹窗浏览模式 */}
       {isFullscreen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 bg-black/85 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="relative w-full max-w-5xl h-[92vh] bg-[#fdfcf8] rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-purple-500/40">
+          <div className="relative w-full max-w-5xl h-[92vh] bg-[#0c0b14] rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-rose-500/40">
             {/* 弹窗顶部栏 */}
             <div className="px-4 py-3 bg-[#1e192c] text-white flex items-center justify-between border-b border-purple-500/30">
               <div className="flex items-center gap-2">

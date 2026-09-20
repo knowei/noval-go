@@ -999,7 +999,7 @@ export default function ChatPage() {
         </div>
 
         {/* Main Dialogue Stream */}
-        <div className="flex-1 max-w-3xl mx-auto w-full p-3 sm:p-6 space-y-5 sm:space-y-6 pb-28">
+        <div className="flex-1 max-w-3xl mx-auto w-full p-3 sm:p-6 space-y-5 sm:space-y-6 pb-72 sm:pb-80">
           {/* Author-designed Interactive Character Card & Handbook */}
           {currentDeck?.customHtml && (
             <div id="handbook-card-anchor" className="scroll-mt-14">
