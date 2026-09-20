@@ -25,12 +25,13 @@ import db_engine
 PORT = int(os.environ.get('NOVAL_PORT', '5173'))
 DB_FILE = os.environ.get('NOVAL_DB_PATH') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'noval_data.db')
 
-# Ensure DB directory exists and seed if empty
-os.makedirs(os.path.dirname(os.path.abspath(DB_FILE)), exist_ok=True)
-seed_db = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'noval_data.db')
-if not os.path.exists(DB_FILE) and os.path.exists(seed_db) and os.path.abspath(DB_FILE) != os.path.abspath(seed_db):
-    import shutil
-    shutil.copy2(seed_db, DB_FILE)
+# Ensure DB directory exists and seed if empty (SQLite fallback mode only)
+if db_engine.db.dialect == 'sqlite':
+    os.makedirs(os.path.dirname(os.path.abspath(DB_FILE)), exist_ok=True)
+    seed_db = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'noval_data.db')
+    if not os.path.exists(DB_FILE) and os.path.exists(seed_db) and os.path.abspath(DB_FILE) != os.path.abspath(seed_db):
+        import shutil
+        shutil.copy2(seed_db, DB_FILE)
 
 def get_db():
     return db_engine.db.get_connection()
@@ -57,6 +58,11 @@ def get_user_from_request(headers):
     return None
 
 def init_db():
+    if db_engine.db.dialect != 'sqlite':
+        db_engine.db.init_tables()
+        studio_api.initialize(get_db)
+        return
+
     conn = get_db()
     c = conn.cursor()
 
