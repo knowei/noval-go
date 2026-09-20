@@ -9,6 +9,24 @@ from datetime import datetime
 # NOVAL-GO 统一多数据库驱动引擎 (PostgreSQL / Supabase / MySQL / SQLite)
 # =============================================================================
 
+def _load_env_file():
+    env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+    if os.path.exists(env_file):
+        try:
+            with open(env_file, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith('#') and '=' in line:
+                        k, v = line.split('=', 1)
+                        k = k.strip()
+                        v = v.strip().strip("'").strip('"')
+                        if k and k not in os.environ:
+                            os.environ[k] = v
+        except Exception:
+            pass
+
+_load_env_file()
+
 DATABASE_URL = os.environ.get('DATABASE_URL', '').strip()
 NOVAL_DB_PATH = os.environ.get('NOVAL_DB_PATH') or os.path.join(os.path.dirname(os.path.abspath(__file__)), 'noval_data.db')
 
@@ -80,8 +98,8 @@ class DatabaseEngine:
         elif self.dialect == 'postgres':
             # 优先尝试导入 pg8000 (纯Python无编译依赖)，其次尝试 psycopg2
             try:
-                import pg8000.native
-                conn = pg8000.native.Connection(
+                import pg8000.dbapi
+                conn = pg8000.dbapi.connect(
                     user=self._parsed_config['user'],
                     password=self._parsed_config['password'],
                     host=self._parsed_config['host'],
@@ -89,6 +107,7 @@ class DatabaseEngine:
                     database=self._parsed_config['database'],
                     ssl_context=True if ('supabase.co' in self._parsed_config['host'] or 'neon.tech' in self._parsed_config['host']) else None
                 )
+                conn.autocommit = True
                 return Pg8000Adapter(conn)
             except ImportError:
                 try:
@@ -265,25 +284,25 @@ class DatabaseEngine:
                 # PostgreSQL / MySQL 标准 DDL
                 cur.execute('''
                 CREATE TABLE IF NOT EXISTS users (
-                    id VARCHAR(64) PRIMARY KEY,
-                    username VARCHAR(64) UNIQUE NOT NULL,
-                    password_hash VARCHAR(128) NOT NULL,
-                    nickname VARCHAR(128) DEFAULT '风月旅行者',
-                    avatar VARCHAR(64) DEFAULT '🎭',
+                    id TEXT PRIMARY KEY,
+                    username TEXT UNIQUE NOT NULL,
+                    password_hash TEXT NOT NULL,
+                    nickname TEXT DEFAULT '风月旅行者',
+                    avatar TEXT DEFAULT '🎭',
                     points INTEGER DEFAULT 9999,
                     model_config_json TEXT,
-                    auth_token VARCHAR(128) DEFAULT '',
+                    auth_token TEXT DEFAULT '',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
                 ''')
                 cur.execute('''
                 CREATE TABLE IF NOT EXISTS conversations (
-                    id VARCHAR(64) PRIMARY KEY,
-                    user_id VARCHAR(64) NOT NULL,
-                    deck_id VARCHAR(64) NOT NULL,
-                    deck_title VARCHAR(255) DEFAULT '',
-                    title VARCHAR(255) DEFAULT '新场景存档',
+                    id TEXT PRIMARY KEY,
+                    user_id TEXT NOT NULL,
+                    deck_id TEXT NOT NULL,
+                    deck_title TEXT DEFAULT '',
+                    title TEXT DEFAULT '新场景存档',
                     history_json TEXT,
                     turn_count INTEGER DEFAULT 1,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -292,23 +311,23 @@ class DatabaseEngine:
                 ''')
                 cur.execute('''
                 CREATE TABLE IF NOT EXISTS stories (
-                    id VARCHAR(64) PRIMARY KEY,
-                    title VARCHAR(255) NOT NULL,
-                    badge VARCHAR(64) DEFAULT '经典必玩',
-                    cover_icon VARCHAR(64) DEFAULT '📖',
-                    cover_title VARCHAR(255),
+                    id TEXT PRIMARY KEY,
+                    title TEXT NOT NULL,
+                    badge TEXT DEFAULT '经典必玩',
+                    cover_icon TEXT DEFAULT '📖',
+                    cover_title TEXT,
                     cover_subtitle TEXT,
-                    logo VARCHAR(64) DEFAULT '📖',
-                    theme_color VARCHAR(32) DEFAULT 'rose',
-                    btn_gradient VARCHAR(128) DEFAULT 'from-rose-600 to-pink-600',
+                    logo TEXT DEFAULT '📖',
+                    theme_color TEXT DEFAULT 'rose',
+                    btn_gradient TEXT DEFAULT 'from-rose-600 to-pink-600',
                     handbook_json TEXT,
                     roles_json TEXT,
                     scenes_json TEXT,
                     styles_json TEXT,
                     first_turn_demo_json TEXT,
-                    custom_css TEXT,
-                    custom_html TEXT,
-                    category VARCHAR(64) DEFAULT '都市',
+                    custom_css TEXT DEFAULT '',
+                    custom_html TEXT DEFAULT '',
+                    category TEXT DEFAULT '都市',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
@@ -316,30 +335,30 @@ class DatabaseEngine:
                 desc_col = "`desc` TEXT" if self.dialect == "mysql" else '"desc" TEXT'
                 cur.execute(f'''
                 CREATE TABLE IF NOT EXISTS plaza_cards (
-                    id VARCHAR(64) PRIMARY KEY,
-                    deck_id VARCHAR(64),
-                    title VARCHAR(255) UNIQUE NOT NULL,
-                    badge VARCHAR(64) DEFAULT '探索精选',
-                    badge_color VARCHAR(64) DEFAULT 'rose',
-                    author VARCHAR(128) DEFAULT '风月剧作组',
+                    id TEXT PRIMARY KEY,
+                    deck_id TEXT,
+                    title TEXT UNIQUE NOT NULL,
+                    badge TEXT DEFAULT '探索精选',
+                    badge_color TEXT DEFAULT 'rose',
+                    author TEXT DEFAULT '风月剧作组',
                     {desc_col},
-                    rating VARCHAR(16) DEFAULT '5.0',
+                    rating TEXT DEFAULT '5.0',
                     tags_json TEXT,
-                    heat VARCHAR(32) DEFAULT '9.9w',
+                    heat TEXT DEFAULT '9.9w',
                     order_index INTEGER DEFAULT 0,
                     cover_image TEXT,
-                    image_tag VARCHAR(64) DEFAULT '',
-                    badge_type VARCHAR(32) DEFAULT 'fire',
+                    image_tag TEXT DEFAULT '',
+                    badge_type TEXT DEFAULT 'fire',
                     is_featured INTEGER DEFAULT 0,
-                    category VARCHAR(64) DEFAULT '都市',
+                    category TEXT DEFAULT '都市',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
                 ''')
                 cur.execute('''
                 CREATE TABLE IF NOT EXISTS system_notices (
-                    id VARCHAR(64) PRIMARY KEY,
-                    notice_type VARCHAR(32) DEFAULT 'announcement',
-                    title VARCHAR(255) NOT NULL,
+                    id TEXT PRIMARY KEY,
+                    notice_type TEXT DEFAULT 'announcement',
+                    title TEXT NOT NULL,
                     content TEXT,
                     countdown_seconds INTEGER DEFAULT 0,
                     is_active INTEGER DEFAULT 1
@@ -365,56 +384,56 @@ class DatabaseEngine:
                 conn.close()
 
 
-class Pg8000Cursor:
-    def __init__(self, conn):
-        self.conn = conn
-        self._last_result = []
-        self._idx = 0
-        self._cols = []
+class DictRow(dict):
+    def __init__(self, cols, values):
+        super().__init__(zip(cols, values))
+        self._values = list(values)
 
-    def execute(self, sql, params=()):
-        sql_converted = sql.replace('?', '%s')
-        if 'INSERT OR REPLACE' in sql_converted:
-            # PostgreSQL does not have INSERT OR REPLACE; handle gracefully
-            sql_converted = sql_converted.replace('INSERT OR REPLACE INTO', 'INSERT INTO')
-        parts = sql_converted.split('%s')
-        if len(parts) > 1:
-            sql_converted = ''.join(p + (f"${i+1}" if i < len(parts)-1 else '') for i, p in enumerate(parts))
-        
-        param_list = list(params) if params else []
-        try:
-            res = self.conn.run(sql_converted, *param_list)
-            self._last_result = res if res else []
-            self._idx = 0
-            if hasattr(self.conn, 'columns'):
-                self._cols = [c['name'] for c in self.conn.columns]
-            else:
-                self._cols = []
-        except Exception as e:
-            raise e
+    def __getitem__(self, item):
+        if isinstance(item, int):
+            return self._values[item]
+        return super().__getitem__(item)
+
+
+class Pg8000CursorWrapper:
+    def __init__(self, cursor):
+        self._cur = cursor
+
+    def execute(self, sql, params=None):
+        sql_conv = sql.replace('?', '%s')
+        if 'INSERT OR IGNORE INTO' in sql_conv:
+            sql_conv = sql_conv.replace('INSERT OR IGNORE INTO', 'INSERT INTO')
+            if 'ON CONFLICT' not in sql_conv:
+                sql_conv = sql_conv.rstrip().rstrip(';') + ' ON CONFLICT DO NOTHING'
+        elif 'INSERT OR REPLACE INTO' in sql_conv:
+            sql_conv = sql_conv.replace('INSERT OR REPLACE INTO', 'INSERT INTO')
+            if 'ON CONFLICT' not in sql_conv:
+                sql_conv = sql_conv.rstrip().rstrip(';') + ' ON CONFLICT (id) DO NOTHING'
+        return self._cur.execute(sql_conv, params or ())
 
     def fetchone(self):
-        if self._idx < len(self._last_result):
-            row = self._last_result[self._idx]
-            self._idx += 1
-            if self._cols and isinstance(row, (list, tuple)):
-                return dict(zip(self._cols, row))
-            if isinstance(row, dict):
-                return row
-            return row
-        return None
+        row = self._cur.fetchone()
+        if row is None:
+            return None
+        if self._cur.description:
+            cols = [d[0] for d in self._cur.description]
+            return DictRow(cols, row)
+        return row
 
     def fetchall(self):
-        rows = []
-        while True:
-            r = self.fetchone()
-            if r is None:
-                break
-            rows.append(r)
+        rows = self._cur.fetchall()
+        if not rows:
+            return []
+        if self._cur.description:
+            cols = [d[0] for d in self._cur.description]
+            return [DictRow(cols, r) for r in rows]
         return rows
 
     def close(self):
-        pass
+        return self._cur.close()
+
+    def __getattr__(self, name):
+        return getattr(self._cur, name)
 
 
 class Pg8000Adapter:
@@ -422,16 +441,32 @@ class Pg8000Adapter:
         self.conn = conn
 
     def cursor(self):
-        return Pg8000Cursor(self.conn)
+        return Pg8000CursorWrapper(self.conn.cursor())
+
+    def execute(self, sql, params=None):
+        cur = self.cursor()
+        cur.execute(sql, params or ())
+        return cur
 
     def commit(self):
-        pass
+        try:
+            self.conn.commit()
+        except Exception:
+            pass
 
     def close(self):
         try:
             self.conn.close()
         except Exception:
             pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is None:
+            self.commit()
+        return False
 
 
 class Psycopg2CursorWrapper:
@@ -440,8 +475,14 @@ class Psycopg2CursorWrapper:
 
     def execute(self, sql, params=None):
         sql_conv = sql.replace('?', '%s')
-        if 'INSERT OR REPLACE' in sql_conv:
+        if 'INSERT OR IGNORE INTO' in sql_conv:
+            sql_conv = sql_conv.replace('INSERT OR IGNORE INTO', 'INSERT INTO')
+            if 'ON CONFLICT' not in sql_conv:
+                sql_conv = sql_conv.rstrip().rstrip(';') + ' ON CONFLICT DO NOTHING'
+        elif 'INSERT OR REPLACE' in sql_conv:
             sql_conv = sql_conv.replace('INSERT OR REPLACE INTO', 'INSERT INTO')
+            if 'ON CONFLICT' not in sql_conv:
+                sql_conv = sql_conv.rstrip().rstrip(';') + ' ON CONFLICT (id) DO NOTHING'
         return self._cur.execute(sql_conv, params)
 
     def fetchone(self):
@@ -467,6 +508,11 @@ class Psycopg2Adapter:
         import psycopg2.extras
         return Psycopg2CursorWrapper(self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor))
 
+    def execute(self, sql, params=None):
+        cur = self.cursor()
+        cur.execute(sql, params or ())
+        return cur
+
     def commit(self):
         self.conn.commit()
 
@@ -476,6 +522,14 @@ class Psycopg2Adapter:
         except Exception:
             pass
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is None:
+            self.commit()
+        return False
+
 
 class MysqlCursorWrapper:
     def __init__(self, cursor):
@@ -483,7 +537,9 @@ class MysqlCursorWrapper:
 
     def execute(self, sql, params=None):
         sql_conv = sql.replace('?', '%s')
-        if 'INSERT OR REPLACE' in sql_conv:
+        if 'INSERT OR IGNORE INTO' in sql_conv:
+            sql_conv = sql_conv.replace('INSERT OR IGNORE INTO', 'INSERT IGNORE INTO')
+        elif 'INSERT OR REPLACE' in sql_conv:
             sql_conv = sql_conv.replace('INSERT OR REPLACE', 'REPLACE')
         return self._cur.execute(sql_conv, params)
 
@@ -507,6 +563,11 @@ class MysqlAdapter:
     def cursor(self):
         return MysqlCursorWrapper(self.conn.cursor())
 
+    def execute(self, sql, params=None):
+        cur = self.cursor()
+        cur.execute(sql, params or ())
+        return cur
+
     def commit(self):
         self.conn.commit()
 
@@ -515,6 +576,14 @@ class MysqlAdapter:
             self.conn.close()
         except Exception:
             pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is None:
+            self.commit()
+        return False
 
 
 # 全局单例引擎实例

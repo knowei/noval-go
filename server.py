@@ -375,7 +375,11 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def send_json(self, data, status=200):
-        resp_bytes = json.dumps(data, ensure_ascii=False).encode('utf-8')
+        def json_serial(obj):
+            if hasattr(obj, 'isoformat'):
+                return obj.isoformat()
+            return str(obj)
+        resp_bytes = json.dumps(data, default=json_serial, ensure_ascii=False).encode('utf-8')
         self.send_response(status)
         self.send_header('Content-Type', 'application/json; charset=utf-8')
         self.send_header('Content-Length', str(len(resp_bytes)))
