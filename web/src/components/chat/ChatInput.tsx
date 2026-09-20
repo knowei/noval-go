@@ -157,70 +157,70 @@ export function ChatInput({
           <button
             type="button"
             onClick={() => setShowCapsules(!showCapsules)}
-            className="px-2 py-0.5 rounded-lg bg-[#1a1b24] hover:bg-[#252838] border border-gray-700/60 text-[11px] text-gray-400 hover:text-gray-200 cursor-pointer flex items-center gap-1 shrink-0 transition"
+            className={`px-2 py-0.5 rounded-lg border text-[11px] cursor-pointer flex items-center gap-1 shrink-0 transition ${
+              showCapsules
+                ? 'bg-purple-950/40 border-purple-500/50 text-purple-300 hover:bg-purple-900/50'
+                : 'bg-[#1a1b24] border-gray-700/60 text-gray-400 hover:text-gray-200 hover:bg-[#252838]'
+            }`}
+            title="展开或折叠快捷动作与语气基调工具条"
           >
-            <span>⊞</span>
-            <span>{showCapsules ? '隐藏按钮' : '显示按钮'}</span>
+            <span>{showCapsules ? '▾' : '▸'}</span>
+            <span>{showCapsules ? '收起快捷条' : '展开快捷条'}</span>
           </button>
-
-          <span className="px-2 py-0.5 rounded-lg bg-sky-950/40 border border-sky-600/40 text-[11px] text-sky-300 shrink-0">
-            [暂停时间推进]
-          </span>
-
-          <span className="px-2 py-0.5 rounded-lg bg-red-950/40 border border-red-600/40 text-[11px] text-red-300 shrink-0 font-bold">
-            【紧急】
-          </span>
         </div>
 
-        {/* 2. 快捷行动胶囊 (可通过隐藏按钮折叠) */}
+        {/* 2. 快捷行动胶囊与语气修饰器 (可通过收起快捷条折叠) */}
         {showCapsules && (
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-xs no-scrollbar">
-            <button
-              onClick={handleRandomDice}
-              disabled={isLoading}
-              className="px-2.5 py-1 rounded-full bg-[#1b1c26] hover:bg-[#242634] border border-amber-500/40 text-amber-300 text-[11px] font-bold flex items-center gap-1 transition shrink-0 cursor-pointer shadow-xs"
-              title="掷骰子随机行动"
-            >
-              <Dices className="w-3.5 h-3.5" />
-              <span>随机掷骰</span>
-            </button>
-
-            {ACTION_CAPSULES.map((cap) => (
+          <div className="space-y-1.5 animate-in fade-in duration-150">
+            {/* 快捷行动胶囊 */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-xs no-scrollbar">
               <button
-                key={cap}
-                onClick={() => onSend(cap)}
+                onClick={handleRandomDice}
                 disabled={isLoading}
-                className="px-2.5 py-1 rounded-full bg-[#171822] hover:bg-[#212330] border border-[#2c2f3e] hover:border-gray-500 text-[11px] text-gray-300 transition shrink-0 cursor-pointer"
+                className="px-2.5 py-1 rounded-full bg-[#1b1c26] hover:bg-[#242634] border border-amber-500/40 text-amber-300 text-[11px] font-bold flex items-center gap-1 transition shrink-0 cursor-pointer shadow-xs"
+                title="掷骰子随机行动"
               >
-                {cap}
+                <Dices className="w-3.5 h-3.5" />
+                <span>随机掷骰</span>
               </button>
-            ))}
+
+              {ACTION_CAPSULES.map((cap) => (
+                <button
+                  key={cap}
+                  onClick={() => onSend(cap)}
+                  disabled={isLoading}
+                  className="px-2.5 py-1 rounded-full bg-[#171822] hover:bg-[#212330] border border-[#2c2f3e] hover:border-gray-500 text-[11px] text-gray-300 transition shrink-0 cursor-pointer"
+                >
+                  {cap}
+                </button>
+              ))}
+            </div>
+
+            {/* 🎭 行动语气与情绪修饰器 */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-xs no-scrollbar">
+              <span className="text-[10px] text-gray-500 font-mono shrink-0 select-none pl-1">
+                🎭 语气基调:
+              </span>
+              {TONE_MODIFIERS.map((tone) => {
+                const isSelected = activeTone === tone.id;
+                return (
+                  <button
+                    key={tone.id}
+                    type="button"
+                    onClick={() => setActiveTone(isSelected ? null : tone.id)}
+                    className={`px-2 py-0.5 rounded-md border text-[11px] font-medium transition shrink-0 cursor-pointer flex items-center gap-1 ${
+                      isSelected ? tone.activeClass : tone.inactiveClass
+                    }`}
+                    title={tone.tag}
+                  >
+                    <span>{tone.label}</span>
+                    {isSelected && <span className="text-[9px] opacity-70">✕</span>}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
-
-        {/* 2.5 🎭 行动语气与情绪修饰器 (情绪基调实时注入) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-xs no-scrollbar">
-          <span className="text-[10px] text-gray-500 font-mono shrink-0 select-none pl-1">
-            🎭 语气基调:
-          </span>
-          {TONE_MODIFIERS.map((tone) => {
-            const isSelected = activeTone === tone.id;
-            return (
-              <button
-                key={tone.id}
-                type="button"
-                onClick={() => setActiveTone(isSelected ? null : tone.id)}
-                className={`px-2 py-0.5 rounded-md border text-[11px] font-medium transition shrink-0 cursor-pointer flex items-center gap-1 ${
-                  isSelected ? tone.activeClass : tone.inactiveClass
-                }`}
-                title={tone.tag}
-              >
-                <span>{tone.label}</span>
-                {isSelected && <span className="text-[9px] opacity-70">✕</span>}
-              </button>
-            );
-          })}
-        </div>
 
         {/* 3. 输入框 (1:1 对齐截图: 电脑端Shift+回车可换行 + 字符数 + 金黄色圆形发送按钮) */}
         <div className="relative flex flex-col rounded-2xl bg-[#14151e] border border-[#272938] focus-within:border-amber-500/70 transition shadow-2xl p-2 sm:px-3 sm:py-2">
