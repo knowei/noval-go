@@ -1,4 +1,7 @@
 services:
+  # -----------------------------------------------------------------
+  # 1. 前后端一体化主应用服务 (Next.js 16 + Python API)
+  # -----------------------------------------------------------------
   noval-go:
     build:
       context: .
@@ -6,40 +9,38 @@ services:
     container_name: noval-go
     restart: unless-stopped
     ports:
-      # 映射主机端口:容器端口 (访问 http://localhost:3000)
+      # 映射主机端口:容器端口 (浏览器访问 http://服务器IP:3000)
       - "3000:3000"
-    volumes:
-      # 本地数据持久化目录 (SQLite 模式或本地临时缓存)
-      - ./data:/app/data
     environment:
       - PORT=3000
       - NOVAL_PORT=5173
       - BACKEND_URL=http://127.0.0.1:5173
       - NODE_ENV=production
-      # -------------------------------------------------------------
-      # 数据库连接串 (支持 PostgreSQL / Supabase / MySQL / SQLite):
-      # 1. 留空：默认使用本地 SQLite 数据库 (/app/data/noval_data.db)
-      # 2. Supabase 示例: postgresql://postgres.[project-ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres
-      # 3. 自建 Postgres 示例: postgresql://noval:noval_secret@postgres:5432/noval_db
-      # 4. 自建 MySQL 示例: mysql://root:password@127.0.0.1:3306/noval_db
-      # -------------------------------------------------------------
-      - DATABASE_URL=
-      - NOVAL_DB_PATH=/app/data/noval_data.db
+      # 默认连接内部 PostgreSQL 容器 (内部网络直连，避免与宿主机 5432 端口冲突)
+      - DATABASE_URL=postgresql://noval_user:noval_secret_2026@postgres:5432/noval_db
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   # -----------------------------------------------------------------
-  # (可选) 自建 PostgreSQL 关系型数据库服务
-  # 如需启用，请取消以下注释，并将上方 noval-go 的 DATABASE_URL 设置为:
-  # postgresql://noval:noval_secret@postgres:5432/noval_db
+  # 2. 官方 PostgreSQL 16 生产级数据库服务
   # -----------------------------------------------------------------
-  # postgres:
-  #   image: postgres:16-alpine
-  #   container_name: noval-postgres
-  #   restart: unless-stopped
-  #   environment:
-  #     - POSTGRES_USER=noval
-  #     - POSTGRES_PASSWORD=noval_secret
-  #     - POSTGRES_DB=noval_db
-  #   volumes:
-  #     - ./pgdata:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
+  postgres:
+    image: postgres:16-alpine
+    container_name: noval-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=noval_user
+      - POSTGRES_PASSWORD=noval_secret_2026
+      - POSTGRES_DB=noval_db
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      # 数据永久持久化至宿主机 ./pgdata 目录
+      - ./pgdata:/var/lib/postgresql/data
+      # 首次启动自动执行建表与全量 60 部剧本、38 张卡片数据灌库
+      - ./init_postgres.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U noval_user -d noval_db"]
+      interval: 3s
+      timeout: 5s
+      retries: 5

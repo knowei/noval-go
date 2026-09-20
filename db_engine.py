@@ -346,6 +346,18 @@ class DatabaseEngine:
                 )
                 ''')
 
+                if self.dialect == 'postgres':
+                    cur.execute('''
+                    INSERT INTO users (id, username, password_hash, nickname, avatar, points)
+                    VALUES ('default_user', 'player', '', '风月旅行者', '🎭', 9999)
+                    ON CONFLICT (id) DO NOTHING
+                    ''')
+                elif self.dialect == 'mysql':
+                    cur.execute('''
+                    INSERT IGNORE INTO users (id, username, password_hash, nickname, avatar, points)
+                    VALUES ('default_user', 'player', '', '风月旅行者', '🎭', 9999)
+                    ''')
+
             if hasattr(conn, 'commit'):
                 conn.commit()
         finally:

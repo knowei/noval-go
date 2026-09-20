@@ -1,92 +1,64 @@
-# 🚀 Noval-Go Docker 生产服务器部署指南
+# 🚀 Noval-Go 生产部署指南 (Next.js + PostgreSQL)
 
-本项目已完成容器化适配，采用 **Next.js Standalone + Python SQLite 后端一体化轻量容器** 架构。
-
-根据您服务器当前的运行状态：
-- `8080` 端口已被 `koko-companion` 占用
-- `8000` 端口已被 `sillytavern` 占用
-- `5432` 端口已被 `postgres` 占用
-
-因此，本项目默认推荐使用 **`3000` 端口**（或 `3001` / `8888`，可在配置中自由更改）。
+本项目已全面升级至 **PostgreSQL (Pagesql)** 数据库架构，并提供 **一键 Docker Compose 生产化部署**。
 
 ---
 
-## 📋 快速部署步骤 (Ubuntu 服务器)
+## 🌟 架构亮点
+1. **全容器化部署**：包含 `noval-go`（Next.js 16 前端 + Python API 核心）与 `noval-postgres`（PostgreSQL 16 Alpine 独立数据库容器）。
+2. **零端口冲突**：PostgreSQL 容器仅在 Docker 内部网络（`postgres:5432`）通信，**不占用宿主机 5432 端口**（即使宿主机已安装 PostgreSQL 也绝不冲突）。
+3. **开箱即用自动导入**：挂载 `init_postgres.sql`，首次启动自动完成建表并灌入全部 60 部剧本与 38 张广场大作，无需手动迁移。
+4. **数据持久化**：数据库全部数据持久化保存在宿主机根目录 `./pgdata`，容器升级、重建数据永不丢失。
+5. **多账号安全隔离**：完整独立用户鉴权（Argon2/SHA256 密码哈希、独立 Token、会话私有存储），杜绝多用户串号。
+
+---
+
+## 📋 快速部署步骤 (Ubuntu / Debian / CentOS / Linux)
 
 ### 1. 登录服务器并拉取代码
-登录您的 Ubuntu 服务器（即截图中的 `VM-0-16-ubuntu`）：
-
 ```bash
-# 进入部署目录 (例如 ~/workspace 或 /opt)
+# 进入部署目录 (例如 ~ 或 /opt)
 cd ~
 
-# 克隆仓库
+# 克隆仓库 (如果尚未克隆)
 git clone https://github.com/knowei/noval-go.git
-
-# 进入项目目录
 cd noval-go
 
-# 切换至最新的重构分支
-git checkout refactor/nextjs-rewrite
+# 如果已有仓库，直接拉取最新代码
+git pull origin refactor/nextjs-rewrite
 ```
-
-> 💡 **提示**：如果后续合并到了 `main` 分支，直接留在 `main` 即可。
 
 ---
 
-### 2. 检查或修改端口配置（可选）
-项目根目录下已自带 `docker-compose.yml`：
-
-```yaml
-version: '3.8'
-
-services:
-  noval-go:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: noval-go
-    restart: unless-stopped
-    ports:
-      - "3000:3000"   # 主机端口:容器端口。如需改为 3001，写成 "3001:3000" 即可
-    volumes:
-      - ./data:/app/data
-    environment:
-      - PORT=3000
-      - NOVAL_PORT=5173
-      - NOVAL_DB_PATH=/app/data/noval_data.db
-      - BACKEND_URL=http://127.0.0.1:5173
-      - NODE_ENV=production
-```
-
-- 若需更改对外端口，直接编辑 `docker-compose.yml` 中的 `"3000:3000"`（例如改为 `"3001:3000"`）。
-
----
-
-### 3. 一键构建并启动容器
-
-在项目根目录下执行以下命令：
+### 2. 一键启动全套服务 (Web + PostgreSQL)
+在项目根目录下直接执行：
 
 ```bash
-# 构建镜像并在后台启动
 docker compose up -d --build
 ```
+*(如果使用的是旧版 docker-compose，执行 `docker-compose up -d --build`)*
 
-*(如果您的 Docker 较早，也可以使用 `docker-compose up -d --build`)*
+Docker Compose 会自动：
+1. 启动 `noval-postgres` 数据库容器，并通过健康检查检测就绪。
+2. 自动运行 `init_postgres.sql` 初始化数据库表与所有官方剧本和卡片。
+3. 构建并启动 `noval-go` 应用容器，自动连接到内部 PostgreSQL。
 
 ---
 
-### 4. 验证运行状态与日志
+### 3. 查看运行状态与日志
 
 ```bash
-# 1. 查看容器是否正常运行
-docker ps | grep noval-go
+# 查看所有运行容器
+docker compose ps
 
-# 2. 查看容器实时运行日志
-docker logs -f noval-go
+# 查看主应用日志
+docker compose logs -f noval-go
+
+# 查看数据库日志
+docker compose logs -f postgres
 ```
 
-看到类似以下输出即表示后端与前端均启动成功：
+看到类似以下输出即代表一切正常：
 ```text
 ==========================================
    🚀 Starting Noval-Go Production Server
@@ -101,94 +73,44 @@ docker logs -f noval-go
 
 ---
 
-### 5. 访问系统
-
+### 4. 访问系统
 在浏览器中打开：
 ```text
 http://<您的服务器公网IP>:3000
 ```
-> ⚠️ **云服务器防火墙安全组提醒**：
-> 请确保腾讯云/阿里云控制台中的 **安全组规则** 已放行对应端口（如 TCP `3000`）。
+
+> ⚠️ **云服务器安全组提醒**：
+> 请确保腾讯云 / 阿里云 / 华为云等控制台的 **安全组规则** 已放行 **TCP 3000** 端口。
 
 ---
 
-## 💾 数据库配置与多模式支持 (PostgreSQL / Supabase / MySQL / SQLite)
+## ⚙️ 进阶配置说明
 
-本项目已完成**网络关系型数据库格式**全面重构，支持两种运行模式：
+### 1. 自定义端口
+若需将访问端口改为 3001 或其他端口，编辑 `docker-compose.yml` 中的端口映射：
+```yaml
+    ports:
+      - "3001:3000"   # 主机端口:容器端口
+```
 
-### 模式 A: 接入网络数据库 (推荐: PostgreSQL / Supabase / MySQL)
-若希望将用户账号、密码鉴权、多端存档与剧本直接存入您服务器现有的 PostgreSQL/MySQL 或云端 Supabase：
-
-1. **在 `docker-compose.yml` 中配置 `DATABASE_URL`**：
-   ```yaml
-   environment:
-     # 连接宿主机现有 PostgreSQL 示例:
-     - DATABASE_URL=postgresql://用户名:密码@172.17.0.1:5432/noval_db
-     # 或连接云端 Supabase 示例:
-     # - DATABASE_URL=postgresql://postgres.xxx:password@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
-     # 或连接 MySQL 示例:
-     # - DATABASE_URL=mysql://root:password@172.17.0.1:3306/noval_db
-   ```
-   *(注：Docker 容器访问宿主机端口通常使用网关 IP `172.17.0.1` 或 `host.docker.internal`)*
-
-2. **一键将历史剧本与卡片数据同步入库**：
-   ```bash
-   # 在服务器项目根目录执行一键同步命令
-   python scripts/migrate_to_db.py --target "postgresql://用户名:密码@127.0.0.1:5432/noval_db"
-   ```
-   同步脚本将自动在目标数据库中创建 `users`, `conversations`, `stories`, `plaza_cards`, `system_notices` 等标准表结构，并将 38 部官方大作与广场展示卡片完整导入。
+### 2. 连接外部/云端数据库 (如 Supabase / 宿主机现有 PG)
+默认已自带内嵌 PostgreSQL 容器。如果您希望直连云端 Supabase 或宿主机现有的 PostgreSQL，只需修改 `docker-compose.yml` 中 `noval-go` 的 `DATABASE_URL`：
+```yaml
+    environment:
+      # 云端 Supabase 示例:
+      - DATABASE_URL=postgresql://postgres.xxx:password@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+      # 或宿主机现有 PG (宿主机 IP 通常为 172.17.0.1):
+      # - DATABASE_URL=postgresql://username:password@172.17.0.1:5432/noval_db
+```
 
 ---
 
-### 模式 B: 本地轻量 SQLite 模式 (零依赖开箱即用)
-若不配置 `DATABASE_URL`，系统将自动回退为本地轻量级 SQLite：
-- 数据库保存在宿主机的 `./data/noval_data.db`；
-- 容器升级或重启时，数据均完好保留。
+## 🔄 日常升级维护
 
----
-
----
-
-## 🔄 后续版本更新升级步骤
-
-当本地代码有新功能推送到 GitHub 后，在服务器上执行以下命令即可平滑升级：
-
+当代码更新后，只需在服务器执行：
 ```bash
 cd ~/noval-go
-
-# 1. 拉取最新代码
 git pull
-
-# 2. 重新构建并平滑重启容器
 docker compose up -d --build
 ```
-
----
-
-## 🌐 进阶：配置 Nginx 反向代理与 SSL 域名（可选）
-
-如果您需要绑定域名并开启 HTTPS：
-
-```nginx
-server {
-    listen 80;
-    server_name noval.yourdomain.com;
-
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-
-        # 开启 SSE 流式打字传输缓冲关闭
-        proxy_buffering off;
-        proxy_read_timeout 300s;
-    }
-}
-```
-配置完成后重载 Nginx：`sudo nginx -s reload`。
+持久化数据保留在 `./pgdata`，代码更新平滑热生效。

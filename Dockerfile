@@ -33,14 +33,14 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 ENV NOVAL_PORT=5173
-ENV NOVAL_DB_PATH=/app/data/noval_data.db
+ENV DATABASE_URL=postgresql://noval_user:noval_secret_2026@postgres:5432/noval_db
 ENV BACKEND_URL=http://127.0.0.1:5173
 
 # 1. 部署后端 Python 源码及资产库
 WORKDIR /app/backend
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple --break-system-packages || true
-COPY server.py db_engine.py studio_api.py stories_data.js dump_pc.json noval_data.db schema.sql ./
+COPY server.py db_engine.py studio_api.py stories_data.js dump_pc.json init_postgres.sql schema.sql ./
 COPY scripts/ ./scripts/
 COPY studio/ ./studio/
 

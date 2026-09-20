@@ -7,7 +7,7 @@ echo "=========================================="
 
 mkdir -p /app/data
 
-# 启动 Python SQLite API 服务
+# 启动 Python 核心后端服务 (PostgreSQL / Database Engine)
 echo "[1/2] Starting Python API backend on port ${NOVAL_PORT:-5173}..."
 cd /app/backend
 python3 server.py &
