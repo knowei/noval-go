@@ -48,7 +48,7 @@ def get_user_from_request(headers):
     try:
         conn = get_db()
         c = conn.cursor()
-        c.execute('SELECT id, username, nickname, avatar, points, model_config_json, auth_token FROM users WHERE auth_token = ? AND auth_token != ""', (token,))
+        c.execute("SELECT id, username, nickname, avatar, points, model_config_json, auth_token FROM users WHERE auth_token = ? AND auth_token != ''", (token,))
         row = c.fetchone()
         conn.close()
         if row:
