@@ -49,36 +49,72 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
     text = text.replace(tlMatch[0], '').trim();
   }
 
-  // 3. 抽取 <article> 正文
-  const articleMatch = text.match(/<article>([\s\S]*?)<\/article>/i);
-  if (articleMatch) {
+  // 3. 剥除外部干扰标签 (<status>, <opt>, <suggested_questions>)
+  text = text.replace(/<status>[\s\S]*?(?:<\/status>|$)/gi, '').trim();
+  text = text.replace(/<opt>[\s\S]*?(?:<\/opt>|$)/gi, '').trim();
+  text = text.replace(/<suggested_questions>[\s\S]*?(?:<\/suggested_questions>|$)/gi, '').trim();
+
+  // 4. 抽取 <article> 正文（支持截断或未闭合情形）
+  const articleMatch = text.match(/<article>([\s\S]*?)(?:<\/article>|$)/i);
+  if (articleMatch && articleMatch[1].trim()) {
     text = articleMatch[1].trim();
   }
 
-  // 4. 按段落划分 (<p> 或 \n)
-  let paragraphs: string[] = [];
-  if (text.includes('<p>')) {
-    const pMatches = text.match(/<p>([\s\S]*?)<\/p>/gi);
-    if (pMatches && pMatches.length > 0) {
-      paragraphs = pMatches.map((p) => p.replace(/<\/?p>/gi, '').trim());
-    } else {
-      paragraphs = text.split('\n').map((l) => l.trim()).filter(Boolean);
-    }
+  // 5. 强力标签修复与归一化 (解决模型漏写尖括号或截断造成的漏标如 </p<p>, <p扁担..., <w“...)
+  let sanitized = text
+    // 修复模型漏写右尖括号导致的连体: </p<p> -> </p>\n<p>
+    .replace(/<\/p\s*<p/gi, '</p>\n<p>')
+    // 修复漏写开标签闭合: <p(?=[\u4e00-\u9fa5“"「A-Za-z0-9])
+    .replace(/<p(?=[\u4e00-\u9fa5“"「A-Za-z0-9])/gi, '<p>')
+    // 修复女性台词漏闭合: <w(?=[“"「\u4e00-\u9fa5])
+    .replace(/<w(?=[“"「\u4e00-\u9fa5])/gi, '<w>')
+    // 修复主角台词漏闭合: <m(?=[“"「\u4e00-\u9fa5])
+    .replace(/<m(?=[“"「\u4e00-\u9fa5])/gi, '<m>')
+    // 修复心声漏闭合: <thk(?=[“"「\u4e00-\u9fa5])
+    .replace(/<thk(?=[“"「\u4e00-\u9fa5])/gi, '<thk>')
+    // 修复特效漏闭合: <fx(?=[“"「\u4e00-\u9fa5【])
+    .replace(/<fx(?=[“"「\u4e00-\u9fa5【])/gi, '<fx>');
+
+  // 6. 统一段落划分 (<p> 标签拆分或换行拆分)
+  let rawParas: string[] = [];
+  if (sanitized.includes('<p>') || sanitized.includes('</p>')) {
+    // 将 </p> 转换为换行符，将 <p> 清除以准确切割段落
+    const byP = sanitized
+      .split(/<\/p>|\n+/gi)
+      .map((p) => p.replace(/<\/?p[^>]*>/gi, '').trim())
+      .filter(Boolean);
+    rawParas = byP;
   } else {
-    paragraphs = text.split('\n').map((l) => l.trim()).filter(Boolean);
+    rawParas = sanitized.split('\n+').map((l) => l.trim()).filter(Boolean);
   }
+
+  // 二次清理段落首尾的残损或断裂标签符号（如单独的 </p、p>、<p）
+  const paragraphs: string[] = rawParas
+    .map((p) => {
+      let cleaned = p
+        .replace(/^<\/?p[^>]*>/i, '')
+        .replace(/<\/?p[^>]*>$/i, '')
+        .replace(/^<\/p/i, '')
+        .replace(/^p>/i, '')
+        .replace(/<\/p$/i, '')
+        .replace(/<p$/i, '')
+        .trim();
+      return cleaned;
+    })
+    .filter(Boolean);
 
   // 渲染段落内部的高亮标签 (<w>, <m>, <thk>, <fx> 及常规引号对白)
   const renderParagraphContent = (para: string) => {
-    const tokenRegex = /(<w>[\s\S]*?<\/w>|<m>[\s\S]*?<\/m>|<thk>[\s\S]*?<\/thk>|<fx>[\s\S]*?<\/fx>|[“「][^”」]+[”」])/gi;
+    // 识别各高亮语法块（支持含有属性或轻微格式异化的闭合标签）
+    const tokenRegex = /(<w[^>]*>[\s\S]*?<\/w>|<m[^>]*>[\s\S]*?<\/m>|<thk[^>]*>[\s\S]*?<\/thk>|<fx[^>]*>[\s\S]*?<\/fx>|[“「][^”」]+[”」])/gi;
     const parts = para.split(tokenRegex);
 
     return parts.map((part, idx) => {
       if (!part) return null;
 
       // 1. 女性 NPC 专属对白 (<w>)
-      if (/^<w>([\s\S]*?)<\/w>$/i.test(part)) {
-        const inner = part.replace(/<\/?w>/gi, '').trim();
+      if (/^<w[^>]*>([\s\S]*?)<\/w>$/i.test(part)) {
+        const inner = part.replace(/<\/?w[^>]*>/gi, '').trim();
         return (
           <span key={idx} className={`novel-w-dialogue inline-block mx-0.5 px-2 py-0.5 rounded-lg border font-medium ${wStyle}`}>
             <span className="opacity-80 mr-1 text-xs">“</span>
@@ -89,8 +125,8 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
       }
 
       // 2. 主角玩家专属对白 (<m>)
-      if (/^<m>([\s\S]*?)<\/m>$/i.test(part)) {
-        const inner = part.replace(/<\/?m>/gi, '').trim();
+      if (/^<m[^>]*>([\s\S]*?)<\/m>$/i.test(part)) {
+        const inner = part.replace(/<\/?m[^>]*>/gi, '').trim();
         return (
           <span key={idx} className="novel-m-dialogue inline-block mx-0.5 px-2 py-0.5 rounded-lg bg-sky-500/15 border border-sky-500/35 text-sky-300 font-medium shadow-[0_0_12px_rgba(56,189,248,0.15)]">
             <span className="text-sky-400/80 mr-1 text-xs">“</span>
@@ -101,8 +137,8 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
       }
 
       // 3. 潜意识心声与微观生理反应 (<thk>)
-      if (/^<thk>([\s\S]*?)<\/thk>$/i.test(part)) {
-        const inner = part.replace(/<\/?thk>/gi, '').trim();
+      if (/^<thk[^>]*>([\s\S]*?)<\/thk>$/i.test(part)) {
+        const inner = part.replace(/<\/?thk[^>]*>/gi, '').trim();
         return (
           <div key={idx} className="novel-thk-card my-2 p-2.5 sm:p-3 rounded-xl bg-gradient-to-r from-purple-950/40 via-[#181629] to-purple-950/20 border border-purple-500/30 text-purple-200/95 text-[12.5px] sm:text-[13px] font-sans shadow-md">
             <div className="flex items-center gap-1.5 text-[11px] font-semibold text-purple-300/90 mb-1 select-none">
@@ -117,8 +153,8 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
       }
 
       // 4. 拟声词与动作冲击特效 (<fx>)
-      if (/^<fx>([\s\S]*?)<\/fx>$/i.test(part)) {
-        const inner = part.replace(/<\/?fx>/gi, '').trim();
+      if (/^<fx[^>]*>([\s\S]*?)<\/fx>$/i.test(part)) {
+        const inner = part.replace(/<\/?fx[^>]*>/gi, '').trim();
         return (
           <span key={idx} className={`novel-fx-tag inline-flex items-center gap-1 mx-1 px-2 py-0.5 rounded-full border text-[12px] font-mono font-bold tracking-wider ${fxStyle}`}>
             <span>⚡</span>
@@ -136,7 +172,12 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
         );
       }
 
-      return <span key={idx}>{part}</span>;
+      // 6. 清理其他误漏的尖括号残片（如单独的 </p、<article>）
+      const cleanPart = part
+        .replace(/<\/?(?:p|article|opt|suggested_questions|d|status|thk|fx|w|m)[^>]*>/gi, '')
+        .replace(/^<\/?[a-z]+/gi, '');
+
+      return <span key={idx}>{cleanPart}</span>;
     });
   };
 

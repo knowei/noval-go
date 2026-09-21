@@ -636,6 +636,11 @@ export default function ChatPage() {
             swipes: finalSwipes,
             swipeIndex: finalSwipes ? finalSwipes.length - 1 : undefined,
           });
+
+          // 推演生成结束后平滑滚至最底端，确保玩家清晰可见 4 个动作分支与交互条
+          setTimeout(() => {
+            handleScrollToBottom(true);
+          }, 150);
         }
       }
     } catch (err: any) {
