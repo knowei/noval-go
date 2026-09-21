@@ -149,5 +149,25 @@ export interface EnabledMods {
   antiCoercion: boolean;
   innerVoice: boolean;
   explorationBranches: boolean;
+  affectionGauge?: boolean;
+  rpgAdventureHud?: boolean;
+  lorebookArbiter?: boolean;
 }
+
+export interface LoveStatusData {
+  character?: string;
+  affection: number;
+  stage?: string;
+  defense: number;
+  permission?: string;
+}
+
+export interface RpgStatusData {
+  realm?: string;
+  hp?: string;
+  mp?: string;
+  inventory?: string[];
+  loot?: string;
+}
+
 

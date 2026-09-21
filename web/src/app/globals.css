@@ -318,3 +318,31 @@ body {
   border-top: 1px solid #282a32 !important;
 }
 
+/* 保护页面核心交互 UI（顶部导航栏、底部输入框、系统按钮）不受任何剧本自定义 CSS 破坏 */
+#theater-header {
+  color-scheme: dark !important;
+}
+
+#theater-header button {
+  text-transform: none;
+}
+
+#chat-input-container {
+  color-scheme: dark !important;
+}
+
+#chat-input-container textarea {
+  background-color: transparent !important;
+  color: #f3f4f6 !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+#chat-input-container button {
+  color-scheme: dark !important;
+}
+
+

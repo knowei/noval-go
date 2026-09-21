@@ -995,32 +995,49 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
 
         # 5.2 获取广场分类标签列表 GET /api/plaza/categories
         if self.path == '/api/plaza/categories':
-            conn = get_db()
-            c = conn.cursor()
-            c.execute("SELECT * FROM plaza_categories ORDER BY order_index ASC")
-            rows = c.fetchall()
-            conn.close()
-            self.send_json([dict(r) for r in rows])
+            try:
+                conn = get_db()
+                c = conn.cursor()
+                c.execute("SELECT * FROM plaza_categories ORDER BY order_index ASC")
+                rows = c.fetchall()
+                conn.close()
+                self.send_json([dict(r) for r in rows])
+            except Exception:
+                self.send_json([
+                    {"id": "all", "name": "全部"},
+                    {"id": "urban", "name": "都市"},
+                    {"id": "scifi", "name": "科幻"},
+                    {"id": "fan", "name": "同人"},
+                    {"id": "romance", "name": "恋爱"},
+                    {"id": "fantasy", "name": "玄幻"},
+                    {"id": "mystery", "name": "悬疑"}
+                ])
             return
 
         # 5.3 获取社区精选指南文章 GET /api/community/articles
         if self.path == '/api/community/articles':
-            conn = get_db()
-            c = conn.cursor()
-            c.execute("SELECT * FROM community_articles ORDER BY order_index ASC")
-            rows = c.fetchall()
-            conn.close()
-            self.send_json([dict(r) for r in rows])
+            try:
+                conn = get_db()
+                c = conn.cursor()
+                c.execute("SELECT * FROM community_articles ORDER BY order_index ASC")
+                rows = c.fetchall()
+                conn.close()
+                self.send_json([dict(r) for r in rows])
+            except Exception:
+                self.send_json([])
             return
 
         # 5.4 获取系统通知与公告 GET /api/system/notices
         if self.path == '/api/system/notices':
-            conn = get_db()
-            c = conn.cursor()
-            c.execute("SELECT * FROM system_notices WHERE is_active = 1")
-            rows = c.fetchall()
-            conn.close()
-            self.send_json([dict(r) for r in rows])
+            try:
+                conn = get_db()
+                c = conn.cursor()
+                c.execute("SELECT * FROM system_notices WHERE is_active = 1")
+                rows = c.fetchall()
+                conn.close()
+                self.send_json([dict(r) for r in rows])
+            except Exception:
+                self.send_json([])
             return
 
         # 5.5 获取探索广场真实分页数据 GET /api/plaza

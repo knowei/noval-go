@@ -9,7 +9,10 @@ import {
   Radio, 
   Eye, 
   Compass, 
-  RotateCcw
+  RotateCcw,
+  Heart,
+  Swords,
+  BookOpen
 } from 'lucide-react';
 
 export function ModCenterModal() {
@@ -26,7 +29,7 @@ export function ModCenterModal() {
   if (!isModCenterOpen) return null;
 
   const isApocalypse = currentDeckKey === 'deck_apocalypse_survival' || 
-    currentDeckKey === '059217c9-213b-48e7-b660-0c04f78ede48' ||
+    currentDeckKey.includes('059217c9') || 
     Boolean(currentDeck?.title?.includes('末世'));
 
   const activeCount = Object.values(enabledMods).filter(Boolean).length;
@@ -37,6 +40,9 @@ export function ModCenterModal() {
       antiCoercion: true,
       innerVoice: true,
       explorationBranches: true,
+      affectionGauge: false,
+      rpgAdventureHud: false,
+      lorebookArbiter: true,
     });
   };
 
@@ -254,6 +260,143 @@ export function ModCenterModal() {
                 <span
                   className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
                     enabledMods.explorationBranches ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* 模组 5：恋爱心防阶梯与情感羁绊锁 MOD */}
+          <div className={`p-4 rounded-xl border transition-all ${
+            enabledMods.affectionGauge
+              ? 'bg-[#181a24] border-pink-500/50 shadow-[0_0_15px_rgba(236,72,153,0.15)]'
+              : 'bg-[#13141b] border-gray-800 opacity-70'
+          }`}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1.5 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="p-1.5 rounded-lg bg-pink-500/20 text-pink-400">
+                    <Heart className="w-4 h-4" />
+                  </div>
+                  <span className="font-bold text-sm text-gray-100">
+                    恋爱心防阶梯与情感羁绊锁 MOD
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-pink-500/20 text-pink-300 border border-pink-500/30">
+                    恋爱沉浸 · 防言出法随
+                  </span>
+                </div>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  严禁“一句话攻略/瞬间发情”！将玩家强推指令降级为尝试，植入 4 阶心防阈值（戒备/试探/动摇/沦陷），单轮心动严格限制在 ±3 点内，并在顶栏挂载实时心动值 HUD 仪表盘。
+                </p>
+                <div className="text-[11px] text-gray-400 flex items-center gap-2 pt-1 font-mono">
+                  <span className="text-pink-400">● 心动值进度条</span>
+                  <span className="text-rose-400">● 亲密权限阶梯</span>
+                  <span className="text-amber-400">● 防线崩溃推拉</span>
+                </div>
+              </div>
+
+              {/* 开关 */}
+              <button
+                type="button"
+                onClick={() => toggleMod('affectionGauge')}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  enabledMods.affectionGauge ? 'bg-pink-600' : 'bg-gray-700'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                    enabledMods.affectionGauge ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* 模组 6：TRPG 战力因果律与 RPG 属性 HUD MOD */}
+          <div className={`p-4 rounded-xl border transition-all ${
+            enabledMods.rpgAdventureHud
+              ? 'bg-[#181a24] border-indigo-500/50 shadow-[0_0_15px_rgba(99,102,241,0.15)]'
+              : 'bg-[#13141b] border-gray-800 opacity-70'
+          }`}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1.5 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="p-1.5 rounded-lg bg-indigo-500/20 text-indigo-400">
+                    <Swords className="w-4 h-4" />
+                  </div>
+                  <span className="font-bold text-sm text-gray-100">
+                    TRPG 战力因果律与成长状态机 MOD
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    修仙/冒险/RPG
+                  </span>
+                </div>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  拒绝无脑秒杀与虚空造神器！跨阶挑战强制判定灵压反噬；境界突破受丹药与瓶颈硬约束；打怪搜刮仅掉落阶位相称的战利品，并挂载生命/法力/储物袋实时 HUD。
+                </p>
+                <div className="text-[11px] text-gray-400 flex items-center gap-2 pt-1 font-mono">
+                  <span className="text-red-400">● 气血/法力双条</span>
+                  <span className="text-indigo-400">● 境界瓶颈锁</span>
+                  <span className="text-emerald-400">● 储物袋与掉落池</span>
+                </div>
+              </div>
+
+              {/* 开关 */}
+              <button
+                type="button"
+                onClick={() => toggleMod('rpgAdventureHud')}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  enabledMods.rpgAdventureHud ? 'bg-indigo-600' : 'bg-gray-700'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                    enabledMods.rpgAdventureHud ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* 模组 7：世界书绝对因果锚定 MOD */}
+          <div className={`p-4 rounded-xl border transition-all ${
+            enabledMods.lorebookArbiter
+              ? 'bg-[#181a24] border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.15)]'
+              : 'bg-[#13141b] border-gray-800 opacity-70'
+          }`}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1.5 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="p-1.5 rounded-lg bg-emerald-500/20 text-emerald-400">
+                    <BookOpen className="w-4 h-4" />
+                  </div>
+                  <span className="font-bold text-sm text-gray-100">
+                    世界书绝对因果锚定 MOD
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    核心物理常数
+                  </span>
+                </div>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  将当前剧本世界书（Lorebook）词条提升为不可推翻的宇宙真理。任何与世界书设定的境界、门派实力、地理产物相悖的玩家声明，AI 将以世界书法典为准当场证伪与现实惩戒。
+                </p>
+                <div className="text-[11px] text-gray-400 flex items-center gap-2 pt-1 font-mono">
+                  <span className="text-emerald-400">● 词条最高优先级</span>
+                  <span className="text-cyan-400">● 严防虚构设定</span>
+                </div>
+              </div>
+
+              {/* 开关 */}
+              <button
+                type="button"
+                onClick={() => toggleMod('lorebookArbiter')}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  enabledMods.lorebookArbiter ? 'bg-emerald-600' : 'bg-gray-700'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                    enabledMods.lorebookArbiter ? 'translate-x-5' : 'translate-x-0'
                   }`}
                 />
               </button>
