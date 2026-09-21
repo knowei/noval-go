@@ -60,6 +60,11 @@ def get_user_from_request(headers):
 def init_db():
     if db_engine.db.dialect != 'sqlite':
         db_engine.db.init_tables()
+        try:
+            from scripts.auto_seed import auto_seed
+            auto_seed()
+        except Exception as e:
+            print(f"[Auto-Seed Notice] {e}")
         studio_api.initialize(get_db)
         return
 
