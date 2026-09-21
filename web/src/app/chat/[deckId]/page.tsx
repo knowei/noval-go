@@ -74,6 +74,11 @@ export default function ChatPage() {
   const [isRainActive, setIsRainActive] = useState(false);
   const [isLorebookOpen, setIsLorebookOpen] = useState(false);
   const [activeLoreEntries, setActiveLoreEntries] = useState<LoreEntry[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Stop ambient sound on unmount
   useEffect(() => {
@@ -920,28 +925,36 @@ export default function ChatPage() {
 
             {/* 推演风格切换药丸 (真实推拉 vs 绝对顺从) */}
             <button
+              suppressHydrationWarning
               onClick={toggleRoleplayMode}
               className={`flex items-center gap-1.5 text-xs px-2.5 sm:px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-xs shrink-0 border ${
-                modelSettings.roleplayMode === 'unrestricted'
+                (isMounted ? modelSettings.roleplayMode : 'unrestricted') === 'unrestricted'
                   ? 'text-pink-300 bg-pink-950/60 hover:bg-pink-900/70 border-pink-500/50 hover:border-pink-400'
                   : 'text-amber-300 bg-amber-950/60 hover:bg-amber-900/70 border-amber-500/50 hover:border-amber-400'
               }`}
-              title={modelSettings.roleplayMode === 'unrestricted' ? '当前模式：💖 绝对顺从（点击切换为 🛡️ 真实推拉·硬核底线）' : '当前模式：🛡️ 真实推拉·硬核底线（违背意志强推会自卫逃跑，点击切换为 💖 绝对顺从）'}
+              title={
+                isMounted
+                  ? (modelSettings.roleplayMode === 'unrestricted'
+                    ? '当前模式：💖 绝对顺从（点击切换为 🛡️ 真实推拉·硬核底线）'
+                    : '当前模式：🛡️ 真实推拉·硬核底线（违背意志强推会自卫逃跑，点击切换为 💖 绝对顺从）')
+                  : undefined
+              }
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${modelSettings.roleplayMode === 'unrestricted' ? 'bg-pink-400' : 'bg-amber-400'} animate-pulse`} />
-              <span className="font-semibold text-xs">{modelSettings.roleplayMode === 'unrestricted' ? '💖 绝对顺从' : '🛡️ 真实推拉'}</span>
+              <span suppressHydrationWarning className={`w-1.5 h-1.5 rounded-full ${(isMounted ? modelSettings.roleplayMode : 'unrestricted') === 'unrestricted' ? 'bg-pink-400' : 'bg-amber-400'} animate-pulse`} />
+              <span suppressHydrationWarning className="font-semibold text-xs">{(isMounted ? modelSettings.roleplayMode : 'unrestricted') === 'unrestricted' ? '💖 绝对顺从' : '🛡️ 真实推拉'}</span>
             </button>
 
             {/* 玩法模组中心快捷入口 */}
             <button
+              suppressHydrationWarning
               onClick={() => setIsModCenterOpen(true)}
               className="flex items-center gap-1.5 text-xs px-2.5 sm:px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-xs shrink-0 border border-orange-500/50 bg-orange-950/60 hover:bg-orange-900/70 text-orange-300 hover:border-orange-400 group"
               title="打开玩法模组中心 (MOD 插件与机制管理)"
             >
               <span className="text-xs group-hover:rotate-12 transition-transform">🧩</span>
               <span className="font-semibold text-xs">模组</span>
-              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-orange-500/30 text-orange-200 border border-orange-500/40">
-                {Object.values(enabledMods).filter(Boolean).length}
+              <span suppressHydrationWarning className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-orange-500/30 text-orange-200 border border-orange-500/40">
+                {isMounted ? Object.values(enabledMods).filter(Boolean).length : 0}
               </span>
             </button>
           </div>
