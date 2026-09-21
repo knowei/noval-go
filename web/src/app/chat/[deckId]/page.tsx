@@ -233,6 +233,8 @@ export default function ChatPage() {
   const isMysteriousRecovery = deckId === 'deck_mysterious_recovery_ghost' || deckId === '0881314d-a2ed-4e78-a5af-71dc42e9acac';
   const isMouthFeedSister = deckId === 'deck_mouth_feed_sister' || deckId === '270a0ccb-ac28-4b9b-ac56-f7e6aa8cff41';
   const isXiuxianWorld = deckId === 'deck_xiuxian_world' || deckId === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7';
+  const isDaughterDoorBlock = deckId === 'deck_daughter_door_block' || deckId === '2168197e-903b-4727-97e3-bf5f1d5b6c8f';
+  const isMotherSisterBaby = deckId === 'deck_mother_sister_baby' || deckId === '758e40b4-c1b3-4655-a83a-5ef136b60a2b';
 
   let bgClass = '';
   if (isCoser) bgClass = 'coser-sister-bg';
@@ -264,6 +266,8 @@ export default function ChatPage() {
   else if (isMysteriousRecovery) bgClass = 'mysterious-recovery-bg';
   else if (isMouthFeedSister) bgClass = 'mouth-feed-bg';
   else if (isXiuxianWorld) bgClass = 'xiuxian-world-bg';
+  else if (isDaughterDoorBlock) bgClass = 'daughter-door-block-bg';
+  else if (isMotherSisterBaby) bgClass = 'mother-sister-baby-bg';
 
   const hasCustomHtml = Boolean(currentDeck?.customHtml);
   const hasUserTurns = conversationHistory.some((t) => t.isUser);
@@ -366,11 +370,11 @@ export default function ChatPage() {
 
 嘴上虽然还在维持着作为新婚人妻的最后一丝道德挣扎，但魅魔受孕发情体质带来的本能反应却背叛了一切，湿润温热的气息直往你颈间喷洒，禁断狂乱的NTL暗流彻底决堤。`;
     } else if (isPerfectGirl) {
-      baseStory = `针对你的互动【${act || '推演少女的救赎与堕落'}】，安静的教室内夕阳斜照，投下狭长暧昧的阴影。
+      baseStory = `针对你的互动【${act || '推演少女的救赎与堕落'}】，滨江公园的长椅周围细雨蒙蒙，晚风卷起地上的潮湿落叶。
 
-作为全校仰慕的学生会长与完美大小姐，苏清雪此刻端坐在座位上，纤细的手指死死攥着平整的百褶裙摆，指节泛白。原本平静从容的美眸深处剧烈动摇，白皙如玉的脸颊与耳垂染透了羞耻的红晕，微张的樱唇间呼出滚烫凌乱的喘息：“你……你以为掌握了这种把柄……就能随意支配我了吗……”
+作为全校公认的“完美少女”与学生会副主席，江怀月此刻将脸深深埋在膝盖间，单薄的双肩剧烈颤抖。平日里无可挑剔的得体微笑与完美面具彻底破碎，散落在地上的涂鸦草稿纸被雨水渐渐打湿：“你……你别看我……我现在这么狼狈……不要管我……”
 
-虽然语气里还带着高岭之花的清冷与倔强，但随着你的步步紧逼，她挺直的脊背却在微不可察地发颤，内心深处那座名为“完美”的骄傲堡垒，正不可逆转地滑向彻底顺从与堕落的深渊。`;
+虽然哭腔里还带着最后一丝自尊的倔强，但随着你的靠近与低语，她微红的眼眸中满是受惊小鹿般的无助与隐秘渴望。内心深处那座在沉重期望下苦苦维系的骄傲堡垒，正在纯爱救赎的治愈与放纵堕落的诱惑之间激烈摇摆。`;
     } else if (isDaughterMorningWood) {
       baseStory = `面对你清晨的反应【${act || '纵容女儿的危险止痒试探'}】，主卧大床上被窝里的热度瞬间攀升到了极点。
 
@@ -409,6 +413,20 @@ export default function ChatPage() {
 “善！此子根骨灵韵卓绝，天地造化钟神秀……”
 
 冥冥之中，苍澜修仙界的风云大势正在为你悄然倾斜，各大宗门的招揽、魔道强者的觊觎、以及一段荡气回肠的仙凡传说，正自此揭开波澜壮阔的序幕！`;
+    } else if (isDaughterDoorBlock) {
+      baseStory = `面对你的举措【${act || '化解女儿的堵门撒娇'}】，玄关防盗门前的气氛瞬间紧绷而灼热。
+
+林可可那双光洁白皙的纤细小腿依旧紧紧搭在门把锁扣上，粉白睡裙下摆因激烈的动作而微微上卷，露出大片泛着象牙光泽的娇嫩肌肤。她仰着微红的小脸，一双眸子满是委屈与狡黠：“老爸，你少拿上班迟到当借口！从小到大你都说最宠我，凭什么昨晚只跟妈妈亲热都不理我？你今天不把我也哄得高高兴兴的，就休想从这道门走出去！”
+
+厨房里，妻子林婉清哼着歌将荷包蛋盛进盘中，脚步声由远及近。听着妻子随时可能走出来的动静，看着面前肆无忌惮用身体封锁大门的调皮女儿，禁断的人伦推拉在此刻被拉扯到了极致。`;
+    } else if (isMotherSisterBaby) {
+      baseStory = `面对你的反应【${act || '应对家中的微妙修罗场'}】，飘着煎蛋与咖啡香气的大平层客厅里空气静得落针可闻。
+
+餐桌对面的超模姐姐顾清颜猛地咬紧吸管，修长九头身的完美曲线在男士旧T恤下若隐若现。昨夜自慰被你撞破的画面如火烧般在她脑海中翻腾，她甚至不敢抬眼正视你，整张冷艳的俏脸一路红透到了修长的脖颈与耳根：“喂……你看什么看！昨晚你最好真的是梦游……要是敢在外面或者跟妈胡说八道一个字，看我不打断你的腿……”
+
+而此时，刚晨浴完的母亲沈韵只裹着一条薄浴巾款款走来，傲人丰腴的H罩杯雪乳随着步伐微微晃颤，笑语盈盈地将刚烤好的吐司放在你面前：“大清早的，你们姐弟俩又在嘀咕什么悄悄话呢？儿子，快趁热吃，一会儿帮妈妈把后面的长发吹一吹。”
+
+在这间毫无防备的私密公寓里，昨夜失控的秘密正像藤蔓般无声缠绕，将这个三口之家拉入无法回头的甜蜜漩涡。`;
     } else {
       baseStory = `针对你的行动【${act || '深入推进'}】，场间的气氛产生了明显的微妙变化。
 

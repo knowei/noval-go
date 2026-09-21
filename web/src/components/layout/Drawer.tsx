@@ -22,17 +22,14 @@ export function Drawer() {
   } = useAppStore();
 
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'current' | 'all'>('current');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (isDrawerOpen) {
       refreshSaves();
     }
   }, [isDrawerOpen, refreshSaves]);
-
-  if (!isDrawerOpen) return null;
-
-  const [activeTab, setActiveTab] = useState<'current' | 'all'>('current');
-  const [searchQuery, setSearchQuery] = useState('');
 
   // Default to 'all' if no current deck is active or in plaza
   useEffect(() => {
@@ -41,7 +38,16 @@ export function Drawer() {
     }
   }, [currentDeckKey, isDrawerOpen]);
 
-  const currentDeckSaves = savedConversations.filter(c => c.deck_id === currentDeckKey);
+  if (!isDrawerOpen) return null;
+
+  const isMatchDeck = (c: any) => {
+    if (!currentDeckKey) return true;
+    if (c.deck_id === currentDeckKey) return true;
+    if (currentDeckKey === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7' && c.deck_id === 'deck_xiuxian_world') return true;
+    if (currentDeckKey === 'deck_xiuxian_world' && c.deck_id === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7') return true;
+    return false;
+  };
+  const currentDeckSaves = savedConversations.filter(isMatchDeck);
   const targetSaves = activeTab === 'current' ? currentDeckSaves : savedConversations;
 
   const filteredSaves = targetSaves.filter(s => {

@@ -59,6 +59,8 @@ export function buildSystemPrompt(options: BuildPromptOptions): string {
   const isMysteriousRecovery = deckId === 'deck_mysterious_recovery_ghost' || deckId.includes('0881314d') || deckTitle.includes('神秘复苏') || deckTitle.includes('是人亦是鬼');
   const isMouthFeedSister = deckId === 'deck_mouth_feed_sister' || deckId.includes('270a0ccb') || deckTitle.includes('嘴对着喂') || deckTitle.includes('林夏');
   const isXiuxianWorld = deckId === 'deck_xiuxian_world' || deckId.includes('4339eb70') || deckTitle.includes('修仙日常') || deckTitle.includes('从零开始的修仙') || deckTitle.includes('苍澜界') || deckTitle.includes('roll天赋');
+  const isDaughterDoorBlock = deckId === 'deck_daughter_door_block' || deckId.includes('2168197e') || deckTitle.includes('调皮的女儿用自己的身体堵门') || deckTitle.includes('出门上班必须先');
+  const isMotherSisterBaby = deckId === 'deck_mother_sister_baby' || deckId.includes('758e40b4') || deckTitle.includes('成年了还把你当孩子') || deckTitle.includes('巨乳美母骚姐');
 
   // 历史分支排除提示（杜绝多轮对话中出现雷同推荐动作）
   let prevBranchReminder = '';
@@ -400,6 +402,29 @@ ${deckDesc ? `世界观简述：${deckDesc}\n` : ''}`;
   * 当玩家输入“关闭灵网”时，立刻切回第一人称/第三人称沉浸修仙剧情推进。
 - 💎【全性向与羁绊推演】：
   完美包容 BG、BL、GB、GL，无论是高岭之花师姐的悄然沦陷、妖女魅惑与反客为主、师尊关爱与禁断心防、还是同门剑友的并肩生死，均细腻刻画心动微表情与生理情欲悸动。
+`;
+  } else if (isDaughterDoorBlock) {
+    prompt += `
+## 🚪《老爸你想出门上班必须先操我一下。调皮的女儿用自己的身体堵门。》专有系统规则：
+- 核心角色：
+  * 女儿 林可可（19岁/大一新生/160cm/清纯甜美/比例极佳）：极度黏父亲、占有欲极强，甚至吃亲生母亲的醋；清晨上班前夕赤足横跨在防盗门把手上，用娇躯死死堵死门口不准父亲出门；
+  * 妻子 林婉清（40岁/温柔贤惠/端庄得体）：正在不远处的厨房里哼歌准备早餐，对玄关处的暗流涌动毫无察觉，随时可能端着餐盘走出来；
+- 核心张力与情境：
+  * 【门后娇女堵门 vs 门内妻子做饭随时撞破】：时间每分每秒逼近上班打卡迟到线，可可赤足娇蛮地威胁“不亲我不抱我就不准走”；
+  * 父亲可以在威严训诫、宠溺妥协、心惊胆战偷欢与打破伦理顺水推舟之间展开高烈度心理拉扯；
+  * 细致描写可可白嫩小脚踩在冰凉金属门把上的反差触感、丝绸睡裙微卷露出的娇嫩大腿、微促的呼吸与厨房动静带来的极致偷情心跳感。
+`;
+  } else if (isMotherSisterBaby) {
+    prompt += `
+## 👠《成年了还把你当孩子的巨乳美母骚姐》专有系统规则：
+- 核心家庭成员：
+  * 亲姐姐 顾清颜（24岁/顶级模特/及腰黑长直/172cm九头身/H罩杯极品粉穴）：公众面前高不可攀的高岭之花，在家穿着男士旧T恤不穿内衣；昨夜在卧室自慰被你意外撞破，极度羞耻防备又暗生情愫；
+  * 母亲 沈韵（42岁/舞蹈老师/紫色波浪长发/H罩杯傲人雪乳/守寡五年）：温婉大方，视照顾你为天职，在家只裹单薄浴巾或轻薄丝质睡衣走动，对你毫无防备；
+  * 隔壁 王阿姨（50岁/八卦邻居）：偶尔串门探视，语带深意地刺探这个只有两女一男同居的大平层；
+- 核心规则与氛围：
+  * 现代一线城市高档大平层公寓，生活气息与肉感香艳交织；
+  * 昨夜撞见姐姐自慰是全家关系失控的导火索，餐桌早餐时姐姐的羞耻避视、母亲毫无防备的亲近触碰，将三口之家的边界逐步消融；
+  * 重点刻画九头身超模的美腿与粉嫩私处秘密、熟女母亲丰腴多汁的H罩杯雪乳、以及男主在成熟母姐无防备日常中的极致拉扯。
 `;
   }
 

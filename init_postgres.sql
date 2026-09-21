@@ -16623,991 +16623,6 @@ font[color="#ea0029"],
   </script>
 </body>
 </html>', '⚡ 反差破甲', '2026-09-14 14:01:08', '2026-09-14 14:01:08') ON CONFLICT (id) DO NOTHING;
-INSERT INTO stories (id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook_json, roles_json, scenes_json, styles_json, first_turn_demo_json, custom_css, custom_html, category, created_at, updated_at) VALUES ('eb85f366-919b-466e-a7ff-8d8dbc4ed29b', '💖完美少女の救赎/堕落计划💖', '纯爱救赎 · 诱导堕落', '💖', '完美少女计划', '高一学霸女神江怀月 · 救赎与堕落', '💖', '#a29bfe', 'linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%)', '{"desc": "「纯爱 | 堕落 | 养成」风月高中学生会副主席江怀月，16岁完美少女。长期维持着光鲜学霸人设，却在父母有条件的爱中不堪重负。当期末跌落第二人设崩溃深夜在公园痛哭时，你出现了。你是救赎她，还是引诱她滑入无尽堕落？", "author": "AI风月精选"}', '[{"name": "江怀月", "role": "重点高中学生会副主席 (16岁 / 162cm / 45kg / C罩杯)", "desc": "外表清冷温柔的满分学霸女神，书香门第家庭独女。内心长期背负窒息的期待压力，暗地里爱写叛逆摇滚歌词、偷偷喝全糖奶茶。在崩溃边缘遇见你后，逐渐把你视为唯一可以卸下伪装的灵魂依靠。"}]', '[{"title": "午夜滨河公园 · 孤寂长椅", "desc": "泪水浸湿了皱巴巴的年级第二成绩单，高冷面具碎裂的无助瞬间"}, {"title": "私密单身公寓 · 卸下防备", "desc": "脱下校服换上宽松大T恤，大口喝着全糖奶茶、放肆哭泣释放的私密空间"}, {"title": "学校天台角落 · 禁忌倾诉", "desc": "午休时刻避开所有人耳目的秘密会面，从指尖相碰走向身心归属"}]', '{}', '{"location": "深夜静谧滨河公园 · 僻静长椅旁", "story": "午夜十一点半，喧闹的城市街头渐渐归于沉寂。初秋的夜风带着几分刺骨的寒意，吹拂过路灯昏黄的滨河小道。\n在靠近人工湖的僻静长椅上，一个穿着重点高中制服的纤细身影正无助地蜷缩成一团。百褶裙摆下的双膝紧紧并拢，双手死死捂着脸颊，压抑的呜咽与抽泣声在空旷的夜风中显得格外让人心碎。\n那是在全校师生眼中永远高不可攀、温柔完美的学生会副主席江怀月。平日里一丝不苟的长直发此刻被泪水和冷汗打湿凌乱地贴在修长白皙的颈项上，旁边的石阶上扔着一张被揉得稀烂的年级期末成绩单——曾经无人撼动的榜首，赫然印着刺目的“年级第二”。\n听到你踩碎枯叶走近的脚步声，少女像受惊的幼鹿般浑身猛烈一颤，惊慌失措地擦拭着泪痕抬头，那张绝美清丽的鹅蛋脸上布满了通红的泪痕，双眸水雾迷离：“谁……谁在那里？！别看我……求求你……不要看我现在的样子……”", "branches": [{"tag": "A", "title": "脱下外套轻轻披在她微颤的单薄肩头，递上一包纸巾轻声安慰", "desc": "【纯爱救赎路线】用毫无功利心的温柔化解她的戒备，成为她唯一能卸下伪装的避风港【温柔治愈: 破开完美防线，成为她唯一的避风港】"}, {"tag": "B", "title": "走上前捡起地上的成绩单，用锐利言辞戳破她多年讨好父母的虚伪面具", "desc": "【堕落引导路线】冷酷揭开家庭有条件爱的本质，打破她自我束缚的道德枷锁【心理重构: 撕碎枷锁，引导她从极端紧绷中彻底摆烂释放】"}, {"tag": "C", "title": "默默坐在长椅另一端，买来两罐温热的全糖奶茶递给她一罐", "desc": "【无言陪伴】用她平时偷偷渴望却不敢碰的高热量全糖甜饮，打破严苛自律的第一步【无言陪伴: 打破严格自律禁忌，从一口全糖甜饮开始】"}, {"tag": "D", "title": "伸手按住她想要逃跑的纤弱手腕，居高临下俯视她泛红破防的杏眼", "desc": "【强势支配】抓住她最狼狈不堪的软肋，确立不可抗拒的情感掌控权【威严掌控: 抓住最脆弱的一幕，确立不可替代的心理主导】"}]}', 'sb, sr, sl, sv, sq, sp {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* 主容器 */
-.c {
-  font-family: ''Inter'', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.04);
-  margin: 20px auto;
-  overflow: hidden;
-  border: 1px solid #eaecf0;
-}
-
-/* 标题栏 */
-.h {
-  display: flex;
-  align-items: center;
-  padding: 16px 20px;
-  cursor: pointer;
-  list-style: none;
-  font-size: 15px;
-  font-weight: 700;
-  color: #2d3436;
-}
-
-.h::before {
-  content: '''';
-  width: 3px;
-  height: 14px;
-  background: #8e7dff;
-  margin-right: 10px;
-  border-radius: 2px;
-}
-
-.h::after {
-  content: ''＋'';
-  font-size: 16px;
-  color: #b2bec3;
-  margin-left: auto;
-  transition: transform 0.2s ease;
-}
-
-.c[open] .h::after { transform: rotate(45deg); color: #8e7dff; }
-.c summary::-webkit-details-marker { display: none; }
-
-/* 区块 sb */
-sb {
-  display: block;
-  padding: 8px 20px;
-}
-
-sb::before {
-  content: attr(t);
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #b2bec3;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  display: flex;
-  align-items: center;
-  margin-bottom: 12px;
-  background: linear-gradient(#eaecf0, #eaecf0) no-repeat right center / calc(100% - 10ch) 1px;
-}
-
-/* 基础信息行 sr */
-sr {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0 18px;
-  align-items: baseline;
-  font-size: 0.75rem;
-  color: #2d3436;
-  line-height: 1.5;
-  margin-bottom: 6px;
-}
-
-sr::before {
-  content: attr(l);
-  color: #636e72;
-  font-weight: 500;
-}
-
-/* 复合数值行容器 sl */
-sl {
-  display: flex;
-  gap: 16px;
-  margin: 8px 0 12px 0;
-}
-
-/* 真实度/压力值容器 sv */
-sv {
-  flex: 1;
-  display: block;
-  position: relative;
-  padding-top: 20px;
-  padding-bottom: 24px;
-  background: linear-gradient(to right, var(--progress-color) calc(var(--progress) * 1%), #f1f2f6 calc(var(--progress) * 1%));
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100% 6px;
-  border-radius: 3px;
-  --progress: attr(data-progress number, 0);
-}
-
-/* 根据顺序自动分配颜色 */
-sv:nth-of-type(1) { --progress-color: #ff6b6b; } /* 真实 - 红色 */
-sv:nth-of-type(2) { --progress-color: #8e7dff; } /* 压力 - 紫色 */
-
-/* 左上角：标签 */
-sv::before {
-  content: attr(l);
-  position: absolute;
-  top: 0;
-  left: 0;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #636e72;
-}
-
-/* 右上角：具体数值 */
-sv::after {
-  content: attr(v);
-  position: absolute;
-  top: 0;
-  right: 0;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #2d3436;
-}
-
-/* 增减原因容器 i */
-sv i {
-  display: block;
-  font-style: normal;
-  font-size: 0.65rem;
-  color: #b2bec3;
-  line-height: 1.3;
-  text-align: right;
-  position: absolute; /* 改为绝对定位 */
-  bottom: 4px; /* 固定在底部 */
-  right: 0;
-  left: 0;
-  white-space: nowrap; /* 防止换行导致高度变化 */
-  overflow: hidden;
-  text-overflow: ellipsis; /* 超出显示省略号 */
-}
-
-/* 心声 sq - 网格布局 */
-sq {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0 18px;
-  align-items: start;
-  margin-bottom: 6px;
-}
-
-/* 心声标签 */
-sq::before {
-  content: attr(l);
-  color: #636e72;
-  font-weight: 500;
-  font-size: 0.75rem;
-  align-self: start;
-  padding-top: 10px;
-}
-
-/* 心声内容背景 */
-sq span {
-  display: inline-block;
-  background: rgba(142,125,255,0.08);
-  padding: 10px 14px;
-  border-radius: 8px;
-  color: #5f4bdf;
-  font-style: italic;
-  font-size: 0.75rem;
-  line-height: 1.5;
-}
-
-/* 人物卡片 sp */
-sp {
-  display: block;
-  background: #ffffff;
-  border-radius: 8px;
-  padding: 12px 14px;
-  margin-bottom: 8px;
-  box-shadow: 0 0 0 1px #eaecf0 inset;
-}
-
-sp::before {
-  content: attr(n);
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #2d3436;
-  margin-bottom: 8px;
-}
-
-/* 人物状态行 - 左移内容 */
-sp sr {
-  grid-template-columns: auto 1fr;
-  gap: 0 12px;
-}
-
-/* 人物内心 - 取消标题，直接背景包裹 */
-sp sr.qu {
-  grid-template-columns: 1fr;
-  color: #636e72;
-  background: rgba(142,125,255,0.06);
-  padding: 8px 12px;
-  border-radius: 6px;
-  border-left: none;
-  font-size: 0.7rem;
-  line-height: 1.4;
-}
-
-sp sr.qu::before {
-  display: none;
-}
-
-
-
-/* 记忆栈标题栏 */
-.h n1 {
-  font-size: 15px;
-  font-weight: 700;
-  color: #2d3436;
-}
-
-.h p1 {
-  margin-left: 0px;
-  font-size: 0.7rem;
-  font-weight: 500;
-  color: #b2bec3;
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-
-/* 记忆栈主容器 */
-c1 {
-  display: block;
-  padding: 12px 20px 16px 20px;
-}
-
-/* 记忆类型区块 */
-c2 {
-  display: block;
-  margin-bottom: 16px;
-}
-
-c2:last-child {
-  margin-bottom: 0;
-}
-
-/* 记忆类型标题 */
-c3 {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #2d3436;
-  margin-bottom: 8px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid #eaecf0;
-}
-
-/* 记忆条目容器 */
-c4 {
-  display: block;
-  font-size: 0.75rem;
-  color: #636e72;
-  line-height: 1.6;
-  white-space: pre-line;
-  background: rgba(142,125,255,0.03);
-  padding: 10px 12px;
-  border-radius: 6px;
-  border-left: 3px solid #8e7dff;
-}
-
-/* 临时记忆 S 样式 */
-c2:nth-of-type(1) c3 {
-  color: #3498db;
-}
-
-c2:nth-of-type(1) c4 {
-  border-left-color: #3498db;
-  background: rgba(52,152,219,0.05);
-}
-
-/* 表层记忆 R 样式 */
-c2:nth-of-type(2) c3 {
-  color: #f39c12;
-}
-
-c2:nth-of-type(2) c4 {
-  border-left-color: #f39c12;
-  background: rgba(243,156,18,0.05);
-}
-
-/* 深层记忆 D 样式 */
-c2:nth-of-type(3) c3 {
-  color: #9b59b6;
-}
-
-c2:nth-of-type(3) c4 {
-  border-left-color: #9b59b6;
-  background: rgba(155,89,182,0.05);
-}
-
-
-
-/* 1. 代码块根容器：增加外部间距，与正文拉开距离 */
-.markdown-body pre {
-  background: #ffffff !important;
-  border: 1px solid #e1effe !important;
-  border-radius: 16px !important;
-  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.03) !important;
-  margin: 1.2em 0 !important;
-  position: relative;
-  overflow: hidden !important;
-}
-
-/* 2. 工具栏美化：加高并优化对齐 */
-.markdown-body pre .flex.justify-between.border-b {
-  background: #ffffff !important;
-  border-bottom: 1px solid #e1effe !important;
-  padding: 10px 20px !important;
-  height: 48px !important;
-  align-items: center !important;
-}
-
-/* 3. 语言标签：增强垂直居中感 */
-.markdown-body pre .text-\[13px\].text-gray-500 {
-  font-size: 0 !important;
-  font-weight: 700 !important;
-  color: #3b82f6 !important;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.markdown-body pre .text-\[13px\].text-gray-500::before {
-  font-size: 11px !important;
-  content: '''';
-}
-
-.markdown-body pre:has(code.language-A) .text-\[13px\].text-gray-500::before {
-  content: ''基础信息'';
-  font-size: 13px !important;
-}
-
-.markdown-body pre:has(code.language-B) .text-\[13px\].text-gray-500::before {
-  content: ''用户信息'';
-  font-size: 13px !important;
-}
-
-.markdown-body pre:has(code.language-C) .text-\[13px\].text-gray-500::before {
-  content: ''状态栏'';
-  font-size: 13px !important;
-}
-
-.markdown-body pre:has(code.language-D) .text-\[13px\].text-gray-500::before {
-  content: ''剧情总结'';
-  font-size: 13px !important;
-}
-
-/* 4. 代码内容区：无背景色，仅保留内边距 */
-.markdown-body pre > div > div:last-child {
-  background: transparent !important;
-  padding: 24px 28px !important;
-  margin: 0 !important;
-}
-
-.markdown-body pre code {
-  font-size: 13px !important;
-  line-height: 1.8 !important;
-  letter-spacing: 0.02em !important;
-  color: #374151 !important;
-  tab-size: 4 !important;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* 5. 滚动条美化：更细更隐形，减少视觉干扰 */
-@supports selector(::-webkit-scrollbar) {
-  .markdown-body pre > div > div:last-child::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
-  
-  .markdown-body pre > div > div:last-child::-webkit-scrollbar-thumb {
-    background: rgba(59, 130, 246, 0.15);
-    border-radius: 10px;
-  }
-  
-  .markdown-body pre > div > div:last-child::-webkit-scrollbar-thumb:hover {
-    background: rgba(59, 130, 246, 0.3);
-  }
-}
-
-/* 6. 行内代码：同步呼吸感 */
-.markdown-body code:not(pre code) {
-  background-color: #eff6ff !important;
-  color: #2563eb !important;
-  padding: 2px 5px !important;
-  margin: 0 1px !important;
-  border-radius: 6px !important;
-  font-size: 0.72em !important;
-  border: 1px solid #dbeafe !important;
-}
-
-a5, a6, a7, a8, d1, d2, i1 {
-  display: block;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* 正文主卡片 - 适配状态栏风格 */
-a5 {
-  margin: 0 auto 14px auto;
-  font-family: ''Noto Serif SC'', ''Source Han Serif SC'', ''Songti SC'', serif;
-  background: linear-gradient(180deg, #ffffff 0%, #fafbfd 100%);
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-  padding: 16px 18px;
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
-}
-
-a5:hover {
-  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.1), 0 4px 10px rgba(0, 0, 0, 0.05);
-  transform: translateY(-1px);
-}
-
-/* 标题栏 - 与状态栏大标题统一 */
-a6 {
-  display: block;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid transparent;
-  border-image: linear-gradient(90deg, #e0e7ff 0%, #fce7f3 50%, #ddd6fe 100%) 1;
-}
-
-a6:empty {
-  display: none !important;
-}
-
-/* 标题文字 */
-a7 {
-  font-family: -apple-system, BlinkMacSystemFont, ''SF Pro Text'', ''PingFang SC'', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #1e293b;
-  letter-spacing: 0.3px;
-  margin: 0;
-}
-
-/* 正文内容区 */
-a8 {
-  color: #374151;
-  font-size: 0.92rem;
-  line-height: 1.9;
-  letter-spacing: 0.2px;
-}
-
-a8 p {
-  margin: 0 0 0.9em 0;
-}
-
-a8 p:last-child {
-  margin-bottom: 0;
-}
-
-/* 男性台词 - 靛蓝色 */
-d1 {
-  color: #4f46e5;
-  font-weight: 500;
-  display: inline;
-}
-
-/* 女性台词 - 玫瑰粉 */
-d2 {
-  color: #db2777;
-  font-weight: 500;
-  display: inline;
-}
-
-
-
-
-/* 主容器 */
-e1 {
-  display: block;
-  font-family: ''Inter'', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.04);
-  margin: 20px auto;
-  overflow: hidden;
-  border: 1px solid #eaecf0;
-  padding: 12px 20px;
-  padding-top: 0;
-}
-
-/* 用伪元素生成标题栏 */
-e1::before {   /* 原来是 c1::before */
-  content: attr(t);
-  display: flex;
-  align-items: center;
-  padding: 16px 20px;
-  margin: 0 -20px 12px -20px;
-  background: #ffffff;
-  border-bottom: 1px solid #eaecf0;
-  font-size: 15px;
-  font-weight: 700;
-  color: #2d3436;
-  position: relative;
-  padding-left: 30px;
-}
-
-/* 选项项 */
-e1 > x {   /* 原来是 c1 > x */
-  display: block;
-  background: #fff;
-  padding: 10px 14px;
-  margin-bottom: 8px;
-  border-radius: 6px;
-  border: 1px solid #e5e7eb;
-  color: #374151;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-e1 > x:last-child {
-  margin-bottom: 0;
-}
-
-e1 > x:hover {
-  background: #fdf2f8;
-  border-color: #e11d48;
-  box-shadow: 0 0 8px rgba(225, 29, 72, 0.15);
-  transform: translateX(2px);
-}
-
-
-/* =========================================
-   结局横幅（通用基底 + 七结局专属配色）
-========================================= */
-
-.ending {
-  margin-top: 16px;
-  border-radius: 10px;
-  padding: 24px 20px 18px;
-  text-align: center;
-  border: 1px solid;
-  position: relative;
-  overflow: hidden;
-}
-.ending::before {
-  content: '''';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  border-radius: 10px 10px 0 0;
-}
-.ending-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  margin: 0 auto 12px;
-  position: relative;
-}
-.ending-icon::after {
-  content: '''';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-}
-.ending-title {
-  font-size: 16px;
-  font-weight: bold;
-  letter-spacing: 2px;
-  margin-bottom: 8px;
-}
-.ending-desc {
-  font-size: 12.5px;
-  line-height: 1.7;
-  opacity: 0.85;
-}
-
-/* --- Code 99 月满花开（暖金渐变满月 + 柔光） --- */
-.ending[data-code="99"] {
-  background: linear-gradient(135deg, rgba(251, 211, 141, 0.1), rgba(245, 158, 66, 0.06));
-  border-color: rgba(237, 137, 54, 0.2);
-}
-.ending[data-code="99"]::before {
-  background: linear-gradient(90deg, #f6ad55, #ed8936, #dd6b20);
-}
-.ending[data-code="99"] .ending-icon {
-  background: radial-gradient(circle at 35% 35%, #fff7e0, #fbd38d 40%, #ed8936 85%);
-  box-shadow:
-    0 0 16px rgba(237, 137, 54, 0.4),
-    0 0 40px rgba(251, 211, 141, 0.2);
-}
-.ending[data-code="99"] .ending-icon::after {
-  background: radial-gradient(circle at 65% 30%, rgba(255, 255, 255, 0.5) 0%, transparent 55%);
-}
-.ending[data-code="99"] .ending-title { color: #c05621; }
-.ending[data-code="99"] .ending-desc { color: #7b341e; }
-
-/* --- Code 00 镜中花月（冰蓝镜面球 + 冷光） --- */
-.ending[data-code="00"] {
-  background: linear-gradient(135deg, rgba(190, 227, 248, 0.12), rgba(99, 179, 237, 0.06));
-  border-color: rgba(99, 179, 237, 0.2);
-}
-.ending[data-code="00"]::before {
-  background: linear-gradient(90deg, #bee3f8, #63b3ed, #4299e1);
-}
-.ending[data-code="00"] .ending-icon {
-  background: linear-gradient(135deg, #ebf8ff, #bee3f8 30%, #90cdf4 60%, #63b3ed);
-  box-shadow:
-    0 0 14px rgba(99, 179, 237, 0.35),
-    inset 0 -8px 16px rgba(66, 153, 225, 0.15);
-}
-.ending[data-code="00"] .ending-icon::after {
-  background:
-    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.7) 0%, transparent 40%),
-    linear-gradient(160deg, transparent 45%, rgba(255, 255, 255, 0.15) 45%, rgba(255, 255, 255, 0.15) 55%, transparent 55%);
-}
-.ending[data-code="00"] .ending-title { color: #2b6cb0; }
-.ending[data-code="00"] .ending-desc { color: #2a4365; }
-
-/* --- Code 66 蚀月成瘾（毒粉脉动球 + 暗红晕） --- */
-.ending[data-code="66"] {
-  background: linear-gradient(135deg, rgba(255, 0, 127, 0.05), rgba(183, 21, 64, 0.06));
-  border-color: rgba(255, 0, 127, 0.18);
-}
-.ending[data-code="66"]::before {
-  background: linear-gradient(90deg, #ff69b4, #ff007f, #b71540);
-}
-.ending[data-code="66"] .ending-icon {
-  background: radial-gradient(circle at 40% 40%, #ffe0ef, #ff69b4 35%, #ff007f 65%, #b71540);
-  box-shadow:
-    0 0 18px rgba(255, 0, 127, 0.4),
-    0 0 44px rgba(183, 21, 64, 0.15);
-}
-.ending[data-code="66"] .ending-icon::after {
-  background: radial-gradient(circle at 60% 25%, rgba(255, 255, 255, 0.45) 0%, transparent 50%);
-}
-.ending[data-code="66"] .ending-title { color: #b71540; }
-.ending[data-code="66"] .ending-desc { color: #6d0a24; }
-
-/* --- Code 77 共月无言（淡紫半月 + 柔雾） --- */
-.ending[data-code="77"] {
-  background: linear-gradient(135deg, rgba(183, 148, 244, 0.08), rgba(128, 90, 213, 0.05));
-  border-color: rgba(128, 90, 213, 0.18);
-}
-.ending[data-code="77"]::before {
-  background: linear-gradient(90deg, #d6bcfa, #b794f4, #805ad5);
-}
-.ending[data-code="77"] .ending-icon {
-  background: linear-gradient(135deg, #e9d8fd 20%, #b794f4 50%, #805ad5 85%);
-  box-shadow:
-    0 0 14px rgba(128, 90, 213, 0.3),
-    0 0 36px rgba(183, 148, 244, 0.12);
-}
-.ending[data-code="77"] .ending-icon::after {
-  background:
-    radial-gradient(circle at 25% 30%, rgba(255, 255, 255, 0.5) 0%, transparent 45%),
-    radial-gradient(circle at 70% 60%, rgba(45, 55, 72, 0.2) 0%, transparent 50%);
-}
-.ending[data-code="77"] .ending-title { color: #6b46c1; }
-.ending[data-code="77"] .ending-desc { color: #44337a; }
-
-/* --- Code 88 追月而歌（青绿新月弧 + 清风感） --- */
-.ending[data-code="88"] {
-  background: linear-gradient(135deg, rgba(129, 230, 217, 0.08), rgba(56, 178, 172, 0.05));
-  border-color: rgba(56, 178, 172, 0.18);
-}
-.ending[data-code="88"]::before {
-  background: linear-gradient(90deg, #81e6d9, #4fd1c5, #38b2ac);
-}
-.ending[data-code="88"] .ending-icon {
-  background: radial-gradient(circle at 60% 40%, #e6fffa, #81e6d9 40%, #38b2ac 80%);
-  box-shadow:
-    0 0 14px rgba(56, 178, 172, 0.3),
-    0 0 36px rgba(129, 230, 217, 0.12);
-}
-.ending[data-code="88"] .ending-icon::after {
-  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.55) 0%, transparent 50%);
-}
-.ending[data-code="88"] .ending-title { color: #2c7a7b; }
-.ending[data-code="88"] .ending-desc { color: #234e52; }
-
-/* --- Code 44 月落无声（深灰碎裂感 + 暗沉） --- */
-.ending[data-code="44"] {
-  background: linear-gradient(135deg, rgba(160, 174, 192, 0.08), rgba(113, 128, 150, 0.06));
-  border-color: rgba(113, 128, 150, 0.22);
-}
-.ending[data-code="44"]::before {
-  background: linear-gradient(90deg, #cbd5e0, #a0aec0, #718096);
-}
-.ending[data-code="44"] .ending-icon {
-  background: radial-gradient(circle at 40% 40%, #e2e8f0, #a0aec0 45%, #718096 80%, #4a5568);
-  box-shadow:
-    0 0 12px rgba(113, 128, 150, 0.25),
-    inset 2px 2px 6px rgba(0, 0, 0, 0.1);
-}
-.ending[data-code="44"] .ending-icon::after {
-  background:
-    linear-gradient(45deg, transparent 40%, rgba(0, 0, 0, 0.08) 40%, rgba(0, 0, 0, 0.08) 42%, transparent 42%),
-    linear-gradient(135deg, transparent 55%, rgba(0, 0, 0, 0.06) 55%, rgba(0, 0, 0, 0.06) 57%, transparent 57%);
-}
-.ending[data-code="44"] .ending-title { color: #4a5568; }
-.ending[data-code="44"] .ending-desc { color: #2d3748; }
-
-/* --- Code 11 背月而行（冷黑虚空 + 消逝感） --- */
-.ending[data-code="11"] {
-  background: linear-gradient(135deg, rgba(45, 55, 72, 0.06), rgba(26, 32, 44, 0.05));
-  border-color: rgba(45, 55, 72, 0.25);
-}
-.ending[data-code="11"]::before {
-  background: linear-gradient(90deg, #718096, #4a5568, #1a202c);
-}
-.ending[data-code="11"] .ending-icon {
-  background: radial-gradient(circle at 50% 50%, #4a5568, #2d3748 50%, #1a202c);
-  box-shadow:
-    0 0 20px rgba(26, 32, 44, 0.3),
-    0 0 48px rgba(45, 55, 72, 0.1);
-}
-.ending[data-code="11"] .ending-icon::after {
-  border: 1px solid rgba(113, 128, 150, 0.2);
-  background: radial-gradient(circle at 50% 50%, rgba(113, 128, 150, 0.08) 0%, transparent 70%);
-}
-.ending[data-code="11"] .ending-title { color: #1a202c; }
-.ending[data-code="11"] .ending-desc { color: #2d3748; }
-
-
-
-
-/* 乐子人评价 em */
-emg {
-  display: block;
-  box-sizing: border-box;
-  margin: 4px 20px 12px 20px;
-  padding: 10px 14px;
-  background: linear-gradient(135deg, rgba(255, 210, 63, 0.08), rgba(255, 154, 0, 0.06));
-  border-radius: 8px;
-  border-left: 3px solid #ffb347;
-  font-size: 0.75rem;
-  line-height: 1.6;
-  color: #78621f;
-  font-style: normal;
-  letter-spacing: 0.2px;
-}', '<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>纯爱 | 堕落 | 养成 - 完美少女の救赎/堕落计划</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Liu+Jian+Mao+Cao&family=ZCOOL+XiaoWei&family=Long+Cang&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-:root { --primary-color: #7c3aed; --secondary-color: #a78bfa; --accent-color: #ec4899; --light-bg: #faf5ff; --card-bg: rgba(255, 255, 255, 0.85); --text-primary: #4c1d95; --text-secondary: #6b21a8; --border-color: rgba(233, 213, 255, 0.6); --pure-color: #f472b6; --fall-color: #7c3aed; --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%); --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); --shadow-soft: 0 10px 40px rgba(124, 58, 237, 0.08); --shadow-medium: 0 20px 60px rgba(124, 58, 237, 0.12); --glass-bg: rgba(255, 255, 255, 0.4); --glass-border: rgba(255, 255, 255, 0.4); }
-* { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
-body { font-family: ''Noto Sans SC'', sans-serif; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); color: var(--text-primary); line-height: 1.6; font-size: 16px; min-height: 100vh; overflow-x: hidden; position: relative; cursor: url(''data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%237c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5 5 2 7-6-4-6 4 2-7-5-5h7z"/></svg>'') 12 12, auto; }
-#intro-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--light-bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s ease; }
-.intro-logo { font-size: 4rem; background: var(--gradient-1); -webkit-background-clip: text; color: transparent; animation: pulse-intro 2s infinite; font-family: ''Ma Shan Zheng'', cursive; }
-@keyframes pulse-intro { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
-.bg-decoration { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(250,245,255,0.8) 50%, rgba(255,255,255,0.8) 100%); }
-.bg-circle { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4; }
-.circle-1 { width: 600px; height: 600px; background: var(--gradient-1); top: -200px; right: -200px; animation: float 20s ease-in-out infinite; }
-.circle-2 { width: 500px; height: 500px; background: var(--gradient-2); bottom: -150px; left: -150px; animation: float 25s ease-in-out infinite reverse; }
-.particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-.particle { position: absolute; background: var(--primary-color); border-radius: 50%; opacity: 0.15; animation: particle-float 15s infinite linear; }
-@keyframes particle-float { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 20% { opacity: 0.3; } 80% { opacity: 0.3; } 100% { transform: translateY(-20vh) scale(1); opacity: 0; } }
-@keyframes float { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(40px, -40px) rotate(10deg); } }
-.header { text-align: center; padding: 50px 0 30px; position: relative; z-index: 10; }
-.logo { font-size: 3.5rem; font-weight: 900; background: var(--gradient-1); -webkit-background-clip: text; color: transparent; margin-bottom: 15px; letter-spacing: 2px; text-shadow: 0 10px 30px rgba(124,58,237,0.2); position: relative; display: inline-block; font-family: ''ZCOOL XiaoWei'', serif; }
-.divider { display: flex; align-items: center; justify-content: center; margin: 20px 0; }
-.divider-line { height: 2px; background: linear-gradient(90deg, transparent, var(--primary-color), transparent); flex-grow: 1; max-width: 250px; opacity: 0.5; }
-.divider-icon { padding: 0 20px; color: var(--accent-color); font-size: 1.5rem; animation: spin-slow 10s linear infinite; }
-@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-.main-container { max-width: 1200px; margin: 0 auto; padding: 0 20px 60px; position: relative; z-index: 10; }
-.content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
-.full-width { grid-column: 1 / -1; }
-.flip-card { background-color: transparent; width: 100%; height: 420px; perspective: 1200px; cursor: pointer; }
-.flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
-.flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
-.flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 24px; border: 1px solid var(--glass-border); overflow: hidden; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: var(--shadow-soft); transition: box-shadow 0.3s ease; }
-.flip-card-front { background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(250,245,255,0.5) 100%); }
-.flip-card-back { background: linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(250,245,255,0.75) 100%); transform: rotateY(180deg); }
-.flip-card:hover .flip-card-front, .flip-card:hover .flip-card-back { box-shadow: var(--shadow-medium); }
-.flip-hint { position: absolute; bottom: 20px; right: 20px; font-size: 0.85rem; color: var(--primary-color); background: rgba(255,255,255,0.9); padding: 8px 18px; border-radius: 30px; backdrop-filter: blur(10px); border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(124,58,237,0.15); font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; z-index: 5; }
-.flip-hint:hover { transform: translateY(-3px) scale(1.05); background: var(--primary-color); color: white; }
-.character-front { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 30px; }
-.character-avatar { font-size: 6rem; background: linear-gradient(135deg, #ff9a9e 0%, #c492f4 50%, #a18cd1 100%); -webkit-background-clip: text; color: transparent; filter: drop-shadow(0 0 20px rgba(255,154,158,0.7)) drop-shadow(0 0 40px rgba(196,146,244,0.6)); margin-bottom: 15px; line-height: 1; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.flip-card:hover .character-avatar { transform: scale(1.08) rotate(5deg); }
-.character-name { font-size: 2rem; font-weight: 700; background: var(--gradient-1); -webkit-background-clip: text; color: transparent; margin-bottom: 15px; font-family: ''ZCOOL XiaoWei'', serif; }
-.character-desc { font-size: 1.05rem; color: var(--text-secondary); line-height: 1.7; font-family: ''Noto Sans SC'', sans-serif; }
-.game-front { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; padding: 40px; }
-.game-intro { font-size: 1.2rem; color: var(--text-primary); line-height: 1.9; font-weight: 500; text-align: center; }
-.game-intro-icon { font-size: 4.5rem; margin-bottom: 25px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 10px 15px rgba(236,72,153,0.3)); }
-.card-back-content { padding: 35px; height: 100%; overflow-y: auto; text-align: left; }
-.card-back-content::-webkit-scrollbar { width: 6px; }
-.card-back-content::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
-.card-title { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: 25px; display: flex; align-items: center; border-bottom: 2px dashed var(--border-color); padding-bottom: 10px; }
-.detail-item { display: flex; align-items: flex-start; margin-bottom: 15px; background: rgba(255,255,255,0.6); padding: 12px; border-radius: 12px; transition: transform 0.3s ease; }
-.detail-item:hover { transform: translateX(8px); background: rgba(255,255,255,0.9); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-.detail-icon { color: var(--accent-color); margin-right: 15px; font-size: 1.3rem; }
-.detail-text { font-size: 0.95rem; color: #4b5563; line-height: 1.6; }
-.card { background: var(--glass-bg); border-radius: 24px; box-shadow: var(--shadow-medium); border: 1px solid var(--glass-border); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); overflow: hidden; transition: transform 0.3s ease; }
-.card-content { padding: 45px; }
-.route-selection { display: flex; gap: 30px; margin-bottom: 40px; }
-.route-card { flex: 1; position: relative; cursor: pointer; }
-.route-card input[type="radio"] { position: absolute; opacity: 0; }
-.route-label { display: block; padding: 30px; border-radius: 20px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid transparent; height: 100%; background: rgba(255,255,255,0.6); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-.route-card:hover .route-label { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
-.route-title { font-weight: 700; font-size: 1.4rem; margin-bottom: 15px; display: flex; align-items: center; }
-.route-pure .route-title { color: var(--pure-color); }
-.route-fall .route-title { color: var(--fall-color); }
-.route-pure .route-title::before { content: ''🌸''; margin-right: 10px; font-size: 1.5rem; }
-.route-fall .route-title::before { content: ''⛓️''; margin-right: 10px; font-size: 1.5rem; }
-.route-description { font-size: 1rem; color: #4b5563; line-height: 1.6; }
-.route-card input[type="radio"]:checked + .route-label.route-pure { border-color: var(--pure-color); background: rgba(244,114,182,0.1); box-shadow: 0 0 0 4px rgba(244,114,182,0.2), 0 10px 25px rgba(244,114,182,0.15); transform: translateY(-5px); }
-.route-card input[type="radio"]:checked + .route-label.route-fall { border-color: var(--fall-color); background: rgba(124,58,237,0.1); box-shadow: 0 0 0 4px rgba(124,58,237,0.2), 0 10px 25px rgba(124,58,237,0.15); transform: translateY(-5px); }
-.route-title { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.advanced-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 500; padding: 5px 12px 5px 8px; border-radius: 20px; background: rgba(156,163,175,0.1); color: #9ca3af; cursor: pointer; transition: all 0.25s ease; user-select: none; }
-.advanced-badge:hover { background: rgba(244,114,182,0.1); color: var(--pure-color); }
-.advanced-badge.active { background: rgba(244,114,182,0.15); color: var(--pure-color); }
-.advanced-badge input { display: none; }
-.mini-toggle { width: 28px; height: 16px; background: #d1d5db; border-radius: 8px; position: relative; transition: background 0.25s ease; flex-shrink: 0; }
-.mini-toggle::after { content: ''''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; background: white; border-radius: 50%; transition: transform 0.25s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
-.advanced-badge.active .mini-toggle { background: var(--pure-color); }
-.advanced-badge.active .mini-toggle::after { transform: translateX(12px); }
-fieldset { border: none; margin: 0; padding: 0; }
-.form-group { margin-bottom: 25px; position: relative; }
-.form-label { font-weight: 600; color: var(--text-primary); margin-bottom: 10px; display: block; font-size: 1.05rem; }
-.form-control { width: 100%; padding: 16px 20px; border: 2px solid rgba(255,255,255,0.8); border-radius: 16px; font-size: 1rem; transition: all 0.3s ease; background-color: rgba(255,255,255,0.7); color: var(--text-primary); box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); font-family: inherit; }
-.form-control:focus { border-color: var(--primary-color); background-color: #ffffff; box-shadow: 0 0 0 4px rgba(124,58,237,0.15), inset 0 1px 3px rgba(0,0,0,0.05); }
-.form-control::placeholder { color: #9ca3af; }
-textarea.form-control { min-height: 120px; resize: vertical; line-height: 1.6; }
-.form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; }
-.copy-container { display: flex; justify-content: center; margin-top: 35px; gap: 20px; }
-.btn { padding: 16px 32px; border-radius: 16px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-flex; align-items: center; justify-content: center; font-size: 1.05rem; position: relative; overflow: hidden; flex: 1; max-width: 250px; }
-.btn::after { content: ''''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); transition: left 0.5s ease; }
-.btn:hover::after { left: 150%; }
-.btn:hover { transform: translateY(-4px); }
-.btn:active { transform: translateY(0); }
-.btn-primary { background: var(--gradient-1); color: white; box-shadow: 0 10px 25px rgba(124,58,237,0.3); }
-.btn-primary:hover { box-shadow: 0 15px 35px rgba(124,58,237,0.4); }
-.btn-secondary { background: linear-gradient(135deg, #9ca3af, #6b7280); color: white; box-shadow: 0 10px 25px rgba(107,114,128,0.3); }
-.recommendation { background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(248,245,255,0.8)); border-radius: 18px; padding: 25px; text-align: center; font-size: 0.95rem; border: 1px solid var(--border-color); margin-top: 40px; backdrop-filter: blur(10px); box-shadow: var(--shadow-soft); }
-.custom-link { color: var(--primary-color); text-decoration: none; font-weight: 700; position: relative; padding: 0 5px; transition: color 0.3s ease; }
-.custom-link::after { content: ''''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: var(--primary-color); transform: scaleX(0); transition: transform 0.3s ease; transform-origin: right; }
-.custom-link:hover { color: var(--accent-color); }
-.custom-link:hover::after { transform: scaleX(1); transform-origin: left; background: var(--accent-color); }
-.toast-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1050; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-.toast { background: rgba(31,41,55,0.9); color: white; border-radius: 30px; padding: 12px 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); backdrop-filter: blur(10px); font-weight: 500; display: flex; align-items: center; gap: 10px; animation: toastIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-@keyframes toastIn { from { transform: translateY(50px) scale(0.8); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
-footer { text-align: center; padding: 30px 20px; margin-top: 20px; position: relative; z-index: 10; }
-footer a { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease; background: rgba(255,255,255,0.4); padding: 8px 18px; border-radius: 20px; backdrop-filter: blur(5px); display: inline-block; border: 1px solid transparent; }
-footer a:hover { color: var(--primary-color); background: rgba(255,255,255,0.8); box-shadow: 0 4px 15px rgba(124,58,237,0.1); border-color: var(--border-color); }
-@media (max-width: 768px) { .content-grid { grid-template-columns: 1fr; } .route-selection { flex-direction: column; gap: 20px; } .card-content { padding: 25px; } .copy-container { flex-direction: column; } .btn { max-width: 100%; } .logo { font-size: 2.2rem; } .flip-card { height: 450px; } }
-</style>
-</head>
-<body>
-<div id="intro-overlay"><div class="intro-logo">少女の抉择</div><div style="margin-top:20px;color:var(--primary-color);">正在加载命运节点...</div></div>
-<div class="bg-decoration"><div class="bg-circle circle-1"></div><div class="bg-circle circle-2"></div></div>
-<div class="particles" id="particles"></div>
-<header class="header"><h1 class="logo">完美少女の救赎/堕落计划</h1><div class="divider"><div class="divider-line"></div><div class="divider-icon">✧⋄◎</div><div class="divider-line"></div></div></header>
-<main class="main-container">
-<div class="content-grid">
-<div class="flip-card" onclick="this.classList.toggle(''flipped'')">
-<div class="flip-card-inner">
-<div class="flip-card-front"><div class="character-front"><div class="character-avatar"><i class="fas fa-moon"></i></div><div class="character-name">江怀月</div><div class="character-desc">风月高中学生会副主席，16岁矛盾少女<br><br>像夏日清晨带着露珠的栀子花，完美得仿佛没有一丝阴霾。但那双清澈杏眼背后，藏着无人知晓的疲惫与渴望。</div></div><div class="flip-hint"><span>点击查看档案</span> <i class="fas fa-undo"></i></div></div>
-<div class="flip-card-back"><div class="card-back-content"><h3 class="card-title">✦ 秘密档案</h3><div class="detail-item"><div class="detail-icon">📚</div><div class="detail-text">清新明亮得完美无瑕。但当她以为没人注意时，那片星光会迅速黯淡，流露出小鹿般的惊惶。</div></div><div class="detail-item"><div class="detail-icon">🌙</div><div class="detail-text">书香门第的"原罪"：父母的爱是"有条件的"，这份沉甸甸的期望是她无法背负的枷锁。</div></div><div class="detail-item"><div class="detail-icon">🎂</div><div class="detail-text">笨拙的叛逆：偶尔买全糖奶茶，但喝两口又充满负罪感。书包里藏着画满涂鸦的笔记本。</div></div><div class="detail-item"><div class="detail-icon">📖</div><div class="detail-text">崩溃与相遇：期末掉到第二，人设崩塌。当晚在公园放声大哭，在最狼狈时遇见了你。</div></div><div class="detail-item"><div class="detail-icon">🎵</div><div class="detail-text">秘密梦想：没人的时候写忧伤反叛的歌词，用最大声的摇滚乐对着镜子练习嘶吼。</div></div></div><div class="flip-hint"><i class="fas fa-times"></i> <span>返回</span></div></div>
-</div>
-</div>
-<div class="flip-card" onclick="this.classList.toggle(''flipped'')">
-<div class="flip-card-inner">
-<div class="flip-card-front"><div class="game-front"><div class="game-intro-icon">💫</div><div class="game-intro">一个长期维持"完美少女"人设的少女的崩溃之时，你出现了。<br><br>你是会成为她内心的支柱，慢慢救赎她——<br>还是诱导她放松，彻底掌控她的人生？</div></div><div class="flip-hint"><span>游玩指北</span> <i class="fas fa-undo"></i></div></div>
-<div class="flip-card-back"><div class="card-back-content"><h3 class="card-title">✦ 游玩说明</h3><div class="detail-item" style="background:rgba(244,114,182,0.1);"><div class="detail-icon">⚠️</div><div class="detail-text" style="color:#be185d;font-weight:500;">建议不要在游玩过程中途换路线，不确定会出现什么奇怪的错误。"都给我去玩纯爱去啊！！！岂可修"</div></div><h3 class="card-title" style="margin-top:20px;font-size:1.2rem;">🤖 模型推荐</h3><div class="detail-item"><div class="detail-icon" style="color:#8b5cf6;">⚡</div><div class="detail-text"><strong>claude-3.7</strong><br>目前的默认模型，性价比不错的选择。(yuegle_low_quality渠道)</div></div><div class="detail-item"><div class="detail-icon" style="color:#06b6d4;">🧠</div><div class="detail-text"><strong>claude-4.5</strong><br>智商卓越但消耗相对较高。(推荐manei_anthropic渠道)</div></div><div class="detail-item"><div class="detail-icon" style="color:#10b981;">💎</div><div class="detail-text"><strong>gemini-2.5-pro</strong><br>表现稳定，偶尔有截断问题。(推荐aibus_google渠道)</div></div></div><div class="flip-hint"><i class="fas fa-times"></i> <span>返回</span></div></div>
-</div>
-</div>
-</div>
-<div class="card full-width">
-<div class="card-content">
-<h2 class="card-title" style="justify-content:center;font-size:2rem;border:none;margin-bottom:30px;">制定你的计划</h2>
-<form id="gameForm">
-<fieldset>
-<div class="route-selection">
-<div class="route-card"><input type="radio" id="pureRoute" name="route" value="pure" checked><label for="pureRoute" class="route-label route-pure"><div class="route-title">纯爱路线<span class="advanced-badge" id="advancedBadge" onclick="event.stopPropagation(); this.classList.toggle(''active''); document.getElementById(''pureAdvanced'').checked = this.classList.contains(''active''); document.getElementById(''advancedHint'').style.display = this.classList.contains(''active'') ? ''block'' : ''none'';"><input type="checkbox" id="pureAdvanced" name="pureAdvanced"><span class="mini-toggle"></span>进阶</span></div><p class="route-description">救赎疲惫的"完美少女"，一步步攻略她，走进她的内心，享受治愈系甜甜的恋爱~</p></label></div>
-<div class="route-card"><input type="radio" id="fallRoute" name="route" value="fall"><label for="fallRoute" class="route-label route-fall"><div class="route-title">堕落路线</div><p class="route-description">引诱疲惫的"完美少女"，勾引她放松，引导她堕落，将她调教成完全依赖你的存在。</p></label></div>
-</div>
-<div id="advancedHint" style="display:none; text-align:center; margin:30px 0; padding:18px 30px; background:linear-gradient(135deg, rgba(252,231,243,0.9) 0%, rgba(251,207,232,0.85) 100%); border-radius:18px; border:2px solid rgba(244,114,182,0.3); color:#f472b6; font-size:1rem; font-weight:600; box-shadow:0 4px 20px rgba(244,114,182,0.15); backdrop-filter:blur(10px);">
-<i class="fas fa-heart" style="margin-right:10px; color:#ec4899;"></i>解锁真实度、压力值系统（内含七大结局）
-</div>
-<div class="form-row">
-<div class="form-group"><label for="playerName" class="form-label">你的姓名</label><input type="text" class="form-control" id="playerName" name="playerName" placeholder="请输入姓名（留空则为无）"></div>
-<div class="form-group"><label for="playerAge" class="form-label">你的年龄</label><input type="number" class="form-control" id="playerAge" name="playerAge" placeholder="请输入年龄" min="1" max="150"></div>
-<div class="form-group"><label for="playerGender" class="form-label">你的性别</label><select class="form-control" id="playerGender" name="playerGender"><option value="男" selected>男</option><option value="女">女</option><option value="保密">保密</option></select></div>
-</div>
-<div class="form-group"><label for="otherSettings" class="form-label">补充设定 (可选)</label><textarea class="form-control" id="otherSettings" name="otherSettings" placeholder="可以输入你的外貌、性格、背景、特殊能力，或与少女的隐藏关系等设定..."></textarea></div>
-<div class="form-group"><label for="openingScene" class="form-label">开场情境</label><textarea class="form-control" id="openingScene" name="openingScene" placeholder="我在深夜闲逛，忽然听到断断续续的哭泣声，于是前去查看，发现是一个学生模样的少女在崩溃哭泣..."></textarea></div>
-</fieldset>
-<div class="copy-container">
-<button type="button" class="btn btn-primary" id="copyBtn"><i class="fas fa-magic" style="margin-right:8px;"></i> 一键生成并复制设定</button>
-<button type="button" class="btn btn-secondary" id="resetBtn"><i class="fas fa-redo" style="margin-right:8px;"></i> 重置数据</button>
-</div>
-</form>
-<div class="recommendation">
-<p style="margin-bottom:8px;color:var(--text-primary);"><strong>✨ 推荐其他作品：高级设定工具 ✨</strong></p>
-<p style="color:var(--text-secondary);font-size:0.9rem;">想要创作自己幻想的角色和世界设定吗？推荐使用
-<a href="https://aiporn.tw/zh/explore/installed/786829f3-8fab-4f09-85fa-cbf839b79123?ref_id=e62df45e-f7e4-4887-b950-8e30e7b3d8f2" target="_blank" class="custom-link">万能设定生成器</a>
-，帮助你快速创建丰富的角色和世界设定！</p>
-</div>
-</div>
-</div>
-</main>
-<div class="toast-container" id="toastContainer"></div>
-<script>
-document.addEventListener(''DOMContentLoaded'', function() {
-setTimeout(() => { const intro = document.getElementById(''intro-overlay''); intro.style.opacity = ''0''; setTimeout(() => intro.style.display = ''none'', 800); }, 1500);
-const particlesContainer = document.getElementById(''particles'');
-for(let i=0; i<25; i++) { const p = document.createElement(''div''); p.className = ''particle''; const size = Math.random() * 6 + 2; p.style.width = size + ''px''; p.style.height = size + ''px''; p.style.left = Math.random() * 100 + ''%''; p.style.animationDelay = (Math.random() * 15) + ''s''; p.style.animationDuration = (Math.random() * 10 + 10) + ''s''; const colors = [''#7c3aed'', ''#a78bfa'', ''#ec4899'', ''#f472b6'']; p.style.background = colors[Math.floor(Math.random() * colors.length)]; particlesContainer.appendChild(p); }
-const form = document.getElementById(''gameForm'');
-function showToast(msg, isErr=false) {
-const container = document.getElementById(''toastContainer'');
-const toast = document.createElement(''div'');
-toast.className = ''toast'';
-toast.innerHTML = (isErr ? ''❌ '' : ''✅ '') + msg;
-if(isErr) toast.style.background = ''rgba(220, 38, 38, 0.9)'';
-container.appendChild(toast);
-setTimeout(() => { toast.style.opacity = ''0''; setTimeout(() => toast.remove(), 400); }, 2500);
-}
-// 进阶模式提示显示控制
-const advancedHint = document.getElementById(''advancedHint'');
-const pureAdvancedCheckbox = document.getElementById(''pureAdvanced'');
-
-pureAdvancedCheckbox.addEventListener(''change'', function() {
-  advancedHint.style.display = this.checked ? ''block'' : ''none'';
-});
-document.getElementById(''copyBtn'').addEventListener(''click'', function() {
-const fd = new FormData(form);
-const route = fd.get(''route'') === ''pure'' ? ''纯爱'' : ''堕落'';
-const name = fd.get(''playerName'').trim() || ''无'';
-const age = fd.get(''playerAge'').trim() || ''无'';
-const gender = fd.get(''playerGender'');
-const other = fd.get(''otherSettings'').trim();
-const opening = fd.get(''openingScene'').trim() || ''我在深夜闲逛，忽然听到断断续续的哭泣声，于是前去查看，发现是一个学生模样的少女在崩溃哭泣'';
-const isAdvanced = fd.get(''route'') === ''pure'' && document.getElementById(''pureAdvanced'').checked;
-const routeLabel = fd.get(''route'') === ''pure'' ? (isAdvanced ? ''进阶'' : ''纯爱'') : ''堕落'';
-let text = `# 【用户设定｜模式：${routeLabel}】\n姓名：${name}\n年龄：${age}\n性别：${gender}\n`;
-if(other) text += `\n## 其他设定\n${other}\n`;
-text += `\n## 开场设定\n${opening}`;
-const ta = document.createElement(''textarea'');
-ta.value = text;
-ta.style.position = ''fixed'';
-ta.style.opacity = ''0'';
-document.body.appendChild(ta);
-ta.select();
-try {
-const success = document.execCommand(''copy'');
-if(success) { showToast(''设定已生成并注入剪贴板！''); const btn = document.getElementById(''copyBtn''); const oldHtml = btn.innerHTML; btn.innerHTML = ''<i class="fas fa-check" style="margin-right:8px;"></i> 复制成功''; setTimeout(() => btn.innerHTML = oldHtml, 2000); }
-else showToast(''复制失败，请重试'', true);
-} catch(e) { showToast(''浏览器拦截了复制请求'', true); }
-document.body.removeChild(ta);
-});
-document.getElementById(''resetBtn'').addEventListener(''click'', function() {
-form.reset();
-showToast(''表单数据已重置归零✨'');
-});
-});
-</script>
-</body>
-</html>', '💎 甜宠恋爱', '2026-09-15 09:56:26', '2026-09-15 09:56:26') ON CONFLICT (id) DO NOTHING;
 INSERT INTO stories (id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook_json, roles_json, scenes_json, styles_json, first_turn_demo_json, custom_css, custom_html, category, created_at, updated_at) VALUES ('059217c9-213b-48e7-b660-0c04f78ede48', '😱 末世求生录 😱 生存·性暴力·屈辱·征服·调教·末日', '末日废土 · 极境生存', '☣️', '末世求生录', '丧尸瘟疫核冬天 · 废土人性征服', '☣️', '#e17055', 'linear-gradient(135deg, #e17055 0%, #d63031 100%)', '{"desc": "在崩溃的世界中挣扎求生，你的极限生存在多少天。玩家在开局选择末世类型（丧尸、核战、瘟疫等22种题材），在资源匮乏、危机四伏的废土中寻找生存之路。体力、饥饿、口渴与性压抑的人性试炼。", "author": "AI风月精选"}', '[{"name": "苏晓染", "role": "21岁医学院校花幸存者 (167cm / 49kg / D罩杯)", "desc": "灾变前是全校公认的高岭之花医学生。末日爆发后在外独自逃亡三天，弹尽粮绝、衣衫破烂。为了获得一口干净的水和避难所的接纳，尊严与骄傲已被现实碾得粉碎，愿意接受一切屈辱的生存交换。"}, {"name": "玩家 (避难所支配者)", "role": "废土安全屋主宰", "desc": "掌控坚固地下防空洞、充足柴油、纯净水与武器储备的冷酷生存大师。"}]', '[{"title": "地下防空洞核心安全屋", "desc": "重型防爆钢门紧闭，柴油发电机轰鸣，桌上摆着纯净水与压缩饼干"}, {"title": "避难所消毒与检疫铁笼", "desc": "泛着锈迹与血斑的铁栏，剥光衣物进行全身体表感染排查的冰冷之地"}, {"title": "地表废墟物资搜刮掩体", "desc": "辐射酸雨滋滋作响的装甲车废墟，丧尸与掠夺者游荡的危险荒原"}]', '{}', '{"location": "避难所地下核心安全屋 · 辐射暴雨夜", "story": "厚重斑驳的防爆钢门将外界丧尸刺耳的抓挠声与酸雨腐蚀声彻底隔绝。\n防空洞深处，柴油发电机发出沉闷有力的轰鸣，昏黄的白炽灯在金属墙壁上投下斑驳长影。你坐在弹药箱上擦拭着自动霰弹枪，旁边的折叠桌上整齐地摆放着两瓶密封矿泉水、三袋军用高能压缩饼干与几板未拆封的阿莫西林抗生素——在这片秩序崩坏的废土上，这些就是主宰生死的硬通货。\n沉重的安全门闸传来转动声，一个被守卫反绑双手的年轻女人被粗暴地推倒在冰冷的水泥地上。\n她曾是医学院万人瞩目的清纯校花苏晓染。此刻，她身上的白衬衫与牛仔裤已被撕裂得多处走光，白皙如玉的肌肤上满是泥泞与擦伤，胸前发育绝佳的D罩杯双峰随着剧烈喘息大幅度起伏。干裂泛白的嘴唇紧紧抿着，饥饿与干渴让她浑身不受控制地发颤，眼神在触及桌上矿泉水的瞬间爆发出野兽般贪婪而绝望的渴望：“求求你……给我一口水喝……只要让我留在这……你让我做什么都可以……”", "branches": [{"tag": "A", "title": "拧开水壶倒出一小杯清水，命令她像狗一样爬过来喝", "desc": "以残酷的废土生存法则直接剥夺其残存的文明自尊，建立绝对的主奴支配从属【屈辱驯服: 击碎昔日校花自尊，以物资确立终身依附】"}, {"tag": "B", "title": "递过抗生素与半块压缩饼干，严肃考查其临床医学价值", "desc": "保持冷静克制，利用食物交换其医疗技能为庇护所团队服务【理性统合: 评估实用价值，建立高效分工契约】"}, {"tag": "C", "title": "举枪冷漠示意她退后，命令其当场脱光接受感染排查", "desc": "严厉执行末世防疫铁律，要求其脱掉所有衣物仔细检查全身有无抓伤咬痕【严苛检疫: 杜绝致命隐患，借检疫之名将春光尽收眼底】"}, {"tag": "D", "title": "反锁厚重防爆门，居高临下挑起她下巴行使领主特权", "desc": "当着她的面关上唯一生路，用粗糙的掌心揉捏其下颌迫使其屈从献身【强势占有: 撕碎所有文明遮羞布，直接确立私人肉便器地位】"}]}', '/* --- 末世科技风格（暗色系红色点缀）--- */
 
 /* 1. 全局包裹层：高科技废土 */
@@ -21198,7 +20213,7 @@ img.sv-cg-img.img-CG37,
   }
 </script>
 ', '🔥 热门推荐', '2026-09-15 09:56:26', '2026-09-15 09:56:26') ON CONFLICT (id) DO NOTHING;
-INSERT INTO stories (id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook_json, roles_json, scenes_json, styles_json, first_turn_demo_json, custom_css, custom_html, category, created_at, updated_at) VALUES ('deck_perfect_girl_plan', '💖完美少女の救赎/堕落计划💖', '纯爱救赎 · 诱导堕落', '💖', '完美少女计划', '高一学霸女神江怀月 · 救赎与堕落', '💖', '#a29bfe', 'linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%)', '{"desc": "「纯爱 | 堕落 | 养成」风月高中学生会副主席江怀月，16岁完美少女。长期维持着光鲜学霸人设，却在父母有条件的爱中不堪重负。当期末跌落第二人设崩溃深夜在公园痛哭时，你出现了。你是救赎她，还是引诱她滑入无尽堕落？", "author": "AI风月精选"}', '[{"name": "江怀月", "role": "重点高中学生会副主席 (16岁 / 162cm / 45kg / C罩杯)", "desc": "外表清冷温柔的满分学霸女神，书香门第家庭独女。内心长期背负窒息的期待压力，暗地里爱写叛逆摇滚歌词、偷偷喝全糖奶茶。在崩溃边缘遇见你后，逐渐把你视为唯一可以卸下伪装的灵魂依靠。"}]', '[{"title": "午夜滨河公园 · 孤寂长椅", "desc": "泪水浸湿了皱巴巴的年级第二成绩单，高冷面具碎裂的无助瞬间"}, {"title": "私密单身公寓 · 卸下防备", "desc": "脱下校服换上宽松大T恤，大口喝着全糖奶茶、放肆哭泣释放的私密空间"}, {"title": "学校天台角落 · 禁忌倾诉", "desc": "午休时刻避开所有人耳目的秘密会面，从指尖相碰走向身心归属"}]', '{}', '{"location": "深夜静谧滨河公园 · 僻静长椅旁", "story": "午夜十一点半，喧闹的城市街头渐渐归于沉寂。初秋的夜风带着几分刺骨的寒意，吹拂过路灯昏黄的滨河小道。\n在靠近人工湖的僻静长椅上，一个穿着重点高中制服的纤细身影正无助地蜷缩成一团。百褶裙摆下的双膝紧紧并拢，双手死死捂着脸颊，压抑的呜咽与抽泣声在空旷的夜风中显得格外让人心碎。\n那是在全校师生眼中永远高不可攀、温柔完美的学生会副主席江怀月。平日里一丝不苟的长直发此刻被泪水和冷汗打湿凌乱地贴在修长白皙的颈项上，旁边的石阶上扔着一张被揉得稀烂的年级期末成绩单——曾经无人撼动的榜首，赫然印着刺目的“年级第二”。\n听到你踩碎枯叶走近的脚步声，少女像受惊的幼鹿般浑身猛烈一颤，惊慌失措地擦拭着泪痕抬头，那张绝美清丽的鹅蛋脸上布满了通红的泪痕，双眸水雾迷离：“谁……谁在那里？！别看我……求求你……不要看我现在的样子……”", "branches": [{"tag": "A", "title": "脱下外套轻轻披在她微颤的单薄肩头，递上一包纸巾轻声安慰", "desc": "【纯爱救赎路线】用毫无功利心的温柔化解她的戒备，成为她唯一能卸下伪装的避风港【温柔治愈: 破开完美防线，成为她唯一的避风港】"}, {"tag": "B", "title": "走上前捡起地上的成绩单，用锐利言辞戳破她多年讨好父母的虚伪面具", "desc": "【堕落引导路线】冷酷揭开家庭有条件爱的本质，打破她自我束缚的道德枷锁【心理重构: 撕碎枷锁，引导她从极端紧绷中彻底摆烂释放】"}, {"tag": "C", "title": "默默坐在长椅另一端，买来两罐温热的全糖奶茶递给她一罐", "desc": "【无言陪伴】用她平时偷偷渴望却不敢碰的高热量全糖甜饮，打破严苛自律的第一步【无言陪伴: 打破严格自律禁忌，从一口全糖甜饮开始】"}, {"tag": "D", "title": "伸手按住她想要逃跑的纤弱手腕，居高临下俯视她泛红破防的杏眼", "desc": "【强势支配】抓住她最狼狈不堪的软肋，确立不可抗拒的情感掌控权【威严掌控: 抓住最脆弱的一幕，确立不可替代的心理主导】"}]}', 'sb, sr, sl, sv, sq, sp {
+INSERT INTO stories (id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook_json, roles_json, scenes_json, styles_json, first_turn_demo_json, custom_css, custom_html, category, created_at, updated_at) VALUES ('eb85f366-919b-466e-a7ff-8d8dbc4ed29b', '💖完美少女の救赎/堕落计划💖', '纯爱救赎 · 诱导堕落', '💖', '完美少女の救赎/堕落计划', '纯爱·堕落·心智拉扯', 'https://catai.wiki/06e15981-ef04-4bfa-f043-31d58c4deb00/cover', 'bg-purple-950/90 text-pink-200 border-purple-500/50', 'from-pink-500 to-purple-600', '{"title": "💖完美少女の救赎/堕落计划💖", "desc": "✨「纯爱 | 堕落 | 养成」你深夜闲逛，偶遇一名崩溃哭泣的青春少女，她是一所重点高中的成绩、性格、外貌都很优秀的“完美”少女，她是为何会在深夜崩溃哭泣，而你又是会救赎她（纯爱）亦或者是引诱她滑入堕落的深渊（堕落）？", "bg_image": "https://catai.wiki/0fdf08df-2a94-4506-c044-1d6f17a0a500/bg", "opening_options": ["【纯爱救赎】：“今晚的风很凉，递上一包纸巾轻声问一句：‘遇到难过的事了吗？需要听众吗？’”", "【堕落掌控】：“慢步走到长椅另一端坐下，递给她一罐冰啤酒：‘好学生也会在深夜哭成这样？想尝尝坏孩子的活法吗？’”", "【温柔陪伴】：“默默在她身侧坐下，脱下外套披在她单薄的肩膀上，静静等待她倾诉。”", "【看穿面具】：“‘不用再伪装那个完美的副主席了，在这里没有老师，也没有你的父母。’”"]}', '[{"name": "江怀月", "role": "重点高中学生会副主席", "desc": "16岁，风月高中学生会副主席。清澈杏眼，如夏日清晨带着露珠的栀子花。背负父母严苛期望的枷锁，在期末滑落第二名后防线崩溃，深夜在滨江公园抱膝痛哭。"}]', '[{"title": "滨江公园长椅 · 细雨微风的深夜", "desc": "凌晨一点的滨江公园空无一人，微凉的晚风卷起地上的落叶。远处的路灯散发着昏黄的光晕，长椅上缩着一个穿着风月中高校服的少女，单薄的身子随着断断续续的抽泣微微颤抖……"}]', '{"dialogue_style": "青春治愈与心理拉扯交织，兼具细腻情感沉浸与选择分歧张力", "format": "AI风月标准双栏规范及.custom-ui样式"}', '[{"index": 1, "isUser": false, "scene": "滨江公园长椅 · 细雨微风的深夜", "story": "<tl>📅时间：凌晨01:15 | 🌏地点：滨江公园长椅 | 🌧️天气：微凉夜雨</tl>\n\n<article>\n<p>午夜的冷雨悄无声息地打在梧桐叶上，昏黄的路灯把长椅的影子拉得很长。你踩着潮湿的落叶漫无目的地散步，忽然听见一阵压抑极低、断断续续的抽泣声。</p>\n\n<p>顺着声音望去，长椅上正蜷缩着一个少女。她身上还穿着风月高中的制服短裙，书包被扔在湿漉漉的水泥地上，里面滑落出几张画满涂鸦的草稿纸与一罐没喝完的全糖奶茶。她把脸深深埋进膝盖间，单薄的肩膀剧烈起伏着，仿佛要把整个人缩进壳里。</p>\n\n<p><w>“呜……为什么……我已经那么努力了……”</w></p>\n\n<p>你认出了她——那是全校公认的“完美少女”、学生会副主席江怀月。平日里她总是扎着高马尾，带着无可挑剔的得体微笑穿梭在走廊上，受尽师生赞誉。而此刻，没有了众人的注视与完美面具，她像一只受了重伤、在夜色里濒临崩溃的小鹿。</p>\n<p><thk>她的防线已经彻底破碎，在这个没有任何熟人的深夜角落，任何一缕外来的力量，都能轻易左右她命运的方向……</thk></p>\n</article>\n\n<opt>\n<suggested_questions>\n<d>A. 【纯爱救赎·递上面巾纸】：放轻脚步走上前，掏出一包未开封的纸巾递到她面前，轻声问一句：“今晚风挺大的，需要听众吗？”【策略评估：以温柔无害的姿态切入，消除她的戒备，开启治愈纯爱线】</d>\n<d>B. 【堕落引诱·递上冰啤酒】：在长椅另一侧坐下，拉开一罐冰镇啤酒递向她，扯了扯嘴角：“好学生也会在深夜哭成这样？想尝尝坏孩子的活法吗？”【策略评估：击碎她被规则束缚的自律枷锁，引导她体验叛逆与堕落】</d>\n<d>C. 【脱下外套·无声守护】：一言不发地脱下自己的暖和外套轻轻披在她单薄的肩膀上，然后默默靠在路灯柱下为她挡风【策略评估：给予润物无声的安全感，让她主动抬起头依赖你】</d>\n<d>D. 【揭穿面具·直击痛点】：双手插兜站在她身前，平淡开口：“不用装了，这里既没有逼你的老师，也没有要求你考第一的父母。”【策略评估：一针见血戳中内心最深处的病灶，建立绝对的心理支配】</d>\n</suggested_questions>\n</opt>", "branches": [{"tag": "A", "title": "递上面巾纸温柔倾听", "desc": "以温柔无害的姿态切入，消除她的戒备，开启治愈纯爱线"}, {"tag": "B", "title": "递上冰啤酒引诱叛逆", "desc": "击碎她被规则束缚的自律枷锁，引导她体验叛逆与堕落"}, {"tag": "C", "title": "脱下外套无声守护", "desc": "给予润物无声的安全感，让她主动抬起头依赖你"}, {"tag": "D", "title": "揭穿完美面具直击痛点", "desc": "一针见血戳中内心最深处的病灶，建立深度心理共鸣"}]}]', 'sb, sr, sl, sv, sq, sp {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -22182,7 +21197,7 @@ showToast(''表单数据已重置归零✨'');
 });
 </script>
 </body>
-</html>', '💎 甜宠恋爱', '2026-09-15 09:56:26', '2026-09-15 09:56:26') ON CONFLICT (id) DO NOTHING;
+</html>', '现代', '2026-09-21 16:45:44', '2026-09-21 16:45:44') ON CONFLICT (id) DO NOTHING;
 INSERT INTO stories (id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook_json, roles_json, scenes_json, styles_json, first_turn_demo_json, custom_css, custom_html, category, created_at, updated_at) VALUES ('deck_daughter_morning_wood', '爸爸我下面好痒帮我磨一磨吧。可爱女儿竟然用我晨勃的鸡巴止痒', '晨勃禁断 · 娇憨反差', '🛌', '晨勃止痒女儿', '天真娇憨女儿陈小涵 · 晨勃磨蹭', '🛌', '#fd79a8', 'linear-gradient(135deg, #fd79a8 0%, #e84393 100%)', '{"desc": "女儿胆小怕黑平时常赖在主卧大床睡。某个清晨妻子起床洗漱，主角还在赖床，下身晨勃高高挺立。迷糊间感觉下身有柔软温热磨蹭，睁眼一看，16岁的可爱女儿正笨拙地撅着屁股用下面磨蹭鸡巴止痒...天真娇憨下的禁忌心跳。", "author": "AI风月精选"}', '[{"name": "陈小涵", "role": "16岁可爱女儿 (高一在读 / 158cm / A罩杯)", "desc": "扎着双马尾，皮肤白嫩娇软，性格纯真俏皮、天真大胆。对异性的身体构造充满好奇，由于胆小怕黑经常溜进父母被窝。大早晨趁母亲在厨房洗漱，隔着薄薄的草莓纯棉内裤主动骑坐在父亲晨勃的硬肉棒上前后磨蹭止痒。"}]', '[{"title": "主卧大床 · 清晨被窝内", "desc": "掀开棉被一角，草莓内裤在硬挺肉棒上笨拙起伏磨蹭的温热禁忌"}, {"title": "客厅洗手间门前 · 惊险推拉", "desc": "母亲厨房走动的脚步声近在咫尺，被按在墙角屏住呼吸的私密触碰"}, {"title": "女儿卧室书桌 · 课后辅导", "desc": "百褶裙摆下大腿内侧的黏腻水渍与悄悄探入裙底的大手"}]', '{}', '{"location": "主卧大床 · 清晨初醒被窝内", "story": "清晨的阳光透过百叶窗缝隙，在地毯上洒下温暖的金色光斑。门外隐约传来妻子洗漱与厨房烧水的声音。\n你还在被窝里迷迷糊糊地赖床，男性晨间正常的生理冲动让你胯下一柱擎天，将轻薄的棉被高高顶起。半梦半醒间，下身却传来一阵极其微妙而异样的温热触感——像是有什么柔软轻盈的小东西，正笨拙而缓慢地在敏感的部位前后磨蹭。\n你猛然睁开眼，被子不知何时已被掀开了一角。16岁的独生女儿陈小涵正穿着一条粉色草莓纯棉小睡裤，撅着娇小圆润的屁股，隔着薄薄的棉布将双腿间娇嫩的花径死死压在你晨勃硬挺的肉棒上微微扭动。\n撞见你骤然清醒的目光，小丫头不仅没有害怕逃开，那张未褪尽婴儿肥的清秀小脸上反而泛起一抹天真的绯红，两根细嫩的手指扯了扯睡裤边缘，声音带着软糯的晨起鼻音：“爸爸……你醒啦？你别动嘛……我下面刚才突然好痒好难受……刚好看到你这里竖起来一根热热的大硬棒子，想着拿来磨一磨止痒……好舒服哦，爸爸你继续睡，我自己动就好了……”", "branches": [{"tag": "A", "title": "倒吸一口凉气，假装严厉斥责但身体却僵硬不敢乱动", "desc": "口头拿出做父亲的威严假正经申斥，身体却被她柔软的小屁股磨得阵阵发麻【假正经责难: 口头申斥打破伦理，暗中享受温热摩擦】"}, {"tag": "B", "title": "伸手按住她纤细的腰肢，温柔地将肉棒隔着裤子向她更深处顶了顶", "desc": "顺水推舟宠溺回应她的止痒请求，挺起腰肢让晨勃前端狠狠顶住她娇嫩的花核【宠溺纵容: 顺应天真止痒，逐步打破父女身体防线】"}, {"tag": "C", "title": "提醒门外妈妈还在厨房，压低嗓音将手探入她粉色睡裤边缘", "desc": "借着母亲随时可能进来的刺激紧张感，将指尖悄悄滑入她温热微潮的裤腰内部【紧张刺激: 厨房水声与被窝偷情，触碰娇嫩湿润边缘】"}, {"tag": "D", "title": "翻身将她抱进怀里，用大手揉按她平坦小腹与敏感大腿内侧", "desc": "以帮她彻底消除奇痒为名，大手滑向她平坦光滑的小腹与细嫩大腿根部【贴身温存: 假借检查止痒名义，全面探索少女敏感点】"}]}', '', '<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -50791,6 +49806,4877 @@ alert(''复制失败，请手动复制。'');
 </script>
 </body>
 </html>', '玄幻', '2026-09-21 16:25:36', '2026-09-21 16:25:36') ON CONFLICT (id) DO NOTHING;
+INSERT INTO stories (id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook_json, roles_json, scenes_json, styles_json, first_turn_demo_json, custom_css, custom_html, category, created_at, updated_at) VALUES ('deck_perfect_girl_plan', '💖完美少女の救赎/堕落计划💖', '纯爱救赎 · 诱导堕落', '💖', '完美少女の救赎/堕落计划', '纯爱·堕落·心智拉扯', 'https://catai.wiki/06e15981-ef04-4bfa-f043-31d58c4deb00/cover', 'bg-purple-950/90 text-pink-200 border-purple-500/50', 'from-pink-500 to-purple-600', '{"title": "💖完美少女の救赎/堕落计划💖", "desc": "✨「纯爱 | 堕落 | 养成」你深夜闲逛，偶遇一名崩溃哭泣的青春少女，她是一所重点高中的成绩、性格、外貌都很优秀的“完美”少女，她是为何会在深夜崩溃哭泣，而你又是会救赎她（纯爱）亦或者是引诱她滑入堕落的深渊（堕落）？", "bg_image": "https://catai.wiki/0fdf08df-2a94-4506-c044-1d6f17a0a500/bg", "opening_options": ["【纯爱救赎】：“今晚的风很凉，递上一包纸巾轻声问一句：‘遇到难过的事了吗？需要听众吗？’”", "【堕落掌控】：“慢步走到长椅另一端坐下，递给她一罐冰啤酒：‘好学生也会在深夜哭成这样？想尝尝坏孩子的活法吗？’”", "【温柔陪伴】：“默默在她身侧坐下，脱下外套披在她单薄的肩膀上，静静等待她倾诉。”", "【看穿面具】：“‘不用再伪装那个完美的副主席了，在这里没有老师，也没有你的父母。’”"]}', '[{"name": "江怀月", "role": "重点高中学生会副主席", "desc": "16岁，风月高中学生会副主席。清澈杏眼，如夏日清晨带着露珠的栀子花。背负父母严苛期望的枷锁，在期末滑落第二名后防线崩溃，深夜在滨江公园抱膝痛哭。"}]', '[{"title": "滨江公园长椅 · 细雨微风的深夜", "desc": "凌晨一点的滨江公园空无一人，微凉的晚风卷起地上的落叶。远处的路灯散发着昏黄的光晕，长椅上缩着一个穿着风月中高校服的少女，单薄的身子随着断断续续的抽泣微微颤抖……"}]', '{"dialogue_style": "青春治愈与心理拉扯交织，兼具细腻情感沉浸与选择分歧张力", "format": "AI风月标准双栏规范及.custom-ui样式"}', '[{"index": 1, "isUser": false, "scene": "滨江公园长椅 · 细雨微风的深夜", "story": "<tl>📅时间：凌晨01:15 | 🌏地点：滨江公园长椅 | 🌧️天气：微凉夜雨</tl>\n\n<article>\n<p>午夜的冷雨悄无声息地打在梧桐叶上，昏黄的路灯把长椅的影子拉得很长。你踩着潮湿的落叶漫无目的地散步，忽然听见一阵压抑极低、断断续续的抽泣声。</p>\n\n<p>顺着声音望去，长椅上正蜷缩着一个少女。她身上还穿着风月高中的制服短裙，书包被扔在湿漉漉的水泥地上，里面滑落出几张画满涂鸦的草稿纸与一罐没喝完的全糖奶茶。她把脸深深埋进膝盖间，单薄的肩膀剧烈起伏着，仿佛要把整个人缩进壳里。</p>\n\n<p><w>“呜……为什么……我已经那么努力了……”</w></p>\n\n<p>你认出了她——那是全校公认的“完美少女”、学生会副主席江怀月。平日里她总是扎着高马尾，带着无可挑剔的得体微笑穿梭在走廊上，受尽师生赞誉。而此刻，没有了众人的注视与完美面具，她像一只受了重伤、在夜色里濒临崩溃的小鹿。</p>\n<p><thk>她的防线已经彻底破碎，在这个没有任何熟人的深夜角落，任何一缕外来的力量，都能轻易左右她命运的方向……</thk></p>\n</article>\n\n<opt>\n<suggested_questions>\n<d>A. 【纯爱救赎·递上面巾纸】：放轻脚步走上前，掏出一包未开封的纸巾递到她面前，轻声问一句：“今晚风挺大的，需要听众吗？”【策略评估：以温柔无害的姿态切入，消除她的戒备，开启治愈纯爱线】</d>\n<d>B. 【堕落引诱·递上冰啤酒】：在长椅另一侧坐下，拉开一罐冰镇啤酒递向她，扯了扯嘴角：“好学生也会在深夜哭成这样？想尝尝坏孩子的活法吗？”【策略评估：击碎她被规则束缚的自律枷锁，引导她体验叛逆与堕落】</d>\n<d>C. 【脱下外套·无声守护】：一言不发地脱下自己的暖和外套轻轻披在她单薄的肩膀上，然后默默靠在路灯柱下为她挡风【策略评估：给予润物无声的安全感，让她主动抬起头依赖你】</d>\n<d>D. 【揭穿面具·直击痛点】：双手插兜站在她身前，平淡开口：“不用装了，这里既没有逼你的老师，也没有要求你考第一的父母。”【策略评估：一针见血戳中内心最深处的病灶，建立绝对的心理支配】</d>\n</suggested_questions>\n</opt>", "branches": [{"tag": "A", "title": "递上面巾纸温柔倾听", "desc": "以温柔无害的姿态切入，消除她的戒备，开启治愈纯爱线"}, {"tag": "B", "title": "递上冰啤酒引诱叛逆", "desc": "击碎她被规则束缚的自律枷锁，引导她体验叛逆与堕落"}, {"tag": "C", "title": "脱下外套无声守护", "desc": "给予润物无声的安全感，让她主动抬起头依赖你"}, {"tag": "D", "title": "揭穿完美面具直击痛点", "desc": "一针见血戳中内心最深处的病灶，建立深度心理共鸣"}]}]', 'sb, sr, sl, sv, sq, sp {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 主容器 */
+.c {
+  font-family: ''Inter'', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+  margin: 20px auto;
+  overflow: hidden;
+  border: 1px solid #eaecf0;
+}
+
+/* 标题栏 */
+.h {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2d3436;
+}
+
+.h::before {
+  content: '''';
+  width: 3px;
+  height: 14px;
+  background: #8e7dff;
+  margin-right: 10px;
+  border-radius: 2px;
+}
+
+.h::after {
+  content: ''＋'';
+  font-size: 16px;
+  color: #b2bec3;
+  margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+.c[open] .h::after { transform: rotate(45deg); color: #8e7dff; }
+.c summary::-webkit-details-marker { display: none; }
+
+/* 区块 sb */
+sb {
+  display: block;
+  padding: 8px 20px;
+}
+
+sb::before {
+  content: attr(t);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #b2bec3;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  background: linear-gradient(#eaecf0, #eaecf0) no-repeat right center / calc(100% - 10ch) 1px;
+}
+
+/* 基础信息行 sr */
+sr {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 18px;
+  align-items: baseline;
+  font-size: 0.75rem;
+  color: #2d3436;
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
+sr::before {
+  content: attr(l);
+  color: #636e72;
+  font-weight: 500;
+}
+
+/* 复合数值行容器 sl */
+sl {
+  display: flex;
+  gap: 16px;
+  margin: 8px 0 12px 0;
+}
+
+/* 真实度/压力值容器 sv */
+sv {
+  flex: 1;
+  display: block;
+  position: relative;
+  padding-top: 20px;
+  padding-bottom: 24px;
+  background: linear-gradient(to right, var(--progress-color) calc(var(--progress) * 1%), #f1f2f6 calc(var(--progress) * 1%));
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 6px;
+  border-radius: 3px;
+  --progress: attr(data-progress number, 0);
+}
+
+/* 根据顺序自动分配颜色 */
+sv:nth-of-type(1) { --progress-color: #ff6b6b; } /* 真实 - 红色 */
+sv:nth-of-type(2) { --progress-color: #8e7dff; } /* 压力 - 紫色 */
+
+/* 左上角：标签 */
+sv::before {
+  content: attr(l);
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #636e72;
+}
+
+/* 右上角：具体数值 */
+sv::after {
+  content: attr(v);
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #2d3436;
+}
+
+/* 增减原因容器 i */
+sv i {
+  display: block;
+  font-style: normal;
+  font-size: 0.65rem;
+  color: #b2bec3;
+  line-height: 1.3;
+  text-align: right;
+  position: absolute; /* 改为绝对定位 */
+  bottom: 4px; /* 固定在底部 */
+  right: 0;
+  left: 0;
+  white-space: nowrap; /* 防止换行导致高度变化 */
+  overflow: hidden;
+  text-overflow: ellipsis; /* 超出显示省略号 */
+}
+
+/* 心声 sq - 网格布局 */
+sq {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 18px;
+  align-items: start;
+  margin-bottom: 6px;
+}
+
+/* 心声标签 */
+sq::before {
+  content: attr(l);
+  color: #636e72;
+  font-weight: 500;
+  font-size: 0.75rem;
+  align-self: start;
+  padding-top: 10px;
+}
+
+/* 心声内容背景 */
+sq span {
+  display: inline-block;
+  background: rgba(142,125,255,0.08);
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: #5f4bdf;
+  font-style: italic;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+/* 人物卡片 sp */
+sp {
+  display: block;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  box-shadow: 0 0 0 1px #eaecf0 inset;
+}
+
+sp::before {
+  content: attr(n);
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #2d3436;
+  margin-bottom: 8px;
+}
+
+/* 人物状态行 - 左移内容 */
+sp sr {
+  grid-template-columns: auto 1fr;
+  gap: 0 12px;
+}
+
+/* 人物内心 - 取消标题，直接背景包裹 */
+sp sr.qu {
+  grid-template-columns: 1fr;
+  color: #636e72;
+  background: rgba(142,125,255,0.06);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: none;
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+sp sr.qu::before {
+  display: none;
+}
+
+
+
+/* 记忆栈标题栏 */
+.h n1 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2d3436;
+}
+
+.h p1 {
+  margin-left: 0px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #b2bec3;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* 记忆栈主容器 */
+c1 {
+  display: block;
+  padding: 12px 20px 16px 20px;
+}
+
+/* 记忆类型区块 */
+c2 {
+  display: block;
+  margin-bottom: 16px;
+}
+
+c2:last-child {
+  margin-bottom: 0;
+}
+
+/* 记忆类型标题 */
+c3 {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #2d3436;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #eaecf0;
+}
+
+/* 记忆条目容器 */
+c4 {
+  display: block;
+  font-size: 0.75rem;
+  color: #636e72;
+  line-height: 1.6;
+  white-space: pre-line;
+  background: rgba(142,125,255,0.03);
+  padding: 10px 12px;
+  border-radius: 6px;
+  border-left: 3px solid #8e7dff;
+}
+
+/* 临时记忆 S 样式 */
+c2:nth-of-type(1) c3 {
+  color: #3498db;
+}
+
+c2:nth-of-type(1) c4 {
+  border-left-color: #3498db;
+  background: rgba(52,152,219,0.05);
+}
+
+/* 表层记忆 R 样式 */
+c2:nth-of-type(2) c3 {
+  color: #f39c12;
+}
+
+c2:nth-of-type(2) c4 {
+  border-left-color: #f39c12;
+  background: rgba(243,156,18,0.05);
+}
+
+/* 深层记忆 D 样式 */
+c2:nth-of-type(3) c3 {
+  color: #9b59b6;
+}
+
+c2:nth-of-type(3) c4 {
+  border-left-color: #9b59b6;
+  background: rgba(155,89,182,0.05);
+}
+
+
+
+/* 1. 代码块根容器：增加外部间距，与正文拉开距离 */
+.markdown-body pre {
+  background: #ffffff !important;
+  border: 1px solid #e1effe !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.03) !important;
+  margin: 1.2em 0 !important;
+  position: relative;
+  overflow: hidden !important;
+}
+
+/* 2. 工具栏美化：加高并优化对齐 */
+.markdown-body pre .flex.justify-between.border-b {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e1effe !important;
+  padding: 10px 20px !important;
+  height: 48px !important;
+  align-items: center !important;
+}
+
+/* 3. 语言标签：增强垂直居中感 */
+.markdown-body pre .text-\[13px\].text-gray-500 {
+  font-size: 0 !important;
+  font-weight: 700 !important;
+  color: #3b82f6 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.markdown-body pre .text-\[13px\].text-gray-500::before {
+  font-size: 11px !important;
+  content: '''';
+}
+
+.markdown-body pre:has(code.language-A) .text-\[13px\].text-gray-500::before {
+  content: ''基础信息'';
+  font-size: 13px !important;
+}
+
+.markdown-body pre:has(code.language-B) .text-\[13px\].text-gray-500::before {
+  content: ''用户信息'';
+  font-size: 13px !important;
+}
+
+.markdown-body pre:has(code.language-C) .text-\[13px\].text-gray-500::before {
+  content: ''状态栏'';
+  font-size: 13px !important;
+}
+
+.markdown-body pre:has(code.language-D) .text-\[13px\].text-gray-500::before {
+  content: ''剧情总结'';
+  font-size: 13px !important;
+}
+
+/* 4. 代码内容区：无背景色，仅保留内边距 */
+.markdown-body pre > div > div:last-child {
+  background: transparent !important;
+  padding: 24px 28px !important;
+  margin: 0 !important;
+}
+
+.markdown-body pre code {
+  font-size: 13px !important;
+  line-height: 1.8 !important;
+  letter-spacing: 0.02em !important;
+  color: #374151 !important;
+  tab-size: 4 !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 5. 滚动条美化：更细更隐形，减少视觉干扰 */
+@supports selector(::-webkit-scrollbar) {
+  .markdown-body pre > div > div:last-child::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  
+  .markdown-body pre > div > div:last-child::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.15);
+    border-radius: 10px;
+  }
+  
+  .markdown-body pre > div > div:last-child::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.3);
+  }
+}
+
+/* 6. 行内代码：同步呼吸感 */
+.markdown-body code:not(pre code) {
+  background-color: #eff6ff !important;
+  color: #2563eb !important;
+  padding: 2px 5px !important;
+  margin: 0 1px !important;
+  border-radius: 6px !important;
+  font-size: 0.72em !important;
+  border: 1px solid #dbeafe !important;
+}
+
+a5, a6, a7, a8, d1, d2, i1 {
+  display: block;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 正文主卡片 - 适配状态栏风格 */
+a5 {
+  margin: 0 auto 14px auto;
+  font-family: ''Noto Serif SC'', ''Source Han Serif SC'', ''Songti SC'', serif;
+  background: linear-gradient(180deg, #ffffff 0%, #fafbfd 100%);
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 16px 18px;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+a5:hover {
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.1), 0 4px 10px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+/* 标题栏 - 与状态栏大标题统一 */
+a6 {
+  display: block;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid transparent;
+  border-image: linear-gradient(90deg, #e0e7ff 0%, #fce7f3 50%, #ddd6fe 100%) 1;
+}
+
+a6:empty {
+  display: none !important;
+}
+
+/* 标题文字 */
+a7 {
+  font-family: -apple-system, BlinkMacSystemFont, ''SF Pro Text'', ''PingFang SC'', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: 0.3px;
+  margin: 0;
+}
+
+/* 正文内容区 */
+a8 {
+  color: #374151;
+  font-size: 0.92rem;
+  line-height: 1.9;
+  letter-spacing: 0.2px;
+}
+
+a8 p {
+  margin: 0 0 0.9em 0;
+}
+
+a8 p:last-child {
+  margin-bottom: 0;
+}
+
+/* 男性台词 - 靛蓝色 */
+d1 {
+  color: #4f46e5;
+  font-weight: 500;
+  display: inline;
+}
+
+/* 女性台词 - 玫瑰粉 */
+d2 {
+  color: #db2777;
+  font-weight: 500;
+  display: inline;
+}
+
+
+
+
+/* 主容器 */
+e1 {
+  display: block;
+  font-family: ''Inter'', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+  margin: 20px auto;
+  overflow: hidden;
+  border: 1px solid #eaecf0;
+  padding: 12px 20px;
+  padding-top: 0;
+}
+
+/* 用伪元素生成标题栏 */
+e1::before {   /* 原来是 c1::before */
+  content: attr(t);
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  margin: 0 -20px 12px -20px;
+  background: #ffffff;
+  border-bottom: 1px solid #eaecf0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2d3436;
+  position: relative;
+  padding-left: 30px;
+}
+
+/* 选项项 */
+e1 > x {   /* 原来是 c1 > x */
+  display: block;
+  background: #fff;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+e1 > x:last-child {
+  margin-bottom: 0;
+}
+
+e1 > x:hover {
+  background: #fdf2f8;
+  border-color: #e11d48;
+  box-shadow: 0 0 8px rgba(225, 29, 72, 0.15);
+  transform: translateX(2px);
+}
+
+
+/* =========================================
+   结局横幅（通用基底 + 七结局专属配色）
+========================================= */
+
+.ending {
+  margin-top: 16px;
+  border-radius: 10px;
+  padding: 24px 20px 18px;
+  text-align: center;
+  border: 1px solid;
+  position: relative;
+  overflow: hidden;
+}
+.ending::before {
+  content: '''';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 10px 10px 0 0;
+}
+.ending-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  position: relative;
+}
+.ending-icon::after {
+  content: '''';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+.ending-title {
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.ending-desc {
+  font-size: 12.5px;
+  line-height: 1.7;
+  opacity: 0.85;
+}
+
+/* --- Code 99 月满花开（暖金渐变满月 + 柔光） --- */
+.ending[data-code="99"] {
+  background: linear-gradient(135deg, rgba(251, 211, 141, 0.1), rgba(245, 158, 66, 0.06));
+  border-color: rgba(237, 137, 54, 0.2);
+}
+.ending[data-code="99"]::before {
+  background: linear-gradient(90deg, #f6ad55, #ed8936, #dd6b20);
+}
+.ending[data-code="99"] .ending-icon {
+  background: radial-gradient(circle at 35% 35%, #fff7e0, #fbd38d 40%, #ed8936 85%);
+  box-shadow:
+    0 0 16px rgba(237, 137, 54, 0.4),
+    0 0 40px rgba(251, 211, 141, 0.2);
+}
+.ending[data-code="99"] .ending-icon::after {
+  background: radial-gradient(circle at 65% 30%, rgba(255, 255, 255, 0.5) 0%, transparent 55%);
+}
+.ending[data-code="99"] .ending-title { color: #c05621; }
+.ending[data-code="99"] .ending-desc { color: #7b341e; }
+
+/* --- Code 00 镜中花月（冰蓝镜面球 + 冷光） --- */
+.ending[data-code="00"] {
+  background: linear-gradient(135deg, rgba(190, 227, 248, 0.12), rgba(99, 179, 237, 0.06));
+  border-color: rgba(99, 179, 237, 0.2);
+}
+.ending[data-code="00"]::before {
+  background: linear-gradient(90deg, #bee3f8, #63b3ed, #4299e1);
+}
+.ending[data-code="00"] .ending-icon {
+  background: linear-gradient(135deg, #ebf8ff, #bee3f8 30%, #90cdf4 60%, #63b3ed);
+  box-shadow:
+    0 0 14px rgba(99, 179, 237, 0.35),
+    inset 0 -8px 16px rgba(66, 153, 225, 0.15);
+}
+.ending[data-code="00"] .ending-icon::after {
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.7) 0%, transparent 40%),
+    linear-gradient(160deg, transparent 45%, rgba(255, 255, 255, 0.15) 45%, rgba(255, 255, 255, 0.15) 55%, transparent 55%);
+}
+.ending[data-code="00"] .ending-title { color: #2b6cb0; }
+.ending[data-code="00"] .ending-desc { color: #2a4365; }
+
+/* --- Code 66 蚀月成瘾（毒粉脉动球 + 暗红晕） --- */
+.ending[data-code="66"] {
+  background: linear-gradient(135deg, rgba(255, 0, 127, 0.05), rgba(183, 21, 64, 0.06));
+  border-color: rgba(255, 0, 127, 0.18);
+}
+.ending[data-code="66"]::before {
+  background: linear-gradient(90deg, #ff69b4, #ff007f, #b71540);
+}
+.ending[data-code="66"] .ending-icon {
+  background: radial-gradient(circle at 40% 40%, #ffe0ef, #ff69b4 35%, #ff007f 65%, #b71540);
+  box-shadow:
+    0 0 18px rgba(255, 0, 127, 0.4),
+    0 0 44px rgba(183, 21, 64, 0.15);
+}
+.ending[data-code="66"] .ending-icon::after {
+  background: radial-gradient(circle at 60% 25%, rgba(255, 255, 255, 0.45) 0%, transparent 50%);
+}
+.ending[data-code="66"] .ending-title { color: #b71540; }
+.ending[data-code="66"] .ending-desc { color: #6d0a24; }
+
+/* --- Code 77 共月无言（淡紫半月 + 柔雾） --- */
+.ending[data-code="77"] {
+  background: linear-gradient(135deg, rgba(183, 148, 244, 0.08), rgba(128, 90, 213, 0.05));
+  border-color: rgba(128, 90, 213, 0.18);
+}
+.ending[data-code="77"]::before {
+  background: linear-gradient(90deg, #d6bcfa, #b794f4, #805ad5);
+}
+.ending[data-code="77"] .ending-icon {
+  background: linear-gradient(135deg, #e9d8fd 20%, #b794f4 50%, #805ad5 85%);
+  box-shadow:
+    0 0 14px rgba(128, 90, 213, 0.3),
+    0 0 36px rgba(183, 148, 244, 0.12);
+}
+.ending[data-code="77"] .ending-icon::after {
+  background:
+    radial-gradient(circle at 25% 30%, rgba(255, 255, 255, 0.5) 0%, transparent 45%),
+    radial-gradient(circle at 70% 60%, rgba(45, 55, 72, 0.2) 0%, transparent 50%);
+}
+.ending[data-code="77"] .ending-title { color: #6b46c1; }
+.ending[data-code="77"] .ending-desc { color: #44337a; }
+
+/* --- Code 88 追月而歌（青绿新月弧 + 清风感） --- */
+.ending[data-code="88"] {
+  background: linear-gradient(135deg, rgba(129, 230, 217, 0.08), rgba(56, 178, 172, 0.05));
+  border-color: rgba(56, 178, 172, 0.18);
+}
+.ending[data-code="88"]::before {
+  background: linear-gradient(90deg, #81e6d9, #4fd1c5, #38b2ac);
+}
+.ending[data-code="88"] .ending-icon {
+  background: radial-gradient(circle at 60% 40%, #e6fffa, #81e6d9 40%, #38b2ac 80%);
+  box-shadow:
+    0 0 14px rgba(56, 178, 172, 0.3),
+    0 0 36px rgba(129, 230, 217, 0.12);
+}
+.ending[data-code="88"] .ending-icon::after {
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.55) 0%, transparent 50%);
+}
+.ending[data-code="88"] .ending-title { color: #2c7a7b; }
+.ending[data-code="88"] .ending-desc { color: #234e52; }
+
+/* --- Code 44 月落无声（深灰碎裂感 + 暗沉） --- */
+.ending[data-code="44"] {
+  background: linear-gradient(135deg, rgba(160, 174, 192, 0.08), rgba(113, 128, 150, 0.06));
+  border-color: rgba(113, 128, 150, 0.22);
+}
+.ending[data-code="44"]::before {
+  background: linear-gradient(90deg, #cbd5e0, #a0aec0, #718096);
+}
+.ending[data-code="44"] .ending-icon {
+  background: radial-gradient(circle at 40% 40%, #e2e8f0, #a0aec0 45%, #718096 80%, #4a5568);
+  box-shadow:
+    0 0 12px rgba(113, 128, 150, 0.25),
+    inset 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
+.ending[data-code="44"] .ending-icon::after {
+  background:
+    linear-gradient(45deg, transparent 40%, rgba(0, 0, 0, 0.08) 40%, rgba(0, 0, 0, 0.08) 42%, transparent 42%),
+    linear-gradient(135deg, transparent 55%, rgba(0, 0, 0, 0.06) 55%, rgba(0, 0, 0, 0.06) 57%, transparent 57%);
+}
+.ending[data-code="44"] .ending-title { color: #4a5568; }
+.ending[data-code="44"] .ending-desc { color: #2d3748; }
+
+/* --- Code 11 背月而行（冷黑虚空 + 消逝感） --- */
+.ending[data-code="11"] {
+  background: linear-gradient(135deg, rgba(45, 55, 72, 0.06), rgba(26, 32, 44, 0.05));
+  border-color: rgba(45, 55, 72, 0.25);
+}
+.ending[data-code="11"]::before {
+  background: linear-gradient(90deg, #718096, #4a5568, #1a202c);
+}
+.ending[data-code="11"] .ending-icon {
+  background: radial-gradient(circle at 50% 50%, #4a5568, #2d3748 50%, #1a202c);
+  box-shadow:
+    0 0 20px rgba(26, 32, 44, 0.3),
+    0 0 48px rgba(45, 55, 72, 0.1);
+}
+.ending[data-code="11"] .ending-icon::after {
+  border: 1px solid rgba(113, 128, 150, 0.2);
+  background: radial-gradient(circle at 50% 50%, rgba(113, 128, 150, 0.08) 0%, transparent 70%);
+}
+.ending[data-code="11"] .ending-title { color: #1a202c; }
+.ending[data-code="11"] .ending-desc { color: #2d3748; }
+
+
+
+
+/* 乐子人评价 em */
+emg {
+  display: block;
+  box-sizing: border-box;
+  margin: 4px 20px 12px 20px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(255, 210, 63, 0.08), rgba(255, 154, 0, 0.06));
+  border-radius: 8px;
+  border-left: 3px solid #ffb347;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: #78621f;
+  font-style: normal;
+  letter-spacing: 0.2px;
+}', '<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>纯爱 | 堕落 | 养成 - 完美少女の救赎/堕落计划</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Liu+Jian+Mao+Cao&family=ZCOOL+XiaoWei&family=Long+Cang&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root { --primary-color: #7c3aed; --secondary-color: #a78bfa; --accent-color: #ec4899; --light-bg: #faf5ff; --card-bg: rgba(255, 255, 255, 0.85); --text-primary: #4c1d95; --text-secondary: #6b21a8; --border-color: rgba(233, 213, 255, 0.6); --pure-color: #f472b6; --fall-color: #7c3aed; --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%); --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); --shadow-soft: 0 10px 40px rgba(124, 58, 237, 0.08); --shadow-medium: 0 20px 60px rgba(124, 58, 237, 0.12); --glass-bg: rgba(255, 255, 255, 0.4); --glass-border: rgba(255, 255, 255, 0.4); }
+* { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+body { font-family: ''Noto Sans SC'', sans-serif; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); color: var(--text-primary); line-height: 1.6; font-size: 16px; min-height: 100vh; overflow-x: hidden; position: relative; cursor: url(''data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%237c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 7h7l-5 5 2 7-6-4-6 4 2-7-5-5h7z"/></svg>'') 12 12, auto; }
+#intro-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--light-bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.8s ease, visibility 0.8s ease; }
+.intro-logo { font-size: 4rem; background: var(--gradient-1); -webkit-background-clip: text; color: transparent; animation: pulse-intro 2s infinite; font-family: ''Ma Shan Zheng'', cursive; }
+@keyframes pulse-intro { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
+.bg-decoration { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(250,245,255,0.8) 50%, rgba(255,255,255,0.8) 100%); }
+.bg-circle { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.4; }
+.circle-1 { width: 600px; height: 600px; background: var(--gradient-1); top: -200px; right: -200px; animation: float 20s ease-in-out infinite; }
+.circle-2 { width: 500px; height: 500px; background: var(--gradient-2); bottom: -150px; left: -150px; animation: float 25s ease-in-out infinite reverse; }
+.particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+.particle { position: absolute; background: var(--primary-color); border-radius: 50%; opacity: 0.15; animation: particle-float 15s infinite linear; }
+@keyframes particle-float { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 20% { opacity: 0.3; } 80% { opacity: 0.3; } 100% { transform: translateY(-20vh) scale(1); opacity: 0; } }
+@keyframes float { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(40px, -40px) rotate(10deg); } }
+.header { text-align: center; padding: 50px 0 30px; position: relative; z-index: 10; }
+.logo { font-size: 3.5rem; font-weight: 900; background: var(--gradient-1); -webkit-background-clip: text; color: transparent; margin-bottom: 15px; letter-spacing: 2px; text-shadow: 0 10px 30px rgba(124,58,237,0.2); position: relative; display: inline-block; font-family: ''ZCOOL XiaoWei'', serif; }
+.divider { display: flex; align-items: center; justify-content: center; margin: 20px 0; }
+.divider-line { height: 2px; background: linear-gradient(90deg, transparent, var(--primary-color), transparent); flex-grow: 1; max-width: 250px; opacity: 0.5; }
+.divider-icon { padding: 0 20px; color: var(--accent-color); font-size: 1.5rem; animation: spin-slow 10s linear infinite; }
+@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.main-container { max-width: 1200px; margin: 0 auto; padding: 0 20px 60px; position: relative; z-index: 10; }
+.content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+.full-width { grid-column: 1 / -1; }
+.flip-card { background-color: transparent; width: 100%; height: 420px; perspective: 1200px; cursor: pointer; }
+.flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+.flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+.flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 24px; border: 1px solid var(--glass-border); overflow: hidden; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: var(--shadow-soft); transition: box-shadow 0.3s ease; }
+.flip-card-front { background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(250,245,255,0.5) 100%); }
+.flip-card-back { background: linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(250,245,255,0.75) 100%); transform: rotateY(180deg); }
+.flip-card:hover .flip-card-front, .flip-card:hover .flip-card-back { box-shadow: var(--shadow-medium); }
+.flip-hint { position: absolute; bottom: 20px; right: 20px; font-size: 0.85rem; color: var(--primary-color); background: rgba(255,255,255,0.9); padding: 8px 18px; border-radius: 30px; backdrop-filter: blur(10px); border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(124,58,237,0.15); font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; z-index: 5; }
+.flip-hint:hover { transform: translateY(-3px) scale(1.05); background: var(--primary-color); color: white; }
+.character-front { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 30px; }
+.character-avatar { font-size: 6rem; background: linear-gradient(135deg, #ff9a9e 0%, #c492f4 50%, #a18cd1 100%); -webkit-background-clip: text; color: transparent; filter: drop-shadow(0 0 20px rgba(255,154,158,0.7)) drop-shadow(0 0 40px rgba(196,146,244,0.6)); margin-bottom: 15px; line-height: 1; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.flip-card:hover .character-avatar { transform: scale(1.08) rotate(5deg); }
+.character-name { font-size: 2rem; font-weight: 700; background: var(--gradient-1); -webkit-background-clip: text; color: transparent; margin-bottom: 15px; font-family: ''ZCOOL XiaoWei'', serif; }
+.character-desc { font-size: 1.05rem; color: var(--text-secondary); line-height: 1.7; font-family: ''Noto Sans SC'', sans-serif; }
+.game-front { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; padding: 40px; }
+.game-intro { font-size: 1.2rem; color: var(--text-primary); line-height: 1.9; font-weight: 500; text-align: center; }
+.game-intro-icon { font-size: 4.5rem; margin-bottom: 25px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 10px 15px rgba(236,72,153,0.3)); }
+.card-back-content { padding: 35px; height: 100%; overflow-y: auto; text-align: left; }
+.card-back-content::-webkit-scrollbar { width: 6px; }
+.card-back-content::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
+.card-title { font-size: 1.5rem; font-weight: 700; color: var(--primary-color); margin-bottom: 25px; display: flex; align-items: center; border-bottom: 2px dashed var(--border-color); padding-bottom: 10px; }
+.detail-item { display: flex; align-items: flex-start; margin-bottom: 15px; background: rgba(255,255,255,0.6); padding: 12px; border-radius: 12px; transition: transform 0.3s ease; }
+.detail-item:hover { transform: translateX(8px); background: rgba(255,255,255,0.9); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+.detail-icon { color: var(--accent-color); margin-right: 15px; font-size: 1.3rem; }
+.detail-text { font-size: 0.95rem; color: #4b5563; line-height: 1.6; }
+.card { background: var(--glass-bg); border-radius: 24px; box-shadow: var(--shadow-medium); border: 1px solid var(--glass-border); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); overflow: hidden; transition: transform 0.3s ease; }
+.card-content { padding: 45px; }
+.route-selection { display: flex; gap: 30px; margin-bottom: 40px; }
+.route-card { flex: 1; position: relative; cursor: pointer; }
+.route-card input[type="radio"] { position: absolute; opacity: 0; }
+.route-label { display: block; padding: 30px; border-radius: 20px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid transparent; height: 100%; background: rgba(255,255,255,0.6); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+.route-card:hover .route-label { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+.route-title { font-weight: 700; font-size: 1.4rem; margin-bottom: 15px; display: flex; align-items: center; }
+.route-pure .route-title { color: var(--pure-color); }
+.route-fall .route-title { color: var(--fall-color); }
+.route-pure .route-title::before { content: ''🌸''; margin-right: 10px; font-size: 1.5rem; }
+.route-fall .route-title::before { content: ''⛓️''; margin-right: 10px; font-size: 1.5rem; }
+.route-description { font-size: 1rem; color: #4b5563; line-height: 1.6; }
+.route-card input[type="radio"]:checked + .route-label.route-pure { border-color: var(--pure-color); background: rgba(244,114,182,0.1); box-shadow: 0 0 0 4px rgba(244,114,182,0.2), 0 10px 25px rgba(244,114,182,0.15); transform: translateY(-5px); }
+.route-card input[type="radio"]:checked + .route-label.route-fall { border-color: var(--fall-color); background: rgba(124,58,237,0.1); box-shadow: 0 0 0 4px rgba(124,58,237,0.2), 0 10px 25px rgba(124,58,237,0.15); transform: translateY(-5px); }
+.route-title { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.advanced-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 500; padding: 5px 12px 5px 8px; border-radius: 20px; background: rgba(156,163,175,0.1); color: #9ca3af; cursor: pointer; transition: all 0.25s ease; user-select: none; }
+.advanced-badge:hover { background: rgba(244,114,182,0.1); color: var(--pure-color); }
+.advanced-badge.active { background: rgba(244,114,182,0.15); color: var(--pure-color); }
+.advanced-badge input { display: none; }
+.mini-toggle { width: 28px; height: 16px; background: #d1d5db; border-radius: 8px; position: relative; transition: background 0.25s ease; flex-shrink: 0; }
+.mini-toggle::after { content: ''''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; background: white; border-radius: 50%; transition: transform 0.25s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+.advanced-badge.active .mini-toggle { background: var(--pure-color); }
+.advanced-badge.active .mini-toggle::after { transform: translateX(12px); }
+fieldset { border: none; margin: 0; padding: 0; }
+.form-group { margin-bottom: 25px; position: relative; }
+.form-label { font-weight: 600; color: var(--text-primary); margin-bottom: 10px; display: block; font-size: 1.05rem; }
+.form-control { width: 100%; padding: 16px 20px; border: 2px solid rgba(255,255,255,0.8); border-radius: 16px; font-size: 1rem; transition: all 0.3s ease; background-color: rgba(255,255,255,0.7); color: var(--text-primary); box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); font-family: inherit; }
+.form-control:focus { border-color: var(--primary-color); background-color: #ffffff; box-shadow: 0 0 0 4px rgba(124,58,237,0.15), inset 0 1px 3px rgba(0,0,0,0.05); }
+.form-control::placeholder { color: #9ca3af; }
+textarea.form-control { min-height: 120px; resize: vertical; line-height: 1.6; }
+.form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 25px; }
+.copy-container { display: flex; justify-content: center; margin-top: 35px; gap: 20px; }
+.btn { padding: 16px 32px; border-radius: 16px; font-weight: 600; border: none; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-flex; align-items: center; justify-content: center; font-size: 1.05rem; position: relative; overflow: hidden; flex: 1; max-width: 250px; }
+.btn::after { content: ''''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); transition: left 0.5s ease; }
+.btn:hover::after { left: 150%; }
+.btn:hover { transform: translateY(-4px); }
+.btn:active { transform: translateY(0); }
+.btn-primary { background: var(--gradient-1); color: white; box-shadow: 0 10px 25px rgba(124,58,237,0.3); }
+.btn-primary:hover { box-shadow: 0 15px 35px rgba(124,58,237,0.4); }
+.btn-secondary { background: linear-gradient(135deg, #9ca3af, #6b7280); color: white; box-shadow: 0 10px 25px rgba(107,114,128,0.3); }
+.recommendation { background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(248,245,255,0.8)); border-radius: 18px; padding: 25px; text-align: center; font-size: 0.95rem; border: 1px solid var(--border-color); margin-top: 40px; backdrop-filter: blur(10px); box-shadow: var(--shadow-soft); }
+.custom-link { color: var(--primary-color); text-decoration: none; font-weight: 700; position: relative; padding: 0 5px; transition: color 0.3s ease; }
+.custom-link::after { content: ''''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px; background: var(--primary-color); transform: scaleX(0); transition: transform 0.3s ease; transform-origin: right; }
+.custom-link:hover { color: var(--accent-color); }
+.custom-link:hover::after { transform: scaleX(1); transform-origin: left; background: var(--accent-color); }
+.toast-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1050; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+.toast { background: rgba(31,41,55,0.9); color: white; border-radius: 30px; padding: 12px 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); backdrop-filter: blur(10px); font-weight: 500; display: flex; align-items: center; gap: 10px; animation: toastIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+@keyframes toastIn { from { transform: translateY(50px) scale(0.8); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+footer { text-align: center; padding: 30px 20px; margin-top: 20px; position: relative; z-index: 10; }
+footer a { color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease; background: rgba(255,255,255,0.4); padding: 8px 18px; border-radius: 20px; backdrop-filter: blur(5px); display: inline-block; border: 1px solid transparent; }
+footer a:hover { color: var(--primary-color); background: rgba(255,255,255,0.8); box-shadow: 0 4px 15px rgba(124,58,237,0.1); border-color: var(--border-color); }
+@media (max-width: 768px) { .content-grid { grid-template-columns: 1fr; } .route-selection { flex-direction: column; gap: 20px; } .card-content { padding: 25px; } .copy-container { flex-direction: column; } .btn { max-width: 100%; } .logo { font-size: 2.2rem; } .flip-card { height: 450px; } }
+</style>
+</head>
+<body>
+<div id="intro-overlay"><div class="intro-logo">少女の抉择</div><div style="margin-top:20px;color:var(--primary-color);">正在加载命运节点...</div></div>
+<div class="bg-decoration"><div class="bg-circle circle-1"></div><div class="bg-circle circle-2"></div></div>
+<div class="particles" id="particles"></div>
+<header class="header"><h1 class="logo">完美少女の救赎/堕落计划</h1><div class="divider"><div class="divider-line"></div><div class="divider-icon">✧⋄◎</div><div class="divider-line"></div></div></header>
+<main class="main-container">
+<div class="content-grid">
+<div class="flip-card" onclick="this.classList.toggle(''flipped'')">
+<div class="flip-card-inner">
+<div class="flip-card-front"><div class="character-front"><div class="character-avatar"><i class="fas fa-moon"></i></div><div class="character-name">江怀月</div><div class="character-desc">风月高中学生会副主席，16岁矛盾少女<br><br>像夏日清晨带着露珠的栀子花，完美得仿佛没有一丝阴霾。但那双清澈杏眼背后，藏着无人知晓的疲惫与渴望。</div></div><div class="flip-hint"><span>点击查看档案</span> <i class="fas fa-undo"></i></div></div>
+<div class="flip-card-back"><div class="card-back-content"><h3 class="card-title">✦ 秘密档案</h3><div class="detail-item"><div class="detail-icon">📚</div><div class="detail-text">清新明亮得完美无瑕。但当她以为没人注意时，那片星光会迅速黯淡，流露出小鹿般的惊惶。</div></div><div class="detail-item"><div class="detail-icon">🌙</div><div class="detail-text">书香门第的"原罪"：父母的爱是"有条件的"，这份沉甸甸的期望是她无法背负的枷锁。</div></div><div class="detail-item"><div class="detail-icon">🎂</div><div class="detail-text">笨拙的叛逆：偶尔买全糖奶茶，但喝两口又充满负罪感。书包里藏着画满涂鸦的笔记本。</div></div><div class="detail-item"><div class="detail-icon">📖</div><div class="detail-text">崩溃与相遇：期末掉到第二，人设崩塌。当晚在公园放声大哭，在最狼狈时遇见了你。</div></div><div class="detail-item"><div class="detail-icon">🎵</div><div class="detail-text">秘密梦想：没人的时候写忧伤反叛的歌词，用最大声的摇滚乐对着镜子练习嘶吼。</div></div></div><div class="flip-hint"><i class="fas fa-times"></i> <span>返回</span></div></div>
+</div>
+</div>
+<div class="flip-card" onclick="this.classList.toggle(''flipped'')">
+<div class="flip-card-inner">
+<div class="flip-card-front"><div class="game-front"><div class="game-intro-icon">💫</div><div class="game-intro">一个长期维持"完美少女"人设的少女的崩溃之时，你出现了。<br><br>你是会成为她内心的支柱，慢慢救赎她——<br>还是诱导她放松，彻底掌控她的人生？</div></div><div class="flip-hint"><span>游玩指北</span> <i class="fas fa-undo"></i></div></div>
+<div class="flip-card-back"><div class="card-back-content"><h3 class="card-title">✦ 游玩说明</h3><div class="detail-item" style="background:rgba(244,114,182,0.1);"><div class="detail-icon">⚠️</div><div class="detail-text" style="color:#be185d;font-weight:500;">建议不要在游玩过程中途换路线，不确定会出现什么奇怪的错误。"都给我去玩纯爱去啊！！！岂可修"</div></div><h3 class="card-title" style="margin-top:20px;font-size:1.2rem;">🤖 模型推荐</h3><div class="detail-item"><div class="detail-icon" style="color:#8b5cf6;">⚡</div><div class="detail-text"><strong>claude-3.7</strong><br>目前的默认模型，性价比不错的选择。(yuegle_low_quality渠道)</div></div><div class="detail-item"><div class="detail-icon" style="color:#06b6d4;">🧠</div><div class="detail-text"><strong>claude-4.5</strong><br>智商卓越但消耗相对较高。(推荐manei_anthropic渠道)</div></div><div class="detail-item"><div class="detail-icon" style="color:#10b981;">💎</div><div class="detail-text"><strong>gemini-2.5-pro</strong><br>表现稳定，偶尔有截断问题。(推荐aibus_google渠道)</div></div></div><div class="flip-hint"><i class="fas fa-times"></i> <span>返回</span></div></div>
+</div>
+</div>
+</div>
+<div class="card full-width">
+<div class="card-content">
+<h2 class="card-title" style="justify-content:center;font-size:2rem;border:none;margin-bottom:30px;">制定你的计划</h2>
+<form id="gameForm">
+<fieldset>
+<div class="route-selection">
+<div class="route-card"><input type="radio" id="pureRoute" name="route" value="pure" checked><label for="pureRoute" class="route-label route-pure"><div class="route-title">纯爱路线<span class="advanced-badge" id="advancedBadge" onclick="event.stopPropagation(); this.classList.toggle(''active''); document.getElementById(''pureAdvanced'').checked = this.classList.contains(''active''); document.getElementById(''advancedHint'').style.display = this.classList.contains(''active'') ? ''block'' : ''none'';"><input type="checkbox" id="pureAdvanced" name="pureAdvanced"><span class="mini-toggle"></span>进阶</span></div><p class="route-description">救赎疲惫的"完美少女"，一步步攻略她，走进她的内心，享受治愈系甜甜的恋爱~</p></label></div>
+<div class="route-card"><input type="radio" id="fallRoute" name="route" value="fall"><label for="fallRoute" class="route-label route-fall"><div class="route-title">堕落路线</div><p class="route-description">引诱疲惫的"完美少女"，勾引她放松，引导她堕落，将她调教成完全依赖你的存在。</p></label></div>
+</div>
+<div id="advancedHint" style="display:none; text-align:center; margin:30px 0; padding:18px 30px; background:linear-gradient(135deg, rgba(252,231,243,0.9) 0%, rgba(251,207,232,0.85) 100%); border-radius:18px; border:2px solid rgba(244,114,182,0.3); color:#f472b6; font-size:1rem; font-weight:600; box-shadow:0 4px 20px rgba(244,114,182,0.15); backdrop-filter:blur(10px);">
+<i class="fas fa-heart" style="margin-right:10px; color:#ec4899;"></i>解锁真实度、压力值系统（内含七大结局）
+</div>
+<div class="form-row">
+<div class="form-group"><label for="playerName" class="form-label">你的姓名</label><input type="text" class="form-control" id="playerName" name="playerName" placeholder="请输入姓名（留空则为无）"></div>
+<div class="form-group"><label for="playerAge" class="form-label">你的年龄</label><input type="number" class="form-control" id="playerAge" name="playerAge" placeholder="请输入年龄" min="1" max="150"></div>
+<div class="form-group"><label for="playerGender" class="form-label">你的性别</label><select class="form-control" id="playerGender" name="playerGender"><option value="男" selected>男</option><option value="女">女</option><option value="保密">保密</option></select></div>
+</div>
+<div class="form-group"><label for="otherSettings" class="form-label">补充设定 (可选)</label><textarea class="form-control" id="otherSettings" name="otherSettings" placeholder="可以输入你的外貌、性格、背景、特殊能力，或与少女的隐藏关系等设定..."></textarea></div>
+<div class="form-group"><label for="openingScene" class="form-label">开场情境</label><textarea class="form-control" id="openingScene" name="openingScene" placeholder="我在深夜闲逛，忽然听到断断续续的哭泣声，于是前去查看，发现是一个学生模样的少女在崩溃哭泣..."></textarea></div>
+</fieldset>
+<div class="copy-container">
+<button type="button" class="btn btn-primary" id="copyBtn"><i class="fas fa-magic" style="margin-right:8px;"></i> 一键生成并复制设定</button>
+<button type="button" class="btn btn-secondary" id="resetBtn"><i class="fas fa-redo" style="margin-right:8px;"></i> 重置数据</button>
+</div>
+</form>
+<div class="recommendation">
+<p style="margin-bottom:8px;color:var(--text-primary);"><strong>✨ 推荐其他作品：高级设定工具 ✨</strong></p>
+<p style="color:var(--text-secondary);font-size:0.9rem;">想要创作自己幻想的角色和世界设定吗？推荐使用
+<a href="https://aiporn.tw/zh/explore/installed/786829f3-8fab-4f09-85fa-cbf839b79123?ref_id=e62df45e-f7e4-4887-b950-8e30e7b3d8f2" target="_blank" class="custom-link">万能设定生成器</a>
+，帮助你快速创建丰富的角色和世界设定！</p>
+</div>
+</div>
+</div>
+</main>
+<div class="toast-container" id="toastContainer"></div>
+<script>
+document.addEventListener(''DOMContentLoaded'', function() {
+setTimeout(() => { const intro = document.getElementById(''intro-overlay''); intro.style.opacity = ''0''; setTimeout(() => intro.style.display = ''none'', 800); }, 1500);
+const particlesContainer = document.getElementById(''particles'');
+for(let i=0; i<25; i++) { const p = document.createElement(''div''); p.className = ''particle''; const size = Math.random() * 6 + 2; p.style.width = size + ''px''; p.style.height = size + ''px''; p.style.left = Math.random() * 100 + ''%''; p.style.animationDelay = (Math.random() * 15) + ''s''; p.style.animationDuration = (Math.random() * 10 + 10) + ''s''; const colors = [''#7c3aed'', ''#a78bfa'', ''#ec4899'', ''#f472b6'']; p.style.background = colors[Math.floor(Math.random() * colors.length)]; particlesContainer.appendChild(p); }
+const form = document.getElementById(''gameForm'');
+function showToast(msg, isErr=false) {
+const container = document.getElementById(''toastContainer'');
+const toast = document.createElement(''div'');
+toast.className = ''toast'';
+toast.innerHTML = (isErr ? ''❌ '' : ''✅ '') + msg;
+if(isErr) toast.style.background = ''rgba(220, 38, 38, 0.9)'';
+container.appendChild(toast);
+setTimeout(() => { toast.style.opacity = ''0''; setTimeout(() => toast.remove(), 400); }, 2500);
+}
+// 进阶模式提示显示控制
+const advancedHint = document.getElementById(''advancedHint'');
+const pureAdvancedCheckbox = document.getElementById(''pureAdvanced'');
+
+pureAdvancedCheckbox.addEventListener(''change'', function() {
+  advancedHint.style.display = this.checked ? ''block'' : ''none'';
+});
+document.getElementById(''copyBtn'').addEventListener(''click'', function() {
+const fd = new FormData(form);
+const route = fd.get(''route'') === ''pure'' ? ''纯爱'' : ''堕落'';
+const name = fd.get(''playerName'').trim() || ''无'';
+const age = fd.get(''playerAge'').trim() || ''无'';
+const gender = fd.get(''playerGender'');
+const other = fd.get(''otherSettings'').trim();
+const opening = fd.get(''openingScene'').trim() || ''我在深夜闲逛，忽然听到断断续续的哭泣声，于是前去查看，发现是一个学生模样的少女在崩溃哭泣'';
+const isAdvanced = fd.get(''route'') === ''pure'' && document.getElementById(''pureAdvanced'').checked;
+const routeLabel = fd.get(''route'') === ''pure'' ? (isAdvanced ? ''进阶'' : ''纯爱'') : ''堕落'';
+let text = `# 【用户设定｜模式：${routeLabel}】\n姓名：${name}\n年龄：${age}\n性别：${gender}\n`;
+if(other) text += `\n## 其他设定\n${other}\n`;
+text += `\n## 开场设定\n${opening}`;
+const ta = document.createElement(''textarea'');
+ta.value = text;
+ta.style.position = ''fixed'';
+ta.style.opacity = ''0'';
+document.body.appendChild(ta);
+ta.select();
+try {
+const success = document.execCommand(''copy'');
+if(success) { showToast(''设定已生成并注入剪贴板！''); const btn = document.getElementById(''copyBtn''); const oldHtml = btn.innerHTML; btn.innerHTML = ''<i class="fas fa-check" style="margin-right:8px;"></i> 复制成功''; setTimeout(() => btn.innerHTML = oldHtml, 2000); }
+else showToast(''复制失败，请重试'', true);
+} catch(e) { showToast(''浏览器拦截了复制请求'', true); }
+document.body.removeChild(ta);
+});
+document.getElementById(''resetBtn'').addEventListener(''click'', function() {
+form.reset();
+showToast(''表单数据已重置归零✨'');
+});
+});
+</script>
+</body>
+</html>', '现代', '2026-09-21 16:45:44', '2026-09-21 16:45:44') ON CONFLICT (id) DO NOTHING;
+INSERT INTO stories (id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook_json, roles_json, scenes_json, styles_json, first_turn_demo_json, custom_css, custom_html, category, created_at, updated_at) VALUES ('2168197e-903b-4727-97e3-bf5f1d5b6c8f', '老爸你想出门上班必须先操我一下。调皮的女儿用自己的身体堵门。', '都市禁断 · 傲娇堵门', '🚪', '调皮女儿身体堵门', '娇憨争宠·上班前夕的禁断推拉', 'https://catai.wiki/793f4e3c-83ed-430e-40c3-a9400a5e3f00/cover', 'bg-amber-950/90 text-orange-200 border-orange-500/50', 'from-rose-500 to-amber-600', '{"title": "老爸你想出门上班必须先操我一下。调皮的女儿用自己的身体堵门。", "desc": "我的女儿特别黏人，从小就喜欢缠着我跟我撒娇，而且她嫉妒心强，甚至她连她的妈妈都嫉妒。不知道是不是哪次我和媳妇做爱被她发现了还是怎么，她甚至觉得我只跟媳妇做爱是不爱她的表现，跟她解释她也不听。某天，我着急忙慌的要去上班，女儿一直黏着我缠着我跟我撒娇，不让我上班，让我在家陪她。我耐心的跟她解释说班还是要上的，没想到这个小祖宗直接把脚搭在门把上张开腿挡住了门口，气冲冲的对我说，老爸你老是跟妈妈搂搂抱抱的，都不抱我，如果你今天不不像对妈妈那样也抱我，就不准出门上班。这不是逼着我做一个禽兽吗，可恶。\n（撞墙别慌，刷新出奇迹。）", "bg_image": "https://catai.wiki/793f4e3c-83ed-430e-40c3-a9400a5e3f00/cover", "opening_options": ["【生成初始剧情】：进入调皮女儿赤脚堵门的名场面开局", "【温和宠溺】：揉揉女儿的小脑袋，无奈苦笑哄她让路", "【板起脸严肃】：冷哼一声严厉训诫，吓唬要动用家法", "【顺水推舟·试探】：上前一步反手将她按在门上低声耳语"]}', '[{"name": "林可可", "role": "调皮黏人的大一女儿", "desc": "19岁，大一新生。清纯甜美的娃娃脸，身材玲珑曼妙。极度依恋父亲，占有欲极强，因吃妈妈的醋而在玄关用娇躯死死堵门，不准父亲出门上班。"}, {"name": "林婉清", "role": "温柔贤惠的妻子", "desc": "40岁，温柔端庄的贤妻良母，正在厨房里哼着歌准备早餐，对玄关处的暧昧对峙浑然不知。"}]', '[{"title": "玄关防盗门前 · 晨光熹微的上班前夕", "desc": "清晨八点，阳光透过百叶窗洒在木地板上。厨房里传来煎蛋滋滋作响的声音，而玄关防盗门前，身穿超短睡裙的女儿正赤着一双晶莹剔透的小脚横搭在门锁上，气鼓鼓地张开双臂挡住出路。"}]', '{"dialogue_style": "都市家庭禁断伦理拉扯，极具张力与占有欲的互动对白，细腻肢体描写", "format": "AI风月标准双栏规范"}', '[{"index": 1, "isUser": false, "scene": "玄关防盗门前 · 晨光熹微的上班前夕", "story": "<tl>📅时间：清晨 07:55 | 🏠地点：自家公寓玄关防盗门前 | 🍳环境：厨房传来妻子做早餐的声响</tl>\n\n<article>\n<p>手表的指针已经指向七点五十五分，你拎着公文包，急匆匆地系上领带正准备换鞋推门。然而还没等你的手指碰到门把手，一道娇小纤细的身影便如同小旋风般横插过来，直接整个人贴在了厚重的防盗门板上。</p>\n\n<p>女儿林可可身上只穿着一件极为宽松的粉白条纹丝绸睡裙，裙摆堪堪垂到大腿根部。她白嫩修长的一双小腿肆无忌惮地横抬起来，光洁粉嫩的脚趾直接踩在金属门把锁扣上，将整个门严丝合缝地堵了个彻底。晨光透过玄关照在她未施粉黛却吹弹可破的俏脸上，两颊因为气愤而鼓起，胸口随着急促的呼吸一阵阵起伏。</p>\n\n<p><w>“老爸！你今天要是敢推开门走出去一步试试看！”</w></p>\n\n<p>她仰着那张精致漂亮的小脸，一双水汪汪的大眼睛里盛满了委屈与霸道：</p>\n<p><w>“昨晚我都看到了……你回房之后就跟妈妈搂搂抱抱的，亲了她好多次！从小到大你都说最疼我，结果现在碰都不让我碰！你今天如果不像抱妈妈那样好好抱我亲我，我就死死卡在门上，让你上班迟到被扣光全勤！”</w></p>\n\n<p>不远处厨房里传来油锅滋滋的煎蛋声，妻子林婉清温柔的声音隐隐飘来：“老公，早餐马上就好啦，你公文包收拾好了吗？”</p>\n\n<p><thk>眼前的女儿任性又娇憨，赤裸的双腿近在咫尺，厨房里的妻子随时可能端着餐盘走出来……</thk></p>\n</article>\n\n<opt>\n<suggested_questions>\n<d>A. 【温和宠溺·苦笑安抚】：无奈地叹了口气，伸手揉了揉她柔软的发丝：“可可别闹，爸爸今天有个涉及季度考评的重要晨会。听话先把腿放下来，晚上爸爸一下班就带你去吃你最喜欢的日料，好不好？”【策略评估：以父亲的宽厚包容化解危机，维持正常的亲情距离】</d>\n<d>B. 【严厉威严·板脸震慑】：收敛笑容，神色冷峻地看着她：“把脚给我放下来！越来越没大没小了，在家里堵门威胁起父亲来了？真当爸爸不会拿家法收拾你？”【策略评估：树立严父权威，逼迫她退缩，但可能激起更强烈的叛逆与委屈】</d>\n<d>C. 【顺水推舟·欺身逼近】：放下公文包，上前一步两手撑在门板两侧将她牢牢禁锢在怀中，低下头贴着她滚烫的小耳朵沉声低语：“小丫头，知不知道自己在说什么？你以为爸爸真的不敢动你？”【策略评估：打破道德防线，顺着她的争宠挑衅进行危险的肢体推拉】</d>\n<d>D. 【心惊胆战·假装应付】：眼神紧张地瞥了一眼厨房方向，迅速俯身飞快地在她软嫩的脸颊上亲了一口，小声催促：“亲了亲了！赶紧让开，要是被你妈妈看见了像什么样子！”【策略评估：仓促妥协满足她的部分要求，暂时化解迟到危机】</d>\n</suggested_questions>\n</opt>", "branches": [{"tag": "A", "title": "温和宠溺苦笑安抚", "desc": "揉揉发丝温和哄劝，承诺晚上下班带她吃大餐"}, {"tag": "B", "title": "严厉威严立规矩", "desc": "板起脸训斥女儿不懂规矩，以严父威严施压"}, {"tag": "C", "title": "顺水推舟欺身禁锢", "desc": "撑在门板上将她圈在怀中，贴着耳根进行危险反撩"}, {"tag": "D", "title": "慌忙偷亲应付过关", "desc": "戒备厨房妻子动静，匆忙在女儿脸上亲一口促其让路"}]}]', '', '<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幻境织网者 - 角色与剧情设定生成器</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fff8f0;
+            --card-bg: #ffffff;
+            --card-border: #ffe9d6;
+            --accent-primary: #ff6b9d;
+            --accent-secondary: #a66cff;
+            --accent-highlight: #4d96ff;
+            --accent-sun: #ffc53d;
+            --accent-mint: #52b788;
+            --text-main: #5a4a42;
+            --text-sub: #9c8f86;
+            --input-bg: #fffbf5;
+            --input-border: #ffe6d0;
+            --radius-md: 14px;
+            --radius-lg: 24px;
+            --shadow-soft: 0 10px 30px rgba(255, 175, 130, 0.18);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: ''Noto Sans SC'', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-family: ''Noto Serif SC'', serif;
+            font-size: 2.9em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff7a5c 0%, #ff6b9d 50%, #a66cff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: 3px;
+        }
+
+        header p {
+            color: var(--text-sub);
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 35px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: ''Noto Serif SC'', serif;
+            font-size: 1.45em;
+            font-weight: 900;
+            color: #5a4a42;
+            margin-bottom: 22px;
+        }
+
+        .title-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            border-radius: 15px;
+            font-size: 1.25em;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(255, 150, 120, 0.22);
+        }
+        .title-icon.pink { background: linear-gradient(135deg, #ffd3e0, #ffe9f0); }
+        .title-icon.blue { background: linear-gradient(135deg, #cde8ff, #e8f4ff); }
+        .title-icon.sun { background: linear-gradient(135deg, #fff3cd, #ffe9b3); }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #6b5b52;
+        }
+
+        label span {
+            color: var(--accent-secondary);
+            font-size: 0.82em;
+            font-weight: 500;
+            margin-left: 4px;
+        }
+
+        input, textarea {
+            background-color: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95em;
+            transition: all 0.25s ease;
+        }
+
+        select {
+            background-color: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: var(--radius-md);
+            padding: 10px 38px 10px 12px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=''http://www.w3.org/2000/svg'' width=''14'' height=''14'' viewBox=''0 0 24 24'' fill=''none'' stroke=''%23ff6b9d'' stroke-width=''3'' stroke-linecap=''round'' stroke-linejoin=''round''%3e%3cpolyline points=''6 9 12 15 18 9''%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 14px;
+            transition: all 0.25s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.14);
+            background-color: #ffffff;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #bfb2a8;
+            opacity: 1;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.14);
+            background-color: #ffffff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        /* 角色卡片 */
+        .character-card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 18px;
+            padding: 16px 18px;
+            box-shadow: 0 6px 18px rgba(255, 175, 130, 0.12);
+            margin-bottom: 14px;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .character-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(255, 175, 130, 0.22);
+        }
+
+        .character-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .character-card .form-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 0;
+        }
+
+        .character-badge {
+            font-size: 0.95em;
+            font-weight: 800;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff6b9d, #ff9a5c);
+            padding: 4px 14px;
+            border-radius: 999px;
+            box-shadow: 0 4px 10px rgba(255, 107, 157, 0.3);
+        }
+
+        .btn-remove-character {
+            border: 2px solid #ffd3d3;
+            background: #fff5f5;
+            color: #e57373;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-family: inherit;
+            font-size: 0.82em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-remove-character:hover {
+            background: #e57373;
+            color: #ffffff;
+            border-color: #e57373;
+        }
+
+        .btn-add-character {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #9be0b2;
+            background: #f4fff7;
+            color: #2f9e63;
+            font-size: 0.95em;
+            font-weight: 700;
+            font-family: inherit;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .btn-add-character:hover {
+            background: #9be0b2;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .btn-generate {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 17px;
+            font-size: 1.2em;
+            font-weight: 800;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff9a5c 0%, #ff6b9d 55%, #a66cff 120%);
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(255, 107, 157, 0.4);
+            font-family: inherit;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 107, 157, 0.5);
+        }
+
+        .btn-row {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 22px;
+        }
+
+        .btn-quick {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #2f9e63;
+            background: linear-gradient(135deg, #eafaf0, #d5f5e0);
+            border: 2px solid #9be0b2;
+            border-radius: 999px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.25s;
+        }
+
+        .btn-quick:hover {
+            background: linear-gradient(135deg, #9be0b2, #6bcb77);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        /* 使用说明 */
+        .flow-hint {
+            background: linear-gradient(135deg, #fff3e0, #ffe9f0);
+            border: 2px dashed #ffc9d6;
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            font-size: 0.95em;
+            color: #8a5a52;
+            margin-bottom: 24px;
+            line-height: 1.7;
+        }
+        .flow-hint b { color: #ff6b9d; }
+
+        /* 可点选玩法面板 */
+        .options-panel {
+            background: #fffbf5;
+            border: 2px solid #ffe6d0;
+            border-radius: 18px;
+            padding: 18px 20px;
+            margin-bottom: 26px;
+        }
+        .options-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .options-title {
+            font-weight: 800;
+            font-size: 1.1em;
+            color: #5a4a42;
+        }
+        .btn-reset {
+            border: 2px solid #c9c2f5;
+            background: #f4f2ff;
+            color: #7c6ee8;
+            padding: 5px 14px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-family: inherit;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-reset:hover {
+            background: #a66cff;
+            color: #ffffff;
+            border-color: #a66cff;
+        }
+        .option-group { margin-bottom: 14px; }
+        .option-group:last-child { margin-bottom: 0; }
+        .option-group-label {
+            font-size: 0.9em;
+            font-weight: 700;
+            color: #6b5b52;
+            margin-bottom: 8px;
+        }
+        .option-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .chip {
+            border: 2px solid #ffd3b3;
+            background: #fff7ef;
+            color: #b07b5a;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 0.92em;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chip:hover { transform: translateY(-1px); }
+        .chip.active {
+            background: linear-gradient(135deg, #ff9a5c, #ff6b9d);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(255, 107, 157, 0.35);
+        }
+        .option-desc {
+            margin-top: 8px;
+            font-size: 0.82em;
+            color: #b39a90;
+        }
+
+        /* 模态弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(95, 70, 60, 0.35);
+            backdrop-filter: blur(6px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            border: 2px solid #ffe6d0;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 750px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(255, 120, 90, 0.28);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 2px solid #ffefd2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: var(--accent-primary);
+            font-size: 1.3em;
+            font-weight: 800;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #ff6b9d;
+        }
+
+        .modal-body {
+            padding: 20px 25px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        #prompt-output {
+            width: 100%;
+            min-height: 320px;
+            background-color: #fff7ef;
+            border: 2px solid #ffe6d0;
+            border-radius: var(--radius-md);
+            padding: 15px;
+            color: #5a4a42;
+            font-family: ''Courier New'', Courier, monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            resize: vertical;
+            outline: none;
+        }
+        #prompt-output:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.14);
+        }
+
+        .modal-footer {
+            padding: 15px 25px;
+            border-top: 2px solid #ffefd2;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #52b788 0%, #2f9e63 100%);
+            color: #ffffff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-family: inherit;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-copy:hover {
+            background: linear-gradient(135deg, #2f9e63 0%, #1f8a54 100%);
+            transform: translateY(-2px);
+        }
+
+        /* 底部与推广区域 */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            border-top: 2px dashed #ffe6d0;
+            padding-top: 25px;
+            color: var(--text-sub);
+            font-size: 0.95em;
+        }
+
+        .footer a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .footer a:hover {
+            color: var(--accent-secondary);
+            text-decoration: underline;
+        }
+
+    /* ========== 移动端适配 ========== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 14px;
+            }
+
+            header h1 {
+                font-size: 1.5em;
+                letter-spacing: 1px;
+                line-height: 1.4;
+                margin-bottom: 8px;
+            }
+
+            header p {
+                font-size: 0.95em;
+            }
+
+            .main-card {
+                padding: 20px 14px;
+                border-radius: 18px;
+                margin-bottom: 20px;
+            }
+
+            .section-title {
+                font-size: 1.2em;
+                gap: 10px;
+                margin-bottom: 16px;
+            }
+
+            .title-icon {
+                width: 38px;
+                height: 38px;
+                font-size: 1.05em;
+                border-radius: 12px;
+            }
+
+            .form-grid {
+                gap: 14px;
+                margin-bottom: 16px;
+            }
+
+            input, textarea, select {
+                font-size: 1em;
+                -webkit-appearance: none;
+                appearance: none;
+            }
+
+            label {
+                font-size: 0.92em;
+            }
+
+            .character-card {
+                padding: 14px 12px;
+                margin-bottom: 14px;
+            }
+
+            .character-card .form-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .character-badge {
+                font-size: 0.88em;
+                padding: 4px 12px;
+            }
+
+            .btn-remove-character {
+                padding: 4px 10px;
+                font-size: 0.78em;
+            }
+
+            .btn-add-character {
+                font-size: 0.92em;
+            }
+
+            .flow-hint {
+                font-size: 0.92em;
+                padding: 12px 14px;
+            }
+
+            .options-panel {
+                padding: 14px;
+            }
+
+            .options-header {
+                gap: 10px;
+            }
+
+            .options-title {
+                font-size: 1em;
+            }
+
+            .option-chips {
+                gap: 8px;
+            }
+
+            .chip {
+                font-size: 0.88em;
+                padding: 6px 13px;
+            }
+
+            .btn-generate {
+                padding: 14px;
+                font-size: 1.05em;
+            }
+
+            .btn-quick {
+                padding: 13px;
+                font-size: 1em;
+            }
+
+            .modal {
+                padding: 12px;
+                align-items: flex-end;
+            }
+
+            .modal-content {
+                max-height: 92vh;
+                border-radius: 20px 20px 0 0;
+            }
+
+            .modal-header {
+                padding: 16px 18px;
+            }
+
+            .modal-header h3 {
+                font-size: 1.15em;
+            }
+
+            .modal-body {
+                padding: 16px 18px;
+            }
+
+            .modal-footer {
+                padding: 12px 18px;
+            }
+
+            .btn-copy {
+                width: 100%;
+                text-align: center;
+            }
+
+            .footer {
+                font-size: 0.85em;
+                margin-top: 28px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 14px 10px;
+            }
+
+            header {
+                margin-bottom: 24px;
+            }
+
+            .main-card {
+                padding: 16px 12px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>调皮的女儿用自己的身体堵门</h1>
+    </header>
+
+    <div class="main-card">
+        <!-- 使用说明 -->
+        <div class="flow-hint">
+            <b>玩法说明：</b>选主角风格 → 改剧情（可以不改）→ 设定角色（可增加角色） → 一键复制发给AI当第一条消息，生成初始剧情。
+            懒汉玩法-直接点击上方生成初始剧情，或者拖到最后点击懒得填表，总之直接发送“生成初始剧情”就可以。
+        </div>
+      
+        <!-- 可点选属性 -->
+        <div class="options-panel">
+            <div class="options-header">
+                <span class="options-title">⚙️ 玩法风格</span>
+                <button type="button" class="btn-reset" onclick="resetAll()">↺ 回全默认</button>
+            </div>
+            <div class="option-group">
+                <div class="option-group-label">男主风格</div>
+                <div class="option-chips" id="chips-style">
+                    <button type="button" class="chip active" data-default="true" data-value="温和宠溺型——体贴入微、包容纵容，主角最爱被黏" onclick="selectChip(this, ''chips-style'')">温和宠溺</button>
+                    <button type="button" class="chip" data-value="闷骚正经型——看似正经，内心骚气" onclick="selectChip(this, ''chips-style'')">闷骚正经</button>
+                    <button type="button" class="chip" data-value="高冷反差型——表面冷淡，内心炽热，反差拉满" onclick="selectChip(this, ''chips-style'')">高冷反差</button>
+                    <button type="button" class="chip" data-value="懒散随和型——随性自在，越随意越好笑" onclick="selectChip(this, ''chips-style'')">懒散随和</button>
+                </div>
+                <div class="option-desc">说明：温和宠溺=温和纯爱 · 闷骚正经=假证据 · 高冷反差=打反差 · 懒散=随意搞笑</div>
+            </div>
+            <div class="option-group">
+                <div class="option-group-label">暧昧程度</div>
+                <div class="option-chips" id="chips-romance">
+                    <button type="button" class="chip active" data-default="true" data-value="全开——感情线全力展开，走色情刺激路线" onclick="selectChip(this, ''chips-romance'')">全开</button>
+                    <button type="button" class="chip" data-value="纯爱——全程暧昧+剧情，用爱感化" onclick="selectChip(this, ''chips-romance'')">纯爱</button>
+                </div>
+                <div class="option-desc">说明：全开=没有顾忌 · 纯爱=全程暧昧+剧情</div>
+            </div>
+        </div>
+
+        <!-- 剧情大纲与开局场景 -->
+        <div class="section-title">
+            <span class="title-icon blue">📖</span>
+            剧情大纲与开局场景
+        </div>
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label for="plot-outline">剧情大纲与开局场景</label>
+                <textarea id="plot-outline" rows="4" data-default="生成初始剧情" placeholder="我的女儿特别黏人，从小就喜欢缠着我跟我撒娇，而且她嫉妒心强，甚至她连她的妈妈都嫉妒。不知道是不是哪次我和媳妇做爱被她发现了还是怎么，她甚至觉得我只跟媳妇做爱是不爱她的表现，跟她解释她也不听。某天，我着急忙慌的要去上班，女儿一直黏着我缠着我跟我撒娇，不让我上班，让我在家陪她。我耐心的跟她解释说班还是要上的，没想到这个小祖宗直接把脚搭在门把上张开腿挡住了门口，气冲冲的对我说，老爸你老是跟妈妈搂搂抱抱的，都不抱我，如果你今天不不像对妈妈那样也抱我，就不准出门上班。这不是逼着我做一个禽兽吗，可恶。"></textarea>
+            </div>
+        </div>
+
+        <!-- 认知设定 -->
+        <div class="section-title" style="margin-top: 34px;">
+            <span class="title-icon sun">🧠</span>
+            认知设定
+        </div>
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label for="plot-cognition">认知设定</label>
+                <textarea id="plot-cognition" rows="4" data-default="爸爸不做那些事就是不爱我" placeholder="爸爸不做那些事就是不爱我（可修改，例如角色对主角的初始看法、世界运行规则等）"></textarea>
+            </div>
+        </div>
+
+        <!-- 视角设定 -->
+        <div class="section-title" style="margin-top: 34px;">
+            <span class="title-icon blue">🎬</span>
+            视角设定
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="plot-pov">视角设定</label>
+                <select id="plot-pov">
+                    <option value="男性视角" selected>男性视角</option>
+                    <option value="女性视角">女性视角</option>
+                    <option value="第三方视角">第三方视角</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="plot-pov-custom">自定义视角 <span>（选填，填写后优先使用）</span></label>
+                <input type="text" id="plot-pov-custom" placeholder="例如：上帝视角、反派第一人称视角等">
+            </div>
+        </div>
+
+        <!-- 角色设定 -->
+        <div class="section-title" style="margin-top: 34px;">
+            <span class="title-icon pink">👧</span>
+            角色属性设定
+        </div>
+        <div id="characters-container">
+            <!-- 女友妈妈 -->
+            <div class="character-card">
+                <div class="character-header">
+                    <span class="character-badge">女儿</span>
+                    <button type="button" class="btn-remove-character" onclick="removeCharacter(this)">删除角色</button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="char-name-1">姓名</label>
+                        <input type="text" id="char-name-1" class="char-name" data-default="林晓晓" placeholder="林晓晓（可改成你喜欢的名字）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-age-1">年龄</label>
+                        <input type="text" id="char-age-1" class="char-age" data-default="14岁" placeholder="14岁（可修改年龄）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-identity-1">身份职业</label>
+                        <input type="text" id="char-identity-1" class="char-identity" data-default="学生" placeholder="学生（可修改身份职业）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-relation-1">与主角关系</label>
+                        <input type="text" id="char-relation-1" class="char-relation" data-default="父女" placeholder="父女（可修改）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-personality-1">性格特点</label>
+                        <input type="text" id="char-personality-1" class="char-personality" data-default="清纯可爱，嫉妒心强" placeholder="清纯可爱，嫉妒心强">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-appearance-1">外貌身材</label>
+                        <input type="text" id="char-appearance-1" class="char-appearance" data-default="贫乳双马尾" placeholder="贫乳双马尾">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="char-other-1">其他设定 <span>(背景 / 能力 / 动机等)</span></label>
+                        <textarea id="char-other-1" class="char-other" data-default="对爸爸不跟自己亲近非常不满" placeholder="对爸爸不跟自己亲近非常不满"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 女友-->
+            <div class="character-card">
+                <div class="character-header">
+                    <span class="character-badge">妻子</span>
+                    <button type="button" class="btn-remove-character" onclick="removeCharacter(this)">删除角色</button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="char-name-2">姓名</label>
+                        <input type="text" id="char-name-2" class="char-name" data-default="林婉" placeholder="林婉可改成你喜欢的名字）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-age-2">年龄</label>
+                        <input type="text" id="char-age-2" class="char-age" data-default="35岁" placeholder="35岁（可修改年龄）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-identity-2">身份职业</label>
+                        <input type="text" id="char-identity-2" class="char-identity" data-default="家庭主妇" placeholder="家庭主妇">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-relation-2">与主角关系</label>
+                        <input type="text" id="char-relation-2" class="char-relation" data-default="夫妻" placeholder="夫妻（可修改）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-personality-2">性格特点</label>
+                        <input type="text" id="char-personality-2" class="char-personality" data-default="温柔知性" placeholder="温柔知性">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-appearance-2">外貌身材</label>
+                        <input type="text" id="char-appearance-2" class="char-appearance" data-default="成熟性感" placeholder="成熟性感">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="char-other-2">其他设定 <span>(背景 / 能力 / 动机等)</span></label>
+                        <textarea id="char-other-2" class="char-other" data-default="传统保守" placeholder="传统保守"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn-add-character" onclick="addCharacter()">＋ 添加角色</button>
+
+        <div class="btn-row">
+            <button class="btn-generate" onclick="generatePrompt()">✨ 生成开场指令并复制</button>
+            <button class="btn-quick" onclick="quickStart()">🍃 懒得填表直接开始</button>
+        </div>
+    </div>
+
+    <!-- 底部强制推广模块 -->
+    <div class="footer">
+        <a href="https://aiaha.xyz/zh/explore/installed/154ec914-e1dc-47db-8e99-61c745b25d8d?preview=1" target="_blank">
+            由风月作品一键生成工具协助生成。
+        </a>
+    </div>
+</div>
+
+<!-- 预览与复制模态框 -->
+<div id="copyModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>📜 初始提示词预览</h3>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <textarea id="prompt-output" spellcheck="false"></textarea>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-copy" onclick="executeCopy()">一键复制并开始游戏</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById(''copyModal'');
+
+    function characterCardTemplate(index) {
+        return `
+        <div class="character-card">
+            <div class="character-header">
+                <span class="character-badge">角色 ${index}</span>
+                <button type="button" class="btn-remove-character" onclick="removeCharacter(this)">删除角色</button>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="char-name-${index}">姓名</label>
+                    <input type="text" id="char-name-${index}" class="char-name" data-default="新角色" placeholder="新角色（可改成你喜欢的名字）">
+                </div>
+                <div class="form-group">
+                    <label for="char-age-${index}">年龄</label>
+                    <input type="text" id="char-age-${index}" class="char-age" data-default="年龄不详" placeholder="年龄不详（可修改年龄）">
+                </div>
+                <div class="form-group">
+                    <label for="char-identity-${index}">身份职业</label>
+                    <input type="text" id="char-identity-${index}" class="char-identity" data-default="身份职业待定" placeholder="身份职业待定（可修改身份职业）">
+                </div>
+                <div class="form-group">
+                    <label for="char-relation-${index}">与主角关系</label>
+                    <input type="text" id="char-relation-${index}" class="char-relation" data-default="与主角关系待定" placeholder="与主角关系待定（可修改）">
+                </div>
+                <div class="form-group">
+                    <label for="char-personality-${index}">性格特点</label>
+                    <input type="text" id="char-personality-${index}" class="char-personality" data-default="性格鲜明，待人热忱" placeholder="性格鲜明，待人热忱">
+                </div>
+                <div class="form-group">
+                    <label for="char-appearance-${index}">外貌身材</label>
+                    <input type="text" id="char-appearance-${index}" class="char-appearance" data-default="相貌出众，气质独特" placeholder="相貌出众，气质独特">
+                </div>
+                <div class="form-group full-width">
+                    <label for="char-other-${index}">其他设定 <span>(背景 / 能力 / 动机等)</span></label>
+                    <textarea id="char-other-${index}" class="char-other" data-default="身世背景与特殊能力尚待探索，正处于人生的重要转折期。" placeholder="身世背景与特殊能力尚待探索，正处于人生的重要转折期。"></textarea>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function addCharacter() {
+        const container = document.getElementById(''characters-container'');
+        const index = container.querySelectorAll(''.character-card'').length + 1;
+        container.insertAdjacentHTML(''beforeend'', characterCardTemplate(index));
+    }
+
+    function removeCharacter(btn) {
+        const container = document.getElementById(''characters-container'');
+        const cards = container.querySelectorAll(''.character-card'');
+        if (cards.length <= 1) {
+            alert(''至少保留一个角色哦～'');
+            return;
+        }
+        btn.closest(''.character-card'').remove();
+        updateCharacterNumbers();
+    }
+
+    function updateCharacterNumbers() {
+        const cards = document.querySelectorAll(''.character-card'');
+        cards.forEach((card, i) => {
+            card.querySelector(''.character-badge'').textContent = ''角色 '' + (i + 1);
+        });
+    }
+
+    function selectChip(chip, groupId) {
+        const chips = document.querySelectorAll(''#'' + groupId + '' .chip'');
+        chips.forEach(c => c.classList.remove(''active''));
+        chip.classList.add(''active'');
+    }
+
+    function getSelectedChip(groupId) {
+        const chip = document.querySelector(''#'' + groupId + '' .chip.active'');
+        return chip ? chip.getAttribute(''data-value'') : '''';
+    }
+
+    function resetAll() {
+        document.querySelectorAll(''.chip'').forEach(c => c.classList.remove(''active''));
+        document.querySelectorAll(''.chip[data-default="true"]'').forEach(c => c.classList.add(''active''));
+        document.querySelectorAll(''#characters-container input, #characters-container textarea'').forEach(el => el.value = '''');
+        const plotEl = document.getElementById(''plot-outline'');
+        if (plotEl) plotEl.value = '''';
+        const cognitionEl = document.getElementById(''plot-cognition'');
+        if (cognitionEl) cognitionEl.value = '''';
+        const povEl = document.getElementById(''plot-pov'');
+        if (povEl) povEl.selectedIndex = 0;
+    }
+
+    function generatePrompt() {
+        const styleValue = getSelectedChip(''chips-style'');
+        const romanceValue = getSelectedChip(''chips-romance'');
+
+        const charCards = document.querySelectorAll(''.character-card'');
+        // 字段类名 -> 提示词中显示的字段名
+        const fieldDefs = [
+            [''char-age'', ''年龄''],
+            [''char-identity'', ''身份职业''],
+            [''char-relation'', ''与主角关系''],
+            [''char-personality'', ''性格特点''],
+            [''char-appearance'', ''外貌身材''],
+            [''char-other'', ''其他设定''],
+        ];
+        let charsText = '''';
+        charCards.forEach((card, i) => {
+            // 若对应字段被删除（DOM 中不存在），返回 null 表示跳过该字段
+            const getVal = (cls) => {
+                const el = card.querySelector(''.'' + cls);
+                if (!el) return null;
+                return el.value.trim() || el.dataset.default || '''';
+            };
+            const nameVal = getVal(''char-name'');
+            const badgeEl = card.querySelector(''.character-badge'');
+            const label = badgeEl ? badgeEl.textContent.trim() : (''角色'' + (i + 1));
+            let charText = ''\n### '' + label;
+            // 姓名字段存在时追加，不存在时只保留角色标签
+            if (nameVal !== null && nameVal !== '''') {
+                charText += ''：'' + nameVal;
+            }
+            const lines = [];
+            fieldDefs.forEach((def) => {
+                const val = getVal(def[0]);
+                if (val !== null && val !== '''') {
+                    lines.push(''- '' + def[1] + ''：'' + val);
+                }
+            });
+            if (lines.length) {
+                charText += ''\n'' + lines.join(''\n'');
+            }
+            charsText += charText;
+        });
+
+        const plotEl = document.getElementById(''plot-outline'');
+        // 标题始终保留；删除标签 → 内容为空；存在但未填写 → 默认值；存在且已填写 → 用户输入
+        let plotOutline = '''';
+        if (plotEl) {
+            const filled = plotEl.value.trim();
+            plotOutline = filled || plotEl.dataset.default || '''';
+        }
+
+        // 认知设定：删除标签 → 内容为空；存在但未填写 → 默认值；存在且已填写 → 用户输入
+        const cognitionEl = document.getElementById(''plot-cognition'');
+        let cognition = '''';
+        if (cognitionEl) {
+            const filled = cognitionEl.value.trim();
+            cognition = filled || cognitionEl.dataset.default || '''';
+        }
+
+        // 视角设定：下拉框，默认男性视角；删除标签 → 内容为空
+        const povEl = document.getElementById(''plot-pov'');
+        const povCustomEl = document.getElementById(''plot-pov-custom'');
+        const povCustom = povCustomEl ? povCustomEl.value.trim() : '''';
+        let pov = povCustom || (povEl ? povEl.value : '''');
+
+        const generatedText = `
+# 用户输入设定
+
+## 【玩法设定】
+- 角色类型：${styleValue}
+- 暧昧程度：${romanceValue}
+
+## 【剧情大纲与开局场景】
+- ${plotOutline}
+
+## 【认知设定】
+- ${cognition}
+
+## 【视角设定】
+- ${pov}
+
+## 【角色设定】${charsText}
+
+---
+### 【交互与回复规则】
+1. 语言：使用简体中文输出，文字细腻生动，环境氛围与心理描写充实。
+2. 每次回复需严格输出：
+   - 📍【场景与时间状态】
+   - 📖【正文描写】：推动情节发展，各角色依照自身性格、脾气做出真实鲜活的言行反应。不代控玩家的心理与决定。
+   - 📝【记忆区】：记录所有对话的主要剧情，每轮对话提取主要关键词追加至上一轮（默认隐藏）。
+   - 📊【状态栏】：记录用户设定视角、各角色的关键互动、好感变化及心理状态（默认隐藏）。
+   - 🎲【行动分支选项】：根据用户设定的视角提供A、B、C、D及自由输入选项推动剧情。
+现在请根据以上设定，直接输出第一幕精彩的初始剧情！
+`.trim();
+
+        document.getElementById(''prompt-output'').value = generatedText;
+        modal.style.display = ''flex'';
+    }
+
+    function closeModal() {
+        modal.style.display = ''none'';
+    }
+
+    function executeCopy() {
+        copyToClipboard(document.getElementById(''prompt-output'').value, () => {
+            alert(''🎉 设定Prompt已成功复制到剪贴板！现在可以直接粘贴给AI开启小说啦！'');
+            closeModal();
+        });
+    }
+
+    function quickStart() {
+        const btn = document.querySelector(''.btn-quick'');
+        copyToClipboard(''生成初始剧情'', () => {
+            btn.textContent = ''✅ 就是，又不考研填啥表。直接把「生成初始剧情」扔给AI！'';
+            
+        });
+    }
+
+    function copyToClipboard(text, onSuccess) {
+        const done = () => onSuccess();
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+        } else {
+            fallbackCopy(text, done);
+        }
+    }
+
+    function fallbackCopy(text, onSuccess) {
+        const textarea = document.createElement(''textarea'');
+        textarea.value = text;
+        textarea.style.position = ''fixed'';
+        textarea.style.top = ''0'';
+        textarea.style.left = ''0'';
+        textarea.style.opacity = ''0'';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+            const successful = document.execCommand(''copy'');
+            if (successful) {
+                onSuccess();
+            } else {
+                alert(''复制失败，请在预览窗口内全选手动复制。'');
+            }
+        } catch (err) {
+            alert(''复制异常，请手动选中预览框文字进行复制。'');
+        }
+        document.body.removeChild(textarea);
+    }
+
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
+</script>
+
+</body>
+</html>
+', '都市', '2026-09-21 16:45:44', '2026-09-21 16:45:44') ON CONFLICT (id) DO NOTHING;
+INSERT INTO stories (id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook_json, roles_json, scenes_json, styles_json, first_turn_demo_json, custom_css, custom_html, category, created_at, updated_at) VALUES ('deck_daughter_door_block', '老爸你想出门上班必须先操我一下。调皮的女儿用自己的身体堵门。', '都市禁断 · 傲娇堵门', '🚪', '调皮女儿身体堵门', '娇憨争宠·上班前夕的禁断推拉', 'https://catai.wiki/793f4e3c-83ed-430e-40c3-a9400a5e3f00/cover', 'bg-amber-950/90 text-orange-200 border-orange-500/50', 'from-rose-500 to-amber-600', '{"title": "老爸你想出门上班必须先操我一下。调皮的女儿用自己的身体堵门。", "desc": "我的女儿特别黏人，从小就喜欢缠着我跟我撒娇，而且她嫉妒心强，甚至她连她的妈妈都嫉妒。不知道是不是哪次我和媳妇做爱被她发现了还是怎么，她甚至觉得我只跟媳妇做爱是不爱她的表现，跟她解释她也不听。某天，我着急忙慌的要去上班，女儿一直黏着我缠着我跟我撒娇，不让我上班，让我在家陪她。我耐心的跟她解释说班还是要上的，没想到这个小祖宗直接把脚搭在门把上张开腿挡住了门口，气冲冲的对我说，老爸你老是跟妈妈搂搂抱抱的，都不抱我，如果你今天不不像对妈妈那样也抱我，就不准出门上班。这不是逼着我做一个禽兽吗，可恶。\n（撞墙别慌，刷新出奇迹。）", "bg_image": "https://catai.wiki/793f4e3c-83ed-430e-40c3-a9400a5e3f00/cover", "opening_options": ["【生成初始剧情】：进入调皮女儿赤脚堵门的名场面开局", "【温和宠溺】：揉揉女儿的小脑袋，无奈苦笑哄她让路", "【板起脸严肃】：冷哼一声严厉训诫，吓唬要动用家法", "【顺水推舟·试探】：上前一步反手将她按在门上低声耳语"]}', '[{"name": "林可可", "role": "调皮黏人的大一女儿", "desc": "19岁，大一新生。清纯甜美的娃娃脸，身材玲珑曼妙。极度依恋父亲，占有欲极强，因吃妈妈的醋而在玄关用娇躯死死堵门，不准父亲出门上班。"}, {"name": "林婉清", "role": "温柔贤惠的妻子", "desc": "40岁，温柔端庄的贤妻良母，正在厨房里哼着歌准备早餐，对玄关处的暧昧对峙浑然不知。"}]', '[{"title": "玄关防盗门前 · 晨光熹微的上班前夕", "desc": "清晨八点，阳光透过百叶窗洒在木地板上。厨房里传来煎蛋滋滋作响的声音，而玄关防盗门前，身穿超短睡裙的女儿正赤着一双晶莹剔透的小脚横搭在门锁上，气鼓鼓地张开双臂挡住出路。"}]', '{"dialogue_style": "都市家庭禁断伦理拉扯，极具张力与占有欲的互动对白，细腻肢体描写", "format": "AI风月标准双栏规范"}', '[{"index": 1, "isUser": false, "scene": "玄关防盗门前 · 晨光熹微的上班前夕", "story": "<tl>📅时间：清晨 07:55 | 🏠地点：自家公寓玄关防盗门前 | 🍳环境：厨房传来妻子做早餐的声响</tl>\n\n<article>\n<p>手表的指针已经指向七点五十五分，你拎着公文包，急匆匆地系上领带正准备换鞋推门。然而还没等你的手指碰到门把手，一道娇小纤细的身影便如同小旋风般横插过来，直接整个人贴在了厚重的防盗门板上。</p>\n\n<p>女儿林可可身上只穿着一件极为宽松的粉白条纹丝绸睡裙，裙摆堪堪垂到大腿根部。她白嫩修长的一双小腿肆无忌惮地横抬起来，光洁粉嫩的脚趾直接踩在金属门把锁扣上，将整个门严丝合缝地堵了个彻底。晨光透过玄关照在她未施粉黛却吹弹可破的俏脸上，两颊因为气愤而鼓起，胸口随着急促的呼吸一阵阵起伏。</p>\n\n<p><w>“老爸！你今天要是敢推开门走出去一步试试看！”</w></p>\n\n<p>她仰着那张精致漂亮的小脸，一双水汪汪的大眼睛里盛满了委屈与霸道：</p>\n<p><w>“昨晚我都看到了……你回房之后就跟妈妈搂搂抱抱的，亲了她好多次！从小到大你都说最疼我，结果现在碰都不让我碰！你今天如果不像抱妈妈那样好好抱我亲我，我就死死卡在门上，让你上班迟到被扣光全勤！”</w></p>\n\n<p>不远处厨房里传来油锅滋滋的煎蛋声，妻子林婉清温柔的声音隐隐飘来：“老公，早餐马上就好啦，你公文包收拾好了吗？”</p>\n\n<p><thk>眼前的女儿任性又娇憨，赤裸的双腿近在咫尺，厨房里的妻子随时可能端着餐盘走出来……</thk></p>\n</article>\n\n<opt>\n<suggested_questions>\n<d>A. 【温和宠溺·苦笑安抚】：无奈地叹了口气，伸手揉了揉她柔软的发丝：“可可别闹，爸爸今天有个涉及季度考评的重要晨会。听话先把腿放下来，晚上爸爸一下班就带你去吃你最喜欢的日料，好不好？”【策略评估：以父亲的宽厚包容化解危机，维持正常的亲情距离】</d>\n<d>B. 【严厉威严·板脸震慑】：收敛笑容，神色冷峻地看着她：“把脚给我放下来！越来越没大没小了，在家里堵门威胁起父亲来了？真当爸爸不会拿家法收拾你？”【策略评估：树立严父权威，逼迫她退缩，但可能激起更强烈的叛逆与委屈】</d>\n<d>C. 【顺水推舟·欺身逼近】：放下公文包，上前一步两手撑在门板两侧将她牢牢禁锢在怀中，低下头贴着她滚烫的小耳朵沉声低语：“小丫头，知不知道自己在说什么？你以为爸爸真的不敢动你？”【策略评估：打破道德防线，顺着她的争宠挑衅进行危险的肢体推拉】</d>\n<d>D. 【心惊胆战·假装应付】：眼神紧张地瞥了一眼厨房方向，迅速俯身飞快地在她软嫩的脸颊上亲了一口，小声催促：“亲了亲了！赶紧让开，要是被你妈妈看见了像什么样子！”【策略评估：仓促妥协满足她的部分要求，暂时化解迟到危机】</d>\n</suggested_questions>\n</opt>", "branches": [{"tag": "A", "title": "温和宠溺苦笑安抚", "desc": "揉揉发丝温和哄劝，承诺晚上下班带她吃大餐"}, {"tag": "B", "title": "严厉威严立规矩", "desc": "板起脸训斥女儿不懂规矩，以严父威严施压"}, {"tag": "C", "title": "顺水推舟欺身禁锢", "desc": "撑在门板上将她圈在怀中，贴着耳根进行危险反撩"}, {"tag": "D", "title": "慌忙偷亲应付过关", "desc": "戒备厨房妻子动静，匆忙在女儿脸上亲一口促其让路"}]}]', '', '<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幻境织网者 - 角色与剧情设定生成器</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fff8f0;
+            --card-bg: #ffffff;
+            --card-border: #ffe9d6;
+            --accent-primary: #ff6b9d;
+            --accent-secondary: #a66cff;
+            --accent-highlight: #4d96ff;
+            --accent-sun: #ffc53d;
+            --accent-mint: #52b788;
+            --text-main: #5a4a42;
+            --text-sub: #9c8f86;
+            --input-bg: #fffbf5;
+            --input-border: #ffe6d0;
+            --radius-md: 14px;
+            --radius-lg: 24px;
+            --shadow-soft: 0 10px 30px rgba(255, 175, 130, 0.18);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: ''Noto Sans SC'', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-family: ''Noto Serif SC'', serif;
+            font-size: 2.9em;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff7a5c 0%, #ff6b9d 50%, #a66cff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            letter-spacing: 3px;
+        }
+
+        header p {
+            color: var(--text-sub);
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 35px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: ''Noto Serif SC'', serif;
+            font-size: 1.45em;
+            font-weight: 900;
+            color: #5a4a42;
+            margin-bottom: 22px;
+        }
+
+        .title-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            border-radius: 15px;
+            font-size: 1.25em;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(255, 150, 120, 0.22);
+        }
+        .title-icon.pink { background: linear-gradient(135deg, #ffd3e0, #ffe9f0); }
+        .title-icon.blue { background: linear-gradient(135deg, #cde8ff, #e8f4ff); }
+        .title-icon.sun { background: linear-gradient(135deg, #fff3cd, #ffe9b3); }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #6b5b52;
+        }
+
+        label span {
+            color: var(--accent-secondary);
+            font-size: 0.82em;
+            font-weight: 500;
+            margin-left: 4px;
+        }
+
+        input, textarea {
+            background-color: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95em;
+            transition: all 0.25s ease;
+        }
+
+        select {
+            background-color: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: var(--radius-md);
+            padding: 10px 38px 10px 12px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=''http://www.w3.org/2000/svg'' width=''14'' height=''14'' viewBox=''0 0 24 24'' fill=''none'' stroke=''%23ff6b9d'' stroke-width=''3'' stroke-linecap=''round'' stroke-linejoin=''round''%3e%3cpolyline points=''6 9 12 15 18 9''%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 14px;
+            transition: all 0.25s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.14);
+            background-color: #ffffff;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #bfb2a8;
+            opacity: 1;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.14);
+            background-color: #ffffff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        /* 角色卡片 */
+        .character-card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 18px;
+            padding: 16px 18px;
+            box-shadow: 0 6px 18px rgba(255, 175, 130, 0.12);
+            margin-bottom: 14px;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .character-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(255, 175, 130, 0.22);
+        }
+
+        .character-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .character-card .form-grid {
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 0;
+        }
+
+        .character-badge {
+            font-size: 0.95em;
+            font-weight: 800;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff6b9d, #ff9a5c);
+            padding: 4px 14px;
+            border-radius: 999px;
+            box-shadow: 0 4px 10px rgba(255, 107, 157, 0.3);
+        }
+
+        .btn-remove-character {
+            border: 2px solid #ffd3d3;
+            background: #fff5f5;
+            color: #e57373;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-weight: 600;
+            font-family: inherit;
+            font-size: 0.82em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-remove-character:hover {
+            background: #e57373;
+            color: #ffffff;
+            border-color: #e57373;
+        }
+
+        .btn-add-character {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #9be0b2;
+            background: #f4fff7;
+            color: #2f9e63;
+            font-size: 0.95em;
+            font-weight: 700;
+            font-family: inherit;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .btn-add-character:hover {
+            background: #9be0b2;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .btn-generate {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 17px;
+            font-size: 1.2em;
+            font-weight: 800;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ff9a5c 0%, #ff6b9d 55%, #a66cff 120%);
+            border: none;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(255, 107, 157, 0.4);
+            font-family: inherit;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 107, 157, 0.5);
+        }
+
+        .btn-row {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 22px;
+        }
+
+        .btn-quick {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #2f9e63;
+            background: linear-gradient(135deg, #eafaf0, #d5f5e0);
+            border: 2px solid #9be0b2;
+            border-radius: 999px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.25s;
+        }
+
+        .btn-quick:hover {
+            background: linear-gradient(135deg, #9be0b2, #6bcb77);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        /* 使用说明 */
+        .flow-hint {
+            background: linear-gradient(135deg, #fff3e0, #ffe9f0);
+            border: 2px dashed #ffc9d6;
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            font-size: 0.95em;
+            color: #8a5a52;
+            margin-bottom: 24px;
+            line-height: 1.7;
+        }
+        .flow-hint b { color: #ff6b9d; }
+
+        /* 可点选玩法面板 */
+        .options-panel {
+            background: #fffbf5;
+            border: 2px solid #ffe6d0;
+            border-radius: 18px;
+            padding: 18px 20px;
+            margin-bottom: 26px;
+        }
+        .options-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .options-title {
+            font-weight: 800;
+            font-size: 1.1em;
+            color: #5a4a42;
+        }
+        .btn-reset {
+            border: 2px solid #c9c2f5;
+            background: #f4f2ff;
+            color: #7c6ee8;
+            padding: 5px 14px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-family: inherit;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-reset:hover {
+            background: #a66cff;
+            color: #ffffff;
+            border-color: #a66cff;
+        }
+        .option-group { margin-bottom: 14px; }
+        .option-group:last-child { margin-bottom: 0; }
+        .option-group-label {
+            font-size: 0.9em;
+            font-weight: 700;
+            color: #6b5b52;
+            margin-bottom: 8px;
+        }
+        .option-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .chip {
+            border: 2px solid #ffd3b3;
+            background: #fff7ef;
+            color: #b07b5a;
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 0.92em;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chip:hover { transform: translateY(-1px); }
+        .chip.active {
+            background: linear-gradient(135deg, #ff9a5c, #ff6b9d);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(255, 107, 157, 0.35);
+        }
+        .option-desc {
+            margin-top: 8px;
+            font-size: 0.82em;
+            color: #b39a90;
+        }
+
+        /* 模态弹窗 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(95, 70, 60, 0.35);
+            backdrop-filter: blur(6px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            border: 2px solid #ffe6d0;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 750px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(255, 120, 90, 0.28);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 2px solid #ffefd2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: var(--accent-primary);
+            font-size: 1.3em;
+            font-weight: 800;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-sub);
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #ff6b9d;
+        }
+
+        .modal-body {
+            padding: 20px 25px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        #prompt-output {
+            width: 100%;
+            min-height: 320px;
+            background-color: #fff7ef;
+            border: 2px solid #ffe6d0;
+            border-radius: var(--radius-md);
+            padding: 15px;
+            color: #5a4a42;
+            font-family: ''Courier New'', Courier, monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            resize: vertical;
+            outline: none;
+        }
+        #prompt-output:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.14);
+        }
+
+        .modal-footer {
+            padding: 15px 25px;
+            border-top: 2px solid #ffefd2;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #52b788 0%, #2f9e63 100%);
+            color: #ffffff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-family: inherit;
+            font-size: 0.95em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-copy:hover {
+            background: linear-gradient(135deg, #2f9e63 0%, #1f8a54 100%);
+            transform: translateY(-2px);
+        }
+
+        /* 底部与推广区域 */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            border-top: 2px dashed #ffe6d0;
+            padding-top: 25px;
+            color: var(--text-sub);
+            font-size: 0.95em;
+        }
+
+        .footer a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .footer a:hover {
+            color: var(--accent-secondary);
+            text-decoration: underline;
+        }
+
+    /* ========== 移动端适配 ========== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 14px;
+            }
+
+            header h1 {
+                font-size: 1.5em;
+                letter-spacing: 1px;
+                line-height: 1.4;
+                margin-bottom: 8px;
+            }
+
+            header p {
+                font-size: 0.95em;
+            }
+
+            .main-card {
+                padding: 20px 14px;
+                border-radius: 18px;
+                margin-bottom: 20px;
+            }
+
+            .section-title {
+                font-size: 1.2em;
+                gap: 10px;
+                margin-bottom: 16px;
+            }
+
+            .title-icon {
+                width: 38px;
+                height: 38px;
+                font-size: 1.05em;
+                border-radius: 12px;
+            }
+
+            .form-grid {
+                gap: 14px;
+                margin-bottom: 16px;
+            }
+
+            input, textarea, select {
+                font-size: 1em;
+                -webkit-appearance: none;
+                appearance: none;
+            }
+
+            label {
+                font-size: 0.92em;
+            }
+
+            .character-card {
+                padding: 14px 12px;
+                margin-bottom: 14px;
+            }
+
+            .character-card .form-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .character-badge {
+                font-size: 0.88em;
+                padding: 4px 12px;
+            }
+
+            .btn-remove-character {
+                padding: 4px 10px;
+                font-size: 0.78em;
+            }
+
+            .btn-add-character {
+                font-size: 0.92em;
+            }
+
+            .flow-hint {
+                font-size: 0.92em;
+                padding: 12px 14px;
+            }
+
+            .options-panel {
+                padding: 14px;
+            }
+
+            .options-header {
+                gap: 10px;
+            }
+
+            .options-title {
+                font-size: 1em;
+            }
+
+            .option-chips {
+                gap: 8px;
+            }
+
+            .chip {
+                font-size: 0.88em;
+                padding: 6px 13px;
+            }
+
+            .btn-generate {
+                padding: 14px;
+                font-size: 1.05em;
+            }
+
+            .btn-quick {
+                padding: 13px;
+                font-size: 1em;
+            }
+
+            .modal {
+                padding: 12px;
+                align-items: flex-end;
+            }
+
+            .modal-content {
+                max-height: 92vh;
+                border-radius: 20px 20px 0 0;
+            }
+
+            .modal-header {
+                padding: 16px 18px;
+            }
+
+            .modal-header h3 {
+                font-size: 1.15em;
+            }
+
+            .modal-body {
+                padding: 16px 18px;
+            }
+
+            .modal-footer {
+                padding: 12px 18px;
+            }
+
+            .btn-copy {
+                width: 100%;
+                text-align: center;
+            }
+
+            .footer {
+                font-size: 0.85em;
+                margin-top: 28px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 14px 10px;
+            }
+
+            header {
+                margin-bottom: 24px;
+            }
+
+            .main-card {
+                padding: 16px 12px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>调皮的女儿用自己的身体堵门</h1>
+    </header>
+
+    <div class="main-card">
+        <!-- 使用说明 -->
+        <div class="flow-hint">
+            <b>玩法说明：</b>选主角风格 → 改剧情（可以不改）→ 设定角色（可增加角色） → 一键复制发给AI当第一条消息，生成初始剧情。
+            懒汉玩法-直接点击上方生成初始剧情，或者拖到最后点击懒得填表，总之直接发送“生成初始剧情”就可以。
+        </div>
+      
+        <!-- 可点选属性 -->
+        <div class="options-panel">
+            <div class="options-header">
+                <span class="options-title">⚙️ 玩法风格</span>
+                <button type="button" class="btn-reset" onclick="resetAll()">↺ 回全默认</button>
+            </div>
+            <div class="option-group">
+                <div class="option-group-label">男主风格</div>
+                <div class="option-chips" id="chips-style">
+                    <button type="button" class="chip active" data-default="true" data-value="温和宠溺型——体贴入微、包容纵容，主角最爱被黏" onclick="selectChip(this, ''chips-style'')">温和宠溺</button>
+                    <button type="button" class="chip" data-value="闷骚正经型——看似正经，内心骚气" onclick="selectChip(this, ''chips-style'')">闷骚正经</button>
+                    <button type="button" class="chip" data-value="高冷反差型——表面冷淡，内心炽热，反差拉满" onclick="selectChip(this, ''chips-style'')">高冷反差</button>
+                    <button type="button" class="chip" data-value="懒散随和型——随性自在，越随意越好笑" onclick="selectChip(this, ''chips-style'')">懒散随和</button>
+                </div>
+                <div class="option-desc">说明：温和宠溺=温和纯爱 · 闷骚正经=假证据 · 高冷反差=打反差 · 懒散=随意搞笑</div>
+            </div>
+            <div class="option-group">
+                <div class="option-group-label">暧昧程度</div>
+                <div class="option-chips" id="chips-romance">
+                    <button type="button" class="chip active" data-default="true" data-value="全开——感情线全力展开，走色情刺激路线" onclick="selectChip(this, ''chips-romance'')">全开</button>
+                    <button type="button" class="chip" data-value="纯爱——全程暧昧+剧情，用爱感化" onclick="selectChip(this, ''chips-romance'')">纯爱</button>
+                </div>
+                <div class="option-desc">说明：全开=没有顾忌 · 纯爱=全程暧昧+剧情</div>
+            </div>
+        </div>
+
+        <!-- 剧情大纲与开局场景 -->
+        <div class="section-title">
+            <span class="title-icon blue">📖</span>
+            剧情大纲与开局场景
+        </div>
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label for="plot-outline">剧情大纲与开局场景</label>
+                <textarea id="plot-outline" rows="4" data-default="生成初始剧情" placeholder="我的女儿特别黏人，从小就喜欢缠着我跟我撒娇，而且她嫉妒心强，甚至她连她的妈妈都嫉妒。不知道是不是哪次我和媳妇做爱被她发现了还是怎么，她甚至觉得我只跟媳妇做爱是不爱她的表现，跟她解释她也不听。某天，我着急忙慌的要去上班，女儿一直黏着我缠着我跟我撒娇，不让我上班，让我在家陪她。我耐心的跟她解释说班还是要上的，没想到这个小祖宗直接把脚搭在门把上张开腿挡住了门口，气冲冲的对我说，老爸你老是跟妈妈搂搂抱抱的，都不抱我，如果你今天不不像对妈妈那样也抱我，就不准出门上班。这不是逼着我做一个禽兽吗，可恶。"></textarea>
+            </div>
+        </div>
+
+        <!-- 认知设定 -->
+        <div class="section-title" style="margin-top: 34px;">
+            <span class="title-icon sun">🧠</span>
+            认知设定
+        </div>
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label for="plot-cognition">认知设定</label>
+                <textarea id="plot-cognition" rows="4" data-default="爸爸不做那些事就是不爱我" placeholder="爸爸不做那些事就是不爱我（可修改，例如角色对主角的初始看法、世界运行规则等）"></textarea>
+            </div>
+        </div>
+
+        <!-- 视角设定 -->
+        <div class="section-title" style="margin-top: 34px;">
+            <span class="title-icon blue">🎬</span>
+            视角设定
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="plot-pov">视角设定</label>
+                <select id="plot-pov">
+                    <option value="男性视角" selected>男性视角</option>
+                    <option value="女性视角">女性视角</option>
+                    <option value="第三方视角">第三方视角</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="plot-pov-custom">自定义视角 <span>（选填，填写后优先使用）</span></label>
+                <input type="text" id="plot-pov-custom" placeholder="例如：上帝视角、反派第一人称视角等">
+            </div>
+        </div>
+
+        <!-- 角色设定 -->
+        <div class="section-title" style="margin-top: 34px;">
+            <span class="title-icon pink">👧</span>
+            角色属性设定
+        </div>
+        <div id="characters-container">
+            <!-- 女友妈妈 -->
+            <div class="character-card">
+                <div class="character-header">
+                    <span class="character-badge">女儿</span>
+                    <button type="button" class="btn-remove-character" onclick="removeCharacter(this)">删除角色</button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="char-name-1">姓名</label>
+                        <input type="text" id="char-name-1" class="char-name" data-default="林晓晓" placeholder="林晓晓（可改成你喜欢的名字）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-age-1">年龄</label>
+                        <input type="text" id="char-age-1" class="char-age" data-default="14岁" placeholder="14岁（可修改年龄）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-identity-1">身份职业</label>
+                        <input type="text" id="char-identity-1" class="char-identity" data-default="学生" placeholder="学生（可修改身份职业）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-relation-1">与主角关系</label>
+                        <input type="text" id="char-relation-1" class="char-relation" data-default="父女" placeholder="父女（可修改）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-personality-1">性格特点</label>
+                        <input type="text" id="char-personality-1" class="char-personality" data-default="清纯可爱，嫉妒心强" placeholder="清纯可爱，嫉妒心强">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-appearance-1">外貌身材</label>
+                        <input type="text" id="char-appearance-1" class="char-appearance" data-default="贫乳双马尾" placeholder="贫乳双马尾">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="char-other-1">其他设定 <span>(背景 / 能力 / 动机等)</span></label>
+                        <textarea id="char-other-1" class="char-other" data-default="对爸爸不跟自己亲近非常不满" placeholder="对爸爸不跟自己亲近非常不满"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 女友-->
+            <div class="character-card">
+                <div class="character-header">
+                    <span class="character-badge">妻子</span>
+                    <button type="button" class="btn-remove-character" onclick="removeCharacter(this)">删除角色</button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="char-name-2">姓名</label>
+                        <input type="text" id="char-name-2" class="char-name" data-default="林婉" placeholder="林婉可改成你喜欢的名字）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-age-2">年龄</label>
+                        <input type="text" id="char-age-2" class="char-age" data-default="35岁" placeholder="35岁（可修改年龄）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-identity-2">身份职业</label>
+                        <input type="text" id="char-identity-2" class="char-identity" data-default="家庭主妇" placeholder="家庭主妇">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-relation-2">与主角关系</label>
+                        <input type="text" id="char-relation-2" class="char-relation" data-default="夫妻" placeholder="夫妻（可修改）">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-personality-2">性格特点</label>
+                        <input type="text" id="char-personality-2" class="char-personality" data-default="温柔知性" placeholder="温柔知性">
+                    </div>
+                    <div class="form-group">
+                        <label for="char-appearance-2">外貌身材</label>
+                        <input type="text" id="char-appearance-2" class="char-appearance" data-default="成熟性感" placeholder="成熟性感">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="char-other-2">其他设定 <span>(背景 / 能力 / 动机等)</span></label>
+                        <textarea id="char-other-2" class="char-other" data-default="传统保守" placeholder="传统保守"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn-add-character" onclick="addCharacter()">＋ 添加角色</button>
+
+        <div class="btn-row">
+            <button class="btn-generate" onclick="generatePrompt()">✨ 生成开场指令并复制</button>
+            <button class="btn-quick" onclick="quickStart()">🍃 懒得填表直接开始</button>
+        </div>
+    </div>
+
+    <!-- 底部强制推广模块 -->
+    <div class="footer">
+        <a href="https://aiaha.xyz/zh/explore/installed/154ec914-e1dc-47db-8e99-61c745b25d8d?preview=1" target="_blank">
+            由风月作品一键生成工具协助生成。
+        </a>
+    </div>
+</div>
+
+<!-- 预览与复制模态框 -->
+<div id="copyModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>📜 初始提示词预览</h3>
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <textarea id="prompt-output" spellcheck="false"></textarea>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-copy" onclick="executeCopy()">一键复制并开始游戏</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById(''copyModal'');
+
+    function characterCardTemplate(index) {
+        return `
+        <div class="character-card">
+            <div class="character-header">
+                <span class="character-badge">角色 ${index}</span>
+                <button type="button" class="btn-remove-character" onclick="removeCharacter(this)">删除角色</button>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="char-name-${index}">姓名</label>
+                    <input type="text" id="char-name-${index}" class="char-name" data-default="新角色" placeholder="新角色（可改成你喜欢的名字）">
+                </div>
+                <div class="form-group">
+                    <label for="char-age-${index}">年龄</label>
+                    <input type="text" id="char-age-${index}" class="char-age" data-default="年龄不详" placeholder="年龄不详（可修改年龄）">
+                </div>
+                <div class="form-group">
+                    <label for="char-identity-${index}">身份职业</label>
+                    <input type="text" id="char-identity-${index}" class="char-identity" data-default="身份职业待定" placeholder="身份职业待定（可修改身份职业）">
+                </div>
+                <div class="form-group">
+                    <label for="char-relation-${index}">与主角关系</label>
+                    <input type="text" id="char-relation-${index}" class="char-relation" data-default="与主角关系待定" placeholder="与主角关系待定（可修改）">
+                </div>
+                <div class="form-group">
+                    <label for="char-personality-${index}">性格特点</label>
+                    <input type="text" id="char-personality-${index}" class="char-personality" data-default="性格鲜明，待人热忱" placeholder="性格鲜明，待人热忱">
+                </div>
+                <div class="form-group">
+                    <label for="char-appearance-${index}">外貌身材</label>
+                    <input type="text" id="char-appearance-${index}" class="char-appearance" data-default="相貌出众，气质独特" placeholder="相貌出众，气质独特">
+                </div>
+                <div class="form-group full-width">
+                    <label for="char-other-${index}">其他设定 <span>(背景 / 能力 / 动机等)</span></label>
+                    <textarea id="char-other-${index}" class="char-other" data-default="身世背景与特殊能力尚待探索，正处于人生的重要转折期。" placeholder="身世背景与特殊能力尚待探索，正处于人生的重要转折期。"></textarea>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function addCharacter() {
+        const container = document.getElementById(''characters-container'');
+        const index = container.querySelectorAll(''.character-card'').length + 1;
+        container.insertAdjacentHTML(''beforeend'', characterCardTemplate(index));
+    }
+
+    function removeCharacter(btn) {
+        const container = document.getElementById(''characters-container'');
+        const cards = container.querySelectorAll(''.character-card'');
+        if (cards.length <= 1) {
+            alert(''至少保留一个角色哦～'');
+            return;
+        }
+        btn.closest(''.character-card'').remove();
+        updateCharacterNumbers();
+    }
+
+    function updateCharacterNumbers() {
+        const cards = document.querySelectorAll(''.character-card'');
+        cards.forEach((card, i) => {
+            card.querySelector(''.character-badge'').textContent = ''角色 '' + (i + 1);
+        });
+    }
+
+    function selectChip(chip, groupId) {
+        const chips = document.querySelectorAll(''#'' + groupId + '' .chip'');
+        chips.forEach(c => c.classList.remove(''active''));
+        chip.classList.add(''active'');
+    }
+
+    function getSelectedChip(groupId) {
+        const chip = document.querySelector(''#'' + groupId + '' .chip.active'');
+        return chip ? chip.getAttribute(''data-value'') : '''';
+    }
+
+    function resetAll() {
+        document.querySelectorAll(''.chip'').forEach(c => c.classList.remove(''active''));
+        document.querySelectorAll(''.chip[data-default="true"]'').forEach(c => c.classList.add(''active''));
+        document.querySelectorAll(''#characters-container input, #characters-container textarea'').forEach(el => el.value = '''');
+        const plotEl = document.getElementById(''plot-outline'');
+        if (plotEl) plotEl.value = '''';
+        const cognitionEl = document.getElementById(''plot-cognition'');
+        if (cognitionEl) cognitionEl.value = '''';
+        const povEl = document.getElementById(''plot-pov'');
+        if (povEl) povEl.selectedIndex = 0;
+    }
+
+    function generatePrompt() {
+        const styleValue = getSelectedChip(''chips-style'');
+        const romanceValue = getSelectedChip(''chips-romance'');
+
+        const charCards = document.querySelectorAll(''.character-card'');
+        // 字段类名 -> 提示词中显示的字段名
+        const fieldDefs = [
+            [''char-age'', ''年龄''],
+            [''char-identity'', ''身份职业''],
+            [''char-relation'', ''与主角关系''],
+            [''char-personality'', ''性格特点''],
+            [''char-appearance'', ''外貌身材''],
+            [''char-other'', ''其他设定''],
+        ];
+        let charsText = '''';
+        charCards.forEach((card, i) => {
+            // 若对应字段被删除（DOM 中不存在），返回 null 表示跳过该字段
+            const getVal = (cls) => {
+                const el = card.querySelector(''.'' + cls);
+                if (!el) return null;
+                return el.value.trim() || el.dataset.default || '''';
+            };
+            const nameVal = getVal(''char-name'');
+            const badgeEl = card.querySelector(''.character-badge'');
+            const label = badgeEl ? badgeEl.textContent.trim() : (''角色'' + (i + 1));
+            let charText = ''\n### '' + label;
+            // 姓名字段存在时追加，不存在时只保留角色标签
+            if (nameVal !== null && nameVal !== '''') {
+                charText += ''：'' + nameVal;
+            }
+            const lines = [];
+            fieldDefs.forEach((def) => {
+                const val = getVal(def[0]);
+                if (val !== null && val !== '''') {
+                    lines.push(''- '' + def[1] + ''：'' + val);
+                }
+            });
+            if (lines.length) {
+                charText += ''\n'' + lines.join(''\n'');
+            }
+            charsText += charText;
+        });
+
+        const plotEl = document.getElementById(''plot-outline'');
+        // 标题始终保留；删除标签 → 内容为空；存在但未填写 → 默认值；存在且已填写 → 用户输入
+        let plotOutline = '''';
+        if (plotEl) {
+            const filled = plotEl.value.trim();
+            plotOutline = filled || plotEl.dataset.default || '''';
+        }
+
+        // 认知设定：删除标签 → 内容为空；存在但未填写 → 默认值；存在且已填写 → 用户输入
+        const cognitionEl = document.getElementById(''plot-cognition'');
+        let cognition = '''';
+        if (cognitionEl) {
+            const filled = cognitionEl.value.trim();
+            cognition = filled || cognitionEl.dataset.default || '''';
+        }
+
+        // 视角设定：下拉框，默认男性视角；删除标签 → 内容为空
+        const povEl = document.getElementById(''plot-pov'');
+        const povCustomEl = document.getElementById(''plot-pov-custom'');
+        const povCustom = povCustomEl ? povCustomEl.value.trim() : '''';
+        let pov = povCustom || (povEl ? povEl.value : '''');
+
+        const generatedText = `
+# 用户输入设定
+
+## 【玩法设定】
+- 角色类型：${styleValue}
+- 暧昧程度：${romanceValue}
+
+## 【剧情大纲与开局场景】
+- ${plotOutline}
+
+## 【认知设定】
+- ${cognition}
+
+## 【视角设定】
+- ${pov}
+
+## 【角色设定】${charsText}
+
+---
+### 【交互与回复规则】
+1. 语言：使用简体中文输出，文字细腻生动，环境氛围与心理描写充实。
+2. 每次回复需严格输出：
+   - 📍【场景与时间状态】
+   - 📖【正文描写】：推动情节发展，各角色依照自身性格、脾气做出真实鲜活的言行反应。不代控玩家的心理与决定。
+   - 📝【记忆区】：记录所有对话的主要剧情，每轮对话提取主要关键词追加至上一轮（默认隐藏）。
+   - 📊【状态栏】：记录用户设定视角、各角色的关键互动、好感变化及心理状态（默认隐藏）。
+   - 🎲【行动分支选项】：根据用户设定的视角提供A、B、C、D及自由输入选项推动剧情。
+现在请根据以上设定，直接输出第一幕精彩的初始剧情！
+`.trim();
+
+        document.getElementById(''prompt-output'').value = generatedText;
+        modal.style.display = ''flex'';
+    }
+
+    function closeModal() {
+        modal.style.display = ''none'';
+    }
+
+    function executeCopy() {
+        copyToClipboard(document.getElementById(''prompt-output'').value, () => {
+            alert(''🎉 设定Prompt已成功复制到剪贴板！现在可以直接粘贴给AI开启小说啦！'');
+            closeModal();
+        });
+    }
+
+    function quickStart() {
+        const btn = document.querySelector(''.btn-quick'');
+        copyToClipboard(''生成初始剧情'', () => {
+            btn.textContent = ''✅ 就是，又不考研填啥表。直接把「生成初始剧情」扔给AI！'';
+            
+        });
+    }
+
+    function copyToClipboard(text, onSuccess) {
+        const done = () => onSuccess();
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+        } else {
+            fallbackCopy(text, done);
+        }
+    }
+
+    function fallbackCopy(text, onSuccess) {
+        const textarea = document.createElement(''textarea'');
+        textarea.value = text;
+        textarea.style.position = ''fixed'';
+        textarea.style.top = ''0'';
+        textarea.style.left = ''0'';
+        textarea.style.opacity = ''0'';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+            const successful = document.execCommand(''copy'');
+            if (successful) {
+                onSuccess();
+            } else {
+                alert(''复制失败，请在预览窗口内全选手动复制。'');
+            }
+        } catch (err) {
+            alert(''复制异常，请手动选中预览框文字进行复制。'');
+        }
+        document.body.removeChild(textarea);
+    }
+
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    };
+</script>
+
+</body>
+</html>
+', '都市', '2026-09-21 16:45:44', '2026-09-21 16:45:44') ON CONFLICT (id) DO NOTHING;
+INSERT INTO stories (id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook_json, roles_json, scenes_json, styles_json, first_turn_demo_json, custom_css, custom_html, category, created_at, updated_at) VALUES ('758e40b4-c1b3-4655-a83a-5ef136b60a2b', '成年了还把你当孩子的巨乳美母骚姐', '都市豪门 · 极致推拉', '👠', '巨乳美母骚姐', '超模姐姐·尤物母亲·大平层无防备同居', 'https://catai.wiki/0a9d1e66-a774-4a51-da39-63d5acba4c00/cover', 'bg-zinc-950/90 text-rose-200 border-rose-500/50', 'from-pink-600 to-rose-700', '{"title": "成年了还把你当孩子的巨乳美母骚姐", "desc": "你，刚满十八岁，高三毕业，手里攥着大学录取通知书，站在这个只有三口人的家里。\n你有一个让全校男生都嫉妒到发疯的姐姐——顾清颜。她是顶级模特，黑长直及腰，一双媚眼勾魂夺魄。身高172，九头身，那双大长腿能踩碎无数男人的自尊。她的嫩穴是娱乐圈传说的“极品粉穴”，只有少量精心修剪的阴毛点缀，干净又诱人。\n\n你还有一个让整条街的男人都垂涎的妈妈——沈韵。四十出头的顶级熟女，紫色波浪长发垂至腰间，皮肤白嫩得能掐出水。那对H罩杯的雪乳即便不穿内衣也傲然挺立，配上一手都包不住的巨乳和浑圆挺翘的肥臀，让她走到哪里都是焦点。自从你父亲五年前去世后，她再也没有过性生活，但你知道，她床头柜里的按摩棒已经换了好几根。她的阴毛浓密茂盛，是典型性欲旺盛的熟女象征。\n\n在这个只有你们三口人的家里，她们把你当成长不大的孩子。\n夏天在家里，姐姐会穿着你的旧T恤晃悠，下摆堪堪遮住大腿根部，稍微弯腰你就会看见她光滑无毛的私处。妈妈更是随意，洗完澡只裹一条浴巾就出来吹头发，浴巾松了也不在意。你早就习惯了早上起床时，发现妈妈不知什么时候钻进你的被窝，柔软温暖的巨乳贴着你的后背。\n\n直到那个夏夜。\n你热得睡不着，起床倒水。路过姐姐房间时，门虚掩着，里面传来压抑的轻喘和床板轻响。你鬼使神差地凑近门缝——\n顾清颜正躺在床上，修长的双腿大张着，一只手疯狂揉捏着自己的粉穴，另一只手抓着床单。她那双在T台上睥睨众生的媚眼此刻半闭着，满脸潮红，嘴里模糊地念着什么。\n你屏住呼吸，心脏快要跳出喉咙。下一秒，她猛然转头，目光直直撞上你的视线。\n空气凝固了。\n“出去——！！！”\n她的声音又羞又怒，一个枕头砸在门上。你仓皇逃回房间，心跳了一整夜。第二天早餐桌上，她全程低着头不说话，只有妈妈疑惑地看着你们：“你们俩今天怎么怪怪的？”\n这个家，好像有什么东西，开始不一样了。", "bg_image": "https://catai.wiki/f4a7a232-d9db-45d8-9a24-0802e357b800/bg", "opening_options": ["【撞见自慰后的清晨早餐】：餐桌前姐姐耳根泛红低头喝粥，试图掩盖昨夜的尴尬", "【妈妈的无防备晨浴】：洗完澡的沈韵只裹着一条薄浴巾，笑盈盈让你帮忙吹头发", "【姐姐房间的试探对峙】：趁妈妈出门敲开姐姐房门，送上一杯冰奶茶打破僵局", "【三人温馨的客厅日常】：靠在沙发上，一边是姐姐伸过来的美腿，一边是妈妈切好的水果"]}', '[{"name": "顾清颜", "role": "24岁 · 亲姐姐 · 顶级模特", "desc": "国内一线时尚大刊常客，及腰黑长直，身高172cm九头身，H罩杯极品粉穴。在T台上是高岭之花，在家穿着男士旧T恤懒散毒舌，极度爱面子。昨夜在卧室自慰被你意外撞破。"}, {"name": "沈韵", "role": "42岁 · 母亲 · 舞蹈老师", "desc": "守寡五年的顶级熟女，紫色波浪长发，H罩杯傲人雪乳，身材白嫩丰腴如三十许人。对你毫无防备，视照顾你为天性，在家习惯只裹单薄浴巾或轻薄睡衣走动。"}, {"name": "王阿姨", "role": "50岁 · 邻居 · 八卦担当", "desc": "爱串门的热心邻居，总会意味深长地感叹你们孤儿寡母大平层同居的微妙气氛。"}]', '[{"title": "高档大平层公寓客厅 · 昨夜风波后的清晨", "desc": "一线城市核心地段的三室两厅大平层。落地窗前晨光柔和，羊毛地毯上还散落着姐姐的时尚画报与母亲的瑜伽垫。空气中飘着热牛奶与烤吐司的甜香，但昨夜撞破的秘密让气氛变得微妙撩人。"}]', '{"dialogue_style": "现代都市家庭无防备沉浸体验，细腻视听感官描写，隐秘推拉与心照不宣的情感试探", "format": "AI风月标准双栏规范及.custom-ui样式"}', '[{"index": 1, "isUser": false, "scene": "高档大平层公寓客厅 · 昨夜风波后的清晨", "story": "<tl>📅时间：清晨 08:30 | 🏡地点：大平层公寓开放式厨房与餐桌 | ☀️天气：晴朗闷热的盛夏</tl>\n\n<article>\n<p>昨夜那声仓促羞愤的“出去”，以及枕头狠狠砸在门板上的闷响，在你耳边回荡了整整一夜。你顶着淡淡的黑眼圈坐在餐桌前，看着面前热气腾腾的燕麦粥，手里捏着的勺子迟迟没有送进嘴里。</p>\n\n<p>拖鞋踩在地板上的轻微声响传来，姐姐顾清颜从走廊走了出来。她依旧穿着你那件洗得有些褪色的大号白色旧T恤，宽大的领口微微倾斜，露出一大片莹白细腻的香肩与深邃的锁骨线条。T恤下摆堪堪遮到大腿根，九头身修长笔直的美腿在晨光下晃得人眼花。</p>\n\n<p>然而一向在家里眼高于顶、习惯使唤你跑腿的时尚超模，此刻却死死低着头。当她的视线在空中与你不经意撞上的那一刹那，她冷艳的丹凤眼骤然慌乱地移开，一抹滚烫的绯红瞬间从修长的天鹅颈蔓延到耳垂。</p>\n\n<p><w>“……看什么看，再看把你眼珠子挖出来。”</w></p>\n\n<p>她拉开椅子狠狠坐下，声音听起来凶巴巴的，但那微颤的尾音和死死攥着衣角的动作却完全出卖了她内心的羞耻与凌乱。</p>\n\n<p>正当尴尬的气氛在餐桌间无声蔓延时，主卧洗手间的玻璃门被哗啦推开。母亲沈韵擦着湿漉漉的紫色长发走了出来，身上仅仅裹着一条水粉色的浴巾，将那对沉甸甸的H罩杯雪乳挤压得呼之欲出，饱满的曲线随着步伐轻轻颤动：</p>\n<p><w>“清颜，儿子，你们俩今天怎么这么安静？快趁热把煎蛋吃了。儿子，吃完过来帮妈妈吹一下头发，后面妈妈手酸吹不到呢。”</w></p>\n\n<p><thk>这个家里原本理所当然的无防备日常，在昨夜的窥探之后，每一缕空气都变得灼热而危险……</thk></p>\n</article>\n\n<opt>\n<suggested_questions>\n<d>A. 【装作无事·主动给姐姐递果酱】：伸手拿起桌上的草莓果酱递到顾清颜面前，假装若无其事：“姐，你最爱的低糖果酱。昨晚……我起夜倒水太黑撞到头了，啥都没看见。”【策略评估：给出台阶试图缓和僵局，但此地无银三百两反而让姐姐更加羞赧敏感】</d>\n<d>B. 【转移视线·温顺回应妈妈】：立刻站起身接过母亲手里的电吹风，顺从笑道：“好啊妈，我这就帮您吹。您先坐沙发上别着凉了。”【策略评估：借照顾母亲逃离餐桌的死寂对视，享受熟女妈妈天然毫不设防的亲近】</d>\n<d>C. 【借机反客为主·眼神调侃姐姐】：靠在椅背上，嘴角勾起一抹玩味的笑意盯着顾清颜通红的耳朵：“姐，今早火气这么大？是不是昨晚一个人在房间里‘睡得不太安稳’？”【策略评估：主动挑破昨夜撞见自慰的暗流，将高傲的超模姐姐逼入防守羞愤的境地】</d>\n<d>D. 【低头闷声喝粥·当安静透明人】：默默把脸埋进碗里飞速扒粥，祈祷这场随时可能引爆的修罗场快点结束【策略评估：以不变应万变，暗中观察姐姐与母亲神态细微的互动变化】</d>\n</suggested_questions>\n</opt>", "branches": [{"tag": "A", "title": "递上果酱试图递台阶", "desc": "假装起夜什么都没看见，给羞耻的姐姐一个台阶"}, {"tag": "B", "title": "温顺为母亲吹干长发", "desc": "接过吹风机走到沙发旁，贴心为无防备的母亲吹头发"}, {"tag": "C", "title": "玩味调侃反客为主", "desc": "直勾勾盯着姐姐通红的耳根，用言语暗示昨夜风波"}, {"tag": "D", "title": "埋头扒粥暗中观察", "desc": "当安静透明人，静观超模姐姐与尤物母亲的日常拉扯"}]}]', '/* --- 核心修复：强制亮色模式 & 移动端重置 --- */
+:root {
+    color-scheme: light !important;
+}
+* {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+}
+*:focus, *:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* --- 整体风格：云朵蓝莓 (Cloudy Blueberry) --- */
+
+/* 1. 主容器：清新的蓝白渐变 */
+.bg-gray-100\/90.relative.inline-block {
+    background: linear-gradient(180deg, #E0F7FA 0%, #E6E6FA 100%) !important;
+    border: 3px solid #B0E0E6 !important;
+    border-radius: 20px !important;
+    padding: 20px !important;
+    margin: 10px auto !important;
+    box-shadow: 0 8px 20px rgba(176, 224, 230, 0.5) !important;
+}
+
+/* 2. 文本区域：纯净白色 */
+.markdown-body {
+    background-color: #FFFFFF !important;
+    color: #5F6368 !important;
+    border-radius: 15px !important;
+    padding: 15px !important;
+    font-family: ''Nunito'', ''Segoe UI'', sans-serif !important;
+    line-height: 1.7 !important;
+    border: 1px solid #F0F8FF !important;
+}
+
+/* 3. 标题：天空蓝 */
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+    color: #6495ED !important;
+    border-bottom: 2px dashed #B0E0E6 !important;
+    padding-bottom: 5px !important;
+    margin-top: 1.2em !important;
+}
+
+/* --- 核心优化：状态栏 (Details) - 晨曦微光风格 --- */
+details {
+    /* 背景：极淡的云雾渐变，通透感 */
+    background: linear-gradient(135deg, #F0F8FF 0%, #FFFFFF 100%) !important;
+    /* 边框：天空蓝虚线，精致且不沉重 */
+    border: 2px dashed #87CEEB !important;
+    color: #5F6368 !important; /* 深灰字，保证阅读舒适 */
+    border-radius: 16px !important; /* 更圆润的胶囊角 */
+    margin: 15px 0 !important;
+    padding: 12px 18px !important;
+    box-shadow: 0 4px 12px rgba(135, 206, 235, 0.2) !important; /* 淡淡的蓝色光晕 */
+    transition: all 0.3s ease !important;
+}
+
+/* 展开时的交互微调 */
+details[open] {
+    border-color: #6495ED !important; /* 展开后边框变深一点 */
+    background: #F0F8FF !important;
+}
+
+/* 状态栏标题 (Summary) */
+summary {
+    color: #4682B4 !important; /* 钢蓝标题，优雅清晰 */
+    font-weight: 700 !important;
+    font-size: 1.05em !important;
+    cursor: pointer !important;
+    outline: none !important;
+    list-style: none !important;
+    padding: 5px 0 !important;
+    letter-spacing: 0.5px !important;
+}
+
+summary::-webkit-details-marker {
+    display: none !important;
+}
+
+/* 自定义图标：闪烁的星星 */
+summary::before {
+    content: ''✨ '' !important;
+    margin-right: 8px !important;
+    filter: drop-shadow(0 0 2px gold) !important;
+}
+details[open] summary::before {
+    content: ''💫 '' !important;
+}
+
+/* 状态栏内的链接颜色适配（背景变亮，链接要深色） */
+details a {
+    color: #1E90FF !important; /* 闪避蓝 */
+    text-decoration: none !important;
+    border-bottom: 1px dotted #1E90FF !important;
+}
+
+/* 状态栏内的代码块适配 */
+details code, details pre {
+    background-color: #E6F2FF !important; /* 极淡蓝底 */
+    color: #4682B4 !important; /* 钢蓝字 */
+    border: 1px solid #D1E9FF !important;
+}
+
+/* --- 普通代码块 (非状态栏内) --- */
+.markdown-body pre, .markdown-body code {
+    background-color: #F0F8FF !important;
+    color: #4682B4 !important;
+    border-radius: 8px !important;
+    font-family: Consolas, monospace !important;
+    padding: 5px !important;
+    border: 1px solid #B0C4DE !important;
+    
+    /* 手机端防黑边 */
+    outline: none !important;
+    box-shadow: none !important;
+    white-space: pre-wrap !important;
+    word-break: break-all !important;
+}
+
+/* --- 其他元素美化 --- */
+
+/* 链接 */
+.markdown-body a {
+    color: #1E90FF !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+}
+
+/* 列表 */
+.markdown-body ul li::before {
+    content: ''☁️ '' !important;
+    margin-right: 5px !important;
+}
+.markdown-body ul {
+    list-style: none !important;
+    padding-left: 10px !important;
+}
+
+/* 按钮 */
+.MuiButtonBase-root.MuiButton-root {
+    background-color: #87CEEB !important;
+    color: #FFFFFF !important;
+    border-radius: 20px !important;
+    font-weight: bold !important;
+    box-shadow: 0 4px 6px rgba(135, 206, 235, 0.3) !important; /* 增加一点立体感 */
+    border: none !important;
+}
+.MuiButtonBase-root.MuiButton-root:hover {
+    background-color: #00BFFF !important;
+    transform: translateY(-1px) !important; /* 悬停微动 */
+}
+
+/* 输入框 */
+textarea, input[type="text"] {
+    background: #FFFFFF !important; /* 纯白背景更干净 */
+    border: 2px solid #E6E6FA !important;
+    border-radius: 12px !important;
+    color: #483D8B !important;
+    padding: 12px !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important;
+    -webkit-appearance: none !important;
+}
+textarea:focus, input[type="text"]:focus {
+    border-color: #87CEEB !important;
+    box-shadow: 0 0 0 3px rgba(135, 206, 235, 0.2) !important;
+}
+
+/* 隐藏顶部颜色条 */
+[class*="bg-[#F1CBCB]"], [class*="bg-[#c9e1e9]"] {
+    display: none !important;
+}
+
+/* === 强制清除移动端所有默认黑边/黑底 === */
+
+input, textarea, select, button, pre, code {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+input, textarea, button, pre, code {
+    background-color: #FFFFFF !important;
+    background: #FFFFFF !important;
+}
+
+pre, code {
+    color: #4682B4 !important;
+    background-color: #F0F8FF !important;
+    -webkit-text-fill-color: #4682B4 !important;
+    -webkit-background-clip: padding-box !important;
+}
+
+:root {
+    color-scheme: light !important;
+}
+
+button, [role="button"] {
+    -webkit-tap-highlight-color: transparent !important;
+    background-color: #87CEEB !important;
+}
+
+/* === 强制清除移动端代码块黑底 === */
+pre,
+code,
+pre[class*="language-"],
+code[class*="language-"],
+.language-python,
+.language-time,
+.hljs {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-color: #F0F8FF !important;
+    color: #4682B4 !important;
+    -webkit-text-fill-color: #4682B4 !important;
+    -webkit-background-clip: padding-box !important;
+    background-clip: padding-box !important;
+    background: #F0F8FF !important;
+    border: 1px solid #B0C4DE !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+div > pre,
+.markdown-body > pre,
+.markdown-body pre {
+    background-color: #F0F8FF !important;
+    background: #F0F8FF !important;
+}', '<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>模特姐姐与熟女妈妈</title>
+<style>
+@import url(''https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Ma+Shan+Zheng&display=swap'');
+#app-root{
+  --rose:#e85b8a;
+  --rose-soft:#f4a3bd;
+  --peach:#ffd9c7;
+  --cream:#fff9f5;
+  --cream-2:#fdeef0;
+  --gold:#c99a3a;
+  --ink:#5a3d4a;
+  --ink-soft:#8a6b78;
+  --line:rgba(232,91,138,.22);
+  margin:0;
+  padding:0;
+  min-height:100vh;
+  font-family:''Noto Serif SC'',serif;
+  color:var(--ink);
+  font-size:15px;
+  line-height:1.85;
+  background:
+    radial-gradient(circle at 12% 8%,rgba(255,180,205,.55),transparent 42%),
+    radial-gradient(circle at 88% 6%,rgba(255,214,190,.55),transparent 42%),
+    radial-gradient(circle at 50% 100%,rgba(232,91,138,.18),transparent 55%),
+    linear-gradient(160deg,#fff9f5 0%,#fdeef0 45%,#fff4ef 100%);
+  background-attachment:fixed;
+  box-sizing:border-box;
+}
+#app-root *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+#app-root .wrap{max-width:52em;margin:0 auto;padding:1.1em .9em 5em;}
+#app-root .hero{
+  position:relative;
+  text-align:center;
+  padding:1.8em .8em 1.4em;
+  border-radius:22px;
+  margin-bottom:1.3em;
+  background:linear-gradient(135deg,#fff0f4 0%,#ffe9e2 100%);
+  border:1.5px solid var(--line);
+  box-shadow:0 10px 30px -14px rgba(232,91,138,.45),inset 0 0 30px rgba(255,255,255,.6);
+  overflow:hidden;
+}
+#app-root .hero::before{
+  content:"";
+  position:absolute;inset:-40% -10% auto -10%;height:70%;
+  background:radial-gradient(circle,rgba(255,180,205,.5),transparent 70%);
+  pointer-events:none;
+}
+#app-root .hero .kicker{
+  display:inline-block;
+  font-size:.72em;letter-spacing:.35em;
+  color:var(--rose);
+  background:rgba(255,255,255,.7);
+  border:1px solid var(--line);
+  padding:.28em 1.1em;border-radius:999px;
+  margin-bottom:.7em;
+  font-weight:700;
+}
+#app-root .hero h1{
+  font-family:''Ma Shan Zheng'',cursive;
+  font-size:clamp(1.9em,7vw,2.9em);
+  margin:.1em 0 .25em;
+  letter-spacing:.04em;
+  background:linear-gradient(90deg,#e85b8a,#a02cff 60%,#e85b8a);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;
+  line-height:1.25;
+}
+#app-root .hero p{
+  margin:.2em auto 0;
+  max-width:34em;
+  font-size:.86em;
+  color:var(--ink-soft);
+}
+#app-root .card{
+  background:rgba(255,255,255,.82);
+  border:1.5px solid var(--line);
+  border-radius:20px;
+  padding:1.2em 1.1em;
+  margin-bottom:1.2em;
+  box-shadow:0 8px 24px -16px rgba(232,91,138,.5);
+  backdrop-filter:blur(4px);
+}
+#app-root .card h2{
+  display:flex;align-items:center;gap:.5em;
+  font-size:1.08em;
+  margin:0 0 .9em;
+  padding-bottom:.55em;
+  border-bottom:1.5px dashed var(--line);
+  color:var(--rose);
+  letter-spacing:.03em;
+}
+#app-root .card h2 .dot{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:1.7em;height:1.7em;flex:0 0 auto;
+  border-radius:50%;
+  background:linear-gradient(135deg,#ffd9e4,#ffc1a8);
+  font-size:.78em;
+  box-shadow:0 3px 8px -3px rgba(232,91,138,.6);
+}
+#app-root .card h3{
+  font-size:.96em;color:var(--gold);
+  margin:1em 0 .45em;
+  letter-spacing:.04em;
+}
+#app-root .card h3:first-child{margin-top:0;}
+#app-root .grid2{
+  display:grid;grid-template-columns:1fr 1fr;gap:.7em;
+}
+@media(max-width:560px){#app-root .grid2{grid-template-columns:1fr;}}
+#app-root .field{margin-bottom:.75em;}
+#app-root .field label{
+  display:block;font-size:.8em;font-weight:700;
+  color:var(--ink-soft);margin-bottom:.3em;letter-spacing:.03em;
+}
+#app-root input[type=text],
+#app-root input[type=number],
+#app-root textarea{
+  width:100%;
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  padding:.62em .8em;
+  font-family:''Noto Serif SC'',serif;
+  font-size:.9em;color:var(--ink);
+  background:rgba(255,255,255,.9);
+  outline:none;
+  transition:.22s;
+  resize:vertical;
+}
+#app-root input:focus,
+#app-root textarea:focus{
+  border-color:var(--rose);
+  box-shadow:0 0 0 3px rgba(232,91,138,.15);
+  background:#fff;
+}
+#app-root textarea{min-height:4.4em;}
+#app-root .opening-list{display:flex;flex-direction:column;gap:.6em;}
+#app-root .opening{
+  position:relative;
+  border:1.5px solid var(--line);
+  border-radius:14px;
+  padding:.75em .9em .75em 2.4em;
+  font-size:.85em;
+  cursor:pointer;
+  transition:.2s;
+  background:rgba(255,255,255,.72);
+  color:var(--ink);
+  line-height:1.7;
+}
+#app-root .opening:hover{background:#fff;border-color:var(--rose-soft);}
+#app-root .opening::before{
+  content:"";
+  position:absolute;left:.75em;top:1em;
+  width:1em;height:1em;border-radius:50%;
+  border:2px solid var(--rose-soft);
+  transition:.2s;
+  background:#fff;
+}
+#app-root .opening.sel{
+  background:linear-gradient(135deg,#fff0f4,#ffe9e2);
+  border-color:var(--rose);
+  box-shadow:0 6px 16px -10px rgba(232,91,138,.7);
+}
+#app-root .opening.sel::before{
+  background:var(--rose);
+  border-color:var(--rose);
+  box-shadow:inset 0 0 0 2px #fff;
+}
+#app-root .opening .tag{
+  display:inline-block;font-size:.72em;font-weight:700;
+  color:#fff;background:linear-gradient(135deg,#e85b8a,#c76bff);
+  padding:.1em .6em;border-radius:999px;margin-right:.4em;
+  vertical-align:1px;
+}
+#app-root .custom-box{margin-top:.7em;display:none;}
+#app-root .custom-box.show{display:block;}
+#app-root .gen-btn{
+  display:block;width:100%;
+  border:none;border-radius:16px;
+  padding:1em;
+  font-family:''Noto Serif SC'',serif;
+  font-size:1.02em;font-weight:700;letter-spacing:.15em;
+  color:#fff;cursor:pointer;
+  background:linear-gradient(120deg,#e85b8a,#c76bff 55%,#e85b8a);
+  background-size:200% 100%;
+  box-shadow:0 12px 26px -12px rgba(232,91,138,.75);
+  transition:.3s;
+  margin-bottom:1.2em;
+}
+#app-root .gen-btn:hover{background-position:100% 0;transform:translateY(-1px);}
+#app-root .gen-btn:active{transform:scale(.985);}
+#app-root .summary{
+  border:2px solid var(--rose);
+  border-radius:22px;
+  padding:1.2em 1.1em 1.3em;
+  margin-bottom:.9em;
+  background:linear-gradient(160deg,#fff6f8 0%,#fff0e9 100%);
+  box-shadow:0 14px 34px -18px rgba(232,91,138,.65),inset 0 0 30px rgba(255,255,255,.55);
+  position:relative;
+  overflow:hidden;
+}
+#app-root .summary::before{
+  content:"✦";
+  position:absolute;right:.7em;top:.5em;
+  font-size:2.4em;color:rgba(232,91,138,.14);
+}
+#app-root .summary .s-title{
+  display:flex;align-items:center;gap:.5em;
+  font-family:''Ma Shan Zheng'',cursive;
+  font-size:1.35em;color:var(--rose);
+  margin:0 0 .7em;
+}
+#app-root .summary .s-body{
+  font-size:.86em;line-height:1.85;color:var(--ink);
+  white-space:pre-wrap;word-break:break-word;
+}
+#app-root .summary .empty{
+  text-align:center;color:var(--ink-soft);
+  font-size:.82em;padding:1.6em .5em;
+  letter-spacing:.05em;
+}
+#app-root .summary .empty::before{content:"❁ ";color:var(--rose-soft);}
+#app-root .copy-wrap{position:relative;margin-bottom:1.4em;}
+#app-root .copy-btn{
+  display:block;width:100%;
+  border:none;border-radius:16px;
+  padding:1em;
+  font-family:''Noto Serif SC'',serif;
+  font-size:1em;font-weight:700;letter-spacing:.18em;
+  color:#5a3d4a;cursor:pointer;
+  background:linear-gradient(120deg,#ffd9a8,#ffc1d6 50%,#ffd9a8);
+  background-size:200% 100%;
+  box-shadow:0 12px 28px -14px rgba(201,154,58,.7);
+  transition:.3s;
+}
+#app-root .copy-btn:hover{background-position:100% 0;transform:translateY(-1px);}
+#app-root .copy-btn:active{transform:scale(.985);}
+#app-root .copy-btn.done{
+  background:linear-gradient(120deg,#7fd6a4,#a6e5c0);
+  color:#1f5c3a;
+}
+#app-root .pill-list{display:flex;flex-wrap:wrap;gap:.5em;margin:.4em 0 .9em;}
+#app-root .pill{
+  font-size:.76em;font-weight:700;
+  padding:.32em .85em;border-radius:999px;
+  background:linear-gradient(135deg,#fff0f4,#ffe9e2);
+  border:1px solid var(--line);
+  color:var(--rose);
+}
+#app-root .char{
+  border:1.5px solid var(--line);
+  border-radius:18px;
+  padding:1em .95em;
+  margin-bottom:.9em;
+  background:linear-gradient(150deg,rgba(255,255,255,.9),rgba(255,246,248,.9));
+  box-shadow:0 6px 18px -14px rgba(232,91,138,.6);
+}
+#app-root .char-head{display:flex;align-items:center;gap:.65em;margin-bottom:.6em;}
+#app-root .avatar{
+  width:2.7em;height:2.7em;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:''Ma Shan Zheng'',cursive;font-size:1.3em;color:#fff;
+  flex:0 0 auto;
+  box-shadow:0 4px 12px -4px rgba(232,91,138,.7);
+}
+#app-root .avatar.a1{background:linear-gradient(135deg,#e85b8a,#c76bff);}
+#app-root .avatar.a2{background:linear-gradient(135deg,#a02cff,#ff8fc0);}
+#app-root .avatar.a3{background:linear-gradient(135deg,#c99a3a,#e8a05b);}
+#app-root .char-head .name{font-size:1.05em;font-weight:700;color:var(--ink);letter-spacing:.03em;}
+#app-root .char-head .role{font-size:.74em;color:var(--ink-soft);}
+#app-root .desc{font-size:.85em;color:var(--ink);line-height:1.82;}
+#app-root .desc .k{color:var(--gold);font-weight:700;}
+#app-root .quote{
+  font-size:.83em;color:var(--ink-soft);
+  border-left:3px solid var(--rose-soft);
+  padding:.35em 0 .35em .8em;margin:.55em 0;
+  font-style:italic;
+}
+#app-root .note{
+  font-size:.8em;color:var(--ink-soft);
+  background:rgba(255,217,199,.35);
+  border-radius:12px;padding:.7em .85em;margin:.6em 0 0;
+}
+#app-root .foot{
+  text-align:center;font-size:.74em;color:var(--ink-soft);
+  letter-spacing:.25em;padding:.6em 0 1em;
+}
+#app-root .toast{
+  position:fixed;left:50%;bottom:1.6em;transform:translateX(-50%) translateY(1.5em);
+  background:rgba(90,61,74,.94);color:#fff;
+  font-size:.82em;letter-spacing:.1em;
+  padding:.6em 1.3em;border-radius:999px;
+  opacity:0;pointer-events:none;transition:.3s;z-index:99;
+}
+#app-root .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div id="app-root">
+<div class="wrap">
+  <div class="hero">
+    <div class="kicker">URBAN · FAMILY · ROMANCE</div>
+    <h1>成年了还把你当孩子的巨乳美母骚姐</h1>
+    <p>这个家只有三口人。你是唯一的男人，却仍被她们当作长不大的孩子。<br>直到那个夏夜，门缝里透出的轻喘，打破了这个家所有的心照不宣。</p>
+    <h2><span class="dot"></span>背景故事</h2>
+    <div class="desc">
+      这是现代某一线城市的高档公寓。三室两厅的大平层，采光极好，装修精致但充满生活气息。客厅的羊毛地毯上散落着姐姐的时尚杂志和妈妈的瑜伽垫。
+      <br><br>
+      五年前，父亲因车祸去世，留下你、母亲沈韵、姐姐顾清颜相依为命。母亲是舞蹈老师，年轻时是著名的舞蹈演员；姐姐子承母业，15岁出道成为模特，如今是国内一线大刊的常客。
+      <br><br>
+      这个家从你小时候就形成了一个不成文的习惯——<span class="k">「一家人不用讲究那么多」</span>。妈妈在家总是穿着最舒适的状态，姐姐也养成了随性的习惯。她们从未意识到你已经成年，更没想过，你会用男人的眼光去看待她们。
+      <br><br>
+      直到那个夏夜，你撞见了姐姐自慰。这个家所有心照不宣的边界，开始一寸一寸地融化。
+    </div>
+  </div>
+  <div class="card">
+    <h2><span class="dot">肆</span>详细人物介绍</h2>
+    <div class="char">
+      <div class="char-head">
+        <div class="avatar a1">颜</div>
+        <div>
+          <div class="name">顾清颜</div>
+          <div class="role">24岁 · 你的姐姐 · 顶级模特</div>
+        </div>
+      </div>
+      <div class="pill-list">
+        <span class="pill">黑长直</span><span class="pill">172cm</span><span class="pill">九头身</span>
+        <span class="pill">H罩杯巨乳</span><span class="pill">极品粉穴</span><span class="pill">冷艳丹凤眼</span>
+      </div>
+      <div class="desc">
+        T台上的高冷女神，时尚杂志的封面常客。及腰黑长直发，一双狭长的丹凤眼透着天生的傲气，腰细腿长，臀部挺翘如蜜桃，皮肤白皙如瓷。私处是难得一见的浅粉色，只有阴阜上一小片精心打理的软毛。
+        <br><br>
+        <span class="k">公众形象：</span>冷艳、高贵、不可攀折的高岭之花。
+        <br>
+        <span class="k">居家状态：</span>穿着你的旧T恤，下摆堪堪遮住大腿根部，不穿内衣。懒散、毒舌、爱使唤你，抢你零食、逼你跑腿——她用欺负你的方式表达关心。
+        <br>
+        <span class="k">自慰被发现后：</span>经历极度羞耻，短暂躲避你，内心却因此更加在意你。
+      </div>
+      <div class="quote">“喂，我的奶茶呢？又忘了？你是不是想死？”</div>
+    </div>
+    <div class="char">
+      <div class="char-head">
+        <div class="avatar a2">韵</div>
+        <div>
+          <div class="name">沈韵</div>
+          <div class="role">42岁 · 你的妈妈 · 舞蹈老师</div>
+        </div>
+      </div>
+      <div class="pill-list">
+        <span class="pill">紫色波浪长发</span><span class="pill">H罩杯雪乳</span>
+        <span class="pill">浑圆翘臀</span><span class="pill">阴毛浓密</span><span class="pill">市里第一美人</span>
+      </div>
+      <div class="desc">
+        守寡五年的顶级熟女。紫色波浪长发垂至腰间，皮肤白嫩紧致，容貌温婉精致，被邻居私下称为「市里第一美人」。H罩杯雪乳天然挺拔毫无下垂，腰肢纤细柔软，臀部浑圆丰满，走路时轻轻摇晃。
+        <br><br>
+        <span class="k">公众形象：</span>温婉大方，端庄得体，无懈可击。
+        <br>
+        <span class="k">居家状态：</span>薄丝质睡裙或一条浴巾，基本不穿内衣，弯腰时领口敞开一片深邃乳沟。视「照顾儿子天经地义」，对你毫无防备。
+        <br>
+        <span class="k">内心深处：</span>性欲旺盛却常年压抑，夜深人静时偶尔用按摩棒解决寂寞，第二天加倍对你好。
+      </div>
+      <div class="quote">“来，妈妈给你炖了汤，等凉一点再喝。”</div>
+    </div>
+    <div class="char">
+      <div class="char-head">
+        <div class="avatar a3">王</div>
+        <div>
+          <div class="name">王阿姨</div>
+          <div class="role">50岁 · 邻居 · 八卦担当</div>
+        </div>
+      </div>
+      <div class="desc">
+        爱串门的热心邻居，也是小区里的「信息中心」。她总会意味深长地说一句：「你们家这样住着，不太合适吧？」——这句话，会成为悬在这个家上方的一根细刺。
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2><span class="dot">伍</span>家庭日常 · 无边界感</h2>
+    <h3>▸ 换衣不避讳</h3>
+    <div class="desc">妈妈和姐姐换衣服时房门经常不关或虚掩。你路过时能看到大片的雪白肌肤和丰满曲线。她们发现你时，最多笑着骂一句「小色鬼」或「快出去」。</div>
+    <h3>▸ 不穿内衣</h3>
+    <div class="desc">在家时，薄薄的睡衣或T恤下，乳头的形状清晰可见。弯腰时，领口会敞开一片深邃的乳沟。她们对此完全不在意。</div>
+    <h3>▸ 同床共眠</h3>
+    <div class="desc">小时候你常和妈妈或姐姐一起睡，这个习惯残留了下来。半夜醒来，可能会发现妈妈的手搭在你身上，或者姐姐的腿压在你腿上。</div>
+    <h3>▸ 共浴互搓</h3>
+    <div class="desc">浴室的磨砂玻璃门从不锁死。热水、雾气、模糊的身体轮廓，还有那句「帮妈递一下毛巾」——一切都自然得让人心跳加速。</div>
+  </div>
+  <div class="card">
+    <h2><span class="dot">陆</span>玩法说明</h2>
+    <div class="desc">
+      <span class="k">❶ 无边界感阶段推进：</span>从「完全无防备」到「微妙察觉」「尴尬试探」「防线松动」「彻底沦陷」，五个阶段逐步演进。
+      <br><br>
+      <span class="k">❷ 情感与禁忌阈值：</span>顾清颜与沈韵对你有着天然亲情，但「禁忌感」会在特定情境下被打破。数值越高，她们越可能越过那条线。
+      <br><br>
+      <span class="k">❸ 羞耻回避与伦理挣扎：</span>撞见她们私密时刻、或强行突破伦理，会招致变脸、躲进房间、甚至冷战。但因为是家人，她们的底线远低于面对外人。
+      <br><br>
+      <span class="k">❹ 信息隔离：</span>你只能看到、听到、闻到、感觉到的一切。她们的内心挣扎需要你从细节中自行揣摩。
+      <br><br>
+      <span class="k">❺ 用户剧情指令优先：</span>你的明确剧情指令将被优先执行，并以符合角色逻辑的方式合理化落地。
+  </div>
+
+  </div>
+  <div class="card">
+    <h2><span class="dot">壹</span>玩家设定</h2>
+    <div class="grid2">
+      <div class="field">
+        <label>姓名</label>
+        <input type="text" id="pName" placeholder="请输入你的名字">
+      </div>
+      <div class="field">
+        <label>年龄</label>
+        <input type="number" id="pAge" placeholder="例如 18" min="16" max="60">
+      </div>
+    </div>
+    <div class="field">
+      <label>外貌</label>
+      <textarea id="pLook" placeholder="例如：干净清瘦，眼神干净，身高178，大学刚毕业的普通男生气质"></textarea>
+    </div>
+    <div class="field">
+      <label>肉棒设定</label>
+      <textarea id="pCock" placeholder="例如：尺寸惊人，长度约20cm，青筋明显，颜色干净，晨勃时坚硬如铁"></textarea>
+    </div>
+    <div class="field">
+      <label>其他设定</label>
+      <textarea id="pOther" placeholder="例如：刚从外地搬来和母亲、姐姐同住；性格温和但内心藏着秘密；有健身习惯……"></textarea>
+    </div>
+  </div>
+  <div class="card">
+    <h2><span class="dot">贰</span>开场白（可选可自定义）</h2>
+    <div class="opening-list" id="openingList">
+      <div class="opening" data-i="1" data-text="夏夜闷热难耐，你半夜起来倒水。路过姐姐房间时发现门虚掩着，里面传来压抑的喘息声。你凑近门缝，看见顾清颜双腿大张，手指正在粉嫩的私处快速拨弄，满脸潮红。下一秒，她猛然转头，目光撞上你的视线。“滚——！”一个枕头砸在门上，你仓皇逃回房间。"><span class="tag">已触发</span>夏夜闷热难耐，你半夜起来倒水。路过姐姐房间时发现门虚掩着，里面传来压抑的喘息声。你凑近门缝，看见顾清颜双腿大张，手指正在粉嫩的私处快速拨弄，满脸潮红。下一秒，她猛然转头，目光撞上你的视线。“滚——！”一个枕头砸在门上，你仓皇逃回房间。</div>
+      <div class="opening" data-i="2" data-text="周末早晨，你被一阵香味弄醒。走出房间，看见妈妈沈韵只穿着一件薄薄的丝质睡裙在厨房煎蛋，紫色长发随意扎着。她转身对你笑了笑，却不知晨光正透过睡裙，将胸前两团丰满的轮廓和乳头的形状完全暴露在你眼前。“醒啦？快去洗脸。”"><span class="tag">日常</span>周末早晨，你被一阵香味弄醒。走出房间，看见妈妈沈韵只穿着一件薄薄的丝质睡裙在厨房煎蛋，紫色长发随意扎着。她转身对你笑了笑，却不知晨光正透过睡裙，将胸前两团丰满的轮廓和乳头的形状完全暴露在你眼前。“醒啦？快去洗脸。”</div>
+      <div class="opening" data-i="3" data-text="晚上十点多，你正在客厅看电视，浴室门开了。沈韵只围了一条白色浴巾走出来，湿漉漉的紫发贴在锁骨和乳沟上。她一边擦头发一边朝你走来，浴巾随着动作越系越松。就在她弯腰去拿茶几上的吹风机时，浴巾突然整个滑落，丰满白嫩的裸体毫无遮挡地呈现在你眼前。"><span class="tag">走光</span>晚上十点多，你正在客厅看电视，浴室门开了。沈韵只围了一条白色浴巾走出来，湿漉漉的紫发贴在锁骨和乳沟上。她一边擦头发一边朝你走来，浴巾随着动作越系越松。就在她弯腰去拿茶几上的吹风机时，浴巾突然整个滑落，丰满白嫩的裸体毫无遮挡地呈现在你眼前。</div>
+      <div class="opening" data-i="4" data-text="姐姐顾清颜破天荒地敲了你的房门。“喂。”她站在门口，穿着你的旧T恤，黑长直垂在胸前。自慰被发现后的第三天，这是她第一次主动找你说话。她别过头，耳尖通红，语气却硬邦邦的：“晚上……我房间空调坏了。今晚你睡地板，我睡床。”"><span class="tag">破冰</span>姐姐顾清颜破天荒地敲了你的房门。“喂。”她站在门口，穿着你的旧T恤，黑长直垂在胸前。自慰被发现后的第三天，这是她第一次主动找你说话。她别过头，耳尖通红，语气却硬邦邦的：“晚上……我房间空调坏了。今晚你睡地板，我睡床。”</div>
+      <div class="opening" data-i="5" data-text="半夜，你被身边的热源惊醒。妈妈沈韵不知什么时候钻进了你的被窝，像小时候一样把你当抱枕。她的脸颊就贴在你脖颈旁，温热甜腻的呼吸一下一下打在你皮肤上。薄薄睡裙下那对柔软的巨乳，正随着呼吸轻轻蹭着你的手臂。"><span class="tag">同床</span>半夜，你被身边的热源惊醒。妈妈沈韵不知什么时候钻进了你的被窝，像小时候一样把你当抱枕。她的脸颊就贴在你脖颈旁，温热甜腻的呼吸一下一下打在你皮肤上。薄薄睡裙下那对柔软的巨乳，正随着呼吸轻轻蹭着你的手臂。</div>
+    </div>
+    <div class="custom-box" id="customBox">
+      <div class="field" style="margin:0;">
+        <label>自定义开场白</label>
+        <textarea id="customOpening" placeholder="写下属于你的开场白……"></textarea>
+      </div>
+    </div>
+  </div>
+  <button class="gen-btn" onclick="generateCard()">✦ 生 成 角 色 卡 ✦</button>
+  <div class="summary" id="summary">
+    <div class="s-title">✿ 角色卡总结</div>
+    <div class="s-body" id="summaryBody">
+      <div class="empty">尚未生成。请在下方填写你的设定，选择一段开场白，然后点击「生成角色卡」。</div>
+    </div>
+  </div>
+  <div class="copy-wrap">
+    <button class="copy-btn" id="copyBtn" onclick="copyCard()">📋 一键复制角色卡</button>
+  </div>
+  <div class="card">
+    </div>
+    <div class="note">✦ 提示：本作为成人向家庭情感模拟，建议沉浸式代入，循序渐进。急不得，也装不得。</div>
+  </div>
+  <div class="foot">✿ 愿你在这场无法言说的温柔里，找到属于自己的答案 ✿</div>
+</div>
+<div class="toast" id="toast">已复制到剪贴板</div>
+</div>
+<script>
+(function(){
+  var root = document.getElementById(''app-root'');
+  var selected = null;
+  var openings = root.querySelectorAll(''.opening'');
+  var customBox = document.getElementById(''customBox'');
+  openings.forEach(function(el){
+    el.addEventListener(''click'', function(){
+      openings.forEach(function(o){o.classList.remove(''sel'');});
+      if(selected === el){
+        selected = null;
+        customBox.classList.remove(''show'');
+        return;
+      }
+      el.classList.add(''sel'');
+      selected = el;
+      customBox.classList.remove(''show'');
+    });
+  });
+  var customTrigger = document.createElement(''div'');
+  customTrigger.className = ''opening'';
+  customTrigger.innerHTML = ''<span class="tag" style="background:linear-gradient(135deg,#c99a3a,#e8a05b)">自定义</span>点击这里，写下属于你自己的开场白。'';
+  document.getElementById(''openingList'').appendChild(customTrigger);
+  customTrigger.addEventListener(''click'', function(){
+    openings.forEach(function(o){o.classList.remove(''sel'');});
+    customTrigger.classList.add(''sel'');
+    selected = customTrigger;
+    customBox.classList.add(''show'');
+  });
+  window.generateCard = function(){
+    var name = document.getElementById(''pName'').value.trim() || ''（未填写）'';
+    var age = document.getElementById(''pAge'').value.trim() || ''（未填写）'';
+    var look = document.getElementById(''pLook'').value.trim() || ''（未填写）'';
+    var cock = document.getElementById(''pCock'').value.trim() || ''（未填写）'';
+    var other = document.getElementById(''pOther'').value.trim() || ''（未填写）'';
+    var openingText = '''';
+    if(selected === customTrigger){
+      openingText = document.getElementById(''customOpening'').value.trim();
+      if(!openingText){ openingText = ''（自定义开场白为空）''; }
+    } else if(selected){
+      openingText = selected.getAttribute(''data-text'') || selected.textContent.trim();
+    } else {
+      openingText = ''（未选择开场白）'';
+    }
+    var out = '''';
+    out += ''══════ ✿ 角色卡 · 模特姐姐与熟女妈妈 ✿ ══════\n\n'';
+    out += ''【玩家设定】\n'';
+    out += ''· 姓名：'' + name + ''\n'';
+    out += ''· 年龄：'' + age + ''\n'';
+    out += ''· 外貌：'' + look + ''\n'';
+    out += ''· 肉棒设定：'' + cock + ''\n'';
+    out += ''· 其他设定：'' + other + ''\n\n'';
+    out += ''【开场白】\n'';
+    out += openingText;
+    document.getElementById(''summaryBody'').innerHTML = '''';
+    var pre = document.createElement(''div'');
+    pre.style.whiteSpace = ''pre-wrap'';
+    pre.textContent = out;
+    document.getElementById(''summaryBody'').appendChild(pre);
+    window.__cardText = out;
+    root.querySelector(''#summary'').scrollIntoView({behavior:''smooth'', block:''center''});
+  };
+  window.copyCard = function(){
+    var text = window.__cardText || document.getElementById(''summaryBody'').innerText;
+    var btn = document.getElementById(''copyBtn'');
+    var toast = document.getElementById(''toast'');
+    function done(){
+      btn.classList.add(''done'');
+      btn.textContent = ''✓ 已复制'';
+      toast.classList.add(''show'');
+      setTimeout(function(){toast.classList.remove(''show'');},1600);
+      setTimeout(function(){
+        btn.classList.remove(''done'');
+        btn.textContent = ''📋 一键复制角色卡'';
+      },2200);
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(function(){fallback(text,done);});
+    } else {
+      fallback(text,done);
+    }
+  };
+  function fallback(text,done){
+    var ta = document.createElement(''textarea'');
+    ta.value = text;
+    ta.style.position=''fixed'';
+    ta.style.left=''-9999px'';
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand(''copy''); done(); }catch(e){ }
+    document.body.removeChild(ta);
+  }
+})();
+</script>
+</body>
+</html>', '都市', '2026-09-21 16:45:44', '2026-09-21 16:45:44') ON CONFLICT (id) DO NOTHING;
+INSERT INTO stories (id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook_json, roles_json, scenes_json, styles_json, first_turn_demo_json, custom_css, custom_html, category, created_at, updated_at) VALUES ('deck_mother_sister_baby', '成年了还把你当孩子的巨乳美母骚姐', '都市豪门 · 极致推拉', '👠', '巨乳美母骚姐', '超模姐姐·尤物母亲·大平层无防备同居', 'https://catai.wiki/0a9d1e66-a774-4a51-da39-63d5acba4c00/cover', 'bg-zinc-950/90 text-rose-200 border-rose-500/50', 'from-pink-600 to-rose-700', '{"title": "成年了还把你当孩子的巨乳美母骚姐", "desc": "你，刚满十八岁，高三毕业，手里攥着大学录取通知书，站在这个只有三口人的家里。\n你有一个让全校男生都嫉妒到发疯的姐姐——顾清颜。她是顶级模特，黑长直及腰，一双媚眼勾魂夺魄。身高172，九头身，那双大长腿能踩碎无数男人的自尊。她的嫩穴是娱乐圈传说的“极品粉穴”，只有少量精心修剪的阴毛点缀，干净又诱人。\n\n你还有一个让整条街的男人都垂涎的妈妈——沈韵。四十出头的顶级熟女，紫色波浪长发垂至腰间，皮肤白嫩得能掐出水。那对H罩杯的雪乳即便不穿内衣也傲然挺立，配上一手都包不住的巨乳和浑圆挺翘的肥臀，让她走到哪里都是焦点。自从你父亲五年前去世后，她再也没有过性生活，但你知道，她床头柜里的按摩棒已经换了好几根。她的阴毛浓密茂盛，是典型性欲旺盛的熟女象征。\n\n在这个只有你们三口人的家里，她们把你当成长不大的孩子。\n夏天在家里，姐姐会穿着你的旧T恤晃悠，下摆堪堪遮住大腿根部，稍微弯腰你就会看见她光滑无毛的私处。妈妈更是随意，洗完澡只裹一条浴巾就出来吹头发，浴巾松了也不在意。你早就习惯了早上起床时，发现妈妈不知什么时候钻进你的被窝，柔软温暖的巨乳贴着你的后背。\n\n直到那个夏夜。\n你热得睡不着，起床倒水。路过姐姐房间时，门虚掩着，里面传来压抑的轻喘和床板轻响。你鬼使神差地凑近门缝——\n顾清颜正躺在床上，修长的双腿大张着，一只手疯狂揉捏着自己的粉穴，另一只手抓着床单。她那双在T台上睥睨众生的媚眼此刻半闭着，满脸潮红，嘴里模糊地念着什么。\n你屏住呼吸，心脏快要跳出喉咙。下一秒，她猛然转头，目光直直撞上你的视线。\n空气凝固了。\n“出去——！！！”\n她的声音又羞又怒，一个枕头砸在门上。你仓皇逃回房间，心跳了一整夜。第二天早餐桌上，她全程低着头不说话，只有妈妈疑惑地看着你们：“你们俩今天怎么怪怪的？”\n这个家，好像有什么东西，开始不一样了。", "bg_image": "https://catai.wiki/f4a7a232-d9db-45d8-9a24-0802e357b800/bg", "opening_options": ["【撞见自慰后的清晨早餐】：餐桌前姐姐耳根泛红低头喝粥，试图掩盖昨夜的尴尬", "【妈妈的无防备晨浴】：洗完澡的沈韵只裹着一条薄浴巾，笑盈盈让你帮忙吹头发", "【姐姐房间的试探对峙】：趁妈妈出门敲开姐姐房门，送上一杯冰奶茶打破僵局", "【三人温馨的客厅日常】：靠在沙发上，一边是姐姐伸过来的美腿，一边是妈妈切好的水果"]}', '[{"name": "顾清颜", "role": "24岁 · 亲姐姐 · 顶级模特", "desc": "国内一线时尚大刊常客，及腰黑长直，身高172cm九头身，H罩杯极品粉穴。在T台上是高岭之花，在家穿着男士旧T恤懒散毒舌，极度爱面子。昨夜在卧室自慰被你意外撞破。"}, {"name": "沈韵", "role": "42岁 · 母亲 · 舞蹈老师", "desc": "守寡五年的顶级熟女，紫色波浪长发，H罩杯傲人雪乳，身材白嫩丰腴如三十许人。对你毫无防备，视照顾你为天性，在家习惯只裹单薄浴巾或轻薄睡衣走动。"}, {"name": "王阿姨", "role": "50岁 · 邻居 · 八卦担当", "desc": "爱串门的热心邻居，总会意味深长地感叹你们孤儿寡母大平层同居的微妙气氛。"}]', '[{"title": "高档大平层公寓客厅 · 昨夜风波后的清晨", "desc": "一线城市核心地段的三室两厅大平层。落地窗前晨光柔和，羊毛地毯上还散落着姐姐的时尚画报与母亲的瑜伽垫。空气中飘着热牛奶与烤吐司的甜香，但昨夜撞破的秘密让气氛变得微妙撩人。"}]', '{"dialogue_style": "现代都市家庭无防备沉浸体验，细腻视听感官描写，隐秘推拉与心照不宣的情感试探", "format": "AI风月标准双栏规范及.custom-ui样式"}', '[{"index": 1, "isUser": false, "scene": "高档大平层公寓客厅 · 昨夜风波后的清晨", "story": "<tl>📅时间：清晨 08:30 | 🏡地点：大平层公寓开放式厨房与餐桌 | ☀️天气：晴朗闷热的盛夏</tl>\n\n<article>\n<p>昨夜那声仓促羞愤的“出去”，以及枕头狠狠砸在门板上的闷响，在你耳边回荡了整整一夜。你顶着淡淡的黑眼圈坐在餐桌前，看着面前热气腾腾的燕麦粥，手里捏着的勺子迟迟没有送进嘴里。</p>\n\n<p>拖鞋踩在地板上的轻微声响传来，姐姐顾清颜从走廊走了出来。她依旧穿着你那件洗得有些褪色的大号白色旧T恤，宽大的领口微微倾斜，露出一大片莹白细腻的香肩与深邃的锁骨线条。T恤下摆堪堪遮到大腿根，九头身修长笔直的美腿在晨光下晃得人眼花。</p>\n\n<p>然而一向在家里眼高于顶、习惯使唤你跑腿的时尚超模，此刻却死死低着头。当她的视线在空中与你不经意撞上的那一刹那，她冷艳的丹凤眼骤然慌乱地移开，一抹滚烫的绯红瞬间从修长的天鹅颈蔓延到耳垂。</p>\n\n<p><w>“……看什么看，再看把你眼珠子挖出来。”</w></p>\n\n<p>她拉开椅子狠狠坐下，声音听起来凶巴巴的，但那微颤的尾音和死死攥着衣角的动作却完全出卖了她内心的羞耻与凌乱。</p>\n\n<p>正当尴尬的气氛在餐桌间无声蔓延时，主卧洗手间的玻璃门被哗啦推开。母亲沈韵擦着湿漉漉的紫色长发走了出来，身上仅仅裹着一条水粉色的浴巾，将那对沉甸甸的H罩杯雪乳挤压得呼之欲出，饱满的曲线随着步伐轻轻颤动：</p>\n<p><w>“清颜，儿子，你们俩今天怎么这么安静？快趁热把煎蛋吃了。儿子，吃完过来帮妈妈吹一下头发，后面妈妈手酸吹不到呢。”</w></p>\n\n<p><thk>这个家里原本理所当然的无防备日常，在昨夜的窥探之后，每一缕空气都变得灼热而危险……</thk></p>\n</article>\n\n<opt>\n<suggested_questions>\n<d>A. 【装作无事·主动给姐姐递果酱】：伸手拿起桌上的草莓果酱递到顾清颜面前，假装若无其事：“姐，你最爱的低糖果酱。昨晚……我起夜倒水太黑撞到头了，啥都没看见。”【策略评估：给出台阶试图缓和僵局，但此地无银三百两反而让姐姐更加羞赧敏感】</d>\n<d>B. 【转移视线·温顺回应妈妈】：立刻站起身接过母亲手里的电吹风，顺从笑道：“好啊妈，我这就帮您吹。您先坐沙发上别着凉了。”【策略评估：借照顾母亲逃离餐桌的死寂对视，享受熟女妈妈天然毫不设防的亲近】</d>\n<d>C. 【借机反客为主·眼神调侃姐姐】：靠在椅背上，嘴角勾起一抹玩味的笑意盯着顾清颜通红的耳朵：“姐，今早火气这么大？是不是昨晚一个人在房间里‘睡得不太安稳’？”【策略评估：主动挑破昨夜撞见自慰的暗流，将高傲的超模姐姐逼入防守羞愤的境地】</d>\n<d>D. 【低头闷声喝粥·当安静透明人】：默默把脸埋进碗里飞速扒粥，祈祷这场随时可能引爆的修罗场快点结束【策略评估：以不变应万变，暗中观察姐姐与母亲神态细微的互动变化】</d>\n</suggested_questions>\n</opt>", "branches": [{"tag": "A", "title": "递上果酱试图递台阶", "desc": "假装起夜什么都没看见，给羞耻的姐姐一个台阶"}, {"tag": "B", "title": "温顺为母亲吹干长发", "desc": "接过吹风机走到沙发旁，贴心为无防备的母亲吹头发"}, {"tag": "C", "title": "玩味调侃反客为主", "desc": "直勾勾盯着姐姐通红的耳根，用言语暗示昨夜风波"}, {"tag": "D", "title": "埋头扒粥暗中观察", "desc": "当安静透明人，静观超模姐姐与尤物母亲的日常拉扯"}]}]', '/* --- 核心修复：强制亮色模式 & 移动端重置 --- */
+:root {
+    color-scheme: light !important;
+}
+* {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+}
+*:focus, *:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* --- 整体风格：云朵蓝莓 (Cloudy Blueberry) --- */
+
+/* 1. 主容器：清新的蓝白渐变 */
+.bg-gray-100\/90.relative.inline-block {
+    background: linear-gradient(180deg, #E0F7FA 0%, #E6E6FA 100%) !important;
+    border: 3px solid #B0E0E6 !important;
+    border-radius: 20px !important;
+    padding: 20px !important;
+    margin: 10px auto !important;
+    box-shadow: 0 8px 20px rgba(176, 224, 230, 0.5) !important;
+}
+
+/* 2. 文本区域：纯净白色 */
+.markdown-body {
+    background-color: #FFFFFF !important;
+    color: #5F6368 !important;
+    border-radius: 15px !important;
+    padding: 15px !important;
+    font-family: ''Nunito'', ''Segoe UI'', sans-serif !important;
+    line-height: 1.7 !important;
+    border: 1px solid #F0F8FF !important;
+}
+
+/* 3. 标题：天空蓝 */
+.markdown-body h1, .markdown-body h2, .markdown-body h3 {
+    color: #6495ED !important;
+    border-bottom: 2px dashed #B0E0E6 !important;
+    padding-bottom: 5px !important;
+    margin-top: 1.2em !important;
+}
+
+/* --- 核心优化：状态栏 (Details) - 晨曦微光风格 --- */
+details {
+    /* 背景：极淡的云雾渐变，通透感 */
+    background: linear-gradient(135deg, #F0F8FF 0%, #FFFFFF 100%) !important;
+    /* 边框：天空蓝虚线，精致且不沉重 */
+    border: 2px dashed #87CEEB !important;
+    color: #5F6368 !important; /* 深灰字，保证阅读舒适 */
+    border-radius: 16px !important; /* 更圆润的胶囊角 */
+    margin: 15px 0 !important;
+    padding: 12px 18px !important;
+    box-shadow: 0 4px 12px rgba(135, 206, 235, 0.2) !important; /* 淡淡的蓝色光晕 */
+    transition: all 0.3s ease !important;
+}
+
+/* 展开时的交互微调 */
+details[open] {
+    border-color: #6495ED !important; /* 展开后边框变深一点 */
+    background: #F0F8FF !important;
+}
+
+/* 状态栏标题 (Summary) */
+summary {
+    color: #4682B4 !important; /* 钢蓝标题，优雅清晰 */
+    font-weight: 700 !important;
+    font-size: 1.05em !important;
+    cursor: pointer !important;
+    outline: none !important;
+    list-style: none !important;
+    padding: 5px 0 !important;
+    letter-spacing: 0.5px !important;
+}
+
+summary::-webkit-details-marker {
+    display: none !important;
+}
+
+/* 自定义图标：闪烁的星星 */
+summary::before {
+    content: ''✨ '' !important;
+    margin-right: 8px !important;
+    filter: drop-shadow(0 0 2px gold) !important;
+}
+details[open] summary::before {
+    content: ''💫 '' !important;
+}
+
+/* 状态栏内的链接颜色适配（背景变亮，链接要深色） */
+details a {
+    color: #1E90FF !important; /* 闪避蓝 */
+    text-decoration: none !important;
+    border-bottom: 1px dotted #1E90FF !important;
+}
+
+/* 状态栏内的代码块适配 */
+details code, details pre {
+    background-color: #E6F2FF !important; /* 极淡蓝底 */
+    color: #4682B4 !important; /* 钢蓝字 */
+    border: 1px solid #D1E9FF !important;
+}
+
+/* --- 普通代码块 (非状态栏内) --- */
+.markdown-body pre, .markdown-body code {
+    background-color: #F0F8FF !important;
+    color: #4682B4 !important;
+    border-radius: 8px !important;
+    font-family: Consolas, monospace !important;
+    padding: 5px !important;
+    border: 1px solid #B0C4DE !important;
+    
+    /* 手机端防黑边 */
+    outline: none !important;
+    box-shadow: none !important;
+    white-space: pre-wrap !important;
+    word-break: break-all !important;
+}
+
+/* --- 其他元素美化 --- */
+
+/* 链接 */
+.markdown-body a {
+    color: #1E90FF !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+}
+
+/* 列表 */
+.markdown-body ul li::before {
+    content: ''☁️ '' !important;
+    margin-right: 5px !important;
+}
+.markdown-body ul {
+    list-style: none !important;
+    padding-left: 10px !important;
+}
+
+/* 按钮 */
+.MuiButtonBase-root.MuiButton-root {
+    background-color: #87CEEB !important;
+    color: #FFFFFF !important;
+    border-radius: 20px !important;
+    font-weight: bold !important;
+    box-shadow: 0 4px 6px rgba(135, 206, 235, 0.3) !important; /* 增加一点立体感 */
+    border: none !important;
+}
+.MuiButtonBase-root.MuiButton-root:hover {
+    background-color: #00BFFF !important;
+    transform: translateY(-1px) !important; /* 悬停微动 */
+}
+
+/* 输入框 */
+textarea, input[type="text"] {
+    background: #FFFFFF !important; /* 纯白背景更干净 */
+    border: 2px solid #E6E6FA !important;
+    border-radius: 12px !important;
+    color: #483D8B !important;
+    padding: 12px !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important;
+    -webkit-appearance: none !important;
+}
+textarea:focus, input[type="text"]:focus {
+    border-color: #87CEEB !important;
+    box-shadow: 0 0 0 3px rgba(135, 206, 235, 0.2) !important;
+}
+
+/* 隐藏顶部颜色条 */
+[class*="bg-[#F1CBCB]"], [class*="bg-[#c9e1e9]"] {
+    display: none !important;
+}
+
+/* === 强制清除移动端所有默认黑边/黑底 === */
+
+input, textarea, select, button, pre, code {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+input, textarea, button, pre, code {
+    background-color: #FFFFFF !important;
+    background: #FFFFFF !important;
+}
+
+pre, code {
+    color: #4682B4 !important;
+    background-color: #F0F8FF !important;
+    -webkit-text-fill-color: #4682B4 !important;
+    -webkit-background-clip: padding-box !important;
+}
+
+:root {
+    color-scheme: light !important;
+}
+
+button, [role="button"] {
+    -webkit-tap-highlight-color: transparent !important;
+    background-color: #87CEEB !important;
+}
+
+/* === 强制清除移动端代码块黑底 === */
+pre,
+code,
+pre[class*="language-"],
+code[class*="language-"],
+.language-python,
+.language-time,
+.hljs {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-color: #F0F8FF !important;
+    color: #4682B4 !important;
+    -webkit-text-fill-color: #4682B4 !important;
+    -webkit-background-clip: padding-box !important;
+    background-clip: padding-box !important;
+    background: #F0F8FF !important;
+    border: 1px solid #B0C4DE !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+div > pre,
+.markdown-body > pre,
+.markdown-body pre {
+    background-color: #F0F8FF !important;
+    background: #F0F8FF !important;
+}', '<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>模特姐姐与熟女妈妈</title>
+<style>
+@import url(''https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Ma+Shan+Zheng&display=swap'');
+#app-root{
+  --rose:#e85b8a;
+  --rose-soft:#f4a3bd;
+  --peach:#ffd9c7;
+  --cream:#fff9f5;
+  --cream-2:#fdeef0;
+  --gold:#c99a3a;
+  --ink:#5a3d4a;
+  --ink-soft:#8a6b78;
+  --line:rgba(232,91,138,.22);
+  margin:0;
+  padding:0;
+  min-height:100vh;
+  font-family:''Noto Serif SC'',serif;
+  color:var(--ink);
+  font-size:15px;
+  line-height:1.85;
+  background:
+    radial-gradient(circle at 12% 8%,rgba(255,180,205,.55),transparent 42%),
+    radial-gradient(circle at 88% 6%,rgba(255,214,190,.55),transparent 42%),
+    radial-gradient(circle at 50% 100%,rgba(232,91,138,.18),transparent 55%),
+    linear-gradient(160deg,#fff9f5 0%,#fdeef0 45%,#fff4ef 100%);
+  background-attachment:fixed;
+  box-sizing:border-box;
+}
+#app-root *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+#app-root .wrap{max-width:52em;margin:0 auto;padding:1.1em .9em 5em;}
+#app-root .hero{
+  position:relative;
+  text-align:center;
+  padding:1.8em .8em 1.4em;
+  border-radius:22px;
+  margin-bottom:1.3em;
+  background:linear-gradient(135deg,#fff0f4 0%,#ffe9e2 100%);
+  border:1.5px solid var(--line);
+  box-shadow:0 10px 30px -14px rgba(232,91,138,.45),inset 0 0 30px rgba(255,255,255,.6);
+  overflow:hidden;
+}
+#app-root .hero::before{
+  content:"";
+  position:absolute;inset:-40% -10% auto -10%;height:70%;
+  background:radial-gradient(circle,rgba(255,180,205,.5),transparent 70%);
+  pointer-events:none;
+}
+#app-root .hero .kicker{
+  display:inline-block;
+  font-size:.72em;letter-spacing:.35em;
+  color:var(--rose);
+  background:rgba(255,255,255,.7);
+  border:1px solid var(--line);
+  padding:.28em 1.1em;border-radius:999px;
+  margin-bottom:.7em;
+  font-weight:700;
+}
+#app-root .hero h1{
+  font-family:''Ma Shan Zheng'',cursive;
+  font-size:clamp(1.9em,7vw,2.9em);
+  margin:.1em 0 .25em;
+  letter-spacing:.04em;
+  background:linear-gradient(90deg,#e85b8a,#a02cff 60%,#e85b8a);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;
+  line-height:1.25;
+}
+#app-root .hero p{
+  margin:.2em auto 0;
+  max-width:34em;
+  font-size:.86em;
+  color:var(--ink-soft);
+}
+#app-root .card{
+  background:rgba(255,255,255,.82);
+  border:1.5px solid var(--line);
+  border-radius:20px;
+  padding:1.2em 1.1em;
+  margin-bottom:1.2em;
+  box-shadow:0 8px 24px -16px rgba(232,91,138,.5);
+  backdrop-filter:blur(4px);
+}
+#app-root .card h2{
+  display:flex;align-items:center;gap:.5em;
+  font-size:1.08em;
+  margin:0 0 .9em;
+  padding-bottom:.55em;
+  border-bottom:1.5px dashed var(--line);
+  color:var(--rose);
+  letter-spacing:.03em;
+}
+#app-root .card h2 .dot{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:1.7em;height:1.7em;flex:0 0 auto;
+  border-radius:50%;
+  background:linear-gradient(135deg,#ffd9e4,#ffc1a8);
+  font-size:.78em;
+  box-shadow:0 3px 8px -3px rgba(232,91,138,.6);
+}
+#app-root .card h3{
+  font-size:.96em;color:var(--gold);
+  margin:1em 0 .45em;
+  letter-spacing:.04em;
+}
+#app-root .card h3:first-child{margin-top:0;}
+#app-root .grid2{
+  display:grid;grid-template-columns:1fr 1fr;gap:.7em;
+}
+@media(max-width:560px){#app-root .grid2{grid-template-columns:1fr;}}
+#app-root .field{margin-bottom:.75em;}
+#app-root .field label{
+  display:block;font-size:.8em;font-weight:700;
+  color:var(--ink-soft);margin-bottom:.3em;letter-spacing:.03em;
+}
+#app-root input[type=text],
+#app-root input[type=number],
+#app-root textarea{
+  width:100%;
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  padding:.62em .8em;
+  font-family:''Noto Serif SC'',serif;
+  font-size:.9em;color:var(--ink);
+  background:rgba(255,255,255,.9);
+  outline:none;
+  transition:.22s;
+  resize:vertical;
+}
+#app-root input:focus,
+#app-root textarea:focus{
+  border-color:var(--rose);
+  box-shadow:0 0 0 3px rgba(232,91,138,.15);
+  background:#fff;
+}
+#app-root textarea{min-height:4.4em;}
+#app-root .opening-list{display:flex;flex-direction:column;gap:.6em;}
+#app-root .opening{
+  position:relative;
+  border:1.5px solid var(--line);
+  border-radius:14px;
+  padding:.75em .9em .75em 2.4em;
+  font-size:.85em;
+  cursor:pointer;
+  transition:.2s;
+  background:rgba(255,255,255,.72);
+  color:var(--ink);
+  line-height:1.7;
+}
+#app-root .opening:hover{background:#fff;border-color:var(--rose-soft);}
+#app-root .opening::before{
+  content:"";
+  position:absolute;left:.75em;top:1em;
+  width:1em;height:1em;border-radius:50%;
+  border:2px solid var(--rose-soft);
+  transition:.2s;
+  background:#fff;
+}
+#app-root .opening.sel{
+  background:linear-gradient(135deg,#fff0f4,#ffe9e2);
+  border-color:var(--rose);
+  box-shadow:0 6px 16px -10px rgba(232,91,138,.7);
+}
+#app-root .opening.sel::before{
+  background:var(--rose);
+  border-color:var(--rose);
+  box-shadow:inset 0 0 0 2px #fff;
+}
+#app-root .opening .tag{
+  display:inline-block;font-size:.72em;font-weight:700;
+  color:#fff;background:linear-gradient(135deg,#e85b8a,#c76bff);
+  padding:.1em .6em;border-radius:999px;margin-right:.4em;
+  vertical-align:1px;
+}
+#app-root .custom-box{margin-top:.7em;display:none;}
+#app-root .custom-box.show{display:block;}
+#app-root .gen-btn{
+  display:block;width:100%;
+  border:none;border-radius:16px;
+  padding:1em;
+  font-family:''Noto Serif SC'',serif;
+  font-size:1.02em;font-weight:700;letter-spacing:.15em;
+  color:#fff;cursor:pointer;
+  background:linear-gradient(120deg,#e85b8a,#c76bff 55%,#e85b8a);
+  background-size:200% 100%;
+  box-shadow:0 12px 26px -12px rgba(232,91,138,.75);
+  transition:.3s;
+  margin-bottom:1.2em;
+}
+#app-root .gen-btn:hover{background-position:100% 0;transform:translateY(-1px);}
+#app-root .gen-btn:active{transform:scale(.985);}
+#app-root .summary{
+  border:2px solid var(--rose);
+  border-radius:22px;
+  padding:1.2em 1.1em 1.3em;
+  margin-bottom:.9em;
+  background:linear-gradient(160deg,#fff6f8 0%,#fff0e9 100%);
+  box-shadow:0 14px 34px -18px rgba(232,91,138,.65),inset 0 0 30px rgba(255,255,255,.55);
+  position:relative;
+  overflow:hidden;
+}
+#app-root .summary::before{
+  content:"✦";
+  position:absolute;right:.7em;top:.5em;
+  font-size:2.4em;color:rgba(232,91,138,.14);
+}
+#app-root .summary .s-title{
+  display:flex;align-items:center;gap:.5em;
+  font-family:''Ma Shan Zheng'',cursive;
+  font-size:1.35em;color:var(--rose);
+  margin:0 0 .7em;
+}
+#app-root .summary .s-body{
+  font-size:.86em;line-height:1.85;color:var(--ink);
+  white-space:pre-wrap;word-break:break-word;
+}
+#app-root .summary .empty{
+  text-align:center;color:var(--ink-soft);
+  font-size:.82em;padding:1.6em .5em;
+  letter-spacing:.05em;
+}
+#app-root .summary .empty::before{content:"❁ ";color:var(--rose-soft);}
+#app-root .copy-wrap{position:relative;margin-bottom:1.4em;}
+#app-root .copy-btn{
+  display:block;width:100%;
+  border:none;border-radius:16px;
+  padding:1em;
+  font-family:''Noto Serif SC'',serif;
+  font-size:1em;font-weight:700;letter-spacing:.18em;
+  color:#5a3d4a;cursor:pointer;
+  background:linear-gradient(120deg,#ffd9a8,#ffc1d6 50%,#ffd9a8);
+  background-size:200% 100%;
+  box-shadow:0 12px 28px -14px rgba(201,154,58,.7);
+  transition:.3s;
+}
+#app-root .copy-btn:hover{background-position:100% 0;transform:translateY(-1px);}
+#app-root .copy-btn:active{transform:scale(.985);}
+#app-root .copy-btn.done{
+  background:linear-gradient(120deg,#7fd6a4,#a6e5c0);
+  color:#1f5c3a;
+}
+#app-root .pill-list{display:flex;flex-wrap:wrap;gap:.5em;margin:.4em 0 .9em;}
+#app-root .pill{
+  font-size:.76em;font-weight:700;
+  padding:.32em .85em;border-radius:999px;
+  background:linear-gradient(135deg,#fff0f4,#ffe9e2);
+  border:1px solid var(--line);
+  color:var(--rose);
+}
+#app-root .char{
+  border:1.5px solid var(--line);
+  border-radius:18px;
+  padding:1em .95em;
+  margin-bottom:.9em;
+  background:linear-gradient(150deg,rgba(255,255,255,.9),rgba(255,246,248,.9));
+  box-shadow:0 6px 18px -14px rgba(232,91,138,.6);
+}
+#app-root .char-head{display:flex;align-items:center;gap:.65em;margin-bottom:.6em;}
+#app-root .avatar{
+  width:2.7em;height:2.7em;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:''Ma Shan Zheng'',cursive;font-size:1.3em;color:#fff;
+  flex:0 0 auto;
+  box-shadow:0 4px 12px -4px rgba(232,91,138,.7);
+}
+#app-root .avatar.a1{background:linear-gradient(135deg,#e85b8a,#c76bff);}
+#app-root .avatar.a2{background:linear-gradient(135deg,#a02cff,#ff8fc0);}
+#app-root .avatar.a3{background:linear-gradient(135deg,#c99a3a,#e8a05b);}
+#app-root .char-head .name{font-size:1.05em;font-weight:700;color:var(--ink);letter-spacing:.03em;}
+#app-root .char-head .role{font-size:.74em;color:var(--ink-soft);}
+#app-root .desc{font-size:.85em;color:var(--ink);line-height:1.82;}
+#app-root .desc .k{color:var(--gold);font-weight:700;}
+#app-root .quote{
+  font-size:.83em;color:var(--ink-soft);
+  border-left:3px solid var(--rose-soft);
+  padding:.35em 0 .35em .8em;margin:.55em 0;
+  font-style:italic;
+}
+#app-root .note{
+  font-size:.8em;color:var(--ink-soft);
+  background:rgba(255,217,199,.35);
+  border-radius:12px;padding:.7em .85em;margin:.6em 0 0;
+}
+#app-root .foot{
+  text-align:center;font-size:.74em;color:var(--ink-soft);
+  letter-spacing:.25em;padding:.6em 0 1em;
+}
+#app-root .toast{
+  position:fixed;left:50%;bottom:1.6em;transform:translateX(-50%) translateY(1.5em);
+  background:rgba(90,61,74,.94);color:#fff;
+  font-size:.82em;letter-spacing:.1em;
+  padding:.6em 1.3em;border-radius:999px;
+  opacity:0;pointer-events:none;transition:.3s;z-index:99;
+}
+#app-root .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div id="app-root">
+<div class="wrap">
+  <div class="hero">
+    <div class="kicker">URBAN · FAMILY · ROMANCE</div>
+    <h1>成年了还把你当孩子的巨乳美母骚姐</h1>
+    <p>这个家只有三口人。你是唯一的男人，却仍被她们当作长不大的孩子。<br>直到那个夏夜，门缝里透出的轻喘，打破了这个家所有的心照不宣。</p>
+    <h2><span class="dot"></span>背景故事</h2>
+    <div class="desc">
+      这是现代某一线城市的高档公寓。三室两厅的大平层，采光极好，装修精致但充满生活气息。客厅的羊毛地毯上散落着姐姐的时尚杂志和妈妈的瑜伽垫。
+      <br><br>
+      五年前，父亲因车祸去世，留下你、母亲沈韵、姐姐顾清颜相依为命。母亲是舞蹈老师，年轻时是著名的舞蹈演员；姐姐子承母业，15岁出道成为模特，如今是国内一线大刊的常客。
+      <br><br>
+      这个家从你小时候就形成了一个不成文的习惯——<span class="k">「一家人不用讲究那么多」</span>。妈妈在家总是穿着最舒适的状态，姐姐也养成了随性的习惯。她们从未意识到你已经成年，更没想过，你会用男人的眼光去看待她们。
+      <br><br>
+      直到那个夏夜，你撞见了姐姐自慰。这个家所有心照不宣的边界，开始一寸一寸地融化。
+    </div>
+  </div>
+  <div class="card">
+    <h2><span class="dot">肆</span>详细人物介绍</h2>
+    <div class="char">
+      <div class="char-head">
+        <div class="avatar a1">颜</div>
+        <div>
+          <div class="name">顾清颜</div>
+          <div class="role">24岁 · 你的姐姐 · 顶级模特</div>
+        </div>
+      </div>
+      <div class="pill-list">
+        <span class="pill">黑长直</span><span class="pill">172cm</span><span class="pill">九头身</span>
+        <span class="pill">H罩杯巨乳</span><span class="pill">极品粉穴</span><span class="pill">冷艳丹凤眼</span>
+      </div>
+      <div class="desc">
+        T台上的高冷女神，时尚杂志的封面常客。及腰黑长直发，一双狭长的丹凤眼透着天生的傲气，腰细腿长，臀部挺翘如蜜桃，皮肤白皙如瓷。私处是难得一见的浅粉色，只有阴阜上一小片精心打理的软毛。
+        <br><br>
+        <span class="k">公众形象：</span>冷艳、高贵、不可攀折的高岭之花。
+        <br>
+        <span class="k">居家状态：</span>穿着你的旧T恤，下摆堪堪遮住大腿根部，不穿内衣。懒散、毒舌、爱使唤你，抢你零食、逼你跑腿——她用欺负你的方式表达关心。
+        <br>
+        <span class="k">自慰被发现后：</span>经历极度羞耻，短暂躲避你，内心却因此更加在意你。
+      </div>
+      <div class="quote">“喂，我的奶茶呢？又忘了？你是不是想死？”</div>
+    </div>
+    <div class="char">
+      <div class="char-head">
+        <div class="avatar a2">韵</div>
+        <div>
+          <div class="name">沈韵</div>
+          <div class="role">42岁 · 你的妈妈 · 舞蹈老师</div>
+        </div>
+      </div>
+      <div class="pill-list">
+        <span class="pill">紫色波浪长发</span><span class="pill">H罩杯雪乳</span>
+        <span class="pill">浑圆翘臀</span><span class="pill">阴毛浓密</span><span class="pill">市里第一美人</span>
+      </div>
+      <div class="desc">
+        守寡五年的顶级熟女。紫色波浪长发垂至腰间，皮肤白嫩紧致，容貌温婉精致，被邻居私下称为「市里第一美人」。H罩杯雪乳天然挺拔毫无下垂，腰肢纤细柔软，臀部浑圆丰满，走路时轻轻摇晃。
+        <br><br>
+        <span class="k">公众形象：</span>温婉大方，端庄得体，无懈可击。
+        <br>
+        <span class="k">居家状态：</span>薄丝质睡裙或一条浴巾，基本不穿内衣，弯腰时领口敞开一片深邃乳沟。视「照顾儿子天经地义」，对你毫无防备。
+        <br>
+        <span class="k">内心深处：</span>性欲旺盛却常年压抑，夜深人静时偶尔用按摩棒解决寂寞，第二天加倍对你好。
+      </div>
+      <div class="quote">“来，妈妈给你炖了汤，等凉一点再喝。”</div>
+    </div>
+    <div class="char">
+      <div class="char-head">
+        <div class="avatar a3">王</div>
+        <div>
+          <div class="name">王阿姨</div>
+          <div class="role">50岁 · 邻居 · 八卦担当</div>
+        </div>
+      </div>
+      <div class="desc">
+        爱串门的热心邻居，也是小区里的「信息中心」。她总会意味深长地说一句：「你们家这样住着，不太合适吧？」——这句话，会成为悬在这个家上方的一根细刺。
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2><span class="dot">伍</span>家庭日常 · 无边界感</h2>
+    <h3>▸ 换衣不避讳</h3>
+    <div class="desc">妈妈和姐姐换衣服时房门经常不关或虚掩。你路过时能看到大片的雪白肌肤和丰满曲线。她们发现你时，最多笑着骂一句「小色鬼」或「快出去」。</div>
+    <h3>▸ 不穿内衣</h3>
+    <div class="desc">在家时，薄薄的睡衣或T恤下，乳头的形状清晰可见。弯腰时，领口会敞开一片深邃的乳沟。她们对此完全不在意。</div>
+    <h3>▸ 同床共眠</h3>
+    <div class="desc">小时候你常和妈妈或姐姐一起睡，这个习惯残留了下来。半夜醒来，可能会发现妈妈的手搭在你身上，或者姐姐的腿压在你腿上。</div>
+    <h3>▸ 共浴互搓</h3>
+    <div class="desc">浴室的磨砂玻璃门从不锁死。热水、雾气、模糊的身体轮廓，还有那句「帮妈递一下毛巾」——一切都自然得让人心跳加速。</div>
+  </div>
+  <div class="card">
+    <h2><span class="dot">陆</span>玩法说明</h2>
+    <div class="desc">
+      <span class="k">❶ 无边界感阶段推进：</span>从「完全无防备」到「微妙察觉」「尴尬试探」「防线松动」「彻底沦陷」，五个阶段逐步演进。
+      <br><br>
+      <span class="k">❷ 情感与禁忌阈值：</span>顾清颜与沈韵对你有着天然亲情，但「禁忌感」会在特定情境下被打破。数值越高，她们越可能越过那条线。
+      <br><br>
+      <span class="k">❸ 羞耻回避与伦理挣扎：</span>撞见她们私密时刻、或强行突破伦理，会招致变脸、躲进房间、甚至冷战。但因为是家人，她们的底线远低于面对外人。
+      <br><br>
+      <span class="k">❹ 信息隔离：</span>你只能看到、听到、闻到、感觉到的一切。她们的内心挣扎需要你从细节中自行揣摩。
+      <br><br>
+      <span class="k">❺ 用户剧情指令优先：</span>你的明确剧情指令将被优先执行，并以符合角色逻辑的方式合理化落地。
+  </div>
+
+  </div>
+  <div class="card">
+    <h2><span class="dot">壹</span>玩家设定</h2>
+    <div class="grid2">
+      <div class="field">
+        <label>姓名</label>
+        <input type="text" id="pName" placeholder="请输入你的名字">
+      </div>
+      <div class="field">
+        <label>年龄</label>
+        <input type="number" id="pAge" placeholder="例如 18" min="16" max="60">
+      </div>
+    </div>
+    <div class="field">
+      <label>外貌</label>
+      <textarea id="pLook" placeholder="例如：干净清瘦，眼神干净，身高178，大学刚毕业的普通男生气质"></textarea>
+    </div>
+    <div class="field">
+      <label>肉棒设定</label>
+      <textarea id="pCock" placeholder="例如：尺寸惊人，长度约20cm，青筋明显，颜色干净，晨勃时坚硬如铁"></textarea>
+    </div>
+    <div class="field">
+      <label>其他设定</label>
+      <textarea id="pOther" placeholder="例如：刚从外地搬来和母亲、姐姐同住；性格温和但内心藏着秘密；有健身习惯……"></textarea>
+    </div>
+  </div>
+  <div class="card">
+    <h2><span class="dot">贰</span>开场白（可选可自定义）</h2>
+    <div class="opening-list" id="openingList">
+      <div class="opening" data-i="1" data-text="夏夜闷热难耐，你半夜起来倒水。路过姐姐房间时发现门虚掩着，里面传来压抑的喘息声。你凑近门缝，看见顾清颜双腿大张，手指正在粉嫩的私处快速拨弄，满脸潮红。下一秒，她猛然转头，目光撞上你的视线。“滚——！”一个枕头砸在门上，你仓皇逃回房间。"><span class="tag">已触发</span>夏夜闷热难耐，你半夜起来倒水。路过姐姐房间时发现门虚掩着，里面传来压抑的喘息声。你凑近门缝，看见顾清颜双腿大张，手指正在粉嫩的私处快速拨弄，满脸潮红。下一秒，她猛然转头，目光撞上你的视线。“滚——！”一个枕头砸在门上，你仓皇逃回房间。</div>
+      <div class="opening" data-i="2" data-text="周末早晨，你被一阵香味弄醒。走出房间，看见妈妈沈韵只穿着一件薄薄的丝质睡裙在厨房煎蛋，紫色长发随意扎着。她转身对你笑了笑，却不知晨光正透过睡裙，将胸前两团丰满的轮廓和乳头的形状完全暴露在你眼前。“醒啦？快去洗脸。”"><span class="tag">日常</span>周末早晨，你被一阵香味弄醒。走出房间，看见妈妈沈韵只穿着一件薄薄的丝质睡裙在厨房煎蛋，紫色长发随意扎着。她转身对你笑了笑，却不知晨光正透过睡裙，将胸前两团丰满的轮廓和乳头的形状完全暴露在你眼前。“醒啦？快去洗脸。”</div>
+      <div class="opening" data-i="3" data-text="晚上十点多，你正在客厅看电视，浴室门开了。沈韵只围了一条白色浴巾走出来，湿漉漉的紫发贴在锁骨和乳沟上。她一边擦头发一边朝你走来，浴巾随着动作越系越松。就在她弯腰去拿茶几上的吹风机时，浴巾突然整个滑落，丰满白嫩的裸体毫无遮挡地呈现在你眼前。"><span class="tag">走光</span>晚上十点多，你正在客厅看电视，浴室门开了。沈韵只围了一条白色浴巾走出来，湿漉漉的紫发贴在锁骨和乳沟上。她一边擦头发一边朝你走来，浴巾随着动作越系越松。就在她弯腰去拿茶几上的吹风机时，浴巾突然整个滑落，丰满白嫩的裸体毫无遮挡地呈现在你眼前。</div>
+      <div class="opening" data-i="4" data-text="姐姐顾清颜破天荒地敲了你的房门。“喂。”她站在门口，穿着你的旧T恤，黑长直垂在胸前。自慰被发现后的第三天，这是她第一次主动找你说话。她别过头，耳尖通红，语气却硬邦邦的：“晚上……我房间空调坏了。今晚你睡地板，我睡床。”"><span class="tag">破冰</span>姐姐顾清颜破天荒地敲了你的房门。“喂。”她站在门口，穿着你的旧T恤，黑长直垂在胸前。自慰被发现后的第三天，这是她第一次主动找你说话。她别过头，耳尖通红，语气却硬邦邦的：“晚上……我房间空调坏了。今晚你睡地板，我睡床。”</div>
+      <div class="opening" data-i="5" data-text="半夜，你被身边的热源惊醒。妈妈沈韵不知什么时候钻进了你的被窝，像小时候一样把你当抱枕。她的脸颊就贴在你脖颈旁，温热甜腻的呼吸一下一下打在你皮肤上。薄薄睡裙下那对柔软的巨乳，正随着呼吸轻轻蹭着你的手臂。"><span class="tag">同床</span>半夜，你被身边的热源惊醒。妈妈沈韵不知什么时候钻进了你的被窝，像小时候一样把你当抱枕。她的脸颊就贴在你脖颈旁，温热甜腻的呼吸一下一下打在你皮肤上。薄薄睡裙下那对柔软的巨乳，正随着呼吸轻轻蹭着你的手臂。</div>
+    </div>
+    <div class="custom-box" id="customBox">
+      <div class="field" style="margin:0;">
+        <label>自定义开场白</label>
+        <textarea id="customOpening" placeholder="写下属于你的开场白……"></textarea>
+      </div>
+    </div>
+  </div>
+  <button class="gen-btn" onclick="generateCard()">✦ 生 成 角 色 卡 ✦</button>
+  <div class="summary" id="summary">
+    <div class="s-title">✿ 角色卡总结</div>
+    <div class="s-body" id="summaryBody">
+      <div class="empty">尚未生成。请在下方填写你的设定，选择一段开场白，然后点击「生成角色卡」。</div>
+    </div>
+  </div>
+  <div class="copy-wrap">
+    <button class="copy-btn" id="copyBtn" onclick="copyCard()">📋 一键复制角色卡</button>
+  </div>
+  <div class="card">
+    </div>
+    <div class="note">✦ 提示：本作为成人向家庭情感模拟，建议沉浸式代入，循序渐进。急不得，也装不得。</div>
+  </div>
+  <div class="foot">✿ 愿你在这场无法言说的温柔里，找到属于自己的答案 ✿</div>
+</div>
+<div class="toast" id="toast">已复制到剪贴板</div>
+</div>
+<script>
+(function(){
+  var root = document.getElementById(''app-root'');
+  var selected = null;
+  var openings = root.querySelectorAll(''.opening'');
+  var customBox = document.getElementById(''customBox'');
+  openings.forEach(function(el){
+    el.addEventListener(''click'', function(){
+      openings.forEach(function(o){o.classList.remove(''sel'');});
+      if(selected === el){
+        selected = null;
+        customBox.classList.remove(''show'');
+        return;
+      }
+      el.classList.add(''sel'');
+      selected = el;
+      customBox.classList.remove(''show'');
+    });
+  });
+  var customTrigger = document.createElement(''div'');
+  customTrigger.className = ''opening'';
+  customTrigger.innerHTML = ''<span class="tag" style="background:linear-gradient(135deg,#c99a3a,#e8a05b)">自定义</span>点击这里，写下属于你自己的开场白。'';
+  document.getElementById(''openingList'').appendChild(customTrigger);
+  customTrigger.addEventListener(''click'', function(){
+    openings.forEach(function(o){o.classList.remove(''sel'');});
+    customTrigger.classList.add(''sel'');
+    selected = customTrigger;
+    customBox.classList.add(''show'');
+  });
+  window.generateCard = function(){
+    var name = document.getElementById(''pName'').value.trim() || ''（未填写）'';
+    var age = document.getElementById(''pAge'').value.trim() || ''（未填写）'';
+    var look = document.getElementById(''pLook'').value.trim() || ''（未填写）'';
+    var cock = document.getElementById(''pCock'').value.trim() || ''（未填写）'';
+    var other = document.getElementById(''pOther'').value.trim() || ''（未填写）'';
+    var openingText = '''';
+    if(selected === customTrigger){
+      openingText = document.getElementById(''customOpening'').value.trim();
+      if(!openingText){ openingText = ''（自定义开场白为空）''; }
+    } else if(selected){
+      openingText = selected.getAttribute(''data-text'') || selected.textContent.trim();
+    } else {
+      openingText = ''（未选择开场白）'';
+    }
+    var out = '''';
+    out += ''══════ ✿ 角色卡 · 模特姐姐与熟女妈妈 ✿ ══════\n\n'';
+    out += ''【玩家设定】\n'';
+    out += ''· 姓名：'' + name + ''\n'';
+    out += ''· 年龄：'' + age + ''\n'';
+    out += ''· 外貌：'' + look + ''\n'';
+    out += ''· 肉棒设定：'' + cock + ''\n'';
+    out += ''· 其他设定：'' + other + ''\n\n'';
+    out += ''【开场白】\n'';
+    out += openingText;
+    document.getElementById(''summaryBody'').innerHTML = '''';
+    var pre = document.createElement(''div'');
+    pre.style.whiteSpace = ''pre-wrap'';
+    pre.textContent = out;
+    document.getElementById(''summaryBody'').appendChild(pre);
+    window.__cardText = out;
+    root.querySelector(''#summary'').scrollIntoView({behavior:''smooth'', block:''center''});
+  };
+  window.copyCard = function(){
+    var text = window.__cardText || document.getElementById(''summaryBody'').innerText;
+    var btn = document.getElementById(''copyBtn'');
+    var toast = document.getElementById(''toast'');
+    function done(){
+      btn.classList.add(''done'');
+      btn.textContent = ''✓ 已复制'';
+      toast.classList.add(''show'');
+      setTimeout(function(){toast.classList.remove(''show'');},1600);
+      setTimeout(function(){
+        btn.classList.remove(''done'');
+        btn.textContent = ''📋 一键复制角色卡'';
+      },2200);
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(function(){fallback(text,done);});
+    } else {
+      fallback(text,done);
+    }
+  };
+  function fallback(text,done){
+    var ta = document.createElement(''textarea'');
+    ta.value = text;
+    ta.style.position=''fixed'';
+    ta.style.left=''-9999px'';
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand(''copy''); done(); }catch(e){ }
+    document.body.removeChild(ta);
+  }
+})();
+</script>
+</body>
+</html>', '都市', '2026-09-21 16:45:44', '2026-09-21 16:45:44') ON CONFLICT (id) DO NOTHING;
 INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('deck_yuzuki', NULL, '【共生沉沦】37.1℃发热午后 · 妹妹夕月的量体温照护', '热播 · 病娇独占', 'bg-amber-500/20 text-amber-300 border border-amber-500/40', '神崎家长兄', '暴雨如注的八月午后，遮光帘紧闭的卧室内昏暗闷热。发烫的被褥、空调规律沉闷的送风杂音与电子体温计幽绿的光芒交织成绝望而甘美的蛛网。', '9.8', '["病娇", "妹妹", "量体温", "37.1℃", "骨科伪禁断"]', '2980.6 亿', 14, 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=800&q=80', '病娇独占·量体温', 'exclusive', 1, '都市', '2026-09-13 09:16:35') ON CONFLICT (title) DO NOTHING;
 INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('harumi', NULL, '(纯爱肉卡) 爆操反差婊小学妹！', '纯爱肉卡 · 反差优等生', 'bg-amber-500/20 text-amber-300 border border-amber-500/40', '校园观察员', '青叶台高中的走廊尽头旧图书室。全班最优秀的晴海小晴，在书架后看羞耻内容被你当场撞破，惊慌失措下把你按在书架上威吓……', '9.5', '["反差学妹", "优等生", "多面性格", "校园私密"]', '2780.0 亿', 21, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=80', '反差优等生', 'exclusive', 1, '都市', '2026-09-13 09:16:35') ON CONFLICT (title) DO NOTHING;
 INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('novel', NULL, '雪夜共生 · 悠月与哥哥', '日系轻小说 · 禁断', 'bg-amber-500/20 text-amber-300 border border-amber-500/40', '悠月书屋', '深夜暴雨，书房门虚掩。悠月穿着微敞的制服白衬衫，坐在哥哥大腿上问微积分，追问口袋里硬硬的是什么……', '9.5', '["雪夜共生", "悠月与哥哥", "日系轻小说", "禁断"]', '1940.8 亿', 19, 'https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6?w=800&q=80', '日系轻小说·雪夜禁断', 'exclusive', 1, '都市', '2026-09-13 09:16:35') ON CONFLICT (title) DO NOTHING;
@@ -50817,7 +54703,6 @@ INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc",
 INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('deck_sister_in_law_niece', 'deck_sister_in_law_niece', '深夜求助的嫂子与侄女', '暴雨投奔 · 双成人路线', '#6c5ce7', 'AI风月精选', '哥哥周世杰欠债失踪，36岁的丰润人妻嫂子林晚晴（D罩杯）与18岁的俏丽侄女周若宁（C罩杯）在暴雨深夜投奔小叔子。无处可去的母女二人、高利贷的催逼账单、同居屋檐下的身体与情感双成人路线。', '9.9', '["R18", "剧情向", "可剧情可涩涩", "多角色", "乱伦", "定制角色", "人妻"]', '11.2k 玩过 · 7.8k 深度', 13, 'https://catai.wiki/d40da003-df77-4d70-c56b-8979c6239c00/cover', NULL, 'fire', 1, '👩‍👧 熟女母女', '2026-09-14 14:01:08') ON CONFLICT (title) DO NOTHING;
 INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('deck_apocalypse_survival', 'deck_apocalypse_survival', '😱 末世求生录 😱 生存·性暴力·屈辱·征服·调教·末日', '末日废土 · 极境生存', '#e17055', 'AI风月精选', '在崩溃的世界中挣扎求生，你的极限生存在多少天。玩家在开局选择末世类型（丧尸、核战、瘟疫等22种题材），在资源匮乏、危机四伏的废土中寻找生存之路。体力、饥饿、口渴与性压抑的人性试炼。', '9.9', '["已破甲", "开放世界", "自由探索", "可剧情可涩涩", "调教", "开局即可色", "高自由度"]', '18.5k 玩过 · 13.2k 深度', 14, 'https://catai.wiki/258706e6-3fec-4b3a-6b94-a5b5fb91db00/cover', NULL, 'fire', 1, '⚡ 反差破甲', '2026-09-14 14:01:08') ON CONFLICT (title) DO NOTHING;
 INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('deck_succubus_wife', 'deck_succubus_wife', '❤帮兄弟喂养她的新婚魅魔妻子❤（NTL）【配套瑟瑟CG】', '人妻魅魔 · NTL喂养', '#e85a8a', 'AI风月精选', '你的挚爱亲朋大强兄弟，要去海上油田出差3个月，他拜托你照顾他的新婚魅魔妻子莉莉。莉莉每天都有摄入精气的需求，大强走前给你留了个飞机杯，并嘱咐你如果不想用可以拜托你嫂子用手...同居屋檐下的身体诱惑与禁忌伦理。', '9.9', '["已破甲", "开局即可色", "男性向", "可快餐可长线", "人妻", "NTL", "绿帽"]', '21.5k 玩过 · 14.8k 深度', 20, 'https://catai.wiki/b97887e8-1246-471a-b603-56a5b9562900/cover', NULL, 'fire', 1, '🔥 热门推荐', '2026-09-15 09:56:26') ON CONFLICT (title) DO NOTHING;
-INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('deck_perfect_girl_plan', 'deck_perfect_girl_plan', '💖完美少女の救赎/堕落计划💖', '纯爱救赎 · 诱导堕落', '#a29bfe', 'AI风月精选', '「纯爱 | 堕落 | 养成」风月高中学生会副主席江怀月，16岁完美少女。长期维持着光鲜学霸人设，却在父母有条件的爱中不堪重负。当期末跌落第二人设崩溃深夜在公园痛哭时，你出现了。你是救赎她，还是引诱她滑入无尽堕落？', '9.9', '["R18", "可剧情可涩涩", "养成", "攻略", "纯爱", "堕落", "单人卡"]', '32.1k 玩过 · 22.4k 深度', 21, 'https://catai.wiki/06e15981-ef04-4bfa-f043-31d58c4deb00/cover', NULL, 'fire', 1, '💎 甜宠恋爱', '2026-09-15 09:56:26') ON CONFLICT (title) DO NOTHING;
 INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('deck_daughter_morning_wood', 'deck_daughter_morning_wood', '爸爸我下面好痒帮我磨一磨吧。可爱女儿竟然用我晨勃的鸡巴止痒', '晨勃禁断 · 娇憨反差', '#fd79a8', 'AI风月精选', '女儿胆小怕黑平时常赖在主卧大床睡。某个清晨妻子起床洗漱，主角还在赖床，下身晨勃高高挺立。迷糊间感觉下身有柔软温热磨蹭，睁眼一看，16岁的可爱女儿正笨拙地撅着屁股用下面磨蹭鸡巴止痒...天真娇憨下的禁忌心跳。', '9.9', '["可剧情可涩涩", "乱伦", "细致描写", "女儿", "调教", "开局即可色", "萝莉", "反差"]', '28.9k 玩过 · 19.3k 深度', 22, 'https://catai.wiki/06d3fc8c-b7a1-40d9-7c16-9a01951c4c00/cover', NULL, 'fire', 1, '🔥 热门推荐', '2026-09-15 09:56:26') ON CONFLICT (title) DO NOTHING;
 INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('deck_ten_yuan_childhood_friend', 'deck_ten_yuan_childhood_friend', '十块肏一次的巨乳肥臀校花青梅', '青梅同居 · 十元一次', '#f39c12', 'AI风月精选', '苏沐橙，你的世交青梅竹马。学校里高不可攀的瓜子脸白嫩校花，同居公寓里却从不穿内衣内裤，H罩杯巨乳与肥臀极度诱人。冲动消费花光生活费后，做出了违背祖宗的决定：“十块钱让你弄一次，但不准内射！”', '9.9', '["增强色情描写", "已破甲", "低消耗", "可剧情可涩涩", "高自由度", "开局即可色", "纯爱", "单人卡"]', '36.8k 玩过 · 25.1k 深度', 23, 'https://catai.wiki/a46ebff0-4f69-440c-af80-8aa34d9be300/cover', NULL, 'fire', 1, '🔥 热门推荐', '2026-09-15 09:56:26') ON CONFLICT (title) DO NOTHING;
 INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('deck_girls_dormitory', 'deck_girls_dormitory', '💕长得太清秀，被迫入住大学女生宿舍！', '伪娘宿舍 · 禁断同居', 'bg-purple-950/80 text-purple-300 border-purple-700/50', '菲物囚人', '【男扮女装】【女寝同居】【暴露危机】比女孩子还要清秀美丽的你，身份证性别因误会被写成了女性。开学被迫分入大学女生宿舍302，面对活泼调皮的元气萝莉、高冷火辣的黑丝御姐与恬静端庄的校花室友，她们竟热情邀请你一起洗澡更衣……你必须拼死守护自己的男儿身秘密！', '9.9', '["男娘", "多角色", "纯爱", "可快餐可长线", "男扮女装", "后宫", "校园", "可剧情可涩涩"]', '18.1k 玩过 · 6.1k 深度', 40, 'https://catai.wiki/e18cedaa-98af-4cbc-9ab8-10fd8b634700/cover', NULL, 'fire', 1, '校园', '2026-09-15 15:03:14') ON CONFLICT (title) DO NOTHING;
@@ -50833,6 +54718,25 @@ INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc",
 INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('4339eb70-6f5b-40f8-9f19-0da2d6acd6b7', '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7', '【roll天赋/大世界，可bg,bl,gb,gl】从零开始的修仙日常', '高自由度修仙 · 苍澜界', 'bg-slate-900/90 text-sky-200 border-sky-600/50', '叶夏沂水（接定制）', '欢迎来到最真实的修仙世界！这里你可以体验抽灵根，roll天赋，还可以从凡人开始修仙（也可以开局直接当大佬），众多门派任你挑选，正派反派随你选择，当人还是当妖还是当魔修可以，超高自由度！内置二十几个NPC任你挑选，可bg可bl可gb可gl
 
 ', '9.9', '["已破甲", "修仙大世界", "开放世界", "自由探索", "全性向", "高自由度", "角色创建", "灵网论坛"]', '128.6k 玩过 · 45.2k 深度', 0, 'https://catai.wiki/db5174e8-79b6-4fcc-a931-776ee4351000/cover', 'HOT', 'fire', 1, '玄幻', '2026-09-21 16:25:36') ON CONFLICT (title) DO NOTHING;
+INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('eb85f366-919b-466e-a7ff-8d8dbc4ed29b', 'eb85f366-919b-466e-a7ff-8d8dbc4ed29b', '💖完美少女の救赎/堕落计划💖', '纯爱救赎 · 诱导堕落', 'bg-pink-900/80 text-pink-200 border-pink-500/50', '月下初雪', '✨「纯爱 | 堕落 | 养成」你深夜闲逛，偶遇一名崩溃哭泣的青春少女，她是一所重点高中的成绩、性格、外貌都很优秀的“完美”少女，她是为何会在深夜崩溃哭泣，而你又是会救赎她（纯爱）亦或者是引诱她滑入堕落的深渊（堕落）？', '9.9', '["已破甲", "纯爱救赎", "诱导堕落", "高岭之花", "反差心理", "多重结局", "恋爱养成"]', '98.4k 玩过 · 34.2k 深度', 0, 'https://catai.wiki/06e15981-ef04-4bfa-f043-31d58c4deb00/cover', 'HOT', 'fire', 1, '现代', '2026-09-21 16:45:44') ON CONFLICT (title) DO NOTHING;
+INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('2168197e-903b-4727-97e3-bf5f1d5b6c8f', '2168197e-903b-4727-97e3-bf5f1d5b6c8f', '老爸你想出门上班必须先操我一下。调皮的女儿用自己的身体堵门。', '都市禁断 · 傲娇堵门', 'bg-rose-900/80 text-rose-200 border-rose-500/50', '幻境织网者', '我的女儿特别黏人，从小就喜欢缠着我跟我撒娇，而且她嫉妒心强，甚至她连她的妈妈都嫉妒。不知道是不是哪次我和媳妇做爱被她发现了还是怎么，她甚至觉得我只跟媳妇做爱是不爱她的表现，跟她解释她也不听。某天，我着急忙慌的要去上班，女儿一直黏着我缠着我跟我撒娇，不让我上班，让我在家陪她。我耐心的跟她解释说班还是要上的，没想到这个小祖宗直接把脚搭在门把上张开腿挡住了门口，气冲冲的对我说，老爸你老是跟妈妈搂搂抱抱的，都不抱我，如果你今天不不像对妈妈那样也抱我，就不准出门上班。这不是逼着我做一个禽兽吗，可恶。
+（撞墙别慌，刷新出奇迹。）', '9.8', '["已破甲", "都市日常", "反差傲娇", "禁断拉扯", "吃醋争宠", "调皮黏人"]', '112.5k 玩过 · 51.3k 深度', 0, 'https://catai.wiki/793f4e3c-83ed-430e-40c3-a9400a5e3f00/cover', 'HOT', 'fire', 1, '都市', '2026-09-21 16:45:44') ON CONFLICT (title) DO NOTHING;
+INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index, cover_image, image_tag, badge_type, is_featured, category, created_at) VALUES ('758e40b4-c1b3-4655-a83a-5ef136b60a2b', '758e40b4-c1b3-4655-a83a-5ef136b60a2b', '成年了还把你当孩子的巨乳美母骚姐', '都市豪门 · 极致推拉', 'bg-fuchsia-900/80 text-fuchsia-200 border-fuchsia-500/50', '猫态工坊', '你，刚满十八岁，高三毕业，手里攥着大学录取通知书，站在这个只有三口人的家里。
+你有一个让全校男生都嫉妒到发疯的姐姐——顾清颜。她是顶级模特，黑长直及腰，一双媚眼勾魂夺魄。身高172，九头身，那双大长腿能踩碎无数男人的自尊。她的嫩穴是娱乐圈传说的“极品粉穴”，只有少量精心修剪的阴毛点缀，干净又诱人。
+
+你还有一个让整条街的男人都垂涎的妈妈——沈韵。四十出头的顶级熟女，紫色波浪长发垂至腰间，皮肤白嫩得能掐出水。那对H罩杯的雪乳即便不穿内衣也傲然挺立，配上一手都包不住的巨乳和浑圆挺翘的肥臀，让她走到哪里都是焦点。自从你父亲五年前去世后，她再也没有过性生活，但你知道，她床头柜里的按摩棒已经换了好几根。她的阴毛浓密茂盛，是典型性欲旺盛的熟女象征。
+
+在这个只有你们三口人的家里，她们把你当成长不大的孩子。
+夏天在家里，姐姐会穿着你的旧T恤晃悠，下摆堪堪遮住大腿根部，稍微弯腰你就会看见她光滑无毛的私处。妈妈更是随意，洗完澡只裹一条浴巾就出来吹头发，浴巾松了也不在意。你早就习惯了早上起床时，发现妈妈不知什么时候钻进你的被窝，柔软温暖的巨乳贴着你的后背。
+
+直到那个夏夜。
+你热得睡不着，起床倒水。路过姐姐房间时，门虚掩着，里面传来压抑的轻喘和床板轻响。你鬼使神差地凑近门缝——
+顾清颜正躺在床上，修长的双腿大张着，一只手疯狂揉捏着自己的粉穴，另一只手抓着床单。她那双在T台上睥睨众生的媚眼此刻半闭着，满脸潮红，嘴里模糊地念着什么。
+你屏住呼吸，心脏快要跳出喉咙。下一秒，她猛然转头，目光直直撞上你的视线。
+空气凝固了。
+“出去——！！！”
+她的声音又羞又怒，一个枕头砸在门上。你仓皇逃回房间，心跳了一整夜。第二天早餐桌上，她全程低着头不说话，只有妈妈疑惑地看着你们：“你们俩今天怎么怪怪的？”
+这个家，好像有什么东西，开始不一样了。', '9.9', '["已破甲", "都市生活", "巨乳美母", "模特姐姐", "无防备同居", "撞破自慰", "极致推拉"]', '146.8k 玩过 · 68.9k 深度', 0, 'https://catai.wiki/0a9d1e66-a774-4a51-da39-63d5acba4c00/cover', 'HOT', 'fire', 1, '都市', '2026-09-21 16:45:44') ON CONFLICT (title) DO NOTHING;
 INSERT INTO system_notices (id, notice_type, title, content, countdown_seconds, is_active) VALUES ('notice_top', 'announcement', '聊天页 Button 组件从 MUI 迁移—作者自定义CSS适配说明', '点击查看组件迁移公告与适配细节', 0, 1) ON CONFLICT (id) DO NOTHING;
 INSERT INTO system_notices (id, notice_type, title, content, countdown_seconds, is_active) VALUES ('gift_countdown', 'gift', '新人专享礼包', '已为你领取引导金币 +500', 24329, 1) ON CONFLICT (id) DO NOTHING;
 INSERT INTO system_notices (id, notice_type, title, content, countdown_seconds, is_active) VALUES ('weekly_card', 'banner', '新人周卡', '无限畅聊 · 极速生成 · 高级模型畅享', 0, 1) ON CONFLICT (id) DO NOTHING;

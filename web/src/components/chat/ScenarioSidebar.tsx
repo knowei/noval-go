@@ -31,7 +31,19 @@ export function ScenarioSidebar({ onClose, onOpenHandbook, onOpenLorebook }: Sce
     refreshSaves();
   }, [currentDeckKey, refreshSaves]);
 
-  const deckSaves = savedConversations.filter(s => s.deck_id === currentDeckKey);
+  const isMatchDeck = (s: any) => {
+    if (!currentDeckKey) return true;
+    if (s.deck_id === currentDeckKey) return true;
+    if (currentDeckKey === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7' && s.deck_id === 'deck_xiuxian_world') return true;
+    if (currentDeckKey === 'deck_xiuxian_world' && s.deck_id === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7') return true;
+    if (currentDeck?.title && s.deck_title) {
+      if (s.deck_title === currentDeck.title) return true;
+      if (s.deck_title.includes(currentDeck.title) || currentDeck.title.includes(s.deck_title)) return true;
+    }
+    return false;
+  };
+
+  const deckSaves = savedConversations.filter(isMatchDeck);
 
   const handleSelectSave = async (convId: string) => {
     const data = await fetchConversation(convId);

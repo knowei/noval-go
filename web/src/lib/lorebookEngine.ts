@@ -610,6 +610,56 @@ export const DEFAULT_LOREBOOKS: Record<string, LoreEntry[]> = {
       category: 'rule',
       content: '万宝楼研制的传讯法宝，通过遍布中州的符阵基站实现神识互联。修士可匿名在灵网论坛发帖、水贴、围观八卦、查看悬赏求购与榜单热评。输入“开启灵网”即可进入论坛模式，输入“关闭灵网”恢复现实推演。'
     }
+  ],
+
+  // 🚪 调皮的女儿用身体堵门
+  deck_daughter_door_block: [
+    {
+      id: 'ddb_koko_blocking',
+      keys: ['林可可', '可可', '女儿', '堵门', '门把', '锁扣', '赤足', '光脚', '小腿'],
+      title: '林可可的赤足堵门娇蛮占有',
+      category: 'character',
+      content: '19岁大一新生，长相清纯甜美、身材娇小玲珑。从小极度依赖父亲，甚至嫉妒母亲能得到父亲的拥抱与亲吻。上班前夕赤着一双光洁粉嫩的玉足死死卡在防盗门锁扣上，扬言不抱不亲就不准出门。'
+    },
+    {
+      id: 'ddb_wife_in_kitchen',
+      keys: ['妻子', '妈妈', '林婉清', '厨房', '早餐', '煎蛋', '迟到', '全勤'],
+      title: '近在咫尺的厨房妻子与上班时限',
+      category: 'rule',
+      content: '妻子林婉清正在不远处的开放式厨房里哼着歌煎蛋，随时可能端着盘子走出来。距离上班打卡只剩几分钟，玄关处女儿的肉体纠缠与妻子随时撞破的危险感交织，带来窒息的推拉张力。'
+    },
+    {
+      id: 'ddb_father_dilemma',
+      keys: ['家法', '宠溺', '亲吻', '门板', '紧靠', '玩火', '迟到'],
+      title: '父权惩戒与禁断顺水推舟',
+      category: 'rule',
+      content: '父亲可以在板起脸严肃立规矩的严父威严、无奈许诺大餐的温和宠溺、以及顺水推舟将娇软女儿按在门背上的禁断反向试探之间自由抉择。'
+    }
+  ],
+
+  // 👠 成年了还把你当孩子的巨乳美母骚姐
+  deck_mother_sister_baby: [
+    {
+      id: 'msb_sister_qingyan',
+      keys: ['顾清颜', '清颜', '姐姐', '超模', '九头身', '黑长直', '粉穴', '旧t恤', '自慰'],
+      title: '高冷超模姐姐顾清颜的私密反差',
+      category: 'character',
+      content: '24岁国内一线模特，身高172cm九头身，天生极品浅粉色私处。在外是高岭之花，在家穿着弟弟的旧大号T恤且从不穿内衣，喜欢指使弟弟跑腿。昨夜在卧室自慰被弟弟无意撞破，极度羞耻敏感。'
+    },
+    {
+      id: 'msb_mother_shenyun',
+      keys: ['沈韵', '妈妈', '母亲', '舞蹈老师', 'h罩杯', '巨乳', '雪乳', '浴巾', '吹头发'],
+      title: '熟女母亲沈韵的无防备同居',
+      category: 'character',
+      content: '42岁舞蹈老师，守寡五年的顶级熟女，紫色长发垂腰，H罩杯雪乳挺拔丰腴。视照顾刚成年的儿子为天性，在家习惯只裹单薄浴巾或轻薄丝质睡衣走动，弯腰递水送餐毫不避讳。'
+    },
+    {
+      id: 'msb_flat_atmosphere',
+      keys: ['大平层', '客厅', '餐桌', '晨浴', '修罗场', '无边界', '早餐'],
+      title: '三口之家边界融化的一线大平层',
+      category: 'location',
+      content: '一线城市三室两厅高档大平层公寓。父亲去世后形成的“一家人不用讲究”的生活习惯，在昨夜撞见姐姐自慰后彻底变味，早餐桌上的眼神回避与母亲的无意亲近，让暧昧与修罗场暗流汹涌。'
+    }
   ]
 };
 
@@ -638,6 +688,8 @@ export function getDeckLorebook(deckId: string, customLore?: LoreEntry[]): LoreE
     else if (deckId === '0881314d-a2ed-4e78-a5af-71dc42e9acac') defaultEntries = DEFAULT_LOREBOOKS['deck_mysterious_recovery_ghost'] || [];
     else if (deckId === '270a0ccb-ac28-4b9b-ac56-f7e6aa8cff41') defaultEntries = DEFAULT_LOREBOOKS['deck_mouth_feed_sister'] || [];
     else if (deckId === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7') defaultEntries = DEFAULT_LOREBOOKS['deck_xiuxian_world'] || [];
+    else if (deckId === '2168197e-903b-4727-97e3-bf5f1d5b6c8f') defaultEntries = DEFAULT_LOREBOOKS['deck_daughter_door_block'] || [];
+    else if (deckId === '758e40b4-c1b3-4655-a83a-5ef136b60a2b') defaultEntries = DEFAULT_LOREBOOKS['deck_mother_sister_baby'] || [];
   }
 
   const customEntries = Array.isArray(customLore) ? customLore : [];
