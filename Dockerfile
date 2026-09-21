@@ -53,7 +53,9 @@ COPY --from=frontend-builder /build/public ./public
 # 3. 部署启动入口脚本
 WORKDIR /app
 COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+RUN chmod +x /app/start.sh && \
+    ln -s /app/backend/scripts /app/scripts && \
+    ln -s /app/backend/init_postgres.sql /app/init_postgres.sql
 
 # 暴露前端访问端口
 EXPOSE 3000
