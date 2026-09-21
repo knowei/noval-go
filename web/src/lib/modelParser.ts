@@ -1246,72 +1246,108 @@ export function parseModelOutput(
   const parsedBranches: Branch[] = [];
 
   const parseLineToBranch = (rawLine: string): Branch | null => {
-    // 移除包裹的 <d> 和 </d> 标签及 Markdown 符号
-    const line = rawLine.replace(/<\/?d>/gi, '').trim();
+    // 1. 清理 HTML/XML 标签与边界空白
+    let line = rawLine.replace(/<\/?(?:d+|[a-z0-9_-]+)(?:\s+[^>]*?)?>/gi, '').trim();
+    line = line.replace(/^<\/>|<\/>$/g, '').trim();
     if (!line) return null;
 
-    // 格式 1: A. [标题] - 描述 或 A. 标题：描述 或 A. 标题 - 描述 或 【A】 标题：描述
-    const m1 = line.match(/^(?:(?:[【\[]?([A-D\d])[】\]]?)|(?:([A-D\d])))(?:[\.、:：\s\-\*]+)(?:\[(.*?)\]|【(.*?)】|\*\*(.*?)\*\*|(.*?))(?:\s*[-—–~:：\s]\s*(.*))?$/);
-    if (m1) {
-      const tag = (m1[1] || m1[2] || '◆').toUpperCase();
-      let title = (m1[3] || m1[4] || m1[5] || m1[6] || '').replace(/\*\*/g, '').replace(/^[“"「]/, '').replace(/[”"」]$/, '').trim();
-      let desc = (m1[7] || '').replace(/\*\*/g, '').replace(/^[“"「]/, '').replace(/[”"」]$/, '').trim();
-      if (title && title.length >= 2 && !title.startsWith('http')) {
-        if (!desc) desc = title;
-        return { tag, title, desc };
+    // 2. 先行提取【风险/策略评估】或【评估】标签，防止冒号干扰标题和正文切分
+    let riskTag = '';
+    const riskMatch = line.match(/(【(?:风险\/策略评估|风险评估|策略评估|评估|代价|后果|预估)[：:\s][^】]+】)/);
+    if (riskMatch) {
+      riskTag = riskMatch[1].trim();
+      line = line.replace(riskMatch[1], '').trim();
+    } else {
+      const riskMatchLoose = line.match(/(【(?:风险\/策略评估|风险评估|策略评估)[^】]+】)/);
+      if (riskMatchLoose) {
+        riskTag = riskMatchLoose[1].trim();
+        line = line.replace(riskMatchLoose[1], '').trim();
       }
     }
 
-    // 格式 2: 【标题】：“描述”
-    const m2 = line.match(/^【(.*?)】[：:]*[“"「]?(.*?)[”"」]?$/);
-    if (m2) {
-      const title = m2[1].trim();
-      const desc = m2[2].trim() || title;
-      if (title.length >= 2) {
-        return { tag: '◆', title, desc };
-      }
+    // 3. 提取选项编号 [A-D\d]
+    let tag = '◆';
+    const tagMatch = line.match(/^(?:[【\[]?([A-D\d])[】\]]?|(?:([A-D\d])))(?:[\.、:：\s\-\*]+)([\s\S]*)$/);
+    if (tagMatch) {
+      tag = (tagMatch[1] || tagMatch[2] || '◆').toUpperCase();
+      line = tagMatch[3].trim();
     }
 
-    // 格式 3: 纯文本动作描述 (例如风月原格式: <d>顺着黑丝边缘慢慢往上抚摸她的腿</d>)
-    if (line.length >= 3 && !line.startsWith('<') && !line.startsWith('#')) {
-      const splitIdx = line.search(/[-—–~:：]/);
-      let title = '';
-      let desc = '';
-      if (splitIdx > 1 && splitIdx < 25) {
-        title = line.substring(0, splitIdx).replace(/^[A-Za-z0-9\.\、\s【】\[\]\*\-]+/, '').trim();
-        desc = line.substring(splitIdx + 1).trim();
+    // 4. 切分标题与描述
+    let title = '';
+    let desc = '';
+
+    // 格式 A: [标题] - 描述 或 【标题】描述
+    const titleBracketMatch = line.match(/^(?:\[(.*?)\]|【(.*?)】|\*\*(.*?)\*\*)\s*[-—–~:：\s]*([\s\S]*)$/);
+    if (titleBracketMatch) {
+      title = (titleBracketMatch[1] || titleBracketMatch[2] || titleBracketMatch[3] || '').trim();
+      desc = (titleBracketMatch[4] || '').trim();
+    } else {
+      // 格式 B: 寻找破折号或冒号作为分隔符
+      const splitIdx = line.search(/\s*[-—–~:：]\s*/);
+      if (splitIdx > 1 && splitIdx < 28) {
+        title = line.substring(0, splitIdx).trim();
+        desc = line.substring(splitIdx).replace(/^[-—–~:：\s]+/, '').trim();
       } else {
-        title = line.length > 18 ? line.slice(0, 16) + '...' : line;
+        // 格式 C: 较长单句动作，取前 18 字为摘要标题，整句为描述
+        title = line.length > 20 ? line.slice(0, 18) + '...' : line;
         desc = line;
       }
-      if (title && title.length >= 2) {
-        return { tag: '◆', title, desc };
-      }
     }
 
+    title = title.replace(/\*\*/g, '').replace(/^[“"「]/, '').replace(/[”"」]$/, '').trim();
+    desc = desc.replace(/\*\*/g, '').replace(/^[“"「]/, '').replace(/[”"」]$/, '').trim();
+
+    if (!desc) desc = title;
+    if (riskTag) {
+      desc = desc.includes(riskTag) ? desc : `${desc} ${riskTag}`;
+    }
+
+    if (title && title.length >= 2 && !title.startsWith('http')) {
+      return { tag, title, desc };
+    }
     return null;
   };
 
   // 优先级 A: 匹配风月标准规范的 <opt><suggested_questions> 或 <suggested_questions> 或 <options> 标签（即便末尾被轻微截断亦可鲁棒提取）
   const sqMatch = rawText.match(/(?:<opt>)?\s*<suggested_questions>([\s\S]*?)(?:<\/suggested_questions>|<\/opt>|$)/i);
   if (sqMatch && sqMatch[1].trim()) {
-    const dMatches = sqMatch[1].match(/<d>([\s\S]*?)(?:<\/d>|$)/gi);
+    let sqContent = sqMatch[1];
+    // 修复模型可能输出的破损标签与粘连:
+    // 1. 通用闭合标签 </> 或 </dd> 或 </ d > 统一修护为 </d>
+    sqContent = sqContent.replace(/<\/\s*(?:d+|>?)\s*>/gi, '</d>');
+    // 2. </dB. 或 </d B. 或 </d\nB. 粘连
+    sqContent = sqContent.replace(/<\/d\s*([A-Za-z0-9])/gi, '</d>\n<d>$1');
+    // 3. </d> B. 漏写 <d>
+    sqContent = sqContent.replace(/<\/d>\s*([A-Za-z0-9][\.、:：\s])/gi, '</d>\n<d>$1');
+    // 4. 评估闭合后直接跟着下一个选项标号，如 】 B.
+    sqContent = sqContent.replace(/([】\]])\s*(?:<\/d>)?\s*([A-Za-z0-9][\.、:：\s])/gi, '$1</d>\n<d>$2');
+    // 5. 修复 <d>A. ... <d>B. 漏写 </d>
+    sqContent = sqContent.replace(/(<d>[\s\S]*?)(?=<d>)/gi, (m) => m.includes('</d>') ? m : m.trim() + '</d>\n');
+
+    const dMatches = sqContent.match(/<d>([\s\S]*?)(?:<\/d>|(?=<d>)|$)/gi);
+    const rawBlocks: string[] = [];
     if (dMatches && dMatches.length > 0) {
       for (const dLine of dMatches) {
-        const b = parseLineToBranch(dLine);
-        if (b) {
-          if (b.tag === '◆') b.tag = String.fromCharCode(65 + parsedBranches.length);
-          parsedBranches.push(b);
+        const cleanBlock = dLine.replace(/<\/?d>/gi, '').trim();
+        if (!cleanBlock) continue;
+        const embeddedSplits = cleanBlock.split(/(?=[A-D\d][\.、:：\s]|\n[A-D\d][\.、:：\s])/g).map((s) => s.trim()).filter(Boolean);
+        if (embeddedSplits.length > 1) {
+          rawBlocks.push(...embeddedSplits);
+        } else {
+          rawBlocks.push(cleanBlock);
         }
       }
     } else {
-      const sqLines = sqMatch[1].split('\n').map((l) => l.trim()).filter(Boolean);
-      for (const line of sqLines) {
-        const b = parseLineToBranch(line);
-        if (b) {
-          if (b.tag === '◆') b.tag = String.fromCharCode(65 + parsedBranches.length);
-          parsedBranches.push(b);
-        }
+      const sqLines = sqContent.split('\n').map((l) => l.trim()).filter(Boolean);
+      rawBlocks.push(...sqLines);
+    }
+
+    for (const block of rawBlocks) {
+      const b = parseLineToBranch(block);
+      if (b) {
+        if (b.tag === '◆') b.tag = String.fromCharCode(65 + parsedBranches.length);
+        parsedBranches.push(b);
       }
     }
   }
@@ -1431,7 +1467,9 @@ export function parseModelOutput(
     .replace(/<opt>[\s\S]*?(?:<\/opt>|$)/gi, '')
     .replace(/<suggested_questions>[\s\S]*?(?:<\/suggested_questions>|$)/gi, '')
     .replace(/<tl>[\s\S]*?(?:<\/tl>|$)/gi, '')
-    .replace(/<details\s*>[\s\S]*?(?:<\/details>|$)/gi, '');
+    .replace(/<details\s*>[\s\S]*?(?:<\/details>|$)/gi, '')
+    .replace(/<\/?(?:d+|opt|suggested_questions)[^>]*>/gi, '')
+    .replace(/<\/>/g, '');
 
   // 修复常见模型漏写尖括号与破损标签
   cleanStory = cleanStory
