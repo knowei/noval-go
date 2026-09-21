@@ -574,6 +574,43 @@ export const DEFAULT_LOREBOOKS: Record<string, LoreEntry[]> = {
       content: '林夏懒得端碗时，会把食物（冰西瓜心、布丁、面条）含在嘴里，嘴对嘴直接渡进男主嘴里，甚至用肉感丰满的大腿像树袋熊般死死夹住男主的腰磨蹭撒娇，用肉体全方位考验弟弟的定力。'
     }
   ],
+  deck_xiuxian_world: [
+    {
+      id: 'xiuxian_canglan_realms',
+      keys: ['境界', '突破', '修为', '炼气', '筑基', '金丹', '元婴', '化神', '炼虚', '合体', '大乘', '渡劫', '飞升'],
+      title: '苍澜界修仙九大境界法则',
+      category: 'rule',
+      content: '修仙境界分为九阶：炼气期、筑基期、金丹期、元婴期、化神期、炼虚期、合体期、大乘期、渡劫期、飞升成仙。境界壁垒森严，每跨越一重大境界寿命与神识皆数倍暴增，低境界在绝对灵压下举步维艰。'
+    },
+    {
+      id: 'xiuxian_sects_neutral',
+      keys: ['昆仑', '天剑门', '天符宗', '天机阁', '万宝楼', '神兵坊', '青囊药谷', '合欢宗'],
+      title: '正道魁首与中立势力',
+      category: 'location',
+      content: '中州昆仑宗为正道领袖兼包万法；天剑门专精杀伐剑道；天符宗统领符阵与传送；天机阁垄断天道星象与风云情报；万宝楼富可敌国掌控商会；青囊药谷医道救世；合欢宗以阴阳双修平衡各派，从不涉足正魔争端。'
+    },
+    {
+      id: 'xiuxian_mo_and_yao',
+      keys: ['魔修', '血煞宗', '万毒窟', '阴尸宗', '天魔教', '妖族', '青丘', '落日岭', '丹穴山', '黑龙渊', '血宸剑冢'],
+      title: '魔道诸宗与万灵妖族',
+      category: 'location',
+      content: '魔道四大派行事极狠：万毒窟饲养阴毒情蛊，血煞宗汲取精血战阵，阴尸宗冰窟操纵古尸，天魔教隐于异界伺机倾覆人间；妖族以青丘九尾狐、落日岭白虎猛兽、丹穴山神禽、黑龙渊真龙四分天下；邪派血宸剑冢以生灵精血祭养凶剑，不入正魔两道。'
+    },
+    {
+      id: 'xiuxian_roots_talents',
+      keys: ['灵根', '天灵根', '双灵根', '变异灵根', '雷灵根', '冰灵根', '风灵根', '剑骨', '荒古圣体', '合欢圣体', '天赋'],
+      title: '灵根品阶与天赋神通',
+      category: 'rule',
+      content: '灵根决定吸纳天地灵气速度与属性亲和：天灵根与变异灵根（风、雷、冰）为万中无一的宗门圣子；搭配剑心通明、药灵圣体、荒古圣体、合欢圣体等特殊命格，可修习对应的无上大道神通。'
+    },
+    {
+      id: 'xiuxian_lingwang_forum',
+      keys: ['灵网', '论坛', '贴吧', '玉简', '发帖', '热议', '吃瓜', '神识通讯'],
+      title: '修仙界灵网玉简与苍澜论坛',
+      category: 'rule',
+      content: '万宝楼研制的传讯法宝，通过遍布中州的符阵基站实现神识互联。修士可匿名在灵网论坛发帖、水贴、围观八卦、查看悬赏求购与榜单热评。输入“开启灵网”即可进入论坛模式，输入“关闭灵网”恢复现实推演。'
+    }
+  ]
 };
 
 // ============================================================================
@@ -600,7 +637,9 @@ export function getDeckLorebook(deckId: string, customLore?: LoreEntry[]): LoreE
     else if (deckId === '2da05c45-b6c2-49a1-89ee-d9c2d732d9ed') defaultEntries = DEFAULT_LOREBOOKS['deck_grade_first_demands'] || [];
     else if (deckId === '0881314d-a2ed-4e78-a5af-71dc42e9acac') defaultEntries = DEFAULT_LOREBOOKS['deck_mysterious_recovery_ghost'] || [];
     else if (deckId === '270a0ccb-ac28-4b9b-ac56-f7e6aa8cff41') defaultEntries = DEFAULT_LOREBOOKS['deck_mouth_feed_sister'] || [];
+    else if (deckId === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7') defaultEntries = DEFAULT_LOREBOOKS['deck_xiuxian_world'] || [];
   }
+
   const customEntries = Array.isArray(customLore) ? customLore : [];
 
   const entryMap = new Map<string, LoreEntry>();
