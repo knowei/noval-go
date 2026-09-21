@@ -748,6 +748,47 @@ const NUDE_GIRLS_SCHOOL_SEMANTIC_GROUPS: SemanticActionGroup[] = [
   }
 ];
 
+// ⚔️ 《从零开始的修仙日常》苍澜界大世界分支库
+const XIUXIAN_WORLD_SEMANTIC_GROUPS: SemanticActionGroup[] = [
+  {
+    keywords: ['测灵', '石柱', '灵根', '资质', '天骄', '大典', '太白峰', '昆仑', '天剑门', '长老', '招徒', '玉台'],
+    branches: [
+      { title: '稳步登台将手掌贴向九龙测灵石柱引动天地异象', desc: '毫不保留地释放体内灵旋，引动广场天降瑞气与九色霞光，震撼全场顶级宗门长老' },
+      { title: '运转独门匿气法门压抑灵压伪装中庸资质藏锋守拙', desc: '将灵根光芒精准压制为平平无奇的双灵根，藏木于林以避开暗处不轨目光' },
+      { title: '迎向高台之上昆仑首席叶倾城审视清冷的冰蓝眼眸', desc: '不卑不亢地直视万年玄冰仙子审视的目光，在无形气场碰撞中初显锋芒' },
+      { title: '直视台下窃窃私语的同门求道者散发凌厉剑意以示震慑', desc: '周身隐隐激荡出锋锐剑气，瞬息逼退周遭嫉妒挑衅之徒，树立自身无敌威势' }
+    ]
+  },
+  {
+    keywords: ['灵网', '论坛', '玉简', '发帖', '热帖', '吃瓜', '悬赏', '道友', '八卦', '万宝楼'],
+    branches: [
+      { title: '掏出通讯玉简轻唤“开启灵网”查看全大陆最新论道八卦', desc: '注入灵力激活万宝楼特制水晶玉简，阅览修仙界各大宗门弟子热议的实时贴吧' },
+      { title: '匿名在苍澜灵网论坛发布一则高额寻宝悬赏求购稀有灵草', desc: '以神秘散修身份开出丰厚灵石酬劳，在修仙界黑市论坛激起千层浪花' },
+      { title: '查看天机阁刚更新的《九州风云榜》与《绝色倾城谱》', desc: '翻阅天机阁发布的实时战力榜与仙子名录，暗中锁定潜在结交或猎艳目标' },
+      { title: '收敛心神念诵法诀“关闭灵网”收起玉简专注当下局势', desc: '断开神识链接切断灵网灌水，将注意力全面收束回现实凶险的修仙交互中' }
+    ]
+  },
+  {
+    keywords: ['魔修', '血煞', '万毒窟', '合欢宗', '妖族', '青丘', '偷袭', '杀意', '斗法', '煞气'],
+    branches: [
+      { title: '祭出本命飞剑横立于身前直面来势汹汹的敌意威压', desc: '剑指苍穹剑气森然，以纯粹霸道的攻杀之势震慑意图不轨的各路邪修' },
+      { title: '运转合欢宗阴阳双修吐纳秘法化解入侵的阴寒魔气', desc: '反客为主将对方袭来的阴冷气劲顺势炼化调和，唇角浮现意味深长的玩味笑意' },
+      { title: '翻转手腕甩出三枚天符宗高阶破煞雷火符轰开退路', desc: '引爆狂暴紫霄神雷，在漫天雷火光影中撕开包围，掌控战局进退主动权' },
+      { title: '传音给暗处潜伏的同道知己暗示结伴前后夹击破局', desc: '神识悄然传音锁定后方掩护，以虚实结合的默契配合将敌人诱入杀阵' }
+    ]
+  },
+  {
+    keywords: ['修炼', '打坐', '吐纳', '丹药', '突破', '瓶颈', '金丹', '元婴', '洞府', '灵泉', '功法'],
+    branches: [
+      { title: '盘膝坐于寒玉蒲团运转大周天心法吸纳天地纯阳灵气', desc: '心如止水吞吐山川精气，周身灵光吞吐流转，稳步淬炼筋骨与丹田道基' },
+      { title: '服下一枚青囊药谷极品筑基丹凝神炼化药力冲击关隘', desc: '引导温润庞大的草木药力顺着经脉奔涌，一举冲破阻碍修为精进的桎梏关卡' },
+      { title: '展开古朴剑谱玉简潜心推演第七式斩天拔剑术奥义', desc: '神识沉入古卷体悟大道法则，在脑海演武场中反复磨砺必杀一剑的极致锋芒' },
+      { title: '邀约相熟知己道友入洞府布下隔音禁制共同参悟大道', desc: '封闭洞府石门点燃安神龙涎香，与知己贴身抵足而坐，探讨功法隐秘与双修妙谛' }
+    ]
+  }
+];
+
+
 const GENERIC_ACTION_POOLS: Branch[] = [
   { tag: 'A', title: '顺势深入掌控当下主动局面', desc: '抓住对方话语与微表情中的动摇瞬间，步步紧逼占据绝对心理主动' },
   { tag: 'B', title: '转换谈话节奏轻声耳语试探', desc: '打破当下的沉默与僵局，用柔和又带着压迫感的话语探寻其真实心意' },
@@ -862,6 +903,12 @@ export function generateContextualBranches(
     deckKey.includes('nude_girls_school') ||
     deckKey.includes('全裸女校') ||
     deckKey.includes('圣伊甸');
+  const isXiuxianWorld =
+    deckKey === 'deck_xiuxian_world' ||
+    deckKey.includes('4339eb70') ||
+    deckKey.includes('xiuxian') ||
+    deckKey.includes('修仙') ||
+    deckKey.includes('苍澜界');
 
   let semanticGroups: SemanticActionGroup[] = [];
   if (isCoser) semanticGroups = COSER_SEMANTIC_GROUPS;
@@ -884,6 +931,8 @@ export function generateContextualBranches(
   else if (isGirlsDormitory) semanticGroups = GIRLS_DORMITORY_SEMANTIC_GROUPS;
   else if (isHousewifeApartment) semanticGroups = HOUSEWIFE_APARTMENT_SEMANTIC_GROUPS;
   else if (isNudeGirlsSchool) semanticGroups = NUDE_GIRLS_SCHOOL_SEMANTIC_GROUPS;
+  else if (isXiuxianWorld) semanticGroups = XIUXIAN_WORLD_SEMANTIC_GROUPS;
+
 
   const combinedContext = (storyText + ' ' + userAction).toLowerCase();
 

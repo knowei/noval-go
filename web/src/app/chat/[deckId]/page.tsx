@@ -232,6 +232,7 @@ export default function ChatPage() {
   const isGradeFirst = deckId === 'deck_grade_first_demands' || deckId === '2da05c45-b6c2-49a1-89ee-d9c2d732d9ed';
   const isMysteriousRecovery = deckId === 'deck_mysterious_recovery_ghost' || deckId === '0881314d-a2ed-4e78-a5af-71dc42e9acac';
   const isMouthFeedSister = deckId === 'deck_mouth_feed_sister' || deckId === '270a0ccb-ac28-4b9b-ac56-f7e6aa8cff41';
+  const isXiuxianWorld = deckId === 'deck_xiuxian_world' || deckId === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7';
 
   let bgClass = '';
   if (isCoser) bgClass = 'coser-sister-bg';
@@ -262,6 +263,7 @@ export default function ChatPage() {
   else if (isGradeFirst) bgClass = 'grade-first-bg';
   else if (isMysteriousRecovery) bgClass = 'mysterious-recovery-bg';
   else if (isMouthFeedSister) bgClass = 'mouth-feed-bg';
+  else if (isXiuxianWorld) bgClass = 'xiuxian-world-bg';
 
   const hasCustomHtml = Boolean(currentDeck?.customHtml);
   const hasUserTurns = conversationHistory.some((t) => t.isUser);
@@ -399,6 +401,14 @@ export default function ChatPage() {
 恒温26℃的微风轻拂过你精壮赤裸的身躯，校门林荫道两旁，成百上千名一丝不挂的贵族少女们齐刷刷投来震惊、羞怯与极度好奇的目光。全校三千名平日里只习惯了百合相亲相爱的纯洁名媛，此刻第一次近距离目睹真正成年雄性的肌肉线条与粗硕雄性象征，整座校园的私密气氛瞬间被引爆。
 
 讲台前，戴着金丝眼镜的巨乳女教师嘴角扬起玩味的笑意，在教案上轻轻敲动指节；而一丝不挂的女校长塞西莉亚优雅地端着茶杯，深邃的美眸中满是探寻与期待——这场属于唯一男性的肉体征服盛宴，正式拉开帷幕。`;
+    } else if (isXiuxianWorld) {
+      baseStory = `面对你的修仙抉择【${act || '步入苍澜大千世界寻仙问道'}】，太白峰下的灵压潮汐骤然剧烈翻腾，九霄之上的浩瀚云海被漫天剑气与五彩霞光生生撕裂！
+
+台前巍峨矗立的九龙测灵石柱嗡鸣激荡，幽蓝的冰魄与赤金的真火在玄奥符印中交相辉映，引来全场数万求道者与各大宗门长老的齐声惊呼。玉台之巅，天剑门剑首萧寒衣原本紧闭的双眸倏然睁开，深邃如渊的眼底划过一抹极罕见的剑意锋芒；昆仑宗掌门君亦尘拂须微笑，目光温润而赞赏；而合欢宗妖娆绝色的宗主魅姬更是掩唇轻笑，足踝的金铃清脆作响，一双秋水长眸脉脉含情地朝你投来暗波流转的深意视线。
+
+“善！此子根骨灵韵卓绝，天地造化钟神秀……”
+
+冥冥之中，苍澜修仙界的风云大势正在为你悄然倾斜，各大宗门的招揽、魔道强者的觊觎、以及一段荡气回肠的仙凡传说，正自此揭开波澜壮阔的序幕！`;
     } else {
       baseStory = `针对你的行动【${act || '深入推进'}】，场间的气氛产生了明显的微妙变化。
 
