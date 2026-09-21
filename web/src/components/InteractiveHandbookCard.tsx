@@ -14,7 +14,7 @@ export function InteractiveHandbookCard({
   html,
   deckTitle = '作品设定与角色卡',
   onStartStory,
-  defaultExpanded = true
+  defaultExpanded = false
 }: InteractiveHandbookCardProps) {
   const [isExpanded, setIsExpanded] = useState<boolean>(defaultExpanded);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);

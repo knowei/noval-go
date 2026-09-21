@@ -7,6 +7,9 @@ const defaultMods: EnabledMods = {
   antiCoercion: true,
   innerVoice: true,
   explorationBranches: true,
+  affectionGauge: false,
+  rpgAdventureHud: false,
+  lorebookArbiter: true,
 };
 
 const getInitialMods = (): EnabledMods => {
@@ -20,6 +23,9 @@ const getInitialMods = (): EnabledMods => {
         antiCoercion: parsed.antiCoercion ?? true,
         innerVoice: parsed.innerVoice ?? true,
         explorationBranches: parsed.explorationBranches ?? true,
+        affectionGauge: parsed.affectionGauge ?? false,
+        rpgAdventureHud: parsed.rpgAdventureHud ?? false,
+        lorebookArbiter: parsed.lorebookArbiter ?? true,
       };
     }
   } catch (e) {
@@ -268,16 +274,6 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   startNewStory: (deck: StoryDeck) => {
     const newId = 'conv_' + Date.now();
-
-    // 如果剧本自带专属交互式设定卡与开场白定制器，初始历史置空，让用户在卡片中定制开场
-    if (deck.customHtml) {
-      set({
-        currentConversationId: newId,
-        conversationHistory: []
-      });
-      return;
-    }
-
     let initialHistory: Turn[] = [];
 
     if (deck.firstTurnDemo && deck.firstTurnDemo.story) {

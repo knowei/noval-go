@@ -15,7 +15,9 @@ import {
   Check,
   X,
   Volume2,
-  VolumeX
+  VolumeX,
+  MoreHorizontal,
+  Settings
 } from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
@@ -38,6 +40,8 @@ import { ErrorCard } from '@/components/chat/ErrorCard';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { LorebookModal } from '@/components/chat/LorebookModal';
 import { InteractiveHandbookCard } from '@/components/InteractiveHandbookCard';
+import { FloatingStatusHud } from '@/components/chat/FloatingStatusHud';
+import { scopeDeckCustomCss } from '@/lib/scopeCss';
 
 export default function ChatPage() {
   const params = useParams();
@@ -74,6 +78,7 @@ export default function ChatPage() {
   const [isRainActive, setIsRainActive] = useState(false);
   const [isLorebookOpen, setIsLorebookOpen] = useState(false);
   const [activeLoreEntries, setActiveLoreEntries] = useState<LoreEntry[]>([]);
+  const [isHeaderMoreOpen, setIsHeaderMoreOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -274,10 +279,10 @@ export default function ChatPage() {
   else if (isDaughterDoorBlock) bgClass = 'daughter-door-block-bg';
   else if (isMotherSisterBaby) bgClass = 'mother-sister-baby-bg';
 
-  const hasCustomHtml = Boolean(currentDeck?.customHtml);
-  const hasUserTurns = conversationHistory.some((t) => t.isUser);
-  // 当剧本自带专属卡片时，未进行任何对话前不渲染冗余的预设轮次，彻底避免卡片下方内容重复突兀
-  const showDialogueTurns = !hasCustomHtml || hasUserTurns;
+  const scopedCss = React.useMemo(
+    () => scopeDeckCustomCss(currentDeck?.customCss, 'story-custom-scope'),
+    [currentDeck?.customCss]
+  );
 
   const getFallbackStory = (actionText: string, turnIdx: number, prevBranches?: Branch[]) => {
     const act = actionText.replace(/【.*?】：?/, '').trim();
@@ -870,13 +875,17 @@ export default function ChatPage() {
         onDoubleClick={handleContainerDoubleClick}
         className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto bg-transparent"
       >
-        {currentDeck?.customCss && (
-          <style dangerouslySetInnerHTML={{ __html: currentDeck.customCss }} />
+        {scopedCss && (
+          <style dangerouslySetInnerHTML={{ __html: scopedCss }} />
         )}
 
         {/* Theater Sticky Header */}
-        <div className="sticky top-0 z-20 border-b border-[#20222e] bg-[#0e0f14]/90 backdrop-blur-md px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        <header
+          id="theater-header"
+          className="sticky top-0 z-20 border-b border-[#20222e] bg-[#0e0f14]/95 backdrop-blur-md px-2.5 sm:px-6 py-2 flex items-center justify-between gap-2 select-none"
+        >
+          {/* 左侧：返回探索、剧本标题与桌面端快捷药丸 */}
+          <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
             <Link
               href="/"
               className="p-1 rounded-lg hover:bg-[#1a1c27] text-gray-400 hover:text-white transition flex items-center gap-1 text-xs shrink-0 group"
@@ -887,21 +896,11 @@ export default function ChatPage() {
 
             <span className="text-gray-700 font-mono hidden xs:inline">|</span>
 
-            {/* Mobile Button to open Scenario & Saves */}
-            <button
-              onClick={() => setIsMobileScenarioOpen(true)}
-              className="md:hidden p-1.5 rounded-lg bg-[#1b1d28] border border-[#2e3142] text-amber-300 hover:text-white text-xs flex items-center gap-1 shrink-0 cursor-pointer shadow-sm"
-              title="查看剧本信息与会话存档"
-            >
-              <BookOpen className="w-3.5 h-3.5" />
-              <span className="text-[11px] font-bold">存档</span>
-            </button>
-
             <div className="flex items-center gap-1.5 min-w-0">
               <span className="text-base shrink-0">
                 {isCoser ? '🎀' : isFatherDaughter ? '💔' : isSister ? '👭' : currentDeck?.coverIcon || '📖'}
               </span>
-              <span className="font-bold text-xs sm:text-sm text-gray-200 truncate">
+              <span className="font-bold text-xs sm:text-sm text-gray-200 truncate max-w-[130px] xs:max-w-[170px] sm:max-w-[220px] md:max-w-xs">
                 {currentDeck?.title || '沉浸剧场'}
               </span>
               {currentDeck?.badge && (
@@ -911,11 +910,12 @@ export default function ChatPage() {
               )}
             </div>
 
-            <span className="text-gray-700 font-mono hidden sm:inline">|</span>
+            <span className="text-gray-700 font-mono hidden md:inline">|</span>
 
+            {/* 桌面端直显：当前模型 */}
             <button
               onClick={() => setIsSettingsOpen(true)}
-              className="hidden sm:flex items-center gap-1.5 text-xs text-emerald-300 hover:text-emerald-200 bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-500/50 hover:border-emerald-400 px-2.5 sm:px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-sm shrink-0 group"
+              className="hidden md:flex items-center gap-1.5 text-xs text-emerald-300 hover:text-emerald-200 bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-500/50 hover:border-emerald-400 px-2.5 sm:px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-sm shrink-0 group"
               title="点击切换推演大模型或配置 API 密钥"
             >
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
@@ -923,11 +923,11 @@ export default function ChatPage() {
               <span className="text-[10px] text-emerald-400 opacity-70 group-hover:opacity-100 transition">▼</span>
             </button>
 
-            {/* 推演风格切换药丸 (真实推拉 vs 绝对顺从) */}
+            {/* 桌面端直显：推演风格切换药丸 */}
             <button
               suppressHydrationWarning
               onClick={toggleRoleplayMode}
-              className={`flex items-center gap-1.5 text-xs px-2.5 sm:px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-xs shrink-0 border ${
+              className={`hidden md:flex items-center gap-1.5 text-xs px-2.5 sm:px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-xs shrink-0 border ${
                 (isMounted ? modelSettings.roleplayMode : 'unrestricted') === 'unrestricted'
                   ? 'text-pink-300 bg-pink-950/60 hover:bg-pink-900/70 border-pink-500/50 hover:border-pink-400'
                   : 'text-amber-300 bg-amber-950/60 hover:bg-amber-900/70 border-amber-500/50 hover:border-amber-400'
@@ -944,11 +944,11 @@ export default function ChatPage() {
               <span suppressHydrationWarning className="font-semibold text-xs">{(isMounted ? modelSettings.roleplayMode : 'unrestricted') === 'unrestricted' ? '💖 绝对顺从' : '🛡️ 真实推拉'}</span>
             </button>
 
-            {/* 玩法模组中心快捷入口 */}
+            {/* 桌面端直显：玩法模组中心快捷入口 */}
             <button
               suppressHydrationWarning
               onClick={() => setIsModCenterOpen(true)}
-              className="flex items-center gap-1.5 text-xs px-2.5 sm:px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-xs shrink-0 border border-orange-500/50 bg-orange-950/60 hover:bg-orange-900/70 text-orange-300 hover:border-orange-400 group"
+              className="hidden lg:flex items-center gap-1.5 text-xs px-2.5 sm:px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-xs shrink-0 border border-orange-500/50 bg-orange-950/60 hover:bg-orange-900/70 text-orange-300 hover:border-orange-400 group"
               title="打开玩法模组中心 (MOD 插件与机制管理)"
             >
               <span className="text-xs group-hover:rotate-12 transition-transform">🧩</span>
@@ -959,15 +959,15 @@ export default function ChatPage() {
             </button>
           </div>
 
-          {/* Action Controls */}
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            {/* Ambient Rain White Noise Toggle */}
+          {/* 右侧操作按钮区：自适应响应式排版 */}
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0 relative">
+            {/* Ambient Rain White Noise (桌面端直显) */}
             <button
               onClick={() => {
                 const active = soundEngine.toggleRain();
                 setIsRainActive(active);
               }}
-              className={`px-2 sm:px-2.5 py-1 rounded-xl border text-xs flex items-center gap-1 transition cursor-pointer shrink-0 ${
+              className={`hidden md:flex px-2 sm:px-2.5 py-1 rounded-xl border text-xs items-center gap-1 transition cursor-pointer shrink-0 ${
                 isRainActive
                   ? 'bg-sky-500/20 text-sky-300 border-sky-500/50 shadow-sm animate-pulse'
                   : 'bg-[#1b1d28] hover:bg-[#252838] border-[#2e3142] text-gray-400 hover:text-gray-200'
@@ -975,13 +975,13 @@ export default function ChatPage() {
               title={isRainActive ? '点击关闭沉浸雨夜白噪音' : '点击开启沉浸雨夜白噪音'}
             >
               <span>{isRainActive ? '🌧️' : '🎧'}</span>
-              <span className="hidden sm:inline text-[11px]">{isRainActive ? '雨声开' : '氛围音效'}</span>
+              <span className="hidden lg:inline text-[11px]">{isRainActive ? '雨声开' : '氛围音效'}</span>
             </button>
 
-            {/* Lorebook World Archive Modal Trigger */}
+            {/* Lorebook World Archive Modal Trigger (桌面端直显) */}
             <button
               onClick={() => setIsLorebookOpen(true)}
-              className={`px-2 sm:px-2.5 py-1 rounded-xl border text-xs flex items-center gap-1.5 transition cursor-pointer shrink-0 ${
+              className={`hidden md:flex px-2 sm:px-2.5 py-1 rounded-xl border text-xs items-center gap-1.5 transition cursor-pointer shrink-0 ${
                 activeLoreEntries.length > 0
                   ? 'bg-indigo-950/70 hover:bg-indigo-900/80 border-indigo-500/60 text-indigo-200 shadow-sm'
                   : 'bg-[#1b1d28] hover:bg-[#252838] border-[#2e3142] text-gray-300 hover:text-indigo-300'
@@ -989,40 +989,43 @@ export default function ChatPage() {
               title="打开世界书背景设定与自定义词条"
             >
               <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="hidden sm:inline text-[11px]">世界书</span>
+              <span className="hidden lg:inline text-[11px]">世界书</span>
               {activeLoreEntries.length > 0 && (
                 <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
               )}
             </button>
 
-            {/* Export Story Full Record */}
+            {/* Export Story Full Record (桌面端直显) */}
             <button
               onClick={() => setIsExportModalOpen(true)}
-              className="px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-amber-500/50 text-gray-300 hover:text-amber-300 text-xs flex items-center gap-1 transition cursor-pointer shrink-0"
+              className="hidden lg:flex px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-amber-500/50 text-gray-300 hover:text-amber-300 text-xs items-center gap-1 transition cursor-pointer shrink-0"
               title="导出或复制整场推演故事长文记录"
             >
               <Share2 className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden sm:inline text-[11px]">导出长文</span>
+              <span className="text-[11px]">导出长文</span>
             </button>
 
+            {/* Settings (桌面端直显) */}
             <button
               onClick={() => setIsSettingsOpen(true)}
-              className="px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-emerald-500/50 text-gray-300 hover:text-emerald-300 text-xs flex items-center gap-1 transition cursor-pointer"
+              className="hidden md:flex px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-emerald-500/50 text-gray-300 hover:text-emerald-300 text-xs items-center gap-1 transition cursor-pointer shrink-0"
               title="切换推演大模型与接口配置"
             >
-              <span className="text-xs">⚙️</span>
-              <span className="hidden sm:inline text-[11px]">切换模型</span>
+              <Settings className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="hidden lg:inline text-[11px]">模型设置</span>
             </button>
 
+            {/* Reset Story (桌面端直显) */}
             <button
               onClick={() => setIsResetConfirmOpen(true)}
-              className="px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-amber-300 text-xs flex items-center gap-1 transition cursor-pointer"
+              className="hidden md:flex px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-amber-300 text-xs items-center gap-1 transition cursor-pointer shrink-0"
               title="重置到第一幕开局"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline text-[11px]">重新开卷</span>
+              <span className="hidden lg:inline text-[11px]">重新开卷</span>
             </button>
 
+            {/* 作品专属人物设定卡入口 */}
             {currentDeck?.customHtml && (
               <button
                 onClick={handleOpenHandbook}
@@ -1030,22 +1033,118 @@ export default function ChatPage() {
                 title="查看作者专属排版作品详情与人物卡"
               >
                 <BookOpen className="w-3.5 h-3.5 text-purple-400" />
-                <span className="hidden sm:inline text-[11px]">作品详情</span>
+                <span className="hidden xs:inline text-[11px]">设定卡</span>
               </button>
             )}
 
+            {/* 存档抽屉 */}
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-pink-300 text-xs flex items-center gap-1 transition cursor-pointer"
+              className="px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-pink-300 text-xs flex items-center gap-1 transition cursor-pointer shrink-0"
+              title="打开会话存档抽屉"
             >
               <History className="w-3.5 h-3.5 text-pink-400" />
-              <span className="hidden sm:inline text-[11px]">存档抽屉</span>
+              <span className="text-[11px]">存档</span>
             </button>
-          </div>
-        </div>
+
+            {/* 移动端专属「更多」折叠下拉菜单按钮 */}
+            <button
+              onClick={() => setIsHeaderMoreOpen(!isHeaderMoreOpen)}
+              className="md:hidden p-1.5 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-white text-xs flex items-center gap-1 transition cursor-pointer shrink-0"
+              title="更多操作"
+            >
+              <MoreHorizontal className="w-4 h-4 text-gray-300" />
+            </button>
+
+              {/* 移动端专属「更多」下拉菜单弹出浮层 */}
+              {isHeaderMoreOpen && (
+                <div className="md:hidden absolute right-0 top-full mt-2 w-48 py-2 bg-[#171822] border border-[#2f3244] rounded-2xl shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150 space-y-1">
+                  <button
+                    onClick={() => {
+                      setIsHeaderMoreOpen(false);
+                      setIsSettingsOpen(true);
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
+                  >
+                    <Settings className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>切换模型与设置</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setIsHeaderMoreOpen(false);
+                      toggleRoleplayMode();
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
+                  >
+                    <span>{modelSettings.roleplayMode === 'unrestricted' ? '💖' : '🛡️'}</span>
+                    <span>推演风格：{modelSettings.roleplayMode === 'unrestricted' ? '绝对顺从' : '真实推拉'}</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setIsHeaderMoreOpen(false);
+                      setIsModCenterOpen(true);
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
+                  >
+                    <span>🧩</span>
+                    <span>玩法模组中心</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setIsHeaderMoreOpen(false);
+                      const active = soundEngine.toggleRain();
+                      setIsRainActive(active);
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
+                  >
+                    <span>{isRainActive ? '🌧️' : '🎧'}</span>
+                    <span>{isRainActive ? '关闭雨声白噪音' : '开启雨声白噪音'}</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setIsHeaderMoreOpen(false);
+                      setIsLorebookOpen(true);
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
+                  >
+                    <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>世界书档案</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setIsHeaderMoreOpen(false);
+                      setIsExportModalOpen(true);
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
+                  >
+                    <Share2 className="w-3.5 h-3.5 text-amber-400" />
+                    <span>导出全景长文</span>
+                  </button>
+
+                  <div className="border-t border-[#262836] my-1" />
+
+                  <button
+                    onClick={() => {
+                      setIsHeaderMoreOpen(false);
+                      setIsResetConfirmOpen(true);
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs text-rose-400 hover:bg-rose-950/30 flex items-center gap-2 transition"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>重新开卷</span>
+                  </button>
+                </div>
+              )}
+            </div>
+        </header>
 
         {/* Main Dialogue Stream */}
-        <div className="flex-1 max-w-3xl mx-auto w-full p-3 sm:p-6 space-y-5 sm:space-y-6 pb-72 sm:pb-80">
+        <div className="story-custom-scope flex-1 max-w-3xl mx-auto w-full p-3 sm:p-6 space-y-5 sm:space-y-6 pb-72 sm:pb-80">
           {/* Author-designed Interactive Character Card & Handbook */}
           {currentDeck?.customHtml && (
             <div id="handbook-card-anchor" className="scroll-mt-14">
@@ -1055,12 +1154,18 @@ export default function ChatPage() {
                 onStartStory={(customPrompt) => {
                   handleSend(customPrompt);
                 }}
-                defaultExpanded={!hasUserTurns}
+                defaultExpanded={false}
               />
             </div>
           )}
 
-          {showDialogueTurns && conversationHistory.map((turn, idx) => {
+          {/* Real-time Dynamic HUD for Love Affection & RPG Adventure */}
+          <FloatingStatusHud
+            turns={conversationHistory}
+            enabledMods={enabledMods}
+          />
+
+          {conversationHistory.map((turn, idx) => {
             const isLatestUserTurn = turn.isUser && (idx === conversationHistory.length - 1 || idx === conversationHistory.length - 2);
 
             if (turn.isUser) {
