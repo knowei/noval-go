@@ -1127,10 +1127,17 @@ export function parseModelOutput(
     return turn;
   }
 
-  // 0. 抽取思维链 (CoT)
-  const cotMatch = rawText.match(/<details>\s*<summary>\s*思维链\s*<\/summary>([\s\S]*?)<\/details>/i);
-  if (cotMatch && cotMatch[1].trim()) {
-    turn.cot = cotMatch[1].replace(/<!--|-->/g, '').trim();
+  // 0. 抽取思维链 (CoT) - 支持全容错解析（包括未闭合 details、粘连 </details<tl>、或裸 <!--思考过程:...-->）
+  const cotRegex = /(?:<details[^>]*>)?\s*<summary[^>]*>\s*(?:思维链|思考过程)[\s\S]*?<\/summary>\s*(?:<!--\s*(?:思考过程:?)?([\s\S]*?)-->|([\s\S]*?)(?=(?:<\/\s*details>?|<\/\s*details(?=[<>\s])|<tl>|<article>|<>|$)))/i;
+  const cotMatch = rawText.match(cotRegex);
+  if (cotMatch) {
+    const rawInner = cotMatch[1] || cotMatch[2] || '';
+    turn.cot = rawInner.replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/<!--|-->/g, '')).replace(/<!--|-->/g, '').trim();
+  } else {
+    const commentCotMatch = rawText.match(/<!--\s*思考过程:?([\s\S]*?)-->/i);
+    if (commentCotMatch) {
+      turn.cot = commentCotMatch[1].trim();
+    }
   }
 
   // 0.1 抽取顶部场景时间栏 (<tl>)
@@ -1441,21 +1448,31 @@ export function parseModelOutput(
 
   // 9. 纯净化小说正文抽取（支持风月 <article> 标准容器与结构标签剔除）
   let cleanStory = rawText;
-  const articleMatch = rawText.match(/<article>([\s\S]*?)(?:<\/article>|$)/i);
+
+  // 优先剥离思维链（无论模型是否遗漏了闭合 details 标签或直接粘连）
+  const cotStripRegex = /(?:<details[^>]*>)?\s*<summary[^>]*>\s*(?:思维链|思考过程)[\s\S]*?<\/summary>\s*(?:<!--\s*(?:思考过程:?)?[\s\S]*?-->|[\s\S]*?(?=(?:<\/\s*details>?|<\/\s*details(?=[<>\s])|<tl>|<article>|<>|$)))/i;
+  cleanStory = cleanStory.replace(cotStripRegex, '');
+  cleanStory = cleanStory.replace(/<!--\s*思考过程:?[\s\S]*?-->/gi, '');
+  cleanStory = cleanStory.replace(/^\s*<\/\s*details\s*>?/i, '').trim();
+
+  // 清理空标签残体如 <>、</>、< >
+  cleanStory = cleanStory.replace(/<(?:\/)?(?:\s*)?>/g, '').trim();
+
+  const articleMatch = cleanStory.match(/<article[^>]*>([\s\S]*?)(?:<\/article>|$)/i);
   if (articleMatch && articleMatch[1].trim()) {
     cleanStory = articleMatch[1].trim();
   } else {
-    const storyMatch = rawText.match(
+    const storyMatch = cleanStory.match(
       /(?:📖|\[)?【?(?:正文描写|正文|剧情正文)】?\]?[:：\s]*([\s\S]*?)(?=(?:📝|📊|🎲|💡|📡|👗|👚|💋|\[|#|<details|<opt)?【?(?:记忆区|关键记忆|记忆|实时物理状态栏|行动分支选项|推荐互动抉择|NPC内心|知念内心|小改改|当前服装)|$)/i
     );
     if (storyMatch && storyMatch[1].trim()) {
       cleanStory = storyMatch[1].trim();
     } else {
-      const splitIdx = rawText.search(
+      const splitIdx = cleanStory.search(
         /(?:📝|📊|🎲|💡|📡|👗|👚|💋|\[|#)?【?(?:记忆区|关键记忆|实时物理状态栏|行动分支选项|推荐互动抉择|推荐互动|下一步行动|NPC内心真实想法|知念内心真实独白|小改改实时监控|当前服装状态|兄妹羁绊)|<details\s*>\s*<summary>\s*(?:玩家状态|角色档案|当前互动|星记忆回廊|<opt)/i
       );
       if (splitIdx !== -1) {
-        cleanStory = rawText.substring(0, splitIdx);
+        cleanStory = cleanStory.substring(0, splitIdx);
       }
       cleanStory = cleanStory.replace(/(?:📍|\[)?【?(?:场景与时间状态|场景状态)】?\]?[:：\s]*.*?\n/g, '').trim();
     }
@@ -1464,11 +1481,14 @@ export function parseModelOutput(
   // 剔除可能残存的结构标签
   cleanStory = cleanStory
     .replace(/<status>[\s\S]*?(?:<\/status>|$)/gi, '')
+    .replace(/<love_status>[\s\S]*?(?:<\/love_status>|$)/gi, '')
+    .replace(/<rpg_status>[\s\S]*?(?:<\/rpg_status>|$)/gi, '')
     .replace(/<opt>[\s\S]*?(?:<\/opt>|$)/gi, '')
     .replace(/<suggested_questions>[\s\S]*?(?:<\/suggested_questions>|$)/gi, '')
     .replace(/<tl>[\s\S]*?(?:<\/tl>|$)/gi, '')
     .replace(/<details\s*>[\s\S]*?(?:<\/details>|$)/gi, '')
-    .replace(/<\/?(?:d+|opt|suggested_questions)[^>]*>/gi, '')
+    .replace(/<\/?(?:d+|opt|suggested_questions|details|summary|tl|love_status|rpg_status|article)[^>]*>/gi, '')
+    .replace(/<(?:\/)?(?:\s*)?>/g, '')
     .replace(/<\/>/g, '');
 
   // 修复常见模型漏写尖括号与破损标签

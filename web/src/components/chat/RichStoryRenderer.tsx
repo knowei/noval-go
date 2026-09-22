@@ -32,13 +32,23 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
     ? "bg-orange-500/15 border-orange-500/40 text-orange-300 shadow-[0_0_10px_rgba(249,115,22,0.2)]"
     : "bg-amber-500/15 border-amber-500/40 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.2)]";
 
-  // 1. 抽取思维链 (CoT)
+  // 1. 抽取思维链 (CoT) - 支持全容错解析（包括未闭合 details、粘连 </details<tl>、或裸 <!--思考过程:...-->）
   let text = rawStory;
   let cotContent: string | null = null;
-  const cotMatch = text.match(/<details>\s*<summary>\s*思维链\s*<\/summary>([\s\S]*?)<\/details>/i);
+  const cotRegex = /(?:<details[^>]*>)?\s*<summary[^>]*>\s*(?:思维链|思考过程)[\s\S]*?<\/summary>\s*(?:<!--\s*(?:思考过程:?)?([\s\S]*?)-->|([\s\S]*?)(?=(?:<\/\s*details>?|<\/\s*details(?=[<>\s])|<tl>|<article>|<>|$)))/i;
+  const cotMatch = text.match(cotRegex);
   if (cotMatch) {
-    cotContent = cotMatch[1].replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/<!--|-->/g, '')).trim();
-    text = text.replace(cotMatch[0], '').trim();
+    const rawInner = cotMatch[1] || cotMatch[2] || '';
+    cotContent = rawInner.replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/<!--|-->/g, '')).replace(/<!--|-->/g, '').trim();
+    text = text.replace(cotMatch[0], '');
+    text = text.replace(/^\s*<\/\s*details\s*>?/i, '').trim();
+  } else {
+    const commentCotMatch = text.match(/<!--\s*思考过程:?([\s\S]*?)-->/i);
+    if (commentCotMatch) {
+      cotContent = commentCotMatch[1].trim();
+      text = text.replace(commentCotMatch[0], '');
+      text = text.replace(/^\s*<\/\s*details\s*>?/i, '').trim();
+    }
   }
 
   // 2. 抽取顶部时间场景栏 (<tl>)
@@ -56,10 +66,15 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
   text = text.replace(/<opt>[\s\S]*?(?:<\/opt>|$)/gi, '').trim();
   text = text.replace(/<suggested_questions>[\s\S]*?(?:<\/suggested_questions>|$)/gi, '').trim();
 
-  // 4. 抽取 <article> 正文（支持截断或未闭合情形）
-  const articleMatch = text.match(/<article>([\s\S]*?)(?:<\/article>|$)/i);
+  // 4. 清理空标签残体（如模型在缺少 article 时输出的 <>、</>、< >）
+  text = text.replace(/<(?:\/)?(?:\s*)?>/g, '').trim();
+
+  // 5. 抽取 <article> 正文（支持截断或属性，若无 article 则自动保留正文并清洗 article 标签残体）
+  const articleMatch = text.match(/<article[^>]*>([\s\S]*?)(?:<\/article>|$)/i);
   if (articleMatch && articleMatch[1].trim()) {
     text = articleMatch[1].trim();
+  } else {
+    text = text.replace(/<\/?article[^>]*>/gi, '').trim();
   }
 
   // 5. 强力标签修复与归一化 (解决模型漏写尖括号或截断造成的漏标如 </p<p>, <p扁担..., <w“...)
@@ -174,9 +189,10 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
         );
       }
 
-      // 6. 清理其他误漏的尖括号残片（如单独的 </p、<article>）
+      // 6. 清理其他误漏的尖括号残片（如单独的 </p、<article>、</summary>、<> 等）
       const cleanPart = part
-        .replace(/<\/?(?:p|article|opt|suggested_questions|d|status|thk|fx|w|m)[^>]*>/gi, '')
+        .replace(/<\/?(?:p|article|opt|suggested_questions|d|status|thk|fx|w|m|details|summary|tl|love_status|rpg_status)[^>]*>/gi, '')
+        .replace(/<(?:\/)?(?:\s*)?>/g, '')
         .replace(/^<\/?[a-z]+/gi, '');
 
       return <span key={idx}>{cleanPart}</span>;
