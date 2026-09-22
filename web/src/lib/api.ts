@@ -109,7 +109,11 @@ export async function fetchConversation(id: string): Promise<ConversationSave | 
       headers: getAuthHeaders()
     });
     if (!resp.ok) return null;
-    return await resp.json();
+    const data = await resp.json();
+    if (data && Array.isArray(data.history)) {
+      data.history = data.history.filter((t: any) => Boolean(t && typeof t === 'object'));
+    }
+    return data;
   } catch (e) {
     return null;
   }
@@ -124,10 +128,16 @@ export async function saveConversation(payload: {
   history: Turn[];
 }): Promise<boolean> {
   try {
+    const cleanPayload = {
+      ...payload,
+      history: Array.isArray(payload.history)
+        ? payload.history.filter((t) => Boolean(t && typeof t === 'object'))
+        : []
+    };
     const resp = await fetch('/api/conversations', {
       method: 'POST',
       headers: getAuthHeaders(),
-      body: JSON.stringify(payload)
+      body: JSON.stringify(cleanPayload)
     });
     return resp.ok;
   } catch (e) {

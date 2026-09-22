@@ -60,10 +60,12 @@ export function FloatingStatusHud({
 
     let phaseData: ScenePhaseData | null = null;
 
+    const safeTurns = (turns || []).filter((t): t is Turn => Boolean(t && typeof t === 'object'));
+
     // 从后往前找最新包含状态标签的 AI 轮次
-    for (let i = turns.length - 1; i >= 0; i--) {
-      const turn = turns[i];
-      if (turn.isUser) continue;
+    for (let i = safeTurns.length - 1; i >= 0; i--) {
+      const turn = safeTurns[i];
+      if (!turn || turn.isUser) continue;
       const text = turn.story || turn.text || '';
 
       // 1. 尝试解析 <scene_phase>

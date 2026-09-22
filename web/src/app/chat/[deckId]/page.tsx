@@ -107,6 +107,7 @@ export default function ChatPage() {
     ];
 
     conversationHistory.forEach((t, i) => {
+      if (!t) return;
       if (t.isUser) {
         lines.push(`### 🧑 第 ${i + 1} 幕 · 玩家抉择\n`);
         lines.push(`${t.text || ''}\n`);
@@ -443,7 +444,7 @@ export default function ChatPage() {
 窗外的夜色如墨，灯光在两人之间洒下斑驳的光影。对方抬起眼帘凝视着你，眼底闪过复杂的情绪波动，似乎正在重新审视你与彼此之间的界限。随着沉默的打破，彼此的距离在不知不觉中悄然拉近。`;
     }
 
-    const allHistoryBranches = conversationHistory.flatMap((t: Turn) => t.branches || []);
+    const allHistoryBranches = conversationHistory.flatMap((t: Turn) => (t && t.branches) || []);
     const branches = generateContextualBranches(deckId, baseStory, turnIdx, act, prevBranches, allHistoryBranches);
     return {
       story: baseStory,
@@ -779,7 +780,8 @@ export default function ChatPage() {
   const handleRegenerateLast = () => {
     if (isLoading || conversationHistory.length === 0) return;
     for (let i = conversationHistory.length - 1; i >= 0; i--) {
-      if (!conversationHistory[i].isUser) {
+      const t = conversationHistory[i];
+      if (t && !t.isUser) {
         handleRegenerate(i);
         return;
       }
@@ -1168,8 +1170,10 @@ export default function ChatPage() {
             onTriggerAction={(actionText) => handleSend(actionText)}
           />
 
-          {conversationHistory.map((turn, idx) => {
-            const isLatestUserTurn = turn.isUser && (idx === conversationHistory.length - 1 || idx === conversationHistory.length - 2);
+          {conversationHistory
+            .filter((t): t is Turn => Boolean(t && typeof t === 'object'))
+            .map((turn, idx, arr) => {
+              const isLatestUserTurn = Boolean(turn.isUser) && (idx === arr.length - 1 || idx === arr.length - 2);
 
             if (turn.isUser) {
               return (

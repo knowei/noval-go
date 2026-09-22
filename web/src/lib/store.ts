@@ -186,29 +186,34 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
   },
   setCurrentDeck: (deckKey, deck) => set({ currentDeckKey: deckKey, currentDeck: deck }),
-  setConversationHistory: (history) => set({ conversationHistory: history }),
+  setConversationHistory: (history) => set({
+    conversationHistory: Array.isArray(history)
+      ? history.filter((t): t is Turn => Boolean(t && typeof t === 'object'))
+      : []
+  }),
   setCurrentConversationId: (id) => set({ currentConversationId: id }),
   
   addTurn: (turn) => {
-    set((state) => ({ conversationHistory: [...state.conversationHistory, turn] }));
+    if (!turn) return;
+    set((state) => ({ conversationHistory: [...state.conversationHistory.filter(Boolean), turn] }));
     get().autoSave();
   },
 
   updateTurn: (index, turn) => {
     set((state) => {
       const next = [...state.conversationHistory];
-      if (next[index]) {
+      if (index >= 0 && index < next.length && next[index]) {
         next[index] = { ...next[index], ...turn };
-      } else {
+      } else if (index >= 0) {
         next[index] = turn as Turn;
       }
-      return { conversationHistory: next };
+      return { conversationHistory: next.filter((t): t is Turn => Boolean(t && typeof t === 'object')) };
     });
     get().autoSave();
   },
 
   truncateHistory: (fromIndex) => {
-    set((state) => ({ conversationHistory: state.conversationHistory.slice(0, fromIndex) }));
+    set((state) => ({ conversationHistory: state.conversationHistory.slice(0, fromIndex).filter(Boolean) }));
     get().autoSave();
   },
 
@@ -319,15 +324,17 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   autoSave: async () => {
     const { currentConversationId, currentUserId, currentDeckKey, currentDeck, conversationHistory } = get();
-    if (!currentConversationId || conversationHistory.length === 0) return;
+    const cleanHistory = (conversationHistory || []).filter((t): t is Turn => Boolean(t && typeof t === 'object'));
+    if (!currentConversationId || cleanHistory.length === 0) return;
 
+    const lastTurn = cleanHistory[cleanHistory.length - 1];
     const payload = {
       id: currentConversationId,
       user_id: currentUserId,
       deck_id: currentDeckKey,
       deck_title: currentDeck?.title || '中式人生',
-      title: conversationHistory[conversationHistory.length - 1]?.location || `${currentDeck?.title || '剧本'} · 第 ${conversationHistory.length} 幕`,
-      history: conversationHistory
+      title: lastTurn?.location || `${currentDeck?.title || '剧本'} · 第 ${cleanHistory.length} 幕`,
+      history: cleanHistory
     };
 
     await saveConversation(payload);
