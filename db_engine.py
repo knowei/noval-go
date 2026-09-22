@@ -281,6 +281,50 @@ class DatabaseEngine:
                 )
                 ''')
             else:
+                # PostgreSQL 自动将旧版遗留 VARCHAR 字段无损扩容为 TEXT
+                if self.dialect == 'postgres':
+                    alter_stmts = [
+                        'ALTER TABLE IF EXISTS users ALTER COLUMN id TYPE TEXT',
+                        'ALTER TABLE IF EXISTS users ALTER COLUMN username TYPE TEXT',
+                        'ALTER TABLE IF EXISTS users ALTER COLUMN password_hash TYPE TEXT',
+                        'ALTER TABLE IF EXISTS users ALTER COLUMN nickname TYPE TEXT',
+                        'ALTER TABLE IF EXISTS users ALTER COLUMN avatar TYPE TEXT',
+                        'ALTER TABLE IF EXISTS users ALTER COLUMN auth_token TYPE TEXT',
+                        'ALTER TABLE IF EXISTS conversations ALTER COLUMN id TYPE TEXT',
+                        'ALTER TABLE IF EXISTS conversations ALTER COLUMN user_id TYPE TEXT',
+                        'ALTER TABLE IF EXISTS conversations ALTER COLUMN deck_id TYPE TEXT',
+                        'ALTER TABLE IF EXISTS conversations ALTER COLUMN deck_title TYPE TEXT',
+                        'ALTER TABLE IF EXISTS conversations ALTER COLUMN title TYPE TEXT',
+                        'ALTER TABLE IF EXISTS stories ALTER COLUMN id TYPE TEXT',
+                        'ALTER TABLE IF EXISTS stories ALTER COLUMN title TYPE TEXT',
+                        'ALTER TABLE IF EXISTS stories ALTER COLUMN badge TYPE TEXT',
+                        'ALTER TABLE IF EXISTS stories ALTER COLUMN cover_icon TYPE TEXT',
+                        'ALTER TABLE IF EXISTS stories ALTER COLUMN cover_title TYPE TEXT',
+                        'ALTER TABLE IF EXISTS stories ALTER COLUMN logo TYPE TEXT',
+                        'ALTER TABLE IF EXISTS stories ALTER COLUMN theme_color TYPE TEXT',
+                        'ALTER TABLE IF EXISTS stories ALTER COLUMN btn_gradient TYPE TEXT',
+                        'ALTER TABLE IF EXISTS stories ALTER COLUMN category TYPE TEXT',
+                        'ALTER TABLE IF EXISTS plaza_cards ALTER COLUMN id TYPE TEXT',
+                        'ALTER TABLE IF EXISTS plaza_cards ALTER COLUMN deck_id TYPE TEXT',
+                        'ALTER TABLE IF EXISTS plaza_cards ALTER COLUMN title TYPE TEXT',
+                        'ALTER TABLE IF EXISTS plaza_cards ALTER COLUMN badge TYPE TEXT',
+                        'ALTER TABLE IF EXISTS plaza_cards ALTER COLUMN badge_color TYPE TEXT',
+                        'ALTER TABLE IF EXISTS plaza_cards ALTER COLUMN author TYPE TEXT',
+                        'ALTER TABLE IF EXISTS plaza_cards ALTER COLUMN rating TYPE TEXT',
+                        'ALTER TABLE IF EXISTS plaza_cards ALTER COLUMN heat TYPE TEXT',
+                        'ALTER TABLE IF EXISTS plaza_cards ALTER COLUMN image_tag TYPE TEXT',
+                        'ALTER TABLE IF EXISTS plaza_cards ALTER COLUMN badge_type TYPE TEXT',
+                        'ALTER TABLE IF EXISTS plaza_cards ALTER COLUMN category TYPE TEXT',
+                        'ALTER TABLE IF EXISTS system_notices ALTER COLUMN id TYPE TEXT',
+                        'ALTER TABLE IF EXISTS system_notices ALTER COLUMN notice_type TYPE TEXT',
+                        'ALTER TABLE IF EXISTS system_notices ALTER COLUMN title TYPE TEXT'
+                    ]
+                    for s in alter_stmts:
+                        try:
+                            cur.execute(s)
+                        except Exception:
+                            pass
+
                 # PostgreSQL / MySQL 标准 DDL
                 cur.execute('''
                 CREATE TABLE IF NOT EXISTS users (
