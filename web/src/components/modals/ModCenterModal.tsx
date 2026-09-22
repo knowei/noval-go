@@ -12,7 +12,9 @@ import {
   RotateCcw,
   Heart,
   Swords,
-  BookOpen
+  BookOpen,
+  Layers,
+  BellRing
 } from 'lucide-react';
 
 export function ModCenterModal() {
@@ -43,6 +45,8 @@ export function ModCenterModal() {
       affectionGauge: false,
       rpgAdventureHud: false,
       lorebookArbiter: true,
+      phaseLock: true,
+      sceneIncidents: true,
     });
   };
 
@@ -62,7 +66,7 @@ export function ModCenterModal() {
               <div className="flex items-center gap-2">
                 <h2 className="text-base sm:text-lg font-bold text-gray-100">玩法模组中心 · MOD 管理器</h2>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-orange-500/20 text-orange-300 border border-orange-500/30">
-                  已装载 {activeCount} / 4
+                  已装载 {activeCount} 项
                 </span>
               </div>
               <p className="text-xs text-gray-400 mt-0.5">
@@ -397,6 +401,96 @@ export function ModCenterModal() {
                 <span
                   className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
                     enabledMods.lorebookArbiter ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* 模组 8：循序渐进·阶段推拉解锁 MOD */}
+          <div className={`p-4 rounded-xl border transition-all ${
+            enabledMods.phaseLock
+              ? 'bg-[#181a24] border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.15)]'
+              : 'bg-[#13141b] border-gray-800 opacity-70'
+          }`}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1.5 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400">
+                    <Layers className="w-4 h-4" />
+                  </div>
+                  <span className="font-bold text-sm text-gray-100">
+                    循序渐进·阶段推拉解锁 MOD
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                    密闭/酒店/都市攻略
+                  </span>
+                </div>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  强制严防无脑跳阶与剧情快进！角色遵循“玄关初验 ➔ 浴室换装 ➔ 契约推拉 ➔ 深层沦陷”严密递进树，实时渲染阶段完成度、核心推拉目标与下一阶段解锁条件。
+                </p>
+                <div className="text-[11px] text-gray-400 flex items-center gap-2 pt-1 font-mono">
+                  <span className="text-amber-400">● 4阶推拉进度条</span>
+                  <span className="text-emerald-400">● 目标与解锁判定</span>
+                </div>
+              </div>
+
+              {/* 开关 */}
+              <button
+                type="button"
+                onClick={() => toggleMod('phaseLock')}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  enabledMods.phaseLock ? 'bg-amber-600' : 'bg-gray-700'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                    enabledMods.phaseLock ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* 模组 9：微观密闭·环境道具与突发危机 MOD */}
+          <div className={`p-4 rounded-xl border transition-all ${
+            enabledMods.sceneIncidents
+              ? 'bg-[#181a24] border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
+              : 'bg-[#13141b] border-gray-800 opacity-70'
+          }`}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1.5 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="p-1.5 rounded-lg bg-cyan-500/20 text-cyan-400">
+                    <BellRing className="w-4 h-4" />
+                  </div>
+                  <span className="font-bold text-sm text-gray-100">
+                    微观密闭·环境道具与突发危机 MOD
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                    环境物理交互 + 突发张力
+                  </span>
+                </div>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  挂载场景微观物件（落地窗帘、大理石浴室、真丝睡袍、高脚红酒杯）一键交互道具盘；并在推拉关键节点随机触发门外查房、手机震动来电等窒息压迫事件。
+                </p>
+                <div className="text-[11px] text-gray-400 flex items-center gap-2 pt-1 font-mono">
+                  <span className="text-cyan-400">● 5大物理道具交互盘</span>
+                  <span className="text-red-400">● 突发环境事件触发</span>
+                </div>
+              </div>
+
+              {/* 开关 */}
+              <button
+                type="button"
+                onClick={() => toggleMod('sceneIncidents')}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  enabledMods.sceneIncidents ? 'bg-cyan-600' : 'bg-gray-700'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                    enabledMods.sceneIncidents ? 'translate-x-5' : 'translate-x-0'
                   }`}
                 />
               </button>
