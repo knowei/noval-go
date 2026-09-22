@@ -449,6 +449,10 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             deck_title = body.get('deck_title', '中式人生')
             title = body.get('title', '新场景存档')
             history = body.get('history', [])
+            if isinstance(history, list):
+                history = [t for t in history if t is not None and isinstance(t, dict)]
+            else:
+                history = []
             turn_count = len(history)
             now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -860,7 +864,11 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                         if not current_auth_user or current_auth_user['id'] != row_uid:
                             self.send_json({'error': '无权访问该私密存档'}, 403)
                             return
-                    data['history'] = json.loads(data.pop('history_json') or '[]')
+                    raw_history = json.loads(data.pop('history_json') or '[]')
+                    if isinstance(raw_history, list):
+                        data['history'] = [t for t in raw_history if t is not None and isinstance(t, dict)]
+                    else:
+                        data['history'] = []
                     self.send_json(data)
                 else:
                     self.send_json({'error': 'Conversation not found'}, 404)
