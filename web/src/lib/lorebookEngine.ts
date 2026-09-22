@@ -660,6 +660,145 @@ export const DEFAULT_LOREBOOKS: Record<string, LoreEntry[]> = {
       category: 'location',
       content: '一线城市三室两厅高档大平层公寓。父亲去世后形成的“一家人不用讲究”的生活习惯，在昨夜撞见姐姐自慰后彻底变味，早餐桌上的眼神回避与母亲的无意亲近，让暧昧与修罗场暗流汹涌。'
     }
+  ],
+
+  // 🌸 与傲娇青梅的纯爱日常💗
+  deck_pure_love_childhood_friend: [
+    {
+      id: 'plc_suwanqing',
+      keys: ['苏晚晴', '晚晴', '青梅', '校花', '傲娇', '发烫', '耳尖', '大笨蛋', '抄作业'],
+      title: '苏晚晴的傲娇心防与深情依恋',
+      category: 'character',
+      content: '17岁高中校花，黑发及腰、清纯绝美。从小就认定了主角是她唯一的依靠，但因为高自尊和害羞，习惯用“才不是为了你”、“顺手买的”作为掩饰。日记本里密密麻麻全写满了关于主角的琐事。'
+    },
+    {
+      id: 'plc_red_bean_pie',
+      keys: ['红豆派', '点心', '放学', '校门口', '第二份半价', '甜品', '书包'],
+      title: '梧桐树下的温热红豆派',
+      category: 'item',
+      content: '晚晴顶着寒风排队十五分钟买下的现烤红豆派。为了维护傲娇面子借口“买一送一多出来的”，油纸包裹下冒着浓郁豆沙香气，是她表达深沉心意的重要载体。'
+    },
+    {
+      id: 'plc_memory_box',
+      keys: ['回忆盒', '宝盒', '照片', '合照', '发带', '借条', '信物'],
+      title: '装满二十年羁绊的秘密回忆宝盒',
+      category: 'item',
+      content: '晚晴床底下带锁的铁盒，藏着从小到大主角送给她的每一颗弹珠、小学运动会合照、初中写给她的数学草稿纸。这是她绝不愿让任何人发现的最珍贵秘密。'
+    }
+  ],
+
+  // ❄️ 寄宿在你家的毒舌冰山校花
+  deck_ice_school_flower: [
+    {
+      id: 'isf_lengyuan',
+      keys: ['冷鸢', '校花', '银发', '冰山', '毒舌', '冰眸', '高岭之花', '同居', '陌生人'],
+      title: '冷鸢的绝对尊严与银发冰山面具',
+      category: 'character',
+      content: '圣华高中公认的顶流女神，银发如瀑、五官宛若瓷娃娃。因寄宿在主角家而感到自尊受挫，因此用极端苛刻的毒舌和冷漠筑起高墙。在学校装作形同陌路，在家里将主角视为空气。'
+    },
+    {
+      id: 'isf_melt_gauge',
+      keys: ['融化度', '好感度', '好感', '破防', '界限', '红线', '守则', '三章'],
+      title: '冰山融化度机制（初始-50）',
+      category: 'rule',
+      content: '冷鸢的心理防线极其坚固。任何轻浮或讨好都会被视为冒犯（扣分）；唯有沉稳不屈的从容掌控、或在她饥饿脆弱时给予毫无压迫感的真实体贴，才能悄然增加融化度。融化度突破正值后将逐步解锁娇憨反差。'
+    },
+    {
+      id: 'isf_night_kitchen',
+      keys: ['厨房', '冰箱', '牛奶', '光脚', '宽大衬衫', '偷吃', '深夜'],
+      title: '深夜厨房里无防备的白炽灯瞬间',
+      category: 'location',
+      content: '凌晨无人时，冷鸢偶尔会摘下白天清冷的面具，穿着宽松白衬衫光着细嫩足踝在厨房冰箱前找零食。被撞见时会瞬间脸红结巴、恼羞成怒。'
+    }
+  ],
+
+  // 🔮 ⭐️阿兹加尔魔法大陆🔮（完备升级版）——Tales of Magician
+  deck_azgar_magic_continent: [
+    {
+      id: 'amc_magic_ranks',
+      keys: ['位阶', '实力', '魔导师', '大魔法师', '圣阶', '见习', '初级', '高阶', '半神', '晋级'],
+      title: '阿兹加尔大陆严苛魔力位阶体系',
+      category: 'rule',
+      content: '大陆恪守魔力位阶法则：见习→初阶→中阶→高阶→大魔法师→魔导师→圣阶→半神。每一阶的以太魔力储量与咒文解析速度呈几何倍数碾压，跨阶挑战必须借助禁忌圣遗物或上古法阵。'
+    },
+    {
+      id: 'amc_creation_pillar',
+      keys: ['创世之柱', '以太', '魔力潮汐', '符文', '遗迹', '方碑', '古精灵'],
+      title: '创世之柱与上古以太方碑',
+      category: 'location',
+      content: '传说神明开天辟地时留下的十二根神柱，如今散落在大战废墟与迷雾深处。方碑周围魔物受以太辐射极易发生狂暴变异，但击败守护魔物可获得极其稀有的上古史诗装备与失传禁咒。'
+    },
+    {
+      id: 'amc_saintess_alia',
+      keys: ['艾莉亚', '圣女', '圣光', '巡礼', '晨曦教会', '神官', '金发', '治愈'],
+      title: '晨曦圣光大教堂巡礼圣女艾莉亚',
+      category: 'character',
+      content: '18岁金发金眸的预备圣女。怀抱纯洁善念巡视大陆，掌握高阶群体圣光驱散与生命治愈术。在被主角救助后视主角为神明赐予的守护誓约者。'
+    },
+    {
+      id: 'amc_monster_loot',
+      keys: ['掉落', '魔核', '素材', '击杀', '战利品', '毒腺', '魔晶', '解剖'],
+      title: '冒险者公会魔物讨伐与素材掉落铁律',
+      category: 'rule',
+      content: '击杀异化魔物后需及时解剖剥取完整魔核与珍贵器官。残破素材收购价折半，完美魔核可在公会炼金坊镶嵌武器，提升元素攻击力并兑换高阶冒险者银鹿币。'
+    }
+  ],
+
+  // 🗡️ 九霄修仙传：设定超全的修仙卡（开局roll天赋）
+  deck_jiuxiao_xiuxian: [
+    {
+      id: 'jxx_cultivation_realms',
+      keys: ['境界', '练气', '筑基', '金丹', '元婴', '化神', '渡劫', '雷劫', '突破', '灵气'],
+      title: '九霄修仙九重大道境界法则',
+      category: 'rule',
+      content: '修真之道逆天而行：练气(一层至九层)→筑基→金丹→元婴→化神→炼虚→合体→大乘→渡劫。大境界突破必招致天地异象与心魔雷劫，根基不稳强行突破者必爆体陨落。'
+    },
+    {
+      id: 'jxx_black_stone_ring',
+      keys: ['黑戒', '石戒', '残魂', '老爷爷', '金手指', '古老铭文', '脉动', '传功'],
+      title: '神秘乌黑石戒与沉睡尊者残魂',
+      category: 'item',
+      content: '主角于后山灵溪偶得的无名乌黑石戒，表面平平无奇，内里封印着上古九霄剑尊的一缕残魂。滴血或注入真气后可开启微型洞府，获得尊者神识指点并洞悉功法破绽。'
+    },
+    {
+      id: 'jxx_yunqingli',
+      keys: ['云清璃', '小师妹', '师姐', '纯阳剑体', '青云宗', '紫玉芝', '白衣', '娇蛮'],
+      title: '纯阳剑体天骄 · 青云剑宗千金云清璃',
+      category: 'character',
+      content: '16岁，掌门独女，天生万中无一的纯阳火灵根与剑心通明。性格娇蛮傲娇、极具侠义心肠。表面上冷傲斥责主角杂役偷懒，暗地里经常借口“顺手”送来珍贵二阶灵药为主角固本培元。'
+    },
+    {
+      id: 'jxx_spirit_herbs_beasts',
+      keys: ['妖兽', '赤鳞蟒', '灵药', '洗髓草', '内丹', '灵石', '品阶', '宗门考核'],
+      title: '九霄大陆灵物法宝与妖兽品阶品位',
+      category: 'rule',
+      content: '天地灵物划分为天地玄黄四阶，妖兽有一阶至九阶之分。二阶妖兽即具备猎杀筑基期修士的恐怖肉身。妖兽内丹与伴生灵草是炼制筑基丹不可替代的至宝。'
+    }
+  ],
+
+  // 🌐 【无限流】主神空间，干穿多元宇宙
+  deck_infinity_lord_god: [
+    {
+      id: 'ilg_lord_god_sphere',
+      keys: ['主神', '光球', '抹杀', '任务', '主线', '倒计时', '轮回者', '轮回手表'],
+      title: '纯白广场至高主神大光球与抹杀法则',
+      category: 'rule',
+      content: '悬浮于主神空间中央的璀璨光球，具备全知全能的兑换制造与时空转移威能。一旦轮回者未在限定时间内完成主线目标，主神手表将立即释放分子级湮灭抹杀，绝无情面。'
+    },
+    {
+      id: 'ilg_reward_points',
+      keys: ['奖励点', '支线剧情', '兑换', '血统', '高斯', '兑换榜', '强化'],
+      title: '主神空间奖励点与支线剧情强化兑换机制',
+      category: 'rule',
+      content: '完成击杀目标与剧情逆转可获得奖励点与S/A/B/C/D级支线剧情。可在主神光球处兑换万界血统（赛亚人/血族/修真/超人）与跨时代黑科技神兵（高斯武器/单分子光剑/反物质湮灭弹）。'
+    },
+    {
+      id: 'ilg_hive_train',
+      keys: ['生化危机', '蜂巢', '红后', '舔食者', '丧尸犬', '列车', '雇佣兵'],
+      title: '生化危机浣熊市地下蜂巢试炼场',
+      category: 'location',
+      content: '新晋轮回者的初级试炼地。地下极深处的绝密生化研究基地，中央电脑红后已启动全面封锁。管道内潜伏着嗅觉与听觉极其敏锐的异化舔食者，致命T病毒弥漫在每一处下水道。'
+    }
   ]
 };
 
@@ -690,6 +829,11 @@ export function getDeckLorebook(deckId: string, customLore?: LoreEntry[]): LoreE
     else if (deckId === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7') defaultEntries = DEFAULT_LOREBOOKS['deck_xiuxian_world'] || [];
     else if (deckId === '2168197e-903b-4727-97e3-bf5f1d5b6c8f') defaultEntries = DEFAULT_LOREBOOKS['deck_daughter_door_block'] || [];
     else if (deckId === '758e40b4-c1b3-4655-a83a-5ef136b60a2b') defaultEntries = DEFAULT_LOREBOOKS['deck_mother_sister_baby'] || [];
+    else if (deckId === '64da8e90-9404-4a55-ae80-fe40c3a28299' || deckId === 'deck_pure_love_childhood_friend') defaultEntries = DEFAULT_LOREBOOKS['deck_pure_love_childhood_friend'] || [];
+    else if (deckId === 'd0c2b806-5a8a-42fd-bdeb-a69fa72cbbf6' || deckId === 'deck_ice_school_flower') defaultEntries = DEFAULT_LOREBOOKS['deck_ice_school_flower'] || [];
+    else if (deckId === 'b0c6d63f-4185-46a5-bbe8-9d0ef7fc974a' || deckId === 'deck_azgar_magic_continent') defaultEntries = DEFAULT_LOREBOOKS['deck_azgar_magic_continent'] || [];
+    else if (deckId === '75376129-e9a1-461b-9671-0e944e969b8e' || deckId === 'deck_jiuxiao_xiuxian') defaultEntries = DEFAULT_LOREBOOKS['deck_jiuxiao_xiuxian'] || [];
+    else if (deckId === '82e261bc-2d95-4c41-8913-e0cf2756fc04' || deckId === 'deck_infinity_lord_god') defaultEntries = DEFAULT_LOREBOOKS['deck_infinity_lord_god'] || [];
   }
 
   const customEntries = Array.isArray(customLore) ? customLore : [];
