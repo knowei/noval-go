@@ -93,7 +93,9 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
     // 修复特效漏闭合: <fx(?=[“"「\u4e00-\u9fa5【])
     .replace(/<fx(?=[“"「\u4e00-\u9fa5【])/gi, '<fx>')
     // 修复危机警报漏闭合: <alert(?=[“"「\u4e00-\u9fa5【])
-    .replace(/<alert(?=[“"「\u4e00-\u9fa5【])/gi, '<alert>');
+    .replace(/<alert(?=[“"「\u4e00-\u9fa5【])/gi, '<alert>')
+    // 修复名场面漏闭合: <climax(?=[“"「\u4e00-\u9fa5【])
+    .replace(/<climax(?=[“"「\u4e00-\u9fa5【])/gi, '<climax>');
 
   // 6. 统一段落划分 (<p> 标签拆分或换行拆分)
   let rawParas: string[] = [];
@@ -126,7 +128,7 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
   // 渲染段落内部的高亮标签 (<w>, <m>, <thk>, <fx> 及常规引号对白)
   const renderParagraphContent = (para: string) => {
     // 识别各高亮语法块（支持含有属性或轻微格式异化的闭合标签）
-    const tokenRegex = /(<w[^>]*>[\s\S]*?<\/w>|<m[^>]*>[\s\S]*?<\/m>|<thk[^>]*>[\s\S]*?<\/thk>|<fx[^>]*>[\s\S]*?<\/fx>|<alert[^>]*>[\s\S]*?<\/alert>|[“「][^”」]+[”」])/gi;
+    const tokenRegex = /(<w[^>]*>[\s\S]*?<\/w>|<m[^>]*>[\s\S]*?<\/m>|<thk[^>]*>[\s\S]*?<\/thk>|<fx[^>]*>[\s\S]*?<\/fx>|<alert[^>]*>[\s\S]*?<\/alert>|<climax[^>]*>[\s\S]*?<\/climax>|[“「][^”」]+[”」])/gi;
     const parts = para.split(tokenRegex);
 
     return parts.map((part, idx) => {
@@ -191,6 +193,26 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
         );
       }
 
+      // 4.5 番剧高能名场面定格特写 (<climax>)
+      if (/^<climax[^>]*>([\s\S]*?)<\/climax>$/i.test(part)) {
+        const inner = part.replace(/<\/?climax[^>]*>/gi, '').trim();
+        return (
+          <div key={idx} className="novel-climax-card my-3.5 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-amber-950/70 via-[#1f142a] to-rose-950/70 border border-amber-400/40 text-amber-100 text-xs sm:text-[13.5px] font-serif shadow-2xl shadow-amber-950/50 relative overflow-hidden backdrop-blur-md animate-in fade-in zoom-in-95 duration-300">
+            <div className="absolute -top-6 -right-6 w-28 h-28 bg-amber-500/15 rounded-full blur-2xl pointer-events-none" />
+            <div className="flex items-center justify-between mb-2 border-b border-amber-500/25 pb-1.5">
+              <div className="flex items-center gap-1.5 text-[11px] font-bold tracking-wider text-amber-300">
+                <span className="text-sm">🎬</span>
+                <span>番剧高能名场面 · 定格特写</span>
+              </div>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-200 border border-amber-500/30 font-mono font-bold tracking-wider">CLIMAX CG</span>
+            </div>
+            <div className="leading-relaxed italic pl-3 border-l-2 border-amber-400/80 font-serif text-amber-100 font-medium text-[13px] sm:text-[14px]">
+              {inner}
+            </div>
+          </div>
+        );
+      }
+
       // 5. 拟声词与动作冲击特效 (<fx>)
       if (/^<fx[^>]*>([\s\S]*?)<\/fx>$/i.test(part)) {
         const inner = part.replace(/<\/?fx[^>]*>/gi, '').trim();
@@ -213,7 +235,7 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
 
       // 7. 清理其他误漏的尖括号残片（如单独的 </p、<article>、</summary>、<> 等）
       const cleanPart = part
-        .replace(/<\/?(?:p|article|opt|suggested_questions|d|status|thk|fx|alert|scene_phase|w|m|details|summary|tl|love_status|rpg_status)[^>]*>/gi, '')
+        .replace(/<\/?(?:p|article|opt|suggested_questions|d|status|thk|fx|alert|climax|scene_phase|w|m|details|summary|tl|love_status|rpg_status)[^>]*>/gi, '')
         .replace(/<(?:\/)?(?:\s*)?>/g, '')
         .replace(/^<\/?[a-z]+/gi, '');
 
