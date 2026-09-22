@@ -30,10 +30,18 @@ export function scopeDeckCustomCss(
     .replace(/(?:^|\})\s*(?:textarea|input(?:\[[^\]]*\])?)\s*\{[^}]*\}/gi, '')
     // 剔除通用 button 和 Material-UI 全局按钮重写 (防止输入框和顶栏按钮被涂成刺眼青色/白色)
     .replace(/(?:^|\})\s*(?:button|\.MuiButton[^{]*)\s*\{[^}]*\}/gi, '')
+    // 剔除企图直接针对系统控制面板与界面的破坏性规则
+    .replace(/(?:^|\})\s*[^}]*?(?:\.reality-panel|\.reality-summary|\.reality-body|\.reality-arrow|\.system-details|\.system-summary|#theater-header|#chat-input|\.card-turn-action-bar)[^{]*\{[^}]*\}/gi, '')
     // 剔除全局移动端破坏性重置
     .replace(/(?:input|textarea|select|button|pre|code)[^{]*\{[^}]*\}/gi, '');
 
-  // 3. 将所有选择器加上 scopeSelector 前缀
+  // 3. 严格隔离系统折叠面板（思维链、记忆沉淀、行动抉择等系统 UI 组件）
+  // 严禁作者裸 details/summary 污染系统面板：自动追加 :not(.reality-panel):not(.system-details)
+  cleaned = cleaned
+    .replace(/(?<![-\w\.#])details(?![-\w]|:not\()/gi, 'details:not(.reality-panel):not(.system-details)')
+    .replace(/(?<![-\w\.#])summary(?![-\w]|:not\()/gi, 'summary:not(.reality-summary):not(.system-summary)');
+
+  // 4. 将所有选择器加上 scopeSelector 前缀
   function prefixSelectors(cssText: string): string {
     return cssText.replace(/([^{}]+)\{([^{}]+)\}/g, (match, selectors, declarations) => {
       const trimmed = selectors.trim();

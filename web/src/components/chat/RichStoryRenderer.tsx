@@ -187,8 +187,8 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
     <div className={`novel-rich-container space-y-3.5 ${className}`}>
       {/* ① 思维链推演折叠面板 (CoT) */}
       {cotContent && (
-        <details className="group rounded-xl border border-purple-500/25 bg-[#120e1a] overflow-hidden text-xs transition-all duration-200">
-          <summary className="cursor-pointer select-none px-3.5 py-2 text-purple-300/90 font-medium flex items-center justify-between hover:bg-purple-950/30">
+        <details className="system-details group rounded-xl border border-purple-500/25 bg-[#120e1a] overflow-hidden text-xs transition-all duration-200">
+          <summary className="system-summary cursor-pointer select-none px-3.5 py-2 text-purple-300/90 font-medium flex items-center justify-between hover:bg-purple-950/30">
             <span className="flex items-center gap-2">
               <span className="text-sm">🧠</span>
               <span className="font-bold tracking-wide">思维链推演 (CoT 决策过程)</span>
