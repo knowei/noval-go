@@ -10,6 +10,8 @@ const defaultMods: EnabledMods = {
   affectionGauge: false,
   rpgAdventureHud: false,
   lorebookArbiter: true,
+  phaseLock: true,
+  sceneIncidents: true,
 };
 
 const getInitialMods = (): EnabledMods => {
@@ -26,6 +28,8 @@ const getInitialMods = (): EnabledMods => {
         affectionGauge: parsed.affectionGauge ?? false,
         rpgAdventureHud: parsed.rpgAdventureHud ?? false,
         lorebookArbiter: parsed.lorebookArbiter ?? true,
+        phaseLock: parsed.phaseLock ?? true,
+        sceneIncidents: parsed.sceneIncidents ?? true,
       };
     }
   } catch (e) {

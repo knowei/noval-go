@@ -152,6 +152,8 @@ export interface EnabledMods {
   affectionGauge?: boolean;
   rpgAdventureHud?: boolean;
   lorebookArbiter?: boolean;
+  phaseLock?: boolean;
+  sceneIncidents?: boolean;
 }
 
 export interface LoveStatusData {
@@ -168,6 +170,13 @@ export interface RpgStatusData {
   mp?: string;
   inventory?: string[];
   loot?: string;
+}
+
+export interface ScenePhaseData {
+  phaseName: string;
+  progress: number;
+  task: string;
+  unlockCondition?: string;
 }
 
 

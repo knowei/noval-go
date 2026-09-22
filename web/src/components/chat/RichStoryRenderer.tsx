@@ -59,10 +59,11 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
     text = text.replace(tlMatch[0], '').trim();
   }
 
-  // 3. 剥除外部干扰与状态标签 (<status>, <love_status>, <rpg_status>, <opt>, <suggested_questions>)
+  // 3. 剥除外部干扰与状态标签 (<status>, <love_status>, <rpg_status>, <scene_phase>, <opt>, <suggested_questions>)
   text = text.replace(/<status>[\s\S]*?(?:<\/status>|$)/gi, '').trim();
   text = text.replace(/<love_status>[\s\S]*?(?:<\/love_status>|$)/gi, '').trim();
   text = text.replace(/<rpg_status>[\s\S]*?(?:<\/rpg_status>|$)/gi, '').trim();
+  text = text.replace(/<scene_phase>[\s\S]*?(?:<\/scene_phase>|$)/gi, '').trim();
   text = text.replace(/<opt>[\s\S]*?(?:<\/opt>|$)/gi, '').trim();
   text = text.replace(/<suggested_questions>[\s\S]*?(?:<\/suggested_questions>|$)/gi, '').trim();
 
@@ -90,7 +91,9 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
     // 修复心声漏闭合: <thk(?=[“"「\u4e00-\u9fa5])
     .replace(/<thk(?=[“"「\u4e00-\u9fa5])/gi, '<thk>')
     // 修复特效漏闭合: <fx(?=[“"「\u4e00-\u9fa5【])
-    .replace(/<fx(?=[“"「\u4e00-\u9fa5【])/gi, '<fx>');
+    .replace(/<fx(?=[“"「\u4e00-\u9fa5【])/gi, '<fx>')
+    // 修复危机警报漏闭合: <alert(?=[“"「\u4e00-\u9fa5【])
+    .replace(/<alert(?=[“"「\u4e00-\u9fa5【])/gi, '<alert>');
 
   // 6. 统一段落划分 (<p> 标签拆分或换行拆分)
   let rawParas: string[] = [];
@@ -123,7 +126,7 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
   // 渲染段落内部的高亮标签 (<w>, <m>, <thk>, <fx> 及常规引号对白)
   const renderParagraphContent = (para: string) => {
     // 识别各高亮语法块（支持含有属性或轻微格式异化的闭合标签）
-    const tokenRegex = /(<w[^>]*>[\s\S]*?<\/w>|<m[^>]*>[\s\S]*?<\/m>|<thk[^>]*>[\s\S]*?<\/thk>|<fx[^>]*>[\s\S]*?<\/fx>|[“「][^”」]+[”」])/gi;
+    const tokenRegex = /(<w[^>]*>[\s\S]*?<\/w>|<m[^>]*>[\s\S]*?<\/m>|<thk[^>]*>[\s\S]*?<\/thk>|<fx[^>]*>[\s\S]*?<\/fx>|<alert[^>]*>[\s\S]*?<\/alert>|[“「][^”」]+[”」])/gi;
     const parts = para.split(tokenRegex);
 
     return parts.map((part, idx) => {
@@ -157,19 +160,38 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
       if (/^<thk[^>]*>([\s\S]*?)<\/thk>$/i.test(part)) {
         const inner = part.replace(/<\/?thk[^>]*>/gi, '').trim();
         return (
-          <div key={idx} className="novel-thk-card my-2 p-2.5 sm:p-3 rounded-xl bg-gradient-to-r from-purple-950/40 via-[#181629] to-purple-950/20 border border-purple-500/30 text-purple-200/95 text-[12.5px] sm:text-[13px] font-sans shadow-md">
+          <div key={idx} className="novel-thk-card my-2 p-2.5 sm:p-3 rounded-xl bg-gradient-to-r from-purple-950/50 via-[#19172c] to-purple-950/30 border border-purple-500/35 text-purple-200/95 text-[12.5px] sm:text-[13px] font-sans shadow-lg relative overflow-hidden">
             <div className="flex items-center gap-1.5 text-[11px] font-semibold text-purple-300/90 mb-1 select-none">
               <span className="text-purple-400">💭</span>
               <span>潜意识心声 · 隐秘动摇与微观生理应激:</span>
             </div>
-            <div className="leading-relaxed pl-3 border-l-2 border-purple-400/50 italic font-serif text-purple-100/90">
+            <div className="leading-relaxed pl-3 border-l-2 border-purple-400/60 italic font-serif text-purple-100/95">
               {inner}
             </div>
           </div>
         );
       }
 
-      // 4. 拟声词与动作冲击特效 (<fx>)
+      // 4. 环境突发危机与即时事件 (<alert>)
+      if (/^<alert[^>]*>([\s\S]*?)<\/alert>$/i.test(part)) {
+        const inner = part.replace(/<\/?alert[^>]*>/gi, '').trim();
+        return (
+          <div key={idx} className="novel-alert-card my-2.5 p-3 rounded-xl bg-gradient-to-r from-red-950/60 via-amber-950/40 to-red-950/30 border border-red-500/40 text-red-200 text-xs sm:text-[13px] font-sans shadow-lg shadow-red-950/30 flex items-start gap-2.5 animate-in fade-in">
+            <span className="text-base leading-none p-1 rounded-lg bg-red-500/20 text-red-400 shrink-0 mt-0.5 animate-pulse">🚨</span>
+            <div className="space-y-0.5 flex-1">
+              <div className="text-[11px] font-bold text-red-400 tracking-wider flex items-center gap-1.5">
+                <span>环境突发事件 / 窒息危机</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
+              </div>
+              <div className="font-serif leading-relaxed text-red-100 font-medium">
+                {inner}
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // 5. 拟声词与动作冲击特效 (<fx>)
       if (/^<fx[^>]*>([\s\S]*?)<\/fx>$/i.test(part)) {
         const inner = part.replace(/<\/?fx[^>]*>/gi, '').trim();
         return (
@@ -180,7 +202,7 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
         );
       }
 
-      // 5. 常规中文对话引号高光 (“...” 或 「...」)
+      // 6. 常规中文对话引号高光 (“...” 或 「...」)
       if (/^[“「].*[”」]$/.test(part)) {
         return (
           <span key={idx} className="font-semibold text-sky-300/95 tracking-wide">
@@ -189,9 +211,9 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
         );
       }
 
-      // 6. 清理其他误漏的尖括号残片（如单独的 </p、<article>、</summary>、<> 等）
+      // 7. 清理其他误漏的尖括号残片（如单独的 </p、<article>、</summary>、<> 等）
       const cleanPart = part
-        .replace(/<\/?(?:p|article|opt|suggested_questions|d|status|thk|fx|w|m|details|summary|tl|love_status|rpg_status)[^>]*>/gi, '')
+        .replace(/<\/?(?:p|article|opt|suggested_questions|d|status|thk|fx|alert|scene_phase|w|m|details|summary|tl|love_status|rpg_status)[^>]*>/gi, '')
         .replace(/<(?:\/)?(?:\s*)?>/g, '')
         .replace(/^<\/?[a-z]+/gi, '');
 

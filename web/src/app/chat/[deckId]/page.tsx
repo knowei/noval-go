@@ -1163,6 +1163,9 @@ export default function ChatPage() {
           <FloatingStatusHud
             turns={conversationHistory}
             enabledMods={enabledMods}
+            deckId={deckId}
+            deckTitle={currentDeck?.title}
+            onTriggerAction={(actionText) => handleSend(actionText)}
           />
 
           {conversationHistory.map((turn, idx) => {
