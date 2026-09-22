@@ -1499,6 +1499,8 @@ export function parseModelOutput(
     .replace(/<m(?=[“"「\u4e00-\u9fa5])/gi, '<m>')
     .replace(/<thk(?=[“"「\u4e00-\u9fa5])/gi, '<thk>')
     .replace(/<fx(?=[“"「\u4e00-\u9fa5【])/gi, '<fx>')
+    .replace(/<alert(?=[“"「\u4e00-\u9fa5【])/gi, '<alert>')
+    .replace(/<climax(?=[“"「\u4e00-\u9fa5【])/gi, '<climax>')
     .trim();
 
   turn.story = cleanStory || rawText.trim();

@@ -526,7 +526,7 @@ export default function ChatPage() {
           const isLast = idx === arr.length - 1;
           let content = h.text || h.story || '';
           if (isLast && h.isUser) {
-            content = `【用户最新推进指令】：${content}。\n【核心执行纪律】：\n1. 严格遵循防抢话原则，严禁替玩家说台词或做心理决策；输出高质量感官与情绪张力描写；\n2. 🎲【互动抉择必达要求】：正文推演结束后，必须在末尾输出 <opt><suggested_questions> 标签，包含4项紧密结合当前最新情节、完全不同于历史选项的全新【玩家可选行动】（使用 <d> 标签包裹），严禁省略！`;
+            content = `【用户最新推进指令】：${content}。\n【核心执行纪律】：\n1. 🎬【番剧演出与剧情强推进】：拒绝原地打太极与车轱辘话复读！本轮必须带来实质性的空间位置迁移、心理秘密暴露或肢体界限突破；运用番剧特写运镜与视听拟音（<fx>），必要时主动触发突发事件（<alert>）或名场面（<climax>）；\n2. 严格遵循防抢话原则，严禁替玩家说台词或做心理决策；输出高质量感官与情绪张力描写；\n3. 🎲【互动抉择必达要求】：正文推演结束后，必须在末尾输出 <opt><suggested_questions> 标签，包含4项紧密结合当前最新情节、完全不同于历史选项的全新【玩家可选行动】（使用 <d> 标签包裹），严禁省略！`;
           }
           return {
             role: h.isUser ? 'user' : 'assistant',
