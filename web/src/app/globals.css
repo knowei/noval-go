@@ -248,24 +248,40 @@ body {
   }
 }
 
+/* --- 统一折叠面板群（思维链、记忆沉淀、行动抉择）核心隔离防护 --- */
+.story-custom-scope .reality-panels-container,
 .reality-panels-container {
   border: 1px solid #383b46 !important;
-  border-radius: 8px !important;
+  border-radius: 12px !important;
   background: #191b22 !important;
   overflow: hidden !important;
   margin-top: 14px !important;
+  padding: 0 !important;
 }
 
+.story-custom-scope details.reality-panel,
+details.reality-panel,
 .reality-panel {
   border: 1px solid #2d303a !important;
-  border-radius: 6px !important;
-  margin-bottom: 6px !important;
+  border-radius: 8px !important;
+  margin: 6px 0 !important;
   overflow: hidden !important;
   background: #191b22 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
 }
 
+.story-custom-scope details.reality-panel[open],
+details.reality-panel[open] {
+  background: #191b22 !important;
+  border-color: #383b46 !important;
+  box-shadow: none !important;
+}
+
+.story-custom-scope summary.reality-summary,
+summary.reality-summary,
 .reality-summary {
-  padding: 9px 14px !important;
+  padding: 10px 14px !important;
   font-size: 13px !important;
   font-weight: 500 !important;
   color: #e2e8f0 !important;
@@ -277,38 +293,62 @@ body {
   background: #202228 !important;
   transition: background 0.15s ease, color 0.15s ease !important;
   list-style: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  letter-spacing: normal !important;
 }
 
-.reality-summary::-webkit-details-marker {
+.story-custom-scope summary.reality-summary::-webkit-details-marker,
+summary.reality-summary::-webkit-details-marker {
   display: none !important;
 }
 
-.reality-summary:hover {
+/* 强力抹除作者 CSS 对 summary::before 的图标劫持 (如 ✨, 💫) */
+.story-custom-scope summary.reality-summary::before,
+summary.reality-summary::before,
+.story-custom-scope details[open] summary.reality-summary::before,
+details[open] summary.reality-summary::before {
+  content: none !important;
+  display: none !important;
+}
+
+.story-custom-scope summary.reality-summary:hover,
+summary.reality-summary:hover {
   background: #282a32 !important;
   color: #fff !important;
 }
 
+.story-custom-scope details.reality-panel[open] > summary.reality-summary,
+details.reality-panel[open] > summary.reality-summary,
 .reality-panel[open] > .reality-summary {
   background: #22252e !important;
   color: #38bdf8 !important;
+  border-bottom: 1px solid #282a32 !important;
 }
 
+.story-custom-scope .reality-arrow,
 .reality-arrow {
   font-size: 11px !important;
   font-family: monospace !important;
   transition: transform 0.15s ease !important;
 }
 
+.story-custom-scope details.reality-panel > summary.reality-summary .reality-arrow::before,
 .reality-panel > .reality-summary .reality-arrow::before {
-  content: '▶';
-  color: #64748b;
+  content: '▶' !important;
+  color: #64748b !important;
+  display: inline-block !important;
 }
 
+.story-custom-scope details.reality-panel[open] > summary.reality-summary .reality-arrow::before,
 .reality-panel[open] > .reality-summary .reality-arrow::before {
-  content: '▼';
-  color: #38bdf8;
+  content: '▼' !important;
+  color: #38bdf8 !important;
+  display: inline-block !important;
 }
 
+.story-custom-scope .reality-body,
 .reality-body {
   padding: 12px 16px !important;
   font-size: 12px !important;
@@ -316,6 +356,8 @@ body {
   line-height: 1.85 !important;
   background: #16171d !important;
   border-top: 1px solid #282a32 !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
 }
 
 /* 保护页面核心交互 UI（顶部导航栏、底部输入框、系统按钮）不受任何剧本自定义 CSS 破坏 */

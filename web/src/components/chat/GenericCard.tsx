@@ -126,8 +126,8 @@ export const GenericCard = React.memo(function GenericCard({
         <div className="reality-panels-container space-y-2 mt-4">
           {/* ① 📊 状态面板 */}
           {hasStatus && (
-            <details className="reality-panel">
-              <summary className="reality-summary cursor-pointer select-none">
+            <details className="reality-panel system-details">
+              <summary className="reality-summary system-summary cursor-pointer select-none">
                 <span className="flex items-center gap-2">
                   <span>📊</span>
                   <span>当前局势与状态栏</span>
@@ -147,8 +147,8 @@ export const GenericCard = React.memo(function GenericCard({
 
           {/* ② 📝 记忆区折叠 */}
           {hasMemory && (
-            <details className="reality-panel">
-              <summary className="reality-summary cursor-pointer select-none">
+            <details className="reality-panel system-details">
+              <summary className="reality-summary system-summary cursor-pointer select-none">
                 <span className="flex items-center gap-2">
                   <span>📝</span>
                   <span>本幕记忆沉淀 ({turn.memory!.length} 条事实)</span>
@@ -168,8 +168,8 @@ export const GenericCard = React.memo(function GenericCard({
 
           {/* ③ 🎲 行动分支折叠 */}
           {hasBranches && (
-            <details className="reality-panel">
-              <summary className="reality-summary cursor-pointer select-none">
+            <details className="reality-panel system-details">
+              <summary className="reality-summary system-summary cursor-pointer select-none">
                 <span className="flex items-center gap-2">
                   <span>🎮</span>
                   <span>当前局势 · 下一步行动抉择 ({activeBranches.length} 项可选)</span>
