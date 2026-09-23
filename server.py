@@ -430,6 +430,35 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                         self.wfile.flush()
             except urllib.error.HTTPError as e:
                 err_data = e.read()
+                # 自动兼容容错：若上游因模型不支持 penalty 报错 400，自动剥离 penalty 字段无缝重试
+                if e.code == 400 and (b'Penalty is not enabled' in err_data or b'penalty' in err_data.lower()):
+                    try:
+                        parsed_body = json.loads(post_body.decode('utf-8'))
+                        modified = False
+                        for p in ['frequency_penalty', 'presence_penalty']:
+                            if p in parsed_body:
+                                parsed_body.pop(p, None)
+                                modified = True
+                        if modified:
+                            retry_body = json.dumps(parsed_body).encode('utf-8')
+                            retry_req = urllib.request.Request(target_url, data=retry_body, headers=req_headers, method='POST')
+                            with urllib.request.urlopen(retry_req, timeout=180) as resp:
+                                self.send_response(resp.getcode())
+                                content_type = resp.headers.get('Content-Type', 'application/json')
+                                self.send_header('Content-Type', content_type)
+                                self.send_header('Cache-Control', 'no-cache')
+                                self.send_header('Connection', 'keep-alive')
+                                self.end_headers()
+                                while True:
+                                    chunk = resp.read(512)
+                                    if not chunk:
+                                        break
+                                    self.wfile.write(chunk)
+                                    self.wfile.flush()
+                                return
+                    except Exception:
+                        pass
+
                 self.send_response(e.code)
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
