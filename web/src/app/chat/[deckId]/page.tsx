@@ -1160,13 +1160,15 @@ export default function ChatPage() {
           )}
 
           {/* Real-time Dynamic HUD for Love Affection & RPG Adventure */}
-          <FloatingStatusHud
-            turns={conversationHistory}
-            enabledMods={enabledMods}
-            deckId={deckId}
-            deckTitle={currentDeck?.title}
-            onTriggerAction={(actionText) => handleSend(actionText)}
-          />
+          {isMounted && (
+            <FloatingStatusHud
+              turns={conversationHistory}
+              enabledMods={enabledMods}
+              deckId={deckId}
+              deckTitle={currentDeck?.title}
+              onTriggerAction={(actionText) => handleSend(actionText)}
+            />
+          )}
 
           {conversationHistory
             .filter((t): t is Turn => Boolean(t && typeof t === 'object'))

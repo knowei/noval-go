@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Turn, EnabledMods, ScenePhaseData } from '@/lib/types';
 import { 
   Heart, 
@@ -35,9 +35,14 @@ export function FloatingStatusHud({
   deckTitle = '',
   onTriggerAction 
 }: FloatingStatusHudProps) {
+  const [mounted, setMounted] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isBagOpen, setIsBagOpen] = useState(false);
   const [isPropPanelOpen, setIsPropPanelOpen] = useState(true);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // 从最新的 AI 轮次中逆向解析状态
   const hudData = useMemo(() => {
@@ -180,6 +185,10 @@ export function FloatingStatusHud({
 
   const { loveData, rpgData, phaseData } = hudData;
   const showProps = Boolean(enabledMods.sceneIncidents);
+
+  if (!mounted) {
+    return null;
+  }
 
   // 如果所有状态都没开启且不显示道具盘，不渲染
   if (!loveData && !rpgData && !phaseData && !showProps) {
