@@ -36,6 +36,57 @@ if db_engine.db.dialect == 'sqlite':
 def get_db():
     return db_engine.db.get_connection()
 
+import copy
+import base64
+try:
+    from cryptography.fernet import Fernet
+    _FERNET_AVAILABLE = True
+except ImportError:
+    _FERNET_AVAILABLE = False
+
+SECRET_ENCRYPTION_SALT = os.environ.get('DATA_ENCRYPTION_KEY') or 'noval-super-secret-salt-key-2026-v1'
+_raw_key = hashlib.sha256(SECRET_ENCRYPTION_SALT.encode('utf-8')).digest()
+_fernet_key = base64.urlsafe_b64encode(_raw_key)
+_cipher_suite = Fernet(_fernet_key) if _FERNET_AVAILABLE else None
+
+def encrypt_secret(plain_text: str) -> str:
+    if not plain_text or not _cipher_suite:
+        return plain_text or ''
+    if str(plain_text).startswith('enc::'):
+        return plain_text
+    try:
+        return 'enc::' + _cipher_suite.encrypt(str(plain_text).encode('utf-8')).decode('utf-8')
+    except Exception:
+        return plain_text
+
+def decrypt_secret(cipher_text: str) -> str:
+    if not cipher_text or not _cipher_suite:
+        return cipher_text or ''
+    if not str(cipher_text).startswith('enc::'):
+        return cipher_text
+    try:
+        return _cipher_suite.decrypt(str(cipher_text)[5:].encode('utf-8')).decode('utf-8')
+    except Exception:
+        return cipher_text
+
+def encrypt_model_config(config: dict) -> dict:
+    if not isinstance(config, dict):
+        return config
+    cfg = copy.deepcopy(config)
+    for k in ['api_key', 'apiKey', 'key']:
+        if k in cfg and isinstance(cfg[k], str) and cfg[k]:
+            cfg[k] = encrypt_secret(cfg[k])
+    return cfg
+
+def decrypt_model_config(config: dict) -> dict:
+    if not isinstance(config, dict):
+        return config
+    cfg = copy.deepcopy(config)
+    for k in ['api_key', 'apiKey', 'key']:
+        if k in cfg and isinstance(cfg[k], str) and cfg[k]:
+            cfg[k] = decrypt_secret(cfg[k])
+    return cfg
+
 def get_user_from_request(headers):
     auth_header = headers.get('Authorization', '')
     token = ''
@@ -404,6 +455,19 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_json({'error': 'Missing target url'}, 400)
                 return
 
+            parsed_target = urllib.parse.urlparse(target_url)
+            if parsed_target.scheme not in ('http', 'https'):
+                self.send_json({'error': 'Invalid target protocol: must be http or https'}, 400)
+                return
+            t_host = (parsed_target.hostname or '').lower()
+            t_port = parsed_target.port
+            if t_host in ('169.254.169.254', 'metadata.google.internal', 'instance-data') or t_host.startswith('169.254.'):
+                self.send_json({'error': 'Access to metadata service is prohibited'}, 403)
+                return
+            if t_port in (5432, 3306, 6379, 27017, 22, 23, 25):
+                self.send_json({'error': 'Target port is prohibited for proxy'}, 403)
+                return
+
             content_len = int(self.headers.get('Content-Length', 0))
             post_body = self.rfile.read(content_len)
 
@@ -551,7 +615,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             c.execute("""
             INSERT INTO users (id, username, password_hash, nickname, avatar, points, model_config_json, auth_token)
             VALUES (?, ?, ?, ?, ?, 9999, ?, ?)
-            """, (new_id, username, pw_hash, nickname, avatar, json.dumps(model_config, ensure_ascii=False), token))
+            """, (new_id, username, pw_hash, nickname, avatar, json.dumps(encrypt_model_config(model_config), ensure_ascii=False), token))
             conn.commit()
             conn.close()
 
@@ -600,7 +664,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             cfg = {}
             if row['model_config_json']:
                 try:
-                    cfg = json.loads(row['model_config_json'])
+                    cfg = decrypt_model_config(json.loads(row['model_config_json']))
                 except Exception:
                     pass
 
@@ -637,7 +701,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             conn = get_db()
             c = conn.cursor()
             c.execute('UPDATE users SET model_config_json = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-                      (json.dumps(model_config, ensure_ascii=False), user_id))
+                      (json.dumps(encrypt_model_config(model_config), ensure_ascii=False), user_id))
             conn.commit()
             conn.close()
 
@@ -845,7 +909,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                 if current_auth_user and current_auth_user['id'] == u['id']:
                     if u.get('model_config_json'):
                         try:
-                            cfg = json.loads(u['model_config_json'])
+                            cfg = decrypt_model_config(json.loads(u['model_config_json']))
                         except Exception:
                             pass
                 u['model_config'] = cfg
@@ -1132,6 +1196,25 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                 'items': items
             })
             return
+
+        # 6. 安全防线：严禁通过静态 HTTP 访问任何敏感数据库、环境配置与源码脚本
+        parsed_path = urllib.parse.urlparse(self.path).path.lower()
+        forbidden_extensions = (
+            '.db', '.sqlite', '.sqlite3', '.env', '.sql', '.py',
+            '.git', '.sh', '.bat', '.json', '.yml', '.yaml', '.md'
+        )
+        forbidden_files = (
+            '/dockerfile', '/start.sh', '/requirements.txt', '/.dockerignore', '/.gitignore'
+        )
+        if any(parsed_path.endswith(ext) or ext + '?' in self.path.lower() for ext in forbidden_extensions) \
+           or any(parsed_path == f or parsed_path.startswith('/.') for f in forbidden_files):
+            # 允许公开静态资源，如 assets/ 下的图片等，其余一律 403 Forbidden
+            if not parsed_path.startswith('/assets/'):
+                self.send_response(403)
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(b'{"error": "Access denied: static file access to sensitive assets is forbidden"}')
+                return
 
         super().do_GET()
 

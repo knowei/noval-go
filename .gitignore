@@ -19,5 +19,12 @@ Thumbs.db
 # Environment & Data
 .env
 .env.*
+*.env
+*.env.*
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+noval_data.db
 pgdata/
 

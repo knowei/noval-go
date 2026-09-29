@@ -30,10 +30,12 @@ def dump_all():
 
     sql_lines.append('\n-- =============================================\n-- 数据填充 (Seed Data)\n-- =============================================\n')
 
-    # 1. users
+    # 1. users (严格脱敏导出：清除所有真实 API Key 与敏感 Token)
     c.execute('SELECT * FROM users')
     for u in c.fetchall():
         d = dict(u)
+        d['model_config_json'] = '{}'
+        d['auth_token'] = ''
         cols = list(d.keys())
         col_str = ', '.join(cols)
         val_str = ', '.join([escape_sql_str(d[col]) for col in cols])

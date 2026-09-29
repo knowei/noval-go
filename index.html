@@ -1501,10 +1501,8 @@
           </div>
           <input type="text" id="apiBaseUrl" value="https://api.deepseek.com/v1" class="w-full bg-[#18191c] border border-[#2e3036] rounded-lg p-2.5 text-gray-200 font-mono focus:outline-none focus:border-amber-500">
         </div>
-        <div>
           <label class="block text-gray-400 mb-1">API Key (秘钥)</label>
-          <input type="password" id="apiKey" value="sk-REDACTED-KEY-00000000000000000000" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx" class="w-full bg-[#18191c] border border-[#2e3036] rounded-lg p-2.5 text-gray-200 font-mono focus:outline-none focus:border-amber-500">
-        </div>
+          <input type="password" id="apiKey" value="" placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx" class="w-full bg-[#18191c] border border-[#2e3036] rounded-lg p-2.5 text-gray-200 font-mono focus:outline-none focus:border-amber-500">
         <div>
           <div class="flex items-center justify-between mb-1">
             <label class="text-gray-400">模型名称 (Model)</label>
@@ -1759,9 +1757,8 @@
     let currentFactoryMode = 'basic';
 
     window.addEventListener('DOMContentLoaded', async () => {
-      if (!localStorage.getItem('rp_api_key')) {
+      if (!localStorage.getItem('rp_api_base')) {
         localStorage.setItem('rp_api_base', 'https://api.deepseek.com/v1');
-        localStorage.setItem('rp_api_key', 'sk-REDACTED-KEY-00000000000000000000');
         localStorage.setItem('rp_api_model', 'deepseek-flash');
       }
 
@@ -5182,7 +5179,7 @@
     // ==========================================
 
     async function callRealApiStream(actionContext, appendToTurnIndex = null) {
-      const apiKey = localStorage.getItem('rp_api_key') || "sk-REDACTED-KEY-00000000000000000000";
+      const apiKey = localStorage.getItem('rp_api_key') || "";
       const baseUrl = localStorage.getItem('rp_api_base') || "https://api.deepseek.com/v1";
       const model = localStorage.getItem('rp_api_model') || "deepseek-flash";
 
@@ -6113,7 +6110,7 @@ D. [选项四] - 具体细节说明`;
 
     function openApiModal() {
       document.getElementById('apiBaseUrl').value = localStorage.getItem('rp_api_base') || "https://api.deepseek.com/v1";
-      document.getElementById('apiKey').value = localStorage.getItem('rp_api_key') || "sk-REDACTED-KEY-00000000000000000000";
+      document.getElementById('apiKey').value = localStorage.getItem('rp_api_key') || "";
       document.getElementById('apiModel').value = localStorage.getItem('rp_api_model') || "deepseek-flash";
       document.getElementById('testStatusBox').classList.add('hidden');
       document.getElementById('apiModal').classList.remove('hidden');
@@ -6125,7 +6122,6 @@ D. [选项四] - 具体细节说明`;
       document.getElementById('apiBaseUrl').value = url;
       if (url.includes('deepseek')) {
         document.getElementById('apiModel').value = 'deepseek-flash';
-        document.getElementById('apiKey').value = 'sk-REDACTED-KEY-00000000000000000000';
       }
     }
     async function saveApiSettings() {

@@ -12,6 +12,18 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    const parsedTarget = new URL(targetUrl);
+    if (!['http:', 'https:'].includes(parsedTarget.protocol)) {
+      return NextResponse.json({ error: '非法请求协议：仅支持 http 或 https' }, { status: 400 });
+    }
+    const host = parsedTarget.hostname.toLowerCase();
+    const port = parsedTarget.port ? parseInt(parsedTarget.port, 10) : (parsedTarget.protocol === 'https:' ? 443 : 80);
+    if (host === '169.254.169.254' || host.startsWith('169.254.') || host === 'metadata.google.internal' || host === 'instance-data') {
+      return NextResponse.json({ error: '禁止代理请求云厂商元数据服务' }, { status: 403 });
+    }
+    if ([5432, 3306, 6379, 27017, 22, 23, 25].includes(port)) {
+      return NextResponse.json({ error: '禁止代理访问敏感系统端口' }, { status: 403 });
+    }
     const body = await req.text();
     const headers: Record<string, string> = {
       'Content-Type': req.headers.get('content-type') || 'application/json',

@@ -1,4 +1,4 @@
-﻿import sqlite3
+import sqlite3
 import os
 
 conn = sqlite3.connect('noval_data.db')
@@ -23,13 +23,16 @@ if os.path.exists('schema.sql'):
 
 sql_lines.append('\n-- =============================================\n-- 数据填充 (Seed Data)\n-- =============================================\n')
 
-# 1. users
+# 1. users (严格脱敏导出：清除所有真实 API Key 与敏感 Token)
 c.execute('SELECT * FROM users')
 users = c.fetchall()
 for u in users:
-    cols = u.keys()
+    d = dict(u)
+    d['model_config_json'] = '{}'
+    d['auth_token'] = ''
+    cols = list(d.keys())
     col_str = ', '.join(cols)
-    val_str = ', '.join([escape_sql_str(u[col]) for col in cols])
+    val_str = ', '.join([escape_sql_str(d[col]) for col in cols])
     sql_lines.append(f'INSERT INTO users ({col_str}) VALUES ({val_str}) ON CONFLICT (id) DO NOTHING;')
 
 # 2. stories
