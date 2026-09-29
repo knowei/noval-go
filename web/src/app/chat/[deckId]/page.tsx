@@ -201,7 +201,17 @@ export default function ChatPage() {
 
         if (deckSaves.length > 0 && deckSaves[0].id) {
           const loaded = await fetchConversation(deckSaves[0].id);
-          if (loaded && loaded.history && loaded.history.length > 0) {
+          const isDummyOnly = Boolean(
+            loaded &&
+            loaded.history &&
+            loaded.history.length === 1 &&
+            !loaded.history[0].isUser &&
+            (loaded.history[0].location === '场景开局' ||
+             loaded.history[0].story?.includes('故事拉开帷幕的初始场景') ||
+             loaded.history[0].story?.includes('你已正式进入【'))
+          );
+
+          if (loaded && loaded.history && loaded.history.length > 0 && !isDummyOnly) {
             setCurrentConversationId(loaded.id);
             setConversationHistory(loaded.history);
             return;
@@ -1154,8 +1164,45 @@ export default function ChatPage() {
                 onStartStory={(customPrompt) => {
                   handleSend(customPrompt);
                 }}
-                defaultExpanded={false}
+                defaultExpanded={conversationHistory.length === 0}
               />
+            </div>
+          )}
+
+          {/* Clean Welcome Card when no customHtml and history is empty */}
+          {!currentDeck?.customHtml && conversationHistory.length === 0 && (
+            <div className="bg-[#161722]/80 border border-[#262838] rounded-2xl p-5 sm:p-6 shadow-xl space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="text-3xl">{currentDeck?.coverIcon || '📖'}</span>
+                <div>
+                  <h2 className="text-base sm:text-lg font-bold text-gray-100">{currentDeck?.title}</h2>
+                  <p className="text-xs text-amber-400/90">{currentDeck?.badge || '剧情角色卡'}</p>
+                </div>
+              </div>
+              {currentDeck?.handbook?.desc && (
+                <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
+                  {currentDeck.handbook.desc}
+                </p>
+              )}
+              {currentDeck?.handbook?.opening_options && currentDeck.handbook.opening_options.length > 0 && (
+                <div className="space-y-2 pt-2 border-t border-[#232534]">
+                  <span className="text-xs font-semibold text-gray-400">推荐开局场景（点击直接开始）：</span>
+                  <div className="grid grid-cols-1 gap-2">
+                    {currentDeck.handbook.opening_options.map((opt: string, oIdx: number) => (
+                      <button
+                        key={oIdx}
+                        onClick={() => handleSend(opt)}
+                        className="text-left text-xs p-3 rounded-xl bg-[#1d1f2c] hover:bg-[#252838] border border-[#2d3042] hover:border-amber-500/50 text-gray-200 transition cursor-pointer leading-relaxed"
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="text-[11px] text-gray-500 flex items-center gap-1.5 pt-1">
+                <span>💡 提示：在下方输入框输入行动，或直接点击上方开局选项开启推演</span>
+              </div>
             </div>
           )}
 

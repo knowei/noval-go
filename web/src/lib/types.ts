@@ -50,11 +50,15 @@ export interface StoryScene {
 }
 
 export interface StoryHandbook {
+  title?: string;
+  desc?: string;
   audience?: string[];
   tips?: string[];
   quote?: string;
   originHtml?: string;
   castHtml?: string;
+  opening_options?: string[];
+  [key: string]: any;
 }
 
 export interface LoreEntry {

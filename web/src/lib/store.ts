@@ -283,43 +283,12 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   startNewStory: (deck: StoryDeck) => {
     const newId = 'conv_' + Date.now();
-    let initialHistory: Turn[] = [];
-
-    if (deck.firstTurnDemo && deck.firstTurnDemo.story) {
-      initialHistory = [{
-        isUser: false,
-        model: get().modelSettings.model || '原作者官方预设',
-        location: deck.firstTurnDemo.location || deck.title,
-        story: deck.firstTurnDemo.story,
-        memory: deck.firstTurnDemo.memory || [],
-        status: deck.firstTurnDemo.status || {},
-        branches: deck.firstTurnDemo.branches || [
-          { tag: 'A', title: '谨慎观察', desc: '顺应当前情境小心试探' },
-          { tag: 'B', title: '掌握主动', desc: '采取坚决行动引导局势' }
-        ]
-      }];
-    } else {
-      const scene = (deck.scenes && deck.scenes[0]) || { title: deck.title, desc: `你已正式进入【${deck.title}】的世界……` };
-      initialHistory = [{
-        isUser: false,
-        model: get().modelSettings.model || '原作者官方预设',
-        location: scene.title,
-        story: scene.desc,
-        branches: [
-          { tag: 'A', title: '观察周遭', desc: '谨慎打量当前空间的动静与线索' },
-          { tag: 'B', title: '主动对话', desc: '上前与核心人物打破沉默，展开深入交互' }
-        ]
-      }];
-    }
-
     set({
       currentDeckKey: deck.id,
       currentDeck: deck,
       currentConversationId: newId,
-      conversationHistory: initialHistory
+      conversationHistory: []
     });
-
-    get().autoSave();
   },
 
   autoSave: async () => {
