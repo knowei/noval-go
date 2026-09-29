@@ -7,17 +7,42 @@ export const dynamic = 'force-dynamic';
 export async function POST(req: NextRequest) {
   // 站点全局访问门禁权限校验 (防止未经授权消耗上游模型 Token)
   const sitePassword = (process.env.SITE_PASSWORD || '888888').trim();
-  if (sitePassword) {
-    const siteTokenHeader = req.headers.get('x-site-token');
-    const cookieToken = req.cookies.get('site_access_token')?.value;
-    const clientToken = siteTokenHeader || cookieToken;
+  const siteTokenHeader = req.headers.get('x-site-token');
+  const cookieToken = req.cookies.get('site_access_token')?.value;
+  const clientToken = (siteTokenHeader || cookieToken || '').trim();
 
-    const salt = process.env.SITE_TOKEN_SALT || 'noval_site_access_salt_2026';
-    const expectedToken = crypto.createHash('sha256').update(sitePassword + ':' + salt).digest('hex');
+  const salt = process.env.SITE_TOKEN_SALT || 'noval_site_access_salt_2026';
+  const expectedToken = sitePassword ? crypto.createHash('sha256').update(sitePassword + ':' + salt).digest('hex') : '';
 
-    if (!clientToken || (clientToken !== expectedToken && clientToken !== sitePassword)) {
-      return NextResponse.json({ error: '未授权：请先在网站输入站点访问密码解锁使用' }, { status: 401 });
+  let isAuthorized = false;
+  if (!sitePassword) {
+    // 站长未设置任何访问密码，全员开放
+    isAuthorized = true;
+  } else if (clientToken && (clientToken === expectedToken || clientToken === sitePassword)) {
+    // 本地快速比对通过
+    isAuthorized = true;
+  } else if (clientToken) {
+    // 本地不匹配时向后端服务做穿透校验 (支持数据库动态修改的站点密码)
+    const backendUrl = process.env.BACKEND_URL || 'http://127.0.0.1:5173';
+    try {
+      const verifyResp = await fetch(`${backendUrl}/api/auth/site-status`, {
+        headers: { 'X-Site-Token': clientToken },
+        cache: 'no-store',
+        signal: AbortSignal.timeout(3000),
+      });
+      if (verifyResp.ok) {
+        const authData = await verifyResp.json();
+        if (authData?.authenticated) {
+          isAuthorized = true;
+        }
+      }
+    } catch (e) {
+      console.warn('[Proxy Auth Verify Error]:', e);
     }
+  }
+
+  if (!isAuthorized) {
+    return NextResponse.json({ error: '未授权：请先在网站输入站点访问密码解锁使用' }, { status: 401 });
   }
 
   const { searchParams } = new URL(req.url);

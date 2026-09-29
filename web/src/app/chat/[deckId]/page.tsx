@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 
 import { useAppStore } from '@/lib/store';
-import { fetchStory, fetchConversations, fetchConversation } from '@/lib/api';
+import { fetchStory, fetchConversations, fetchConversation, getSiteToken, clearSiteToken } from '@/lib/api';
 import { parseModelOutput, generateContextualBranches } from '@/lib/modelParser';
 import { buildSystemPrompt } from '@/lib/promptEngine';
 import { Turn, Branch, LoreEntry } from '@/lib/types';
@@ -67,6 +67,7 @@ export default function ChatPage() {
     isModCenterOpen,
     setIsModCenterOpen,
     enabledMods,
+    setIsSiteUnlocked,
   } = useAppStore();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -554,12 +555,19 @@ export default function ChatPage() {
       // 客户端等待上限设为 120 秒，适应 DeepSeek 等推理模型长上下文的高思考延迟
       const timeoutId = setTimeout(() => controller.abort(), 120000);
 
+      const siteToken = getSiteToken();
+      const requestHeaders: Record<string, string> = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${modelSettings.apiKey || ''}`
+      };
+      if (siteToken) {
+        requestHeaders['x-site-token'] = siteToken;
+      }
+
       const resp = await fetch(`/proxy?target=${encodeURIComponent(targetUrl)}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${modelSettings.apiKey || ''}`
-        },
+        headers: requestHeaders,
+        credentials: 'include',
         body: JSON.stringify({
           model: apiModel,
           messages: promptMessages,
@@ -587,6 +595,11 @@ export default function ChatPage() {
             const rawText = await resp.text();
             if (rawText) errDetail = `${errDetail}: ${rawText.slice(0, 200)}`;
           } catch {}
+        }
+
+        if (resp.status === 401 && (errDetail.includes('密码') || errDetail.includes('未授权'))) {
+          clearSiteToken();
+          setIsSiteUnlocked(false);
         }
 
         addTurn({

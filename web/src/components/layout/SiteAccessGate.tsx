@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
-import { verifySitePasswordApi, checkSiteStatusApi } from '@/lib/api';
+import { verifySitePasswordApi, checkSiteStatusApi, setSiteToken, clearSiteToken } from '@/lib/api';
 import { Lock, KeyRound, Eye, EyeOff, ShieldCheck, Sparkles, Loader2, AlertCircle, ArrowRight } from 'lucide-react';
 
 interface SiteAccessGateProps {
@@ -23,12 +23,22 @@ export function SiteAccessGate({ children }: SiteAccessGateProps) {
   useEffect(() => {
     const localToken = typeof window !== 'undefined' ? localStorage.getItem('noval_site_access_token') : null;
     if (localToken) {
+      // 保证 Cookie 与 localStorage 持久化同步
+      setSiteToken(localToken);
       setIsSiteUnlocked(true);
       setHasCheckedInit(true);
+
+      // 后台静默校验 Token 是否依然合法（防止服务端修改或重置密码导致死锁）
+      checkSiteStatusApi().then((status) => {
+        if (!status.authenticated) {
+          clearSiteToken();
+          setIsSiteUnlocked(false);
+        }
+      }).catch(() => {});
       return;
     }
 
-    // 后端鉴权状态兜底探测
+    // 无本地 Token 时探测站点是否为免密模式或已通过服务端认证
     checkSiteStatusApi().then((status) => {
       if (status.authenticated) {
         setIsSiteUnlocked(true);
