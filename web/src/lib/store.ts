@@ -64,6 +64,8 @@ interface AppState {
   isDrawerOpen: boolean;
   isModCenterOpen: boolean;
   enabledMods: EnabledMods;
+  isSiteUnlocked: boolean;
+  setIsSiteUnlocked: (unlocked: boolean) => void;
 
   setCurrentUserId: (id: string) => void;
   setCurrentUser: (user: UserProfile | null) => void;
@@ -111,6 +113,16 @@ export const useAppStore = create<AppState>((set, get) => ({
   isDrawerOpen: false,
   isModCenterOpen: false,
   enabledMods: getInitialMods(),
+  isSiteUnlocked: typeof window !== 'undefined' ? !!localStorage.getItem('noval_site_access_token') : false,
+  setIsSiteUnlocked: (unlocked: boolean) => {
+    if (typeof window !== 'undefined') {
+      if (!unlocked) {
+        localStorage.removeItem('noval_site_access_token');
+        document.cookie = 'site_access_token=; path=/; max-age=0; SameSite=Lax';
+      }
+    }
+    set({ isSiteUnlocked: unlocked });
+  },
 
   setCurrentUserId: (id: string) => {
     if (typeof window !== 'undefined') {

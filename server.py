@@ -87,6 +87,23 @@ def decrypt_model_config(config: dict) -> dict:
             cfg[k] = decrypt_secret(cfg[k])
     return cfg
 
+SITE_TOKEN_SALT = os.environ.get('SITE_TOKEN_SALT') or 'noval_site_access_salt_2026'
+
+def get_site_token_hash(pwd: str) -> str:
+    return hashlib.sha256((str(pwd).strip() + ':' + SITE_TOKEN_SALT).encode('utf-8')).hexdigest()
+
+def get_site_password() -> str:
+    try:
+        val = db_engine.db.get_config('site_password')
+        if val:
+            return str(val).strip()
+    except Exception:
+        pass
+    return os.environ.get('SITE_PASSWORD', '888888').strip()
+
+def set_site_password(new_pwd: str):
+    db_engine.db.set_config('site_password', str(new_pwd).strip())
+
 def get_user_from_request(headers):
     auth_header = headers.get('Authorization', '')
     token = ''
@@ -288,6 +305,15 @@ def init_db():
         content TEXT,
         countdown_seconds INTEGER DEFAULT 0,
         is_active INTEGER DEFAULT 1
+    )
+    """)
+
+    # 8. 系统全局配置表 (站点门禁密码等)
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS system_config (
+        key TEXT PRIMARY KEY,
+        value TEXT,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     """)
 
@@ -682,6 +708,51 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             })
             return
 
+        # 站点全局访问门禁验证 POST /api/auth/site-verify
+        if self.path == '/api/auth/site-verify':
+            content_len = int(self.headers.get('Content-Length', 0))
+            body = json.loads(self.rfile.read(content_len).decode('utf-8')) if content_len > 0 else {}
+            input_pwd = (body.get('password') or '').strip()
+            expected_pwd = get_site_password()
+
+            if input_pwd == expected_pwd:
+                token = get_site_token_hash(expected_pwd)
+                self.send_json({
+                    'success': True,
+                    'token': token,
+                    'isProtected': True,
+                    'message': '站点访问密码验证通过'
+                })
+            else:
+                self.send_json({
+                    'success': False,
+                    'error': '访问密码错误，请重新输入'
+                }, 401)
+            return
+
+        # 站点访问密码修改 POST /api/auth/site-change-password
+        if self.path == '/api/auth/site-change-password':
+            content_len = int(self.headers.get('Content-Length', 0))
+            body = json.loads(self.rfile.read(content_len).decode('utf-8')) if content_len > 0 else {}
+            old_pwd = (body.get('oldPassword') or '').strip()
+            new_pwd = (body.get('newPassword') or '').strip()
+
+            expected_pwd = get_site_password()
+            if old_pwd != expected_pwd:
+                self.send_json({'success': False, 'error': '原访问密码错误'}, 401)
+                return
+            if len(new_pwd) < 1:
+                self.send_json({'success': False, 'error': '新密码不能为空'}, 400)
+                return
+            set_site_password(new_pwd)
+            new_token = get_site_token_hash(new_pwd)
+            self.send_json({
+                'success': True,
+                'token': new_token,
+                'message': '站点访问密码已成功更新'
+            })
+            return
+
         if self.path == '/api/user/model-settings':
             content_len = int(self.headers.get('Content-Length', 0))
             body = json.loads(self.rfile.read(content_len).decode('utf-8'))
@@ -873,6 +944,22 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(err_data)
             except Exception as e:
                 self.send_json({'error': str(e)}, 500)
+            return
+
+        # 站点门禁状态检查 GET /api/auth/site-status
+        if self.path.startswith('/api/auth/site-status'):
+            token = self.headers.get('X-Site-Token', '')
+            if not token:
+                auth = self.headers.get('Authorization', '')
+                if auth.startswith('Bearer '):
+                    token = auth[7:].strip()
+            expected_pwd = get_site_password()
+            expected_token = get_site_token_hash(expected_pwd)
+            is_valid = bool(token and token == expected_token)
+            self.send_json({
+                'isProtected': True,
+                'authenticated': is_valid
+            })
             return
 
         # 2. 获取用户资料与多账号列表 GET

@@ -44,6 +44,78 @@ export function getAuthToken(): string | null {
   return localStorage.getItem('rp_auth_token');
 }
 
+export function getSiteToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('noval_site_access_token');
+}
+
+export function setSiteToken(token: string) {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('noval_site_access_token', token);
+    document.cookie = `site_access_token=${token}; path=/; max-age=2592000; SameSite=Lax`;
+  }
+}
+
+export function clearSiteToken() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('noval_site_access_token');
+    document.cookie = `site_access_token=; path=/; max-age=0; SameSite=Lax`;
+  }
+}
+
+export async function verifySitePasswordApi(password: string): Promise<{ success: boolean; token?: string; error?: string }> {
+  try {
+    const resp = await fetch('/api/auth/site-verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+    const data = await resp.json();
+    if (!resp.ok || !data.success) {
+      return { success: false, error: data.error || '访问密码错误，请重新输入' };
+    }
+    if (data.token) {
+      setSiteToken(data.token);
+    }
+    return { success: true, token: data.token };
+  } catch (e: any) {
+    return { success: false, error: e.message || '网络连接异常' };
+  }
+}
+
+export async function checkSiteStatusApi(): Promise<{ isProtected: boolean; authenticated: boolean }> {
+  try {
+    const token = getSiteToken();
+    const headers: Record<string, string> = {};
+    if (token) headers['X-Site-Token'] = token;
+    const resp = await fetch('/api/auth/site-status', { headers });
+    if (!resp.ok) return { isProtected: true, authenticated: false };
+    return await resp.json();
+  } catch {
+    return { isProtected: true, authenticated: !!getSiteToken() };
+  }
+}
+
+export async function changeSitePasswordApi(oldPassword: string, newPassword: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const resp = await fetch('/api/auth/site-change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ oldPassword, newPassword })
+    });
+    const data = await resp.json();
+    if (!resp.ok || !data.success) {
+      return { success: false, error: data.error || '修改密码失败' };
+    }
+    if (data.token) {
+      setSiteToken(data.token);
+    }
+    return { success: true };
+  } catch (e: any) {
+    return { success: false, error: e.message || '网络连接异常' };
+  }
+}
+
 export function getAuthHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -51,6 +123,10 @@ export function getAuthHeaders(): Record<string, string> {
   const token = getAuthToken();
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+  }
+  const siteToken = getSiteToken();
+  if (siteToken) {
+    headers['X-Site-Token'] = siteToken;
   }
   return headers;
 }
@@ -207,13 +283,21 @@ export async function saveModelSettings(userId: string, settings: ModelSettings)
 }
 
 export async function smartFetch(url: string, options: RequestInit = {}): Promise<Response> {
+  const siteToken = getSiteToken();
   try {
     const resp = await fetch(url, options);
     return resp;
   } catch (err) {
     const proxyUrl = `/proxy?target=${encodeURIComponent(url)}`;
+    const mergedHeaders = new Headers(options.headers || {});
+    if (siteToken && !mergedHeaders.has('x-site-token')) {
+      mergedHeaders.set('x-site-token', siteToken);
+    }
     try {
-      const proxyResp = await fetch(proxyUrl, options);
+      const proxyResp = await fetch(proxyUrl, {
+        ...options,
+        headers: mergedHeaders
+      });
       return proxyResp;
     } catch (proxyErr: any) {
       throw new Error(`直连与代理均失败: ${proxyErr?.message || proxyErr}`);

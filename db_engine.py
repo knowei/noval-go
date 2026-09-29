@@ -280,6 +280,14 @@ class DatabaseEngine:
                     is_active INTEGER DEFAULT 1
                 )
                 ''')
+                # 6. system_config (站点配置与全局门禁密码等)
+                cur.execute('''
+                CREATE TABLE IF NOT EXISTS system_config (
+                    key TEXT PRIMARY KEY,
+                    value TEXT,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                ''')
             else:
                 # PostgreSQL 自动将旧版遗留 VARCHAR 字段无损扩容为 TEXT
                 if self.dialect == 'postgres':
@@ -408,6 +416,13 @@ class DatabaseEngine:
                     is_active INTEGER DEFAULT 1
                 )
                 ''')
+                cur.execute('''
+                CREATE TABLE IF NOT EXISTS system_config (
+                    key TEXT PRIMARY KEY,
+                    value TEXT,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                ''')
 
                 if self.dialect == 'postgres':
                     cur.execute('''
@@ -426,6 +441,43 @@ class DatabaseEngine:
         finally:
             if hasattr(conn, 'close'):
                 conn.close()
+
+    def get_config(self, key: str, default=None):
+        conn = self.get_connection()
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT value FROM system_config WHERE key = ?", (key,))
+            row = cur.fetchone()
+            if row:
+                return row[0] if isinstance(row, (tuple, list)) else row.get('value', default)
+            return default
+        except Exception:
+            return default
+        finally:
+            if hasattr(conn, 'close'):
+                conn.close()
+
+    def set_config(self, key: str, value: str):
+        conn = self.get_connection()
+        try:
+            cur = conn.cursor()
+            now_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            if self.dialect == 'postgres':
+                cur.execute("""
+                INSERT INTO system_config (key, value, updated_at) VALUES (%s, %s, %s)
+                ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = EXCLUDED.updated_at
+                """, (key, value, now_str))
+            else:
+                cur.execute("""
+                INSERT INTO system_config (key, value, updated_at) VALUES (?, ?, ?)
+                ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
+                """, (key, value, now_str))
+            if hasattr(conn, 'commit'):
+                conn.commit()
+        finally:
+            if hasattr(conn, 'close'):
+                conn.close()
+
 
 
 class DictRow(dict):

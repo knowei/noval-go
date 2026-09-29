@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
-import { saveModelSettings, testModelConnection, fetchRemoteModels } from '@/lib/api';
-import { X, Check, Cpu, Key, Globe, Sliders, Zap, Loader2 } from 'lucide-react';
+import { saveModelSettings, testModelConnection, fetchRemoteModels, changeSitePasswordApi } from '@/lib/api';
+import { X, Check, Cpu, Key, Globe, Sliders, Zap, Loader2, Lock, KeyRound, ShieldCheck } from 'lucide-react';
 
 const PRESET_MODELS = [
   { name: 'deepseek-flash', label: 'DeepSeek Flash (极速极简推荐)', desc: '毫秒级响应，超低消耗，风月默认高频引擎', provider: 'deepseek' },
@@ -39,8 +39,40 @@ export function ModelSettingsModal() {
       setTemperature(modelSettings.temperature ?? 0.7);
       setRoleplayMode(modelSettings.roleplayMode || 'realistic');
       setTestStatus(null);
+      setSitePwdStatus(null);
+      setOldSitePwd('');
+      setNewSitePwd('');
     }
   }, [isSettingsOpen, modelSettings]);
+
+  const [oldSitePwd, setOldSitePwd] = useState('');
+  const [newSitePwd, setNewSitePwd] = useState('');
+  const [sitePwdStatus, setSitePwdStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [isChangingPwd, setIsChangingPwd] = useState(false);
+
+  const handleChangeSitePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!oldSitePwd.trim() || !newSitePwd.trim()) {
+      setSitePwdStatus({ type: 'error', message: '请填写原密码与新密码' });
+      return;
+    }
+    setIsChangingPwd(true);
+    setSitePwdStatus(null);
+    try {
+      const res = await changeSitePasswordApi(oldSitePwd.trim(), newSitePwd.trim());
+      if (res.success) {
+        setSitePwdStatus({ type: 'success', message: '站点访问密码修改成功！新密码已立即生效。' });
+        setOldSitePwd('');
+        setNewSitePwd('');
+      } else {
+        setSitePwdStatus({ type: 'error', message: res.error || '修改密码失败，请检查原密码' });
+      }
+    } catch (err: any) {
+      setSitePwdStatus({ type: 'error', message: err.message || '网络连接异常' });
+    } finally {
+      setIsChangingPwd(false);
+    }
+  };
 
   if (!isSettingsOpen) return null;
 
@@ -354,6 +386,75 @@ export function ModelSettingsModal() {
                   关闭硬核自卫断裂，全员身心易陷。霸道支配直接娇羞瓦解顺从，极速推进。
                 </p>
               </button>
+            </div>
+          </div>
+
+          {/* Site Password & Protection Section */}
+          <div className="pt-4 border-t border-[#252836]">
+            <div className="flex items-center justify-between mb-3">
+              <label className="text-xs font-bold text-gray-200 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-amber-400" />
+                <span>站点私密访问保护 (Site Access Gate)</span>
+              </label>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-[10px] text-emerald-300 font-mono">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>保护中</span>
+              </span>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-[#141622] border border-[#252836] space-y-3">
+              <p className="text-[11px] text-gray-400 leading-relaxed">
+                只有输入正确访问密码的人员才能进入本站与调用 AI 推演。您可以在下方直接快捷修改通行码：
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div>
+                  <label className="block text-[10px] text-gray-400 mb-1">当前原密码</label>
+                  <input
+                    type="password"
+                    value={oldSitePwd}
+                    onChange={(e) => setOldSitePwd(e.target.value)}
+                    placeholder="原访问密码 (默认888888)"
+                    className="w-full bg-[#0d0e14] border border-[#2a2d3d] focus:border-amber-500/60 rounded-xl px-3 py-1.5 text-xs text-gray-100 placeholder-gray-600 outline-none font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-400 mb-1">新密码</label>
+                  <input
+                    type="password"
+                    value={newSitePwd}
+                    onChange={(e) => setNewSitePwd(e.target.value)}
+                    placeholder="输入要设置的新密码"
+                    className="w-full bg-[#0d0e14] border border-[#2a2d3d] focus:border-amber-500/60 rounded-xl px-3 py-1.5 text-xs text-gray-100 placeholder-gray-600 outline-none font-mono"
+                  />
+                </div>
+              </div>
+
+              {sitePwdStatus && (
+                <div className={`p-2.5 rounded-xl border text-[11px] flex items-center gap-2 ${
+                  sitePwdStatus.type === 'success' 
+                    ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300' 
+                    : 'bg-rose-950/40 border-rose-500/40 text-rose-300'
+                }`}>
+                  <span>{sitePwdStatus.type === 'success' ? '✅' : '❌'}</span>
+                  <span>{sitePwdStatus.message}</span>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-[10px] text-gray-500">
+                  也可在项目根目录 <code className="text-gray-400 font-mono">.env</code> 中设置 <code className="text-amber-400 font-mono">SITE_PASSWORD</code>
+                </span>
+                <button
+                  type="button"
+                  disabled={isChangingPwd || !oldSitePwd || !newSitePwd}
+                  onClick={handleChangeSitePassword}
+                  className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-xs font-medium cursor-pointer transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+                >
+                  {isChangingPwd ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <KeyRound className="w-3.5 h-3.5" />}
+                  <span>更新访问密码</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

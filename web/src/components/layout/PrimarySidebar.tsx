@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/lib/store';
-import { fetchUserProfile } from '@/lib/api';
+import { fetchUserProfile, clearSiteToken } from '@/lib/api';
 import {
   Compass,
   Feather,
@@ -13,7 +13,8 @@ import {
   Sliders,
   Settings,
   X,
-  Menu
+  Menu,
+  Lock
 } from 'lucide-react';
 
 export function PrimarySidebar() {
@@ -25,6 +26,7 @@ export function PrimarySidebar() {
     setIsUserSwitchOpen,
     setIsSettingsOpen,
     setIsDrawerOpen,
+    setIsSiteUnlocked,
     modelSettings,
     currentDeckKey
   } = useAppStore();
@@ -240,16 +242,34 @@ export function PrimarySidebar() {
         </div>
 
         {/* Settings gear */}
-        <button
-          onClick={() => {
-            setIsSettingsOpen(true);
-            if (isMobile) setIsMobileDrawerOpen(false);
-          }}
-          className="p-1.5 rounded-xl text-gray-500 hover:text-gray-300 hover:bg-[#1a1c28] transition cursor-pointer flex items-center justify-center"
-          title="系统与API设置"
-        >
-          <Settings className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-1 mt-1">
+          {/* Settings gear */}
+          <button
+            onClick={() => {
+              setIsSettingsOpen(true);
+              if (isMobile) setIsMobileDrawerOpen(false);
+            }}
+            className="p-1.5 rounded-xl text-gray-500 hover:text-gray-300 hover:bg-[#1a1c28] transition cursor-pointer flex items-center justify-center"
+            title="系统与API设置"
+          >
+            <Settings className="w-4 h-4" />
+          </button>
+
+          {/* Lock site button */}
+          <button
+            onClick={() => {
+              if (window.confirm('确定要锁定站点吗？锁定后需要重新输入访问密码才能进入。')) {
+                clearSiteToken();
+                setIsSiteUnlocked(false);
+                if (isMobile) setIsMobileDrawerOpen(false);
+              }
+            }}
+            className="p-1.5 rounded-xl text-gray-500 hover:text-rose-400 hover:bg-rose-950/30 transition cursor-pointer flex items-center justify-center"
+            title="锁定站点 / 重新输入密码"
+          >
+            <Lock className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );

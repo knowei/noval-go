@@ -1,9 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'node:crypto';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
+  // 站点全局访问门禁权限校验 (防止未经授权消耗上游模型 Token)
+  const sitePassword = (process.env.SITE_PASSWORD || '888888').trim();
+  if (sitePassword) {
+    const siteTokenHeader = req.headers.get('x-site-token');
+    const cookieToken = req.cookies.get('site_access_token')?.value;
+    const clientToken = siteTokenHeader || cookieToken;
+
+    const salt = process.env.SITE_TOKEN_SALT || 'noval_site_access_salt_2026';
+    const expectedToken = crypto.createHash('sha256').update(sitePassword + ':' + salt).digest('hex');
+
+    if (!clientToken || (clientToken !== expectedToken && clientToken !== sitePassword)) {
+      return NextResponse.json({ error: '未授权：请先在网站输入站点访问密码解锁使用' }, { status: 401 });
+    }
+  }
+
   const { searchParams } = new URL(req.url);
   const targetUrl = searchParams.get('target');
 
