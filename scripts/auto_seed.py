@@ -2,9 +2,20 @@ import os
 import sys
 import re
 
-# Add project root to sys.path
+# Add project root and backend dir to sys.path
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, BASE_DIR)
+REAL_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+
+for candidate in [
+    BASE_DIR,
+    REAL_DIR,
+    os.path.join(BASE_DIR, 'backend'),
+    '/app/backend',
+    '/app',
+    os.getcwd()
+]:
+    if os.path.isdir(candidate) and candidate not in sys.path:
+        sys.path.insert(0, candidate)
 
 import db_engine
 
@@ -28,9 +39,17 @@ def auto_seed():
 
         print(f"[Noval-Go] Current status: {story_count} stories, {card_count} plaza cards in DB.")
         print("[Noval-Go] Synchronizing latest cards & stories from init_postgres.sql (idempotent ON CONFLICT)...")
-        sql_path = os.path.join(BASE_DIR, 'init_postgres.sql')
-        if not os.path.exists(sql_path):
-            print(f"[Noval-Go Error] Seed file not found at: {sql_path}")
+        
+        sql_candidates = [
+            os.path.join(BASE_DIR, 'init_postgres.sql'),
+            os.path.join(REAL_DIR, 'init_postgres.sql'),
+            '/app/backend/init_postgres.sql',
+            '/app/init_postgres.sql',
+            os.path.join(os.getcwd(), 'init_postgres.sql')
+        ]
+        sql_path = next((p for p in sql_candidates if os.path.exists(p)), None)
+        if not sql_path:
+            print(f"[Noval-Go Error] Seed file not found in candidates: {sql_candidates}")
             return
 
         with open(sql_path, 'r', encoding='utf-8') as f:
