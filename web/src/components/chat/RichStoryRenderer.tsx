@@ -61,6 +61,7 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
 
   // 3. 剥除外部干扰与状态标签 (<status>, <love_status>, <rpg_status>, <scene_phase>, <opt>, <suggested_questions>)
   text = text.replace(/<status>[\s\S]*?(?:<\/status>|$)/gi, '').trim();
+  text = text.replace(/<char_status>[\s\S]*?(?:<\/char_status>|$)/gi, '').trim();
   text = text.replace(/<love_status>[\s\S]*?(?:<\/love_status>|$)/gi, '').trim();
   text = text.replace(/<rpg_status>[\s\S]*?(?:<\/rpg_status>|$)/gi, '').trim();
   text = text.replace(/<scene_phase>[\s\S]*?(?:<\/scene_phase>|$)/gi, '').trim();

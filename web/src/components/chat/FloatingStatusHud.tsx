@@ -19,6 +19,7 @@ import {
   Blinds,
   AlertTriangle
 } from 'lucide-react';
+import { parseTurnCharacterStatus, CharacterStatusSnapshot } from '@/lib/characterStatusParser';
 
 interface FloatingStatusHudProps {
   turns: Turn[];
@@ -152,6 +153,21 @@ export function FloatingStatusHud({
       if (phaseData && loveData && rpgData) break;
     }
 
+    let charStatus: CharacterStatusSnapshot | null = null;
+    for (let i = safeTurns.length - 1; i >= 0; i--) {
+      const turn = safeTurns[i];
+      if (!turn || turn.isUser) continue;
+      const parsed = parseTurnCharacterStatus(turn, deckId, deckTitle, i);
+      if (parsed) {
+        charStatus = parsed;
+        break;
+      }
+    }
+
+    if (!charStatus) {
+      charStatus = parseTurnCharacterStatus({ isUser: false, story: '' }, deckId, deckTitle, 0);
+    }
+
     // 针对密闭/酒店剧本，若开启了 phaseLock 但模型前几轮尚未输出标签，提供默认保底阶段
     const isAtourOrHotel = deckId === 'deck_atour_app' || deckId.includes('1ad4e5fd') || deckTitle.includes('亚朵') || deckTitle.includes('酒店');
     if (!phaseData && enabledMods.phaseLock && isAtourOrHotel && turns.length > 0) {
@@ -180,18 +196,18 @@ export function FloatingStatusHud({
       }
     }
 
-    return { loveData, rpgData, phaseData };
+    return { loveData, rpgData, phaseData, charStatus };
   }, [turns, enabledMods.affectionGauge, enabledMods.rpgAdventureHud, enabledMods.phaseLock, deckId, deckTitle]);
 
-  const { loveData, rpgData, phaseData } = hudData;
+  const { loveData, rpgData, phaseData, charStatus } = hudData;
   const showProps = Boolean(enabledMods.sceneIncidents);
 
   if (!mounted) {
     return null;
   }
 
-  // 如果所有状态都没开启且不显示道具盘，不渲染
-  if (!loveData && !rpgData && !phaseData && !showProps) {
+  // 如果所有状态都没开启且无通用属性和道具盘，不渲染
+  if (!loveData && !rpgData && !phaseData && !charStatus && !showProps) {
     return null;
   }
 
@@ -237,8 +253,14 @@ export function FloatingStatusHud({
           <div className="flex items-center gap-2 flex-wrap">
             <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-300 font-mono tracking-wider">
               <Activity className="w-3.5 h-3.5 text-orange-400 animate-pulse" />
-              <span>LIVE HUD // 沉浸式场景控制台</span>
+              <span>LIVE HUD // 角色状态与机制控制台</span>
             </div>
+            {charStatus && (
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-500/15 text-purple-300 border border-purple-500/30 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-purple-400" />
+                <span>{charStatus.characterName} · 数值路线</span>
+              </span>
+            )}
             {phaseData && (
               <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 flex items-center gap-1">
                 <Layers className="w-3 h-3 text-amber-400" />
@@ -278,6 +300,97 @@ export function FloatingStatusHud({
         {/* HUD 主体面板 */}
         {!isCollapsed && (
           <div className="pt-2.5 space-y-2.5">
+            {/* 0. 核心机制 · 角色数值与路线控制台 (1:1 对齐设定图) */}
+            {charStatus && (
+              <div className="bg-[#151722]/90 rounded-xl p-3 border border-purple-500/25 space-y-3 shadow-lg">
+                <div className="flex items-center justify-between text-xs flex-wrap gap-1 border-b border-gray-800/60 pb-2">
+                  <div className="flex items-center gap-1.5 font-bold text-purple-200">
+                    <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse shadow-[0_0_6px_rgba(236,72,153,0.8)]" />
+                    <span>核心机制 · 数值与路线</span>
+                    <span className="text-gray-400 font-normal">·</span>
+                    <span className="text-pink-300 font-semibold">{charStatus.characterName}</span>
+                  </div>
+                  {charStatus.stageName && (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-purple-950/60 text-purple-300 border border-purple-500/30">
+                      当前阶段：{charStatus.stageName}
+                    </span>
+                  )}
+                </div>
+
+                {/* 数值进度卡片网格 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {charStatus.stats.map((st, idx) => {
+                    const pct = Math.min(100, Math.max(0, Math.round((st.value / st.max) * 100)));
+                    const isNtr = st.name.includes('NTR') || st.name.includes('沦陷');
+                    const isIntervention = st.name.includes('干预');
+
+                    return (
+                      <div key={idx} className="bg-[#0e1017]/90 rounded-xl p-3 border border-gray-800/80 space-y-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="flex items-center gap-1.5 font-semibold text-gray-200">
+                            <span>{st.icon}</span>
+                            <span>{st.name}</span>
+                          </span>
+                          <div className="flex items-center gap-1.5 font-mono text-xs">
+                            <span className="font-bold text-gray-100">{st.value}</span>
+                            <span className="text-gray-500 text-[10px]">/{st.max}</span>
+                            {st.delta && (
+                              <span className="text-[10px] px-1 py-0.2 rounded bg-pink-500/20 text-pink-300 border border-pink-500/30 font-bold">
+                                {st.delta}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 进度条 */}
+                        <div className="w-full bg-[#1b1c28] rounded-full h-2 overflow-hidden border border-gray-800">
+                          <div 
+                            className="h-full rounded-full transition-all duration-500 shadow-sm"
+                            style={{ width: `${pct}%`, background: st.barColor }}
+                          />
+                        </div>
+
+                        {/* 区间阶段说明（如 NTR 专有 4 阶区间，1:1 对齐用户截图） */}
+                        {isNtr && (
+                          <div className="grid grid-cols-2 gap-1 text-[10px] text-gray-400 pt-1 border-t border-gray-800/50">
+                            <div className={st.value <= 30 ? 'text-emerald-300 font-bold' : 'text-gray-500'}>
+                              0-30 安全区: 纯友谊
+                            </div>
+                            <div className={st.value > 30 && st.value <= 60 ? 'text-amber-300 font-bold' : 'text-gray-500'}>
+                              31-60 暧昧区: 动摇
+                            </div>
+                            <div className={st.value > 60 && st.value <= 90 ? 'text-orange-400 font-bold' : 'text-gray-500'}>
+                              61-90 沦陷区: 亲近
+                            </div>
+                            <div className={st.value > 90 ? 'text-rose-400 font-bold' : 'text-gray-500'}>
+                              91-100 出轨区: 沦陷
+                            </div>
+                          </div>
+                        )}
+
+                        {isIntervention && (
+                          <div className="text-[10px] text-gray-400 pt-1 border-t border-gray-800/50 leading-relaxed">
+                            💡 玩家的主动干预行为会提升此值。高干预值能有效抑制NTR进度值增长，甚至触发苏婉晴的愧疚与回归。
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* 最新深层心境 */}
+                {charStatus.mood && (
+                  <div className="flex items-start gap-2 bg-[#0e1017]/70 rounded-lg p-2 text-xs text-pink-200/90 font-serif border border-pink-500/15">
+                    <span className="text-pink-400 text-sm">💭</span>
+                    <div>
+                      <span className="text-[10px] text-pink-400/80 font-sans block font-bold">最新心境微澜：</span>
+                      <span className="italic leading-relaxed">{charStatus.mood}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* 1. 剧情阶段推进锁定条 (Phase Lock) */}
             {phaseData && (
               <div className="bg-[#171822]/90 rounded-lg p-2.5 border border-amber-500/25 space-y-1.5">

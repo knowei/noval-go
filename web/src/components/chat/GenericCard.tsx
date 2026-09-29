@@ -6,6 +6,8 @@ import { Turn } from '@/lib/types';
 import { generateContextualBranches } from '@/lib/modelParser';
 import { MapPin } from 'lucide-react';
 import { RichStoryRenderer } from './RichStoryRenderer';
+import { parseTurnCharacterStatus } from '@/lib/characterStatusParser';
+import { TurnStatusCard } from './TurnStatusCard';
 
 interface GenericCardProps {
   turn: Turn;
@@ -68,6 +70,10 @@ export const GenericCard = React.memo(function GenericCard({
   const hasBranches = activeBranches && activeBranches.length > 0;
   const hasAnyPanel = hasStatus || hasMemory || hasBranches;
 
+  const parsedCharStatus = React.useMemo(() => {
+    return parseTurnCharacterStatus(turn, deckId, '', index);
+  }, [turn, deckId, index]);
+
   return (
     <div className="p-5 sm:p-6 rounded-2xl bg-[#171822] border border-[#272a38] shadow-xl space-y-4 text-gray-200 select-text">
       {/* Location Header */}
@@ -119,6 +125,11 @@ export const GenericCard = React.memo(function GenericCard({
         <div className="novel-text space-y-1">
           <RichStoryRenderer rawStory={storyText} />
         </div>
+      )}
+
+      {/* 📊 方案3：每轮对话底部·即时心理与数值结算卡 */}
+      {parsedCharStatus && (
+        <TurnStatusCard status={parsedCharStatus} />
       )}
 
       {/* 统一折叠面板群 (1:1 风格对齐第一版) */}

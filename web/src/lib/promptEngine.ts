@@ -557,6 +557,7 @@ ${deckDesc ? `世界观简述：${deckDesc}\n` : ''}`;
 <p><alert>【突发危机/环境事件】：（在剧情平淡或转折节点主动触发！如外部敲门、手机来电、意外失足）</alert></p>
 <p><climax>🎬【番剧高能名场面·定格特写】：（在情绪突破、心防破防或重大进展时定格呈现CG画面）</climax></p>
 </article>
+<char_status>[目标角色]: [主要互动NPC] | [核心属性1]: [数值]/100 ([本轮增减如+5, 阶段名]) | [核心属性2]: [数值]/100 ([本轮增减如-5, 阶段名]) | [心境微澜]: [一句话描述NPC本轮受玩家行动影响后的深层心理波动或微表情]</char_status>
 ${enabledMods?.phaseLock ? '<scene_phase>[当前阶段]: 阶段X·[阶段名] (进度: [数字]/100) | [核心任务]: [当前目标] | [解锁判定]: [解锁条件]</scene_phase>\n' : ''}${enabledMods?.affectionGauge ? '<love_status>[目标角色]: [角色名] | [心动值]: [数字]/100 ([阶段]) | [心防防御]: [数字]% | [亲密许可]: [许可行为]</love_status>\n' : ''}${enabledMods?.rpgAdventureHud ? '<rpg_status>[境界/等级]: [境界] (进度: [数字]/100) | [生命/气血]: [数字]% | [法力/真元]: [数字]% | [储物背包]: [物品列表] | [本轮收获]: [收获物]</rpg_status>\n' : ''}
 <opt>
 <suggested_questions>
