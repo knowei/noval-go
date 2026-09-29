@@ -1160,6 +1160,7 @@ export default function ChatPage() {
             <div id="handbook-card-anchor" className="scroll-mt-14">
               <InteractiveHandbookCard
                 html={currentDeck.customHtml}
+                customCss={currentDeck.customCss}
                 deckTitle={currentDeck.title}
                 onStartStory={(customPrompt) => {
                   handleSend(customPrompt);

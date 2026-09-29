@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp, Maximize2, Sparkles, BookOpen, X, Check } from 
 
 interface InteractiveHandbookCardProps {
   html: string;
+  customCss?: string;
   deckTitle?: string;
   onStartStory?: (customPromptOrOpening: string) => void;
   defaultExpanded?: boolean;
@@ -12,6 +13,7 @@ interface InteractiveHandbookCardProps {
 
 export function InteractiveHandbookCard({
   html,
+  customCss,
   deckTitle = '作品设定与角色卡',
   onStartStory,
   defaultExpanded = false
@@ -22,12 +24,15 @@ export function InteractiveHandbookCard({
   const [appliedNotice, setAppliedNotice] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
-  // 注入增强脚本：
-  // 1. 自动高度监听通知父容器
-  // 2. 在总结区底部追加【🚀 直接以此设定开启推演】按钮
-  // 3. 点击一键复制或开始推演时，将玩家设定的总结内容通过 postMessage 发送给 React
+  // 注入增强脚本与样式：
+  // 1. 自动注入专属 customCss
+  // 2. 自动高度监听通知父容器
+  // 3. 在总结区底部追加【🚀 直接以此设定开启推演】按钮
+  // 4. 点击一键复制或开始推演时，将玩家设定的总结内容通过 postMessage 发送给 React
   const enhancedHtml = useMemo(() => {
     if (!html) return '';
+
+    const cssInject = customCss ? `<style>\n${customCss}\n</style>\n` : '';
 
     const bridgeScript = `
 <style>
@@ -97,12 +102,21 @@ export function InteractiveHandbookCard({
 </script>
 `;
 
-    // 插入到 </body> 之前，如果无 body 则追加到末尾
-    if (html.includes('</body>')) {
-      return html.replace('</body>', bridgeScript + '</body>');
+    let result = html;
+    if (cssInject) {
+      if (result.includes('</head>')) {
+        result = result.replace('</head>', cssInject + '</head>');
+      } else {
+        result = cssInject + result;
+      }
     }
-    return html + bridgeScript;
-  }, [html]);
+
+    // 插入到 </body> 之前，如果无 body 则追加到末尾
+    if (result.includes('</body>')) {
+      return result.replace('</body>', bridgeScript + '</body>');
+    }
+    return result + bridgeScript;
+  }, [html, customCss]);
 
   useEffect(() => {
     setIsExpanded(defaultExpanded);

@@ -62,6 +62,14 @@ def auto_seed():
         length = len(content)
         while i < length:
             c = content[i]
+            # 仅在引号外部跳过 SQL 单行注释 (-- 注释)，严禁破坏字符串内部的 CSS 变量 (--bg-1) 与 HTML 注释 (<!--)
+            if not in_string and c == '-' and i + 1 < length and content[i+1] == '-':
+                nl = content.find('\n', i)
+                if nl == -1:
+                    break
+                i = nl + 1
+                continue
+
             if c == "'":
                 if in_string:
                     if i + 1 < length and content[i+1] == "'":
@@ -87,12 +95,27 @@ def auto_seed():
             if stmt:
                 statements.append(stmt)
 
+        is_pg = getattr(db_engine.db, 'dialect', '') == 'postgres'
         success = 0
         errors = 0
         for stmt in statements:
-            cleaned = re.sub(r'--[^\n]*\n', '', stmt).strip()
+            cleaned = stmt.strip()
             if not cleaned:
                 continue
+
+            # 在 PostgreSQL 模式下将 ON CONFLICT DO NOTHING 升级为智能覆盖更新，确保被旧版脚本破坏的 custom_html 与 CSS 完美自愈修复
+            if is_pg:
+                if cleaned.startswith("INSERT INTO stories"):
+                    cleaned = cleaned.replace(
+                        "ON CONFLICT (id) DO NOTHING",
+                        "ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, badge = EXCLUDED.badge, cover_icon = EXCLUDED.cover_icon, cover_title = EXCLUDED.cover_title, cover_subtitle = EXCLUDED.cover_subtitle, logo = EXCLUDED.logo, theme_color = EXCLUDED.theme_color, btn_gradient = EXCLUDED.btn_gradient, handbook_json = EXCLUDED.handbook_json, roles_json = EXCLUDED.roles_json, scenes_json = EXCLUDED.scenes_json, styles_json = EXCLUDED.styles_json, first_turn_demo_json = EXCLUDED.first_turn_demo_json, custom_css = EXCLUDED.custom_css, custom_html = EXCLUDED.custom_html, category = EXCLUDED.category, updated_at = EXCLUDED.updated_at"
+                    )
+                elif cleaned.startswith("INSERT INTO plaza_cards"):
+                    cleaned = cleaned.replace(
+                        "ON CONFLICT (title) DO NOTHING",
+                        "ON CONFLICT (title) DO UPDATE SET badge = EXCLUDED.badge, badge_color = EXCLUDED.badge_color, author = EXCLUDED.author, \"desc\" = EXCLUDED.\"desc\", rating = EXCLUDED.rating, tags_json = EXCLUDED.tags_json, heat = EXCLUDED.heat, cover_image = EXCLUDED.cover_image, image_tag = EXCLUDED.image_tag, badge_type = EXCLUDED.badge_type, is_featured = EXCLUDED.is_featured, category = EXCLUDED.category"
+                    )
+
             try:
                 cur.execute(cleaned)
                 success += 1
