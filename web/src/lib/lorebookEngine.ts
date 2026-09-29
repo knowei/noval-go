@@ -1,4 +1,5 @@
 import { LoreEntry, Turn } from './types';
+import { matchShipgirlsFromContext } from './azurLaneShipCatalog';
 
 // ============================================================================
 // 1. 核心大作官方内置世界书词条库 (Lorebook Knowledge Base)
@@ -799,6 +800,52 @@ export const DEFAULT_LOREBOOKS: Record<string, LoreEntry[]> = {
       category: 'location',
       content: '新晋轮回者的初级试炼地。地下极深处的绝密生化研究基地，中央电脑红后已启动全面封锁。管道内潜伏着嗅觉与听觉极其敏锐的异化舔食者，致命T病毒弥漫在每一处下水道。'
     }
+  ],
+
+  // ⚓ 【碧蓝大世界】唯一指挥官与母港全员的日常修罗场
+  deck_azur_lane_open_world: [
+    {
+      id: 'azur_commander_physique',
+      keys: ['指挥官', '体质', '心智魔方', '共鸣', '净化', '心跳', '吸引力', '男人'],
+      title: '唯一指挥官的心智魔方绝对亲和与净化体质',
+      category: 'rule',
+      content: '作为整座碧蓝母港唯一的人类男性指挥官，主角拥有极其罕见的纯净心智魔方共鸣体质。主角的肢体触碰、体温与深层接触能够抚平舰娘魔方的燥热过载，甚至能遏制并净化META化狂暴侵蚀。对母港全体舰娘具有无与伦比的身心情感吸引力，舰娘在靠近指挥官时魔方会加速跳动、身心发热并产生天然的归宿依赖感。'
+    },
+    {
+      id: 'azur_hatsuzuki_oath',
+      keys: ['初月', '秋月级', '红桥映雪', '毛巾', '更衣室', '浴巾', '驱逐'],
+      title: '初月（秋月级驱逐舰）与誓约婚纱「红桥映雪」',
+      category: 'character',
+      content: '重樱秋月级驱逐舰初月。傲娇嘴硬小娇妻，性格要强但面对指挥官极易害羞破防。官方誓约婚纱为「红桥映雪」（/images/azurlane/hatsuzuki_oath_full.jpg）：一袭纯白无瑕的和风白无垢新娘华服，配以朱红衬里与典雅发饰。在好感度突破100或缔结誓约时触发，象征其将一身与余生全数托付给指挥官。'
+    },
+    {
+      id: 'azur_taihou_desire',
+      keys: ['大凤', '重度病娇', '偷钥匙', '装甲空母', '查房', '军服'],
+      title: '大凤（装甲航空母舰）的重度病娇独占欲',
+      category: 'character',
+      content: '重樱大凤。视指挥官为唯一神明的病娇空母，常年手握指挥官卧室的备用万能钥匙。擅长趁指挥官不在时偷抱换洗军服狂吸体味，并24小时密切关注一切接近指挥官的雌性舰娘。一旦发现其他舰娘与指挥官亲近，会立刻散发出滚烫危险的黑化气场与深渊占有欲。'
+    },
+    {
+      id: 'azur_prinz_eugen',
+      keys: ['欧根', '欧根亲王', '微醺', '啤酒', '调情', '小恶魔'],
+      title: '欧根亲王（铁血重巡）的微醺调戏与深情',
+      category: 'character',
+      content: '铁血重巡洋舰欧根亲王。银白长发配挑染红发，嘴角含着一抹意味深长的狡黠微笑。最喜欢手持冰镇啤酒在近距离挑逗捉弄指挥官，欣赏指挥官脸红心跳的窘迫神态。但只要指挥官反手展现霸道壁咚，她眼底的轻浮伪装就会瞬间化为动情颤抖。'
+    },
+    {
+      id: 'azur_naval_facilities',
+      keys: ['母港', '露天温泉', '更衣室', '指挥室', '深海船坞', '后宅', '后山'],
+      title: '碧蓝母港的核心秘密地标与温泉日常',
+      category: 'location',
+      content: '碧蓝母港背山面海，设施齐备：指挥官官邸、后宅露天自然温泉（男女汤仅隔一道竹质薄屏风与共享更衣室）、深海大型检修船坞、皇家红茶馆、重樱神木鸟居。在雷暴雨夜极易发生断电与误入私密区域的桃色突发事件。'
+    },
+    {
+      id: 'azur_oath_covenant',
+      keys: ['誓约', '婚纱', '誓约之戒', '戒指', '心智好感度', '仪式'],
+      title: '心智好感度与誓约之戒的神圣契约',
+      category: 'rule',
+      content: '舰娘的好感度分为【陌生(0-30)】、【友好(31-60)】、【喜欢(61-80)】、【爱慕(81-99)】与【誓约(100)】。当好感度达到100且独占渴求值圆满时，指挥官可向其出示「誓约之戒」，在全港瞩目或两人私密月夜下为她戴上指环，解锁该舰娘的官方誓约婚纱立绘及永不分离的一生契约。'
+    }
   ]
 };
 
@@ -809,7 +856,8 @@ export const DEFAULT_LOREBOOKS: Record<string, LoreEntry[]> = {
 export function getDeckLorebook(deckId: string, customLore?: LoreEntry[]): LoreEntry[] {
   let defaultEntries = DEFAULT_LOREBOOKS[deckId] || [];
   if (defaultEntries.length === 0) {
-    if (deckId === '4881f4b1-dfd0-45cb-8e3a-f7b880f66635') defaultEntries = DEFAULT_LOREBOOKS['deck_succubus_wife'] || [];
+    if (deckId === 'deck_azur_lane_open_world' || deckId.includes('azur_lane') || deckId.includes('碧蓝')) defaultEntries = DEFAULT_LOREBOOKS['deck_azur_lane_open_world'] || [];
+    else if (deckId === '4881f4b1-dfd0-45cb-8e3a-f7b880f66635') defaultEntries = DEFAULT_LOREBOOKS['deck_succubus_wife'] || [];
     else if (deckId === 'eb85f366-919b-466e-a7ff-8d8dbc4ed29b') defaultEntries = DEFAULT_LOREBOOKS['deck_perfect_girl_plan'] || [];
     else if (deckId === 'b64f6c60-f3b0-438b-91ef-51362dbb4ce4') defaultEntries = DEFAULT_LOREBOOKS['deck_daughter_morning_wood'] || [];
     else if (deckId === '6575c840-e7d2-4fdc-a752-b111d9bdf5b8') defaultEntries = DEFAULT_LOREBOOKS['deck_ten_yuan_childhood_friend'] || [];
@@ -871,11 +919,42 @@ export function retrieveActiveLore(
     return { entry, score };
   });
 
-  const activeEntries = scoredEntries
+  let activeEntries = scoredEntries
     .filter((item) => item.score > 0)
     .sort((a, b) => b.score - a.score)
     .slice(0, maxEntries)
     .map((item) => item.entry);
+
+  // ⚓ 碧蓝航线全舰娘动态匹配与即时装载 (Dynamic Azur Lane KAN-SEN Matcher)
+  const isAzurLane = deckId === 'deck_azur_lane_open_world' || deckId.includes('azur_lane') || deckId.includes('碧蓝');
+  if (isAzurLane) {
+    const { matchedProfiles, matchedFactions } = matchShipgirlsFromContext(contextText);
+    for (const profile of matchedProfiles) {
+      const alreadyHas = activeEntries.some(e => e.id === `azur_${profile.id}` || e.title.includes(profile.name));
+      if (!alreadyHas) {
+        activeEntries.unshift({
+          id: `azur_dynamic_${profile.id}`,
+          keys: profile.keywords,
+          title: `${profile.name}（${profile.faction} · ${profile.hullType}）官方人设与互动机制`,
+          category: 'character',
+          content: `官方性格画像：${profile.personality}；【官方经典语癖】：${profile.officialVoiceMannerism}；【特殊触摸官方反应】：${profile.specialTouchReaction}；【对指挥官的深层渴求】：${profile.secretDesire}；${profile.oathSkinTitle ? `【誓约婚纱】：已收录官方绝美婚纱${profile.oathSkinTitle}（立绘路径：${profile.oathSkinImage}），当好感度达到100或缔结誓约时触发盛大婚礼仪式。` : ''}`
+        });
+      }
+    }
+
+    for (const faction of matchedFactions) {
+      const alreadyHas = activeEntries.some(e => e.id === `azur_faction_${faction.faction}` || e.title.includes(faction.faction));
+      if (!alreadyHas && activeEntries.length < maxEntries + 2) {
+        activeEntries.push({
+          id: `azur_faction_${faction.faction}`,
+          keys: [faction.faction],
+          title: `阵营法则：${faction.faction}`,
+          category: 'rule',
+          content: `阵营特色：${faction.representativeFeatures}；说话风格：${faction.toneStyle}；对指挥官态度：${faction.typicalAttitudeToCommander}`
+        });
+      }
+    }
+  }
 
   if (activeEntries.length === 0) {
     return { activeEntries: [], formattedPrompt: '' };

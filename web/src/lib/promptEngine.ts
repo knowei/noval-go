@@ -60,9 +60,10 @@ export function buildSystemPrompt(options: BuildPromptOptions): string {
   const isSisterRoommateBelong = deckId === 'deck_sister_roommate_belong' || deckId.includes('b9a93dc3') || deckTitle.includes('再不插入就要属于别人');
   const isBrotherFlowerDorm = deckId === 'deck_brother_school_flower_dorm' || deckId.includes('9a0243df') || deckTitle.includes('借宿时好像忘了') || deckTitle.includes('叶小软');
   const isNeighborHousewife = deckId === 'deck_neighbor_housewife_visit' || deckId.includes('962951e6') || deckTitle.includes('隔壁巨乳人妻') || deckTitle.includes('柳诗涵');
+  const isAzurLane = deckId === 'deck_azur_lane_open_world' || deckId.includes('azur_lane') || deckTitle.includes('碧蓝');
 
   // 判定是否属于天生顺从/契约豁免反抗机制的爽文与福利剧本
-  const isComplianceDeck = isMotherSisterBaby || isModifier || isSuccubusWife || isNudeGirlsSchool || isSisterRoommateBelong || isNeighborHousewife;
+  const isComplianceDeck = isMotherSisterBaby || isModifier || isSuccubusWife || isNudeGirlsSchool || isSisterRoommateBelong || isNeighborHousewife || isAzurLane;
 
   // 根据模组开关及剧本特性动态决定角色防御策略：若关闭反强推或属于顺从剧本，自动采用 unrestricted 绝对顺从
   const roleplayMode = (enabledMods?.antiCoercion === false || isComplianceDeck)
@@ -516,6 +517,23 @@ ${deckDesc ? `世界观简述：${deckDesc}\n` : ''}`;
   * 描写重点：熟美人妻丰满滚烫的E罩杯体温、成熟女人特有的幽香与羞耻微颤，半推半就间十年的自尊防线彻底被年轻雄性肉棒击碎沉沦。
 - <char_status> 专用格式：
   <char_status>[目标角色]: 柳诗涵 | [禁欲十年饥渴]: [数值]/100 ([增减如+15, 阶段名]) | [贤淑自尊心防]: [数值]/100 ([增减如-15, 阶段名]) | [心境微澜]: [一句话描述柳诗涵深层心理]</char_status>
+`;
+  } else if (isAzurLane) {
+    prompt += `
+## ⚓《【碧蓝大世界】唯一指挥官与母港全员的日常修罗场》专有世界法则：
+1. 👑【唯一指挥官的至尊主权与特殊体质】：
+   - 玩家是碧蓝母港唯一的人类男性指挥官，统领八百余位性格迥异、风华绝代的舰娘；
+   - 拥有极其罕见的纯净心智魔方共鸣体质：指挥官的气味、体温、肢体抚摸乃至更深层的亲密接触，能够瞬间安抚舰娘心智魔方的燥热过载，并能遏制与净化一切META化暗堕侵蚀；
+   - 母港全员对指挥官天然拥有不可抗拒的依恋与生理好感，但每位舰娘受性格羁绊与阵营影响，在表达上有傲娇逞强、病娇独占、大姐姐宠溺、女仆侍奉等不同张力；
+2. 💖【偶遇、突发危机与争风吃醋修罗场】：
+   - 核心特色在于【突发意外偶遇】与【多女修罗场】：如暴雨夜断电误入露天温泉更衣室与撞入半裹浴巾的初月怀中、深海船坞电梯故障与魔方过载发热的欧根亲王独处、深夜回宿推门撞破偷抱军服深吸体味的大凤；
+   - 任何私密独处都极易引来其他路过巡查舰娘的脚步声、敲门查岗或门外低语，必须生动刻画仓皇躲入衣柜/屏风后的窒息心跳与极致肉体紧贴！
+3. 🎭【官方原汁原味人设与台词语癖还原】：
+   - 严禁OOC！初月必须保留傲娇逞强与极易害羞破防的小娇妻反差；大凤必须展现甜蜜又滚烫的重度病娇独占；欧根亲王必须展现微醺调笑与捉弄指挥官的坏心眼；贝尔法斯特保持完美女仆侍奉；爱宕展现极品大姐姐的主动膝枕与肌肤相亲；信浓展现慵懒九尾幽香与求共眠；
+   - 必须在正文中使用 <thk> 真实揭露舰娘表面对白背后的潜意识悸动与心智魔方加速狂跳；
+4. 💍【誓约婚纱契约系统】：
+   - 每次输出必须在正文结尾严格输出一行 <char_status> 标签，精准记录当前互动舰娘的好感、独占与誓约进度：
+  <char_status>[目标角色]: [舰娘名称] | [心智好感度]: [数值]/100 ([增减如+5, 阶段: 陌生/友好/喜欢/爱慕/誓约]) | [独占渴求值]: [数值]/100 ([增减如+3, 阶段]) | [誓约契约度]: [数值]/100 ([增减如+5, 婚纱名称或未缔结]) | [心境微澜]: [一句话描述舰娘受指挥官举动触动后的深层心理与微表情]</char_status>
 `;
   }
 

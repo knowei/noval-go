@@ -99,12 +99,27 @@ function parseExplicitCharStatus(content: string, deckId: string, deckTitle: str
     const isIntervention = key.includes('干预') || key.includes('守护') || key.includes('阻止');
     const isAffection = key.includes('心动') || key.includes('好感') || key.includes('爱意');
     const isDefense = key.includes('防线') || key.includes('羞耻') || key.includes('戒备');
+    const isOath = key.includes('誓约') || key.includes('契约度') || key.includes('婚纱');
+    const isExclusivity = key.includes('独占渴求') || key.includes('独占欲') || key.includes('吃醋') || key.includes('占有');
+    const isCubeResonance = key.includes('魔方') || key.includes('共鸣');
 
     let icon = '📊';
     let color = 'from-purple-500 to-indigo-500';
     let barColor = 'linear-gradient(90deg, #a855f7, #6366f1)';
 
-    if (isNtr) {
+    if (isOath) {
+      icon = '💍';
+      color = 'from-cyan-400 to-blue-500';
+      barColor = 'linear-gradient(90deg, #06b6d4, #3b82f6)';
+    } else if (isCubeResonance) {
+      icon = '💠';
+      color = 'from-sky-400 to-indigo-500';
+      barColor = 'linear-gradient(90deg, #38bdf8, #6366f1)';
+    } else if (isExclusivity) {
+      icon = '🔥';
+      color = 'from-amber-500 to-rose-500';
+      barColor = 'linear-gradient(90deg, #f59e0b, #ef4444)';
+    } else if (isNtr) {
       icon = '💔';
       color = 'from-rose-500 to-pink-600';
       barColor = 'linear-gradient(90deg, #f43f5e, #ec4899)';
@@ -532,6 +547,62 @@ function generateHeuristicStatus(
           color: 'from-purple-500 to-indigo-500',
           barColor: 'linear-gradient(90deg, #a855f7, #6366f1)',
           icon: '🥀'
+        }
+      ]
+    };
+  }
+
+  // ⚓ 碧蓝航线母港大世界 (舰娘好感与誓约契约模型)
+  const isAzurLane = deckId === 'deck_azur_lane_open_world' || deckId.includes('azur_lane') || deckTitle.includes('碧蓝');
+  if (isAzurLane) {
+    let shipName = '初月';
+    if (text.includes('大凤')) shipName = '大凤';
+    else if (text.includes('欧根')) shipName = '欧根亲王';
+    else if (text.includes('贝尔法斯特') || text.includes('贝法')) shipName = '贝尔法斯特';
+    else if (text.includes('爱宕')) shipName = '爱宕';
+    else if (text.includes('信浓')) shipName = '信浓';
+    else if (text.includes('新泽西')) shipName = '新泽西';
+    else if (text.includes('柴郡')) shipName = '柴郡';
+    else if (text.includes('埃吉尔')) shipName = '埃吉尔';
+
+    const affection = Math.min(100, 55 + turnIndex * 6);
+    const jealousy = Math.min(100, 30 + turnIndex * 4);
+    const oathVal = Math.min(100, 35 + turnIndex * 5);
+
+    return {
+      characterName: shipName,
+      stageName: affection >= 100 ? '可缔结誓约' : affection >= 80 ? '深情爱慕' : affection >= 60 ? '怦然喜欢' : '互相信任',
+      mood: innerThought || '被指挥官特殊的魔方气息吸引，心跳失控，表面强作镇定……',
+      stats: [
+        {
+          name: '心智好感度',
+          value: affection,
+          max: 100,
+          delta: '+6 ▲',
+          stageDesc: affection >= 80 ? '爱慕 (心智共鸣)' : '喜欢 (脸红心跳)',
+          color: 'from-pink-500 to-rose-400',
+          barColor: 'linear-gradient(90deg, #ec4899, #f472b6)',
+          icon: '💖'
+        },
+        {
+          name: '独占渴求值',
+          value: jealousy,
+          max: 100,
+          delta: '+4 ▲',
+          stageDesc: jealousy > 60 ? '暗生醋意' : '暗自期待',
+          color: 'from-amber-500 to-rose-500',
+          barColor: 'linear-gradient(90deg, #f59e0b, #ef4444)',
+          icon: '🔥'
+        },
+        {
+          name: '誓约契约度',
+          value: oathVal,
+          max: 100,
+          delta: '+5 ▲',
+          stageDesc: oathVal >= 100 ? '誓约之戒准备就绪' : shipName === '初月' ? '「红桥映雪」期待中' : '心之羁绊沉淀中',
+          color: 'from-cyan-400 to-blue-500',
+          barColor: 'linear-gradient(90deg, #06b6d4, #3b82f6)',
+          icon: '💍'
         }
       ]
     };
