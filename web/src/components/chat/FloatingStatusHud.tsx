@@ -335,7 +335,11 @@ export function FloatingStatusHud({
                             <span className="font-bold text-gray-100">{st.value}</span>
                             <span className="text-gray-500 text-[10px]">/{st.max}</span>
                             {st.delta && (
-                              <span className="text-[10px] px-1 py-0.2 rounded bg-pink-500/20 text-pink-300 border border-pink-500/30 font-bold">
+                              <span className={`text-[10px] px-1.5 py-0.2 rounded font-bold ${
+                                (isIntervention ? st.delta.includes('+') : st.delta.includes('-'))
+                                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                  : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                              }`}>
                                 {st.delta}
                               </span>
                             )}
@@ -350,11 +354,11 @@ export function FloatingStatusHud({
                           />
                         </div>
 
-                        {/* 区间阶段说明（如 NTR 专有 4 阶区间，1:1 对齐用户截图） */}
+                        {/* 区间阶段说明（如 NTR 专有 4 阶区间，1:1 对齐设定图） */}
                         {isNtr && (
                           <div className="grid grid-cols-2 gap-1 text-[10px] text-gray-400 pt-1 border-t border-gray-800/50">
                             <div className={st.value <= 30 ? 'text-emerald-300 font-bold' : 'text-gray-500'}>
-                              0-30 安全区: 纯友谊
+                              0-30 安全区: 守垒成功·身心归夫
                             </div>
                             <div className={st.value > 30 && st.value <= 60 ? 'text-amber-300 font-bold' : 'text-gray-500'}>
                               31-60 暧昧区: 动摇

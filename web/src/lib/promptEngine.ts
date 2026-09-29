@@ -56,6 +56,7 @@ export function buildSystemPrompt(options: BuildPromptOptions): string {
   const isXiuxianWorld = deckId === 'deck_xiuxian_world' || deckId.includes('4339eb70') || deckTitle.includes('修仙日常') || deckTitle.includes('从零开始的修仙') || deckTitle.includes('苍澜界') || deckTitle.includes('roll天赋');
   const isDaughterDoorBlock = deckId === 'deck_daughter_door_block' || deckId.includes('2168197e') || deckTitle.includes('调皮的女儿用自己的身体堵门') || deckTitle.includes('出门上班必须先');
   const isMotherSisterBaby = deckId === 'deck_mother_sister_baby' || deckId.includes('758e40b4') || deckTitle.includes('成年了还把你当孩子') || deckTitle.includes('巨乳美母骚姐');
+  const isWifeTrip = deckId === 'deck_wife_business_trip' || deckId.includes('2c10c41f') || deckTitle.includes('出差') || deckTitle.includes('男闺蜜');
 
   // 判定是否属于天生顺从/契约豁免反抗机制的爽文与福利剧本
   const isComplianceDeck = isMotherSisterBaby || isModifier || isSuccubusWife || isNudeGirlsSchool;
@@ -460,6 +461,28 @@ ${deckDesc ? `世界观简述：${deckDesc}\n` : ''}`;
   * 现代一线城市高档大平层公寓，生活日常烟火气与肉欲横流的禁忌香艳极致交融；
   * 重点刻画九头身超模姐姐粉嫩紧致的私处与傲娇破防时的泪光娇喘、熟美母亲沉甸甸摇晃的H罩杯温软雪乳与母性溺爱包容的眼神；
   * 充分运用 <thk> 标签揭示母亲与姐姐在面对你时的隐秘情欲、自欺欺人的借口与心慌失守。
+`;
+  } else if (isWifeTrip) {
+    prompt += `
+## 💍《肥臀巨乳美妻要跟男闺蜜出差？》专有角色与核心机制规则：
+- 角色定位铁律：
+  * 玩家角色（{user}）是【合法丈夫 林川】！结婚两年，两人是受法律与伦理保护的恩爱夫妻！
+  * 苏婉晴（26岁，客户总监，H罩杯极品人妻）深爱丈夫，把所有女人的娇媚与身体都给了丈夫，对男闺蜜自以为是“纯哥儿们”；
+  * 陆明远（29岁男闺蜜）是暗恋多年、居心叵测企图撬墙角的健身教练；
+- 核心数值与增减法则（绝对禁令，严禁搞反）：
+  * 💔【NTR 沦陷进度】（0-100，初始10）：衡量的是【苏婉晴被陆明远攻陷、背叛丈夫的程度】！
+    - 0-30 安全区：守垒成功·身心归夫（她对陆明远仅为普通同事/心生反感，身心完全属于丈夫）；
+    - 31-60 暧昧区：动摇；
+    - 61-90 沦陷区：亲近；
+    - 91-100 出轨区：被陆明远攻陷。
+  * 🛡️【玩家干预值】（0-100，初始0）：衡量的是【丈夫的主权宣示、守护行动、亲密温存与阻击介入】！
+  * 🛑【合法夫妻恩爱判定最高铁律】：
+    - 玩家（丈夫）留住妻子、退票阻断、查岗、霸道宣示主权、或者在家里/床第间与妻子亲热、做爱、抽插、内射、恩爱欢好，这是标准的【🛡️ 守垒成功·捍卫婚姻】！
+    - 在发生上述行为时：【玩家干预值】必须大幅暴涨（+15~+25 ▲，升至 80~100），【NTR 沦陷进度】必须大幅暴跌（-20~-30 ▼，跌至 0~5 安全区）！
+    - 严禁将合法丈夫与自己妻子的做爱判定为“NTR沦陷”或“出轨”！那是丈夫的独占与胜利！
+    - 只有当玩家冷漠纵容、默许放任妻子跟陆明远单独出行、或者苏婉晴真正被陆明远身体侵犯/精神出轨时，NTR 进度才会增加！
+- <char_status> 专用输出格式：
+  <char_status>[目标角色]: 苏婉晴 | [NTR 沦陷进度]: [数值]/100 ([增减如-20, 阶段名]) | [玩家干预值]: [数值]/100 ([增减如+20, 阶段名]) | [心境微澜]: [一句话描述苏婉晴本轮受丈夫行动影响后的心理波动]</char_status>
 `;
   }
 

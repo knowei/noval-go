@@ -51,6 +51,8 @@ export function TurnStatusCard({ status }: TurnStatusCardProps) {
               const pct = Math.min(100, Math.max(0, Math.round((st.value / st.max) * 100)));
               const isPositive = st.delta && st.delta.includes('+');
               const isNegative = st.delta && st.delta.includes('-');
+              const isGoodMetric = st.name.includes('干预') || st.name.includes('好感') || st.name.includes('心动') || st.name.includes('守护') || st.name.includes('生命') || st.name.includes('气血') || st.name.includes('法力') || st.name.includes('真元');
+              const isFavorable = isGoodMetric ? isPositive : isNegative;
 
               return (
                 <div 
@@ -67,11 +69,11 @@ export function TurnStatusCard({ status }: TurnStatusCardProps) {
                       <span className="font-bold text-gray-100">{st.value}</span>
                       <span className="text-gray-500 text-[10px]">/{st.max}</span>
                       {st.delta && (
-                        <span className={`px-1 py-0.2 rounded text-[10px] font-bold ${
-                          isPositive
-                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
-                            : isNegative
+                        <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
+                          isFavorable
                             ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                            : isPositive || isNegative
+                            ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                             : 'bg-gray-800 text-gray-300'
                         }`}>
                           {st.delta}

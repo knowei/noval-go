@@ -134,8 +134,38 @@ function parseExplicitCharStatus(content: string, deckId: string, deckTitle: str
     });
   }
 
+  // 针对美妻出差疑云，防止误把合法丈夫做爱/阻断识别为 NTR 出轨
+  const isWifeTrip = deckId === 'deck_wife_business_trip' || deckId.includes('2c10c41f') || deckTitle.includes('出差') || deckTitle.includes('男闺蜜');
+  if (isWifeTrip) {
+    const husbandIntimacyKeywords = ['做爱', '上你', '老公', '进入', '肉棒', '抽插', '内射', '娇喘', '合法夫妻', '咆哮', '免提', '挂断', '退票', '不许去', '留下来', '林川', '丈夫'];
+    const hasHusbandAction = husbandIntimacyKeywords.some(kw => content.includes(kw));
+
+    if (hasHusbandAction) {
+      for (const st of stats) {
+        if (st.name.includes('NTR') || st.name.includes('沦陷')) {
+          if (st.value > 30) {
+            st.value = Math.max(0, 15 - Math.min(10, Math.floor(st.value * 0.1)));
+            st.delta = '-20 ▼';
+            st.stageDesc = '安全区 (身心归夫 · 守垒成功)';
+            st.color = 'from-emerald-500 to-teal-500';
+            st.barColor = 'linear-gradient(90deg, #10b981, #059669)';
+            st.icon = '🛡️';
+          }
+        }
+        if (st.name.includes('干预')) {
+          if (st.value < 70) {
+            st.value = 90;
+            st.delta = '+20 ▲';
+            st.stageDesc = '有效阻断 · 守垒决胜';
+          }
+        }
+      }
+    }
+  }
+
   return {
     characterName,
+    stageName: stats.find(s => s.stageDesc)?.stageDesc,
     mood,
     stats
   };
@@ -244,35 +274,91 @@ function generateHeuristicStatus(
   // A. 美妻出差疑云 (NTR / 干预机制专属)
   const isWifeTrip = deckId === 'deck_wife_business_trip' || deckId.includes('2c10c41f') || deckTitle.includes('出差') || deckTitle.includes('男闺蜜');
   if (isWifeTrip) {
-    const progressBase = Math.min(95, 10 + turnIndex * 6);
-    const interventionBase = Math.min(95, 5 + turnIndex * 12);
+    // 语义分析：检测合法丈夫（玩家）的守护、亲密、性爱与主权干预
+    const husbandIntimacyKeywords = [
+      '做爱', '上你', '老公', '进入', '肉棒', '抽插', '内射', '娇喘', '呻吟', '高潮',
+      '占有', '按在', '挺入', '撞击', '湿透', '瘫软', '求饶', '好舒服', '爱老公', '合法',
+      '夫妻', '丈夫', '林川', '大床', '主卧', '撕破', '快感', '射在', '亲吻', '抚弄',
+      '雪白', '巨乳', '紧致', '敏感', '迎合', '只属于你'
+    ];
+    const husbandInterventionKeywords = [
+      '退票', '不许去', '留下来', '质问', '查岗', '别走', '关门', '行李箱', '夺过',
+      '免提', '恶鬼', '咆哮', '挂断', '电话', '拉黑', '警告', '男闺蜜', '陆明远',
+      '摊牌', '跟踪', '抓现行', '阻止'
+    ];
+    const ntrBetrayalKeywords = [
+      '跟陆明远走', '明远的手', '明远抱', '被明远吻', '明远的肉棒', '被明远进入',
+      '背叛老公', '给老公戴绿帽', '推开老公', '厌恶老公', '借给明远', '送给明远'
+    ];
 
+    const hasIntimacy = husbandIntimacyKeywords.some(kw => text.includes(kw));
+    const hasIntervention = husbandInterventionKeywords.some(kw => text.includes(kw));
+    const hasBetrayal = ntrBetrayalKeywords.some(kw => text.includes(kw));
+
+    let ntrProgress = 10;
+    let interventionValue = 20;
+    let ntrDelta = '-0';
+    let interventionDelta = '+10 ▲';
     let stage = '安全区 (相敬如宾)';
-    if (progressBase >= 90) stage = '完全出轨区';
-    else if (progressBase >= 60) stage = '深度沦陷区';
-    else if (progressBase >= 30) stage = '暧昧动摇区';
+    let defaultMood = '被你察觉异常后指尖微颤，眼神闪烁间有一丝心虚与自责……';
+
+    if (hasIntimacy || (hasIntervention && !hasBetrayal)) {
+      // 玩家（合法丈夫）强势行使夫权、温存做爱或有力阻击陆明远：守垒大获全胜！
+      interventionValue = Math.min(100, Math.max(80, 50 + turnIndex * 8));
+      interventionDelta = '+20 ▲';
+      
+      // NTR 沦陷度彻底崩溃归零 / 压制至安全极低值
+      ntrProgress = Math.max(0, Math.min(8, 15 - turnIndex * 3));
+      ntrDelta = '-20 ▼';
+      stage = '安全区 (守垒成功 · 身心归夫)';
+
+      if (text.includes('咆哮') || text.includes('免提') || text.includes('电话') || text.includes('恶鬼')) {
+        defaultMood = '听着免提中陆明远无能狂怒的咆哮，身心彻底被丈夫滚烫深沉的占有填满，满心羞耻却又感到前所未有的安稳与踏实，庆幸自己被老公霸道地留了下来。';
+      } else {
+        defaultMood = '身心彻底臣服于丈夫的爱意与温度，紧紧环抱着老公的后颈娇喘求饶，眼里与心中只容得下自己的合法伴侣。';
+      }
+    } else if (hasBetrayal) {
+      // 真实发生向陆明远倾斜的背叛情节
+      ntrProgress = Math.min(100, Math.max(45, 20 + turnIndex * 10));
+      ntrDelta = '+15 ▲';
+      interventionValue = Math.max(0, 30 - turnIndex * 4);
+      interventionDelta = '-10 ▼';
+      if (ntrProgress >= 90) stage = '完全出轨区';
+      else if (ntrProgress >= 60) stage = '深度沦陷区';
+      else stage = '暧昧动摇区';
+      defaultMood = '在陆明远的步步紧逼与试探下心慌意乱，理智与婚姻底线在禁忌边缘摇摇欲坠……';
+    } else {
+      // 早期试探与推拉
+      interventionValue = Math.min(70, 15 + turnIndex * 8);
+      ntrProgress = Math.max(0, Math.min(25, 12 - turnIndex));
+      ntrDelta = '-5 ▼';
+      interventionDelta = '+10 ▲';
+      stage = '安全区 (暗流微澜)';
+    }
 
     return {
       characterName: '苏婉晴',
       stageName: stage,
-      mood: innerThought || '被你察觉异常后指尖微颤，眼神闪烁间有一丝心虚与自责……',
+      mood: innerThought || defaultMood,
       stats: [
         {
           name: 'NTR 沦陷进度',
-          value: progressBase,
+          value: ntrProgress,
           max: 100,
-          delta: '+5 ▲',
+          delta: ntrDelta,
           stageDesc: stage,
-          color: 'from-rose-500 to-pink-600',
-          barColor: 'linear-gradient(90deg, #f43f5e, #ec4899)',
-          icon: '💔'
+          color: ntrProgress > 60 ? 'from-rose-500 to-pink-600' : 'from-emerald-500 to-teal-500',
+          barColor: ntrProgress > 60 
+            ? 'linear-gradient(90deg, #f43f5e, #ec4899)' 
+            : 'linear-gradient(90deg, #10b981, #059669)',
+          icon: ntrProgress > 60 ? '💔' : '🛡️'
         },
         {
           name: '玩家干预值',
-          value: interventionBase,
+          value: interventionValue,
           max: 100,
-          delta: '+15 ▲',
-          stageDesc: interventionBase > 40 ? '有效阻断' : '初步试探',
+          delta: interventionDelta,
+          stageDesc: interventionValue >= 75 ? '守垒决胜 · 身心独占' : interventionValue >= 40 ? '有效阻断' : '初步试探',
           color: 'from-emerald-500 to-teal-500',
           barColor: 'linear-gradient(90deg, #10b981, #14b8a6)',
           icon: '🛡️'
