@@ -27,12 +27,7 @@ def auto_seed():
             story_count = 0
 
         print(f"[Noval-Go] Current status: {story_count} stories, {card_count} plaza cards in DB.")
-
-        if card_count > 0 and story_count > 0:
-            print("[Noval-Go] Database already has stories and cards. No seeding needed.")
-            return
-
-        print("[Noval-Go] Database is empty! Auto-seeding from init_postgres.sql...")
+        print("[Noval-Go] Synchronizing latest cards & stories from init_postgres.sql (idempotent ON CONFLICT)...")
         sql_path = os.path.join(BASE_DIR, 'init_postgres.sql')
         if not os.path.exists(sql_path):
             print(f"[Noval-Go Error] Seed file not found at: {sql_path}")
