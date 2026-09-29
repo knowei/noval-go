@@ -435,6 +435,108 @@ function generateHeuristicStatus(
     };
   }
 
+  // D. 妹妹属于别人了 (禁断渴求 / 伦理心防)
+  const isSisterRoommate = deckId === 'deck_sister_roommate_belong' || deckId.includes('b9a93dc3') || deckTitle.includes('再不插入就要属于别人');
+  if (isSisterRoommate) {
+    const desire = Math.min(100, 60 + turnIndex * 8);
+    const defense = Math.max(5, 40 - turnIndex * 7);
+    return {
+      characterName: '林溪月',
+      stageName: desire > 85 ? '情欲决堤' : desire > 65 ? '假意挑衅' : '禁忌动摇',
+      mood: innerThought || '咬着下唇微扬着下巴，眼神挑衅却又带着一丝害怕被拒绝的慌乱，身体在你的逼近下早已悄悄湿透……',
+      stats: [
+        {
+          name: '禁断情欲渴求',
+          value: desire,
+          max: 100,
+          delta: '+12 ▲',
+          stageDesc: desire > 80 ? '任君采撷' : '急迫渴望',
+          color: 'from-pink-500 to-rose-500',
+          barColor: 'linear-gradient(90deg, #ec4899, #f43f5e)',
+          icon: '🔥'
+        },
+        {
+          name: '兄妹伦理心防',
+          value: defense,
+          max: 100,
+          delta: '-10 ▼',
+          stageDesc: defense < 20 ? '彻底瓦解' : '摇摇欲坠',
+          color: 'from-purple-500 to-indigo-500',
+          barColor: 'linear-gradient(90deg, #a855f7, #6366f1)',
+          icon: '🔒'
+        }
+      ]
+    };
+  }
+
+  // E. 兄弟校花女友借宿 (背德心动 / 矜持心防)
+  const isBrotherFlower = deckId === 'deck_brother_school_flower_dorm' || deckId.includes('9a0243df') || deckTitle.includes('借宿时好像忘了') || deckTitle.includes('叶小软');
+  if (isBrotherFlower) {
+    const thrill = Math.min(100, 45 + turnIndex * 8);
+    const reserve = Math.max(10, 55 - turnIndex * 6);
+    return {
+      characterName: '叶小软',
+      stageName: thrill > 75 ? '背德沦陷' : '羞耻失措',
+      mood: innerThought || '赤裸的雪白娇躯在你目光注视下泛起大片粉红，双手慌乱捂着胸口，眼神慌乱求饶却又不由自主地紧绷颤栗……',
+      stats: [
+        {
+          name: '背德刺激心动',
+          value: thrill,
+          max: 100,
+          delta: '+10 ▲',
+          stageDesc: thrill > 70 ? '情欲蔓延' : '心跳失速',
+          color: 'from-rose-500 to-pink-500',
+          barColor: 'linear-gradient(90deg, #f43f5e, #ec4899)',
+          icon: '💓'
+        },
+        {
+          name: '矜持防备心防',
+          value: reserve,
+          max: 100,
+          delta: '-8 ▼',
+          stageDesc: reserve < 25 ? '防线崩溃' : '慌乱失守',
+          color: 'from-amber-500 to-orange-500',
+          barColor: 'linear-gradient(90deg, #f59e0b, #f97316)',
+          icon: '😳'
+        }
+      ]
+    };
+  }
+
+  // F. 隔壁巨乳人妻拜访 (十年渴求 / 贤淑自尊)
+  const isNeighborWidow = deckId === 'deck_neighbor_housewife_visit' || deckId.includes('962951e6') || deckTitle.includes('隔壁巨乳人妻') || deckTitle.includes('柳诗涵');
+  if (isNeighborWidow) {
+    const hunger = Math.min(100, 65 + turnIndex * 7);
+    const pride = Math.max(5, 40 - turnIndex * 6);
+    return {
+      characterName: '柳诗涵',
+      stageName: hunger > 85 ? '熟美沉沦' : hunger > 70 ? '情意动摇' : '半推半就',
+      mood: innerThought || '十年守寡的空虚在年轻男人的体温压迫下瞬间决堤，双手虚抓着你的臂膀，眼眸水汽弥漫，微启的红唇吐出温热娇喘……',
+      stats: [
+        {
+          name: '禁欲十年渴求',
+          value: hunger,
+          max: 100,
+          delta: '+10 ▲',
+          stageDesc: hunger > 80 ? '春潮难耐' : '情迷意乱',
+          color: 'from-rose-500 to-red-500',
+          barColor: 'linear-gradient(90deg, #f43f5e, #ef4444)',
+          icon: '💦'
+        },
+        {
+          name: '贤淑自尊心防',
+          value: pride,
+          max: 100,
+          delta: '-8 ▼',
+          stageDesc: pride < 15 ? '彻底融化' : '摇摇欲坠',
+          color: 'from-purple-500 to-indigo-500',
+          barColor: 'linear-gradient(90deg, #a855f7, #6366f1)',
+          icon: '🥀'
+        }
+      ]
+    };
+  }
+
   // 通用恋爱心防模型
   const aff = Math.min(100, 25 + turnIndex * 5);
   const def = Math.max(10, 75 - turnIndex * 5);
