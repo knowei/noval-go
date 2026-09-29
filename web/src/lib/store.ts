@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { UserProfile, StoryDeck, Turn, ConversationSave, ModelSettings, EnabledMods } from './types';
-import { fetchConversations, saveConversation } from './api';
+import { fetchConversations, saveConversation, deleteConversation } from './api';
 
 const defaultMods: EnabledMods = {
   apocalypseSurvival: true,
@@ -294,7 +294,13 @@ export const useAppStore = create<AppState>((set, get) => ({
   autoSave: async () => {
     const { currentConversationId, currentUserId, currentDeckKey, currentDeck, conversationHistory } = get();
     const cleanHistory = (conversationHistory || []).filter((t): t is Turn => Boolean(t && typeof t === 'object'));
-    if (!currentConversationId || cleanHistory.length === 0) return;
+    if (!currentConversationId) return;
+
+    if (cleanHistory.length === 0) {
+      await deleteConversation(currentConversationId);
+      get().refreshSaves();
+      return;
+    }
 
     const lastTurn = cleanHistory[cleanHistory.length - 1];
     const payload = {

@@ -17,6 +17,7 @@ export function Drawer() {
     currentDeckKey,
     currentDeck,
     startNewStory,
+    currentConversationId,
     setCurrentConversationId,
     setConversationHistory
   } = useAppStore();
@@ -75,9 +76,19 @@ export function Drawer() {
 
   const handleConfirmDelete = async () => {
     if (deleteTargetId) {
+      const isDeletingCurrent = deleteTargetId === currentConversationId;
       await deleteConversation(deleteTargetId);
       await refreshSaves();
       setDeleteTargetId(null);
+
+      if (isDeletingCurrent) {
+        if (currentDeck) {
+          startNewStory(currentDeck);
+        } else {
+          setCurrentConversationId('');
+          setConversationHistory([]);
+        }
+      }
     }
   };
 

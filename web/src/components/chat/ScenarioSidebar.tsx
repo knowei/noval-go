@@ -61,9 +61,31 @@ export function ScenarioSidebar({ onClose, onOpenHandbook, onOpenLorebook }: Sce
 
   const handleConfirmDelete = async () => {
     if (deleteTargetId) {
+      const isDeletingCurrent = deleteTargetId === currentConversationId;
       await deleteConversation(deleteTargetId);
       await refreshSaves();
       setDeleteTargetId(null);
+
+      if (isDeletingCurrent) {
+        // 检查当前剧本是否还有其他剩余存档
+        const remaining = (useAppStore.getState().savedConversations || []).filter(isMatchDeck);
+        if (remaining.length > 0) {
+          const nextData = await fetchConversation(remaining[0].id);
+          if (nextData && nextData.history) {
+            setCurrentConversationId(nextData.id);
+            setConversationHistory(nextData.history);
+            return;
+          }
+        }
+
+        // 无剩余存档，重置为主界面初始开局状态
+        if (currentDeck) {
+          startNewStory(currentDeck);
+        } else {
+          setCurrentConversationId('');
+          setConversationHistory([]);
+        }
+      }
     }
   };
 
