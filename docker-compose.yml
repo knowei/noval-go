@@ -18,6 +18,8 @@ services:
       - NODE_ENV=production
       # 默认连接内部 PostgreSQL 容器 (内部网络直连，避免与宿主机 5432 端口冲突)
       - DATABASE_URL=postgresql://noval_user:noval_secret_2026@postgres:5432/noval_db
+      # 站点私密访问密码 (默认 888888，可在 .env 中修改)
+      - SITE_PASSWORD=${SITE_PASSWORD:-888888}
     depends_on:
       postgres:
         condition: service_healthy
