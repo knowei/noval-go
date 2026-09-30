@@ -8,8 +8,13 @@ import { ModCenterModal } from "@/components/modals/ModCenterModal";
 import { SiteAccessGate } from "@/components/layout/SiteAccessGate";
 
 export const metadata: Metadata = {
-  title: "NOVAL-GO · AI沉浸式角色扮演风月剧场",
-  description: "高质量二次元、都市日常、心理解构与破甲向互动小说平台",
+  title: "幻诺剧场 (Novala) · AI沉浸式角色扮演与心动誓约",
+  description: "基于大语言模型驱动的高沉浸互动小说与角色扮演私密剧场，支持自由剧情演化、多分支抉择、心智好感度与角色誓约系统。",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/favicon.ico",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

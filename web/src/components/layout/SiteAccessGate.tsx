@@ -84,12 +84,12 @@ export function SiteAccessGate({ children }: SiteAccessGateProps) {
     return (
       <div className="fixed inset-0 bg-[#0a0b10] flex items-center justify-center z-[99999]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-rose-500 animate-pulse flex items-center justify-center text-white text-xs font-black shadow-lg shadow-rose-500/30">
-            风月
+          <div className="w-12 h-12 rounded-2xl overflow-hidden border border-amber-500/40 shadow-lg shadow-rose-500/30 animate-pulse bg-[#13151f]">
+            <img src="/logo.png" alt="幻诺剧场" className="w-full h-full object-cover" />
           </div>
-          <div className="flex items-center gap-2 text-xs text-gray-500 font-mono">
+          <div className="flex items-center gap-2 text-xs text-gray-400 font-mono">
             <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-500" />
-            <span>正在校验站点安全环境...</span>
+            <span>正在校验「幻诺剧场」安全环境...</span>
           </div>
         </div>
       </div>
@@ -118,8 +118,8 @@ export function SiteAccessGate({ children }: SiteAccessGateProps) {
         {/* 标题徽章区 */}
         <div className="flex flex-col items-center text-center mb-6">
           <div className="relative mb-3">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-pink-600 flex items-center justify-center text-white shadow-xl shadow-rose-500/30 transform hover:scale-105 transition duration-300">
-              <Lock className="w-8 h-8 text-white drop-shadow-md" />
+            <div className="w-16 h-16 rounded-2xl overflow-hidden border border-amber-500/40 shadow-xl shadow-rose-500/30 transform hover:scale-105 transition duration-300 bg-[#090a0f]">
+              <img src="/logo.png" alt="幻诺剧场" className="w-full h-full object-cover" />
             </div>
             <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-2 border-[#13151f] flex items-center justify-center text-white text-[10px] shadow">
               <ShieldCheck className="w-3.5 h-3.5" />
@@ -128,7 +128,7 @@ export function SiteAccessGate({ children }: SiteAccessGateProps) {
 
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-mono mb-2">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>NOVAL-GO · 私密剧场保护</span>
+            <span>Novala · 幻诺私密剧场</span>
           </div>
 
           <h2 className="text-xl sm:text-2xl font-black text-gray-100 tracking-tight">

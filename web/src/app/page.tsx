@@ -92,7 +92,7 @@ export default function PlazaPage() {
         <div className="relative z-10 max-w-2xl space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/20 text-pink-300 text-xs font-bold border border-pink-500/40">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>今日头条独占神作 · AI风月高定</span>
+            <span>今日头条独占神作 · 幻诺高定</span>
           </div>
 
           <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white font-mono">

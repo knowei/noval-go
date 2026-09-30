@@ -97,13 +97,17 @@ export function PrimarySidebar() {
             className="flex items-center gap-2.5 group w-full justify-center"
             title="回到首页广场"
           >
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-rose-500/25 group-hover:scale-105 group-hover:shadow-rose-500/40 transition duration-300 font-black text-sm select-none">
-              风月
+            <div className="w-10 h-10 rounded-2xl overflow-hidden border border-amber-500/40 shadow-lg shadow-rose-500/25 group-hover:scale-105 group-hover:shadow-rose-500/40 transition duration-300 relative bg-[#13151f] shrink-0">
+              <img
+                src="/logo.png"
+                alt="幻诺剧场"
+                className="w-full h-full object-cover"
+              />
             </div>
             {isMobile && (
               <div className="flex-1 min-w-0">
-                <span className="font-bold text-sm text-gray-100 font-mono block truncate">AI风月剧场</span>
-                <span className="text-[10px] text-gray-400 block">沉浸互动剧本</span>
+                <span className="font-bold text-sm text-gray-100 font-mono block truncate">幻诺剧场</span>
+                <span className="text-[10px] text-gray-400 block font-mono truncate">Novala · 沉浸角色扮演</span>
               </div>
             )}
           </Link>
@@ -305,10 +309,10 @@ export function PrimarySidebar() {
               <Menu className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-1.5">
-              <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-amber-500 via-rose-500 to-pink-500 flex items-center justify-center text-white text-[11px] font-black">
-                风月
+              <div className="w-6 h-6 rounded-lg overflow-hidden border border-amber-500/40 shrink-0">
+                <img src="/logo.png" alt="幻诺" className="w-full h-full object-cover" />
               </div>
-              <span className="font-bold text-xs text-gray-200">AI风月剧场</span>
+              <span className="font-bold text-xs text-gray-200 font-mono">幻诺剧场</span>
             </div>
           </div>
 
