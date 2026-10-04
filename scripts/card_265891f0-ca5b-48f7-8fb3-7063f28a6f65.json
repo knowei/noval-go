@@ -1,0 +1,223 @@
+{
+  "code": 100000,
+  "msg": "ok",
+  "data": {
+    "apps": {
+      "id": "265891f0-ca5b-48f7-8fb3-7063f28a6f65",
+      "app_model_config_id": "f67e26e4-cfab-48ea-976c-469916cdcac2",
+      "created_by_account_id": "ef8fca32-0775-41dd-991f-c7341ceb0a4a",
+      "name": "🩵妈妈🩵【全服装立绘】",
+      "mode": "chat",
+      "icon": "",
+      "icon_background": "",
+      "status": "",
+      "is_demo": false,
+      "is_universal": false,
+      "description": "<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>唐懿</title>\n<style>\n@keyframes shake{0%,100%{transform:translateX(0);}10%,30%,50%,70%,90%{transform:translateX(-4px);}20%,40%,60%,80%{transform:translateX(4px);}}\n@keyframes cornerFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}\n.shake-it{animation:shake 0.4s ease;}\n#chat-ui-bot-login-v30{font-family:'Microsoft YaHei',sans-serif;color:#333;line-height:1.6;perspective:1500px;overflow:hidden;}\n#chat-ui-bot-login-v30 body{background:#eef2f5;margin:0;padding:20px;display:flex;justify-content:center;align-items:center;min-height:100vh;}\n#chat-ui-bot-login-v30 .card-container{position:relative;width:100%;max-width:462px;min-height:780px;margin:auto;border-radius:8px;box-shadow:0 20px 40px rgba(0,0,0,0.1);overflow:hidden;border:1px solid #cfd8dc;display:flex;flex-direction:column;background:url('https://img.remit.ee/api/file/BQACAgUAAyEGAASHRsPbAAERjGlprgngJjV1z-XqxNQzSO031y3aLQACLiEAAnZPcFWfshTsWljwuDoE.png') no-repeat center top;background-size:cover;}\n#chat-ui-bot-login-v30 .content-layer{position:relative;z-index:5;padding:20px;flex:1;display:flex;flex-direction:column;background:linear-gradient(to bottom, rgba(255,255,255,0) 75%, rgba(0,0,0,0.8) 100%);}\n#chat-ui-bot-login-v30 .title{padding:30px 10px 10px 10px;text-align:center;position:relative;}\n#chat-ui-bot-login-v30 .title h2{margin:0;font-weight:900;font-size:1.8rem;letter-spacing:2px;color:#1a237e;text-shadow:0 0 10px rgba(255,255,255,0.8);}\n#chat-ui-bot-login-v30 .title .subtitle{margin-top:5px;font-size:1em;font-weight:bold;color:#fff;letter-spacing:1px;text-shadow:0 1px 3px rgba(0,0,0,0.9),0 0 8px rgba(0,0,0,0.5);}\n#chat-ui-bot-login-v30 .corner-btn{position:absolute;font-size:26px;cursor:pointer;z-index:100;animation:cornerFloat 2.5s ease-in-out infinite;filter:drop-shadow(0 0 5px #fff);color:#1a237e;top:15px;}\n#chat-ui-bot-login-v30 .corner-btn.left{left:15px;}\n#chat-ui-bot-login-v30 .spacer{flex:1;}\n#chat-ui-bot-login-v30 .input-area{background:rgba(255,255,255,0.4);padding:15px;margin-top:auto;border-radius:4px;border:1px solid rgba(255,255,255,0.6);backdrop-filter:blur(8px);}\n#chat-ui-bot-login-v30 .input-box,#chat-ui-bot-login-v30 .textarea-box{width:90%;padding:10px 12px;border-radius:2px;font-size:14px;outline:none;transition:0.3s;color:#000;margin:0 auto 10px auto;display:block;box-sizing:border-box;border:1px solid rgba(26,35,126,0.2);background:rgba(255,255,255,0.7);}\n#chat-ui-bot-login-v30 .input-box:focus,#chat-ui-bot-login-v30 .textarea-box:focus{border-color:#1a237e;background:rgba(255,255,255,0.95);}\n#chat-ui-bot-login-v30 .input-box.error-border{border:2px solid #c62828;background:rgba(255,230,230,0.8);}\n#chat-ui-bot-login-v30 .error-hint{color:#c62828;font-size:11px;text-align:center;margin:-5px auto 8px auto;display:none;font-weight:bold;}\n#chat-ui-bot-login-v30 .button{width:90%;padding:12px 0;border-radius:2px;font-size:16px;font-weight:bold;cursor:pointer;transition:0.3s;margin:0 auto;display:block;border:1px solid #1a237e;background:rgba(26,35,126,0.8);color:#fff;letter-spacing:2px;}\n#chat-ui-bot-login-v30 .button:hover{background:#0d47a1;box-shadow:0 0 15px rgba(26,35,126,0.3);}\n#chat-ui-bot-login-v30 .details-box{padding:12px;border-top:1px solid #263238;font-size:11px;color:#90a4ae;background:#101010;text-align:center;}\n/* 左侧开局面板——改为双列图�的格式 */\n#chat-ui-bot-login-v30 .opening-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:#f0f4f8;z-index:200;transform:translateX(-100%);transition:transform 0.5s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;}\n#chat-ui-bot-login-v30 .opening-overlay.active{transform:translateX(0);}\n#chat-ui-bot-login-v30 .panel-header{padding:18px;background:#fff;border-bottom:1px solid #d1d9e0;display:flex;align-items:center;justify-content:space-between;}\n#chat-ui-bot-login-v30 .small-btn{padding:6px 15px;border:1px solid #1a237e;background:#fff;color:#1a237e;font-size:12px;cursor:pointer;font-weight:bold;}\n#chat-ui-bot-login-v30 .opening-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:15px;overflow-y:auto;flex:1;}\n#chat-ui-bot-login-v30 .opening-grid::-webkit-scrollbar{width:4px;}\n#chat-ui-bot-login-v30 .opening-grid::-webkit-scrollbar-thumb{background:#1a237e;}\n#chat-ui-bot-login-v30 .opening-item{display:flex;flex-direction:column;align-items:center;background:#fff;border:1px solid #e0e6ed;padding:4px;border-radius:2px;cursor:pointer;transition:0.2s;}\n#chat-ui-bot-login-v30 .opening-item:hover{border-color:#1a237e;background:#f0f4ff;}\n#chat-ui-bot-login-v30 .opening-item.selected{background:#e8eaf6;border-color:#1a237e;box-shadow:0 0 0 2px rgba(26,35,126,0.2);}\n#chat-ui-bot-login-v30 .opening-item img{width:100%;aspect-ratio:2/3;object-fit:cover;filter:brightness(0.95);}\n#chat-ui-bot-login-v30 .opening-item .op-title{font-size:11px;margin-top:6px;color:#1a237e;font-weight:bold;text-align:center;}\n#chat-ui-bot-login-v30 .opening-item .op-desc{font-size:9px;color:#607d8b;line-height:1.4;text-align:center;padding:2px 4px 4px 4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}\n#finalCopyToast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a237e;color:#fff;padding:15px 30px;border-radius:2px;display:none;z-index:999;font-weight:bold;letter-spacing:1px;}\n#openingToast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1a237e;color:#fff;padding:12px 24px;border-radius:2px;display:none;z-index:999;font-size:13px;font-weight:bold;}\n</style>\n</head>\n<body>\n<div id=\"chat-ui-bot-login-v30\">\n<div class=\"card-container\">\n\n<div class=\"corner-btn left\" onclick=\"openOpenings()\">📖</div>\n\n<div class=\"content-layer\">\n<div class=\"title\">\n<h2>🩵妈妈🩵</h2>\n<div class=\"subtitle\">“嗯，回来了吗”</div>\n</div>\n<div class=\"spacer\"></div>\n<div class=\"input-area\">\n<input type=\"text\" id=\"name\" placeholder=\"你叫什么名字\" class=\"input-box\">\n<div class=\"error-hint\" id=\"nameError\">请输入你的名字</div>\n<input type=\"text\" id=\"role\" placeholder=\"你是她的？（默认：儿子）\" class=\"input-box\">\n<input type=\"text\" id=\"setting\" placeholder=\"你长什么样？（默认：普通身材）\" class=\"input-box\">\n<textarea id=\"opening\" class=\"textarea-box\" rows=\"3\"></textarea>\n<button class=\"button\" onclick=\"copyInfo()\">开始</button>\n</div>\n</div>\n<div class=\"details-box\">点击 📖 选择开局剧情</div>\n\n<!-- 左侧：开局面板（双列图鉴格式） -->\n<div class=\"opening-overlay\" id=\"openingOverlay\">\n<div class=\"panel-header\">\n<span style=\"color:#1a237e;font-weight:900;letter-spacing:1px;\">选个开局</span>\n<div class=\"small-btn\" onclick=\"closeOpenings()\">返回</div>\n</div>\n<div class=\"opening-grid\">\n\n<div class=\"opening-item\" onclick=\"selectOpening(0)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/蓝厨房围裙棕长袖体恤黑长裙.png\">\n<div class=\"op-title\">放学到家</div>\n<div class=\"op-desc\">推开门闻到饭菜香，她系着围裙头也没回</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(1)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/灰色瑜伽背心紧身裤.png\">\n<div class=\"op-title\">周末早晨</div>\n<div class=\"op-desc\">撞见她穿紧身瑜伽裤趴在垫子上拉伸</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(2)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/白浴巾包裹.png\">\n<div class=\"op-title\">深夜撞见</div>\n<div class=\"op-desc\">浴室门突然开了，她裹着浴巾头发还在滴水</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(3)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/黑吊带睡裙.png\">\n<div class=\"op-title\">睡不着的夜</div>\n<div class=\"op-desc\">凌晨她穿吊带睡裙窝在沙发上刷手机</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(4)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/黑卫衣牛仔裤.png\">\n<div class=\"op-title\">超市采购</div>\n<div class=\"op-desc\">去不去？不去我自己走了</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(5)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/雷电将军cos服.png\">\n<div class=\"op-title\">说到做到</div>\n<div class=\"op-desc\">考进前三，她穿着cos服面无表情出来了</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(6)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/深蓝工作衬衫黑长裤.png\">\n<div class=\"op-title\">第一天上班</div>\n<div class=\"op-desc\">她找了份新工作，穿衬衫在玄关照镜子</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(7)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/白背心牛仔短裤.png\">\n<div class=\"op-title\">空调坏了</div>\n<div class=\"op-desc\">大暑天空调罢工，她脖子上全是汗</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(8)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/深蓝死库水.png\">\n<div class=\"op-title\">亲子游泳</div>\n<div class=\"op-desc\">她穿连体泳衣从更衣室出来，面无表情</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(9)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/黑短袖短款旗袍.png\">\n<div class=\"op-title\">同学聚会</div>\n<div class=\"op-desc\">穿着旗袍照镜子，看到你在门口：敲门</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(10)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/蓝汉服长裙.png\">\n<div class=\"op-title\">被朋友拉走</div>\n<div class=\"op-desc\">穿了身汉服耳朵尖发红：一个字别说</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(11)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/红圣诞吊带短裙圣诞帽.png\">\n<div class=\"op-title\">平安夜</div>\n<div class=\"op-desc\">妈妈在客厅穿圣诞裙踩凳子挂彩球</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(12)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/米色针织衫外套白体恤蓝长裙.png\">\n<div class=\"op-title\">周末逛街</div>\n<div class=\"op-desc\">商场搞活动，带你买两件衣服。快点</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(13)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/深蓝警服黑包臀裙裤袜.png\">\n<div class=\"op-title\">储物间</div>\n<div class=\"op-desc\">翻到一套叠得整齐的旧警服。她：放回去</div>\n</div>\n\n<div class=\"opening-item\" onclick=\"selectOpening(14)\">\n<img src=\"https://ttc.ygjg9.qzz.io/api/rfile/白护士套装.png\">\n<div class=\"op-title\">去医院找她</div>\n<div class=\"op-desc\">手腕崴了去她医院，她皱眉捏住你的手腕</div>\n</div>\n\n</div>\n</div>\n\n</div>\n</div>\n\n<div id=\"finalCopyToast\">已复制，粘贴发送即可</div>\n<div id=\"openingToast\">已切换开局</div>\n\n<script>\nvar openingTexts = [\n\"（放学回家，推开门就闻到了菜香。厨房里妈妈系着蓝围裙背对着我切菜，听到动静头也没回：'手洗了没？没洗别碰桌子。'）\",\n\"（周六早上，我迷迷糊糊去客厅倒水，发现妈妈穿着灰色瑜伽背心和紧身裤趴在地垫上拉伸。她头也没抬：'水壶在厨房，别踩我垫子。'）\",\n\"（半夜起来上厕所，走廊没开灯。浴室门突然从里面打开，妈妈裹着白浴巾出来，头发湿漉漉的，跟我撞了个正着。她皱眉：'……大半夜不出声走路，吓死人。'）\",\n\"（夏天凌晨两点，热得睡不着。我去客厅开空调，发现妈妈穿着黑色吊带睡裙窝在沙发角落刷手机，屏幕的光照着她的脸。她瞥了我一眼：'你也睡不着？'）\",\n\"（周末下午，妈妈难得穿了件黑卫衣配牛仔裤，头发随便扎了个马尾，拎着环保袋站在门口穿鞋：'去超市，你去不去？不去我走了。'）\",\n\"（之前妈妈说过如果考进前三就答应我一个要求，我说要她穿雷电将军cos服拍一张照。今天她穿着cos服脸上没什么表情但耳朵尖发红：'……说到做到。拍完马上脱。'）\",\n\"（早上出门前，妈妈穿着深蓝色工作衬衫和黑裤子站在玄关照镜子，她找了份新工作，今天第一天。我多看了两眼，她头也没回：'看什么，别迟到。走了。'）\",\n\"（大暑天，空调坏了，修理工说明天才能来。妈妈穿着白背心和牛仔短裤坐在客厅用蒲扇扇风，脖子锁骨上全是汗。她烦躁地看了我一眼：'别靠过来。热。'）\",\n\"（学校通知要搞亲子游泳活动，家长必须参加。到了泳池边，妈妈从更衣室出来，穿着深蓝色连体泳衣，面无表情地拽了拽肩带：'别盯着看。下水。'）\",\n\"（周六傍晚，妈妈站在卧室穿衣镜前，穿着一件黑色短款旗袍侧身打量自己，好像在决定要不要穿这件去参加同学聚会。看到我杵在门口，她冷冷地：'不会敲门？'）\",\n\"（妈妈被她那个唯一的闺蜜硬拉去参加什么传统文化市集，穿了一身蓝色汉服站在家门口，表情冰冷但耳朵尖有点红。她看了我一眼：'一个字都不许说。走了。'）\",\n\"（平安夜放学回家，发现客厅角落多了一棵半人高的塑料圣诞树。妈妈穿着红色圣诞吊带裙踩着小凳子往树上挂彩球，看到我进门手顿了一下：'看什么看，只是体验一下圣诞……。'）\",\n\"（周末，妈妈穿着米色针织外套和蓝长裙，背着包站在门口看手机等我：'商场搞活动，带你去买两件衣服。动作快，磨蹭什么。'）\",\n\"（我在储物间翻东西找旧课本，从柜子深处翻出一套叠得整整齐齐的深蓝色警服和一顶大檐帽。妈妈不知什么时候走到我身后，盯着我手里的衣服沉默了几秒：'……放回去。别翻了。'）\",\n\"（下午打球的时手腕崴了，我特意去医院挂了骨科走到护士站，妈妈穿着护士服在写什么东西。她抬头看见我，愣了一下皱着眉走过来捏住我的手腕：'怎么弄的？——别动，我看看。'）\"\n];\n\ndocument.addEventListener('DOMContentLoaded', function(){\n    document.getElementById(\"opening\").value = openingTexts[0];\n});\n\nfunction openOpenings(){\n    document.getElementById('openingOverlay').classList.add('active');\n}\nfunction closeOpenings(){\n    document.getElementById('openingOverlay').classList.remove('active');\n}\nfunction selectOpening(index){\n    document.getElementById('opening').value = openingTexts[index];\n    var items = document.querySelectorAll('.opening-item');\n    items.forEach(function(item){ item.classList.remove('selected'); });\n    items[index].classList.add('selected');\n    var toast = document.getElementById('openingToast');\n    toast.style.display = 'block';\n    setTimeout(function(){ toast.style.display = 'none'; }, 800);\n    setTimeout(function(){ closeOpenings(); }, 600);\n}\nfunction copyInfo(){\n    var nameInput = document.getElementById(\"name\");\n    var nameError = document.getElementById(\"nameError\");\n    var name = nameInput.value.trim();\n\n    if(!name){\n        nameInput.classList.add('error-border','shake-it');\n        nameError.style.display = 'block';\n        nameInput.focus();\n        setTimeout(function(){\n            nameInput.classList.remove('shake-it');\n        }, 400);\n        nameInput.addEventListener('input', function handler(){\n            if(nameInput.value.trim()){\n                nameInput.classList.remove('error-border');\n                nameError.style.display = 'none';\n                nameInput.removeEventListener('input', handler);\n            }\n        });\n        return;\n    }\n\n    nameInput.classList.remove('error-border');\n    nameError.style.display = 'none';\n\n    var copyText = \"玩家姓名: \" + name +\n        \"\\n我的身份: \" + (document.getElementById(\"role\").value || \"她的儿子\") +\n        \"\\n特征: \" + (document.getElementById(\"setting\").value || \"普通身材\") +\n        \"\\n\\n\" + document.getElementById(\"opening\").value;\n    var textArea = document.createElement(\"textarea\");\n    textArea.value = copyText;\n    document.body.appendChild(textArea);\n    textArea.select();\n    document.execCommand('copy');\n    document.body.removeChild(textArea);\n    document.getElementById(\"finalCopyToast\").style.display = \"block\";\n    setTimeout(function(){ document.getElementById(\"finalCopyToast\").style.display = \"none\"; }, 1500);\n}\n</script>\n</body>",
+      "cover": "https://catai.wiki/07ee22af-a885-41d8-2616-08c22f407100/cover",
+      "cover_tiny": "",
+      "summary": "❄️【妈妈】【冷淡】❄️（周五早上，我还在被窝里睡着。忽然鼻子被人捏住，喘不上气，迷迷糊糊听见一个冷冰冰的声音：'几点了，还不起。'）",
+      "is_anonymous": false,
+      "memo": "",
+      "reward_points": 0,
+      "category": 0,
+      "total_fish_balls": 0,
+      "type": 1,
+      "is_public": true,
+      "language": "zh-Hans",
+      "age_rating": 1,
+      "gender": 1,
+      "is_web3_app": false,
+      "review_status": 0,
+      "is_available_not_public": true,
+      "average_cost_per_message": 1705,
+      "players_count": 46360,
+      "conv_count_for_avg_msg_per_conv": 0,
+      "like_count": 264,
+      "rating_count": 90,
+      "avg_rating_score": 9.7,
+      "depth_play_user_count": 15846,
+      "avg_play_round_count": 26,
+      "overall_rank": 22018120875,
+      "score": 0,
+      "first_published_at": 1771044374,
+      "published_at": 1786260231,
+      "deleted_at": 0,
+      "recommendation_reason": "",
+      "favorites_count": 3155,
+      "comments_count": 867,
+      "mod_permission": 4,
+      "disable_css_mod": false,
+      "has_special_cg": false
+    },
+    "model_config": {
+      "id": "f67e26e4-cfab-48ea-976c-469916cdcac2",
+      "app_id": "265891f0-ca5b-48f7-8fb3-7063f28a6f65",
+      "provider": "",
+      "model_id": "",
+      "configs": "",
+      "opening_statement": "选择一段开场白",
+      "suggested_questions": null,
+      "suggested_questions_after_answer": {
+        "enabled": false
+      },
+      "speech_to_text": {
+        "enabled": false
+      },
+      "text_to_speech": {
+        "enabled": false,
+        "language": "",
+        "voice": ""
+      },
+      "more_like_this": "",
+      "model": {
+        "provider": "manei_google_anti",
+        "name": "gemini-3-flash-preview",
+        "completion_params": {}
+      },
+      "user_input_form": "",
+      "dataset_query_variable": "",
+      "pre_prompt": "",
+      "pre_prompt_sort": 0,
+      "agent_mode": {
+        "enabled": false,
+        "max_iteration": 5,
+        "strategy": "react",
+        "tools": []
+      },
+      "sensitive_word_avoidance": {
+        "configs": [],
+        "enabled": false,
+        "type": ""
+      },
+      "retriever_resource": {
+        "enabled": false
+      },
+      "prompt_type": "simple",
+      "chat_prompt_config": "",
+      "completion_prompt_config": "",
+      "dataset_configs": {
+        "datasets": {
+          "datasets": []
+        },
+        "retrieval_model": "single"
+      },
+      "external_data_tools": "",
+      "file_upload": {
+        "image": {
+          "detail": "high",
+          "enabled": false,
+          "number_limits": 3,
+          "transfer_methods": [
+            "remote_url",
+            "local_file"
+          ]
+        }
+      },
+      "world_book": "",
+      "banned_words": "",
+      "pre_length": 5853,
+      "pre_prompt_and_pre_post_text_length": 5853,
+      "world_book_length": 823,
+      "ai_opening_statements": "",
+      "bg_image": "",
+      "bg_mobile": "https://catai.wiki/bf90ed76-d007-4159-e154-9ba887a5cd00/mobile",
+      "built_in_css": "    .role-player {\n      color: #00bfff; /* 天蓝色 — 玩家用户 */\n    }\n    .role-jiejie {\n      color: #ff1f1f; /* 亮红色 — 女主角 */\n    }\n    .role-other-male {\n      color: #8b4513; /* 棕色 — 其他男性 */\n    }\n    .role-other-female {\n      color: #fa8072; /* 浅红色 — 其他女性 */\n    }\n\n/* 开始信息栏 */\n.x{border:2px solid #808080;padding:8px 10px;border-radius:6px;background:rgba(128,128,128,0.05);font-size:0.9em;color:#333;line-height:1.4}.x div{margin:2px 0;display:flex;align-items:center}\n\n/* 状态栏 */\n@keyframes k-fade{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}\n.k-sum{background:linear-gradient(145deg,#808080,#696969);color:#fff;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:12px;display:inline-block;margin-top:5px;transition:all 0.3s ease;box-shadow:2px 2px 5px rgba(0,0,0,0.1);user-select:none}\n.k-sum:hover{background:linear-gradient(145deg,#909090,#757575);transform:scale(1.02);box-shadow:3px 3px 8px rgba(0,0,0,0.15)}\n.k-box{background:#dcdcdc;border-radius:6px;padding:10px;margin-top:8px;font-size:14px;text-align:left;white-space:pre-wrap;line-height:1.6;box-shadow:inset 0 0 10px rgba(0,0,0,0.05);border:1px solid rgba(255,255,255,0.3)}\ndetails[open] .k-box{animation:k-fade 0.4s cubic-bezier(0.4,0,0.2,1)}\n.k-img{margin:8px 0;text-align:left;white-space:normal;position:relative}\n/* 新增：红色警示标题样式 */\n.k-red{color:#8B0000;font-weight:bold;cursor:pointer;margin-top:5px;display:inline-block}\n/* 新增：普通子标题样式 */\n.k-sub{cursor:pointer;opacity:0.8;font-size:0.9em;margin-top:5px;display:inline-block}\n\n\n\n/* ================= 通用样式 (防干扰版) ================= */\n[class^=\"fz-\"],[class^=\"bq-\"]{background-size:cover;background-position:center;background-repeat:no-repeat;display:inline-block;vertical-align:top;filter:none!important;color-scheme:light!important;forced-color-adjust:none!important;background-color:transparent!important;border:1px solid rgba(0,0,0,0.1);border-radius:6px;box-shadow:0 2px 5px rgba(0,0,0,0.2);}\n[class^=\"fz-\"]{width:200px;height:300px;margin:5px;}\n[class^=\"bq-\"]{width:200px;height:150px;margin:10px 5px;}\n\n/* ================= 服装 (fz-xxxx) ================= */\n.fz-vest{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/白背心牛仔短裤.png')}\n.fz-nrse{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/白护士套装.png')}\n.fz-coat{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/白毛领厚外套黑毛衣黑包臀裙黑裤袜.png')}\n.fz-olst{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/白纽扣长袖衬衫黑包臀裙黑裤袜.png')}\n.fz-dres{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/白色吊带连衣裙.png')}\n.fz-kimn{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/白色和服.png')}\n.fz-knit{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/白色露肩包臀毛衣黑裤袜.png')}\n.fz-flor{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/白色碎花背心白短裤.png')}\n.fz-bunn{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/白兔女郎白丝吊带袜.png')}\n.fz-biki{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/白性感比基尼.png')}\n.fz-towl{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/白浴巾包裹.png')}\n.fz-preg{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/白长裙大孕肚.png')}\n.fz-miku{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/初音未来cos服.png')}\n.fz-wedn{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/纯白性感婚纱吊带丝袜.png')}\n.fz-slp1{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/黑吊带睡裙.png')}\n.fz-qipa{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/黑短袖短款旗袍.png')}\n.fz-robe{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/黑透明睡袍真空露出半个阴唇.png')}\n.fz-bun2{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/黑兔女郎渔网袜.png')}\n.fz-hood{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/黑卫衣牛仔裤.png')}\n.fz-undr{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/黑胸罩黑内裤.png')}\n.fz-swea{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/黑长袖包臀毛衣黑裤袜.png')}\n.fz-stu1{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/红领结白衬衫黑短裙夏学生服.png')}\n.fz-stu2{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/红领结黑外套白衬衫黑短裙秋季学生服.png')}\n.fz-xmas{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/红圣诞吊带短裙圣诞帽.png')}\n.fz-yoga{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/灰色瑜伽背心紧身裤.png')}\n.fz-olds{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/旧黑长袖包臀毛衣.png')}\n.fz-aprn{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/蓝厨房围裙棕长袖体恤黑长裙.png')}\n.fz-hanf{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/蓝汉服长裙.png')}\n.fz-raid{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/雷电将军cos服.png')}\n.fz-casu{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/米色针织衫外套白体恤蓝长裙.png')}\n.fz-worn{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/破旧发黄白体恤牛仔短裤.png')}\n.fz-work{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/深蓝工作衬衫黑长裤.png')}\n.fz-poli{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/深蓝警服黑包臀裙裤袜.png')}\n.fz-swim{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/深蓝死库水.png')}\n\n/* ================= 新增服装 (fz-xxxx) ================= */\n.fz-wslp{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/ty白吊带超薄短睡裙.png')}\n.fz-wtee{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/ty白短袖体恤黑短裤.png')}\n.fz-whtl{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/ty白色酒店长睡袍.png')}\n.fz-bbik{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/ty黑色比基尼泳衣.png')}\n.fz-bslk{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/ty黑色丝绸吊带睡裙超短款.png')}\n.fz-wrob{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/ty酒红色睡袍短款.png')}\n.fz-wlng{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/ty酒红色睡袍长宽.png')}\n.fz-rslp{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/ty亮红色吊带睡裙黑蕾丝边.png')}\n.fz-nude{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/唐懿冷淡全裸体.png')}\n.fz-gbik{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/ty绿色花纹比基尼.png')}\n.fz-gslp{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/ty玫瑰金长袖短睡袍.png')}\n.fz-brwn{background-image:url('https://ttc.ygjg9.qzz.io/api/rfile/ty棕长袖体恤黑长裙.png')}\n\n\n\n/* ===== 公共 ===== */\nWorld,secret{display:none!important}\nwc p,wm p,py p,wf p{display:contents!important}\nwc>br,wm br,py br,wl br,wl>i>br,pl br,po>br,mg>br,wf>br,wf>p::before,wf>p::after,wlist br,wtop br,wi>br{display:none!important}\nua span br,ub span br,po span br,it br{display:inline!important}\n/* 👇 修复这里：把 wf 加上去了，让它拥有固定的手机外框！ */\nwm,wc,py,wf{width:270px;height:450px;background:#fff;font-family:-apple-system,BlinkMacSystemFont,\"Helvetica Neue\",\"PingFang SC\",\"Microsoft YaHei\",Arial,sans-serif;border-radius:8px;border:.7px solid #bdbdbd;box-shadow:0 7px 22px rgba(0,0,0,.13);position:relative;margin:30px auto;overflow:hidden;display:block;color:#111;-webkit-font-smoothing:antialiased}\n\n/* ===== 1 主页 wm ===== */\nwh{display:flex;align-items:center;justify-content:center;position:absolute;top:0;left:0;width:100%;height:44px;background:#ededed;z-index:10;border-bottom:.5px solid #d8d8d8;font-size:15px;font-weight:400;color:#111;box-sizing:border-box}\nwh::before{content:'🔍';position:absolute;right:40px;top:0;width:22px;height:44px;line-height:44px;text-align:center;font-size:14px}\nwh::after{content:none!important}\nwl{display:block;position:absolute;top:44px;bottom:52px;width:100%;overflow-y:auto;background:#fff}\nwl::-webkit-scrollbar{display:none}\nwl>i{display:block;position:relative;height:62px;padding:37px 42px 0 54px;box-sizing:border-box;border-bottom:.5px solid #ededed;font-style:normal;font-size:10.5px;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff}\nwl>i::before{content:attr(a);position:absolute;left:11px;top:9px;width:38px;height:38px;border-radius:5px;background-color:#7890aa;color:#fff;font-size:14px;font-weight:400;display:flex;align-items:center;justify-content:center;overflow:hidden;box-sizing:border-box}\nwl>i:nth-child(2n):before{background-color:#07c160}\nwl>i:nth-child(3n):before{background-color:#6688a8}\nwl>i:nth-child(4n):before{background-color:#d48b68}\nwl>i:nth-child(5n):before{background-color:#8c78a6}\nwl>i:nth-child(6n):before{background-color:#5d9999}\nwl>i::after{content:attr(n);position:absolute;left:54px;top:12px;font-size:13px;color:#171717;font-weight:400;line-height:1}\nwl>i b{position:absolute;right:11px;top:12px;font-weight:400;font-size:9.5px;color:#aaa;line-height:1}\nwl>i.gp1::before{content:'👥';background-color:#e9e9e9;color:#555;font-size:18px}\nwm::before{content:'➕';position:absolute;z-index:20;right:8px;top:0;width:26px;height:44px;line-height:44px;text-align:center;font-size:15px}\nwm::after{content:none!important}\nwn{display:flex;position:absolute;bottom:0;left:0;width:100%;height:52px;background:#f7f7f7;border-top:.5px solid #dcdcdc;z-index:10}\nwn s{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:8.5px;color:#181818;font-weight:400;text-decoration:none;gap:2px;line-height:1}\nwn s.on1{color:#07c160}\nwn s::before{content:'';display:block;font-size:16px;line-height:1}\nwn s:nth-child(1)::before{content:'💬'}\nwn s.on1:nth-child(1)::before{content:'💚'}\nwn s:nth-child(2)::before{content:'👤'}\nwn s:nth-child(3)::before{content:'🧭'}\nwn s:nth-child(4)::before{content:'🙂'}\n\n/* ===== 2 聊天 wc ===== */\ncn{display:flex;align-items:center;justify-content:center;position:absolute;top:0;left:0;width:100%;height:44px;background:#ededed;z-index:10;border-bottom:.5px solid #d8d8d8;font-size:14px;font-weight:400;color:#111;box-sizing:border-box}\ncn::before{content:'‹';position:absolute;left:10px;top:0;width:22px;height:44px;font-size:28px;line-height:42px;color:#111}\ncn::after{content:'⋯';position:absolute;right:10px;top:0;height:44px;font-size:18px;color:#111;line-height:42px}\nmg{display:block;position:absolute;top:44px;bottom:46px;left:0;width:100%;overflow-y:auto;background:#ededed;padding:10px 0 15px;box-sizing:border-box}\nmg::-webkit-scrollbar{display:none}\nsy{display:block;width:max-content;max-width:80%;text-align:center;font-size:8.5px;color:#888;background:#dcdcdc;border-radius:3px;padding:3px 5px;margin:8px auto 14px;line-height:1}\nua,ub{display:block;position:relative;margin:0 9px 16px;min-height:34px;box-sizing:border-box}\nua{padding-left:42px;text-align:left}\nub{padding-right:42px;text-align:right}\nua::before,ub::before{content:attr(data-a);position:absolute;top:0;width:34px;height:34px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;overflow:hidden;box-sizing:border-box}\nua::before{left:0;background:#879bb2}\nub::before{right:0;background:#69b957}\nua::after,ub::after{content:attr(data-n);position:absolute;top:0;font-size:8px;color:#999;line-height:1;white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis}\nua::after{left:42px}\nub::after{right:42px;text-align:right}\nua span,ub span{display:inline-block;width:fit-content;max-width:72%;font-size:12px;padding:8px 10px;border-radius:4px;line-height:1.42;word-break:break-word;position:relative;text-align:left;box-sizing:border-box;vertical-align:top;margin-top:12px}\nua span{background:#fff;color:#222;border:.5px solid #e5e5e5}\nub span{background:#95ec69;color:#222}\nua span::before,ub span::before{content:'';position:absolute;top:10px;border-top:5px solid transparent;border-bottom:5px solid transparent}\nua span::before{left:-5px;border-right:5px solid #fff}\nub span::before{right:-5px;border-left:5px solid #95ec69}\nua span:has(div[class]),ub span:has(div[class]){padding:0;background:transparent;border:0;max-width:73%}\nua span:has(div[class])::before,ub span:has(div[class])::before{display:none}\nua span div[class],ub span div[class]{display:flex;align-items:center;justify-content:center;width:132px;height:132px;border-radius:2px;background:#f3f3f3;overflow:hidden;font-size:56px;line-height:1}\nua span.hb,ub span.hb,ua span.zz,ub span.zz{background:#fa9d3b;color:#fff;min-width:158px;max-width:190px;min-height:64px;padding:12px 8px 22px 42px;font-size:12px;line-height:1.35;border:0}\nua span.hb::before,ub span.hb::before,ua span.zz::before,ub span.zz::before{content:'🧧';left:4px;top:8px;width:34px;height:34px;border:0;font-size:28px;line-height:34px;text-align:center}\nua span.zz::before,ub span.zz::before{content:'💸'}\nua span.hb::after,ub span.hb::after,ua span.zz::after,ub span.zz::after{content:'微信红包';display:block;position:absolute;bottom:0;left:0;width:100%;height:18px;box-sizing:border-box;padding:3px 8px;font-size:8px;color:rgba(255,255,255,.8);background:rgba(0,0,0,.08);border-radius:0 0 4px 4px;text-align:left}\nua span.zz::after,ub span.zz::after{content:'微信转账'}\nwb{position:absolute;bottom:0;left:0;width:100%;height:46px;background:#f7f7f7;border-top:.5px solid #d7d7d7;z-index:15;box-sizing:border-box}\nwb::before{content:'🎤';position:absolute;left:6px;top:0;width:24px;height:46px;line-height:46px;text-align:center;font-size:15px;z-index:2;pointer-events:none}\nwb::after{content:'😊➕';position:absolute;right:6px;top:0;width:52px;height:46px;line-height:46px;text-align:right;font-size:15px;letter-spacing:4px;z-index:2;pointer-events:none}\nwb input{position:absolute;left:32px;width:calc(100% - 90px);top:8px;height:30px;margin:0;padding:0 8px;border:.5px solid #ddd;border-radius:4px;background:#fff;outline:none;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif;font-size:12px;color:#222;z-index:1}\nwc::after{display:none!important}\n\n/* ====== 4. 微信朋友圈 (蓝天白云户外版) ====== */\nwf{overflow-y:auto}\nwf::-webkit-scrollbar{display:none}\nwtop{display:block;position:relative;height:170px;background:#fff;margin-bottom:15px}\n\n/* 顶部灰箭头与相机图标 */\nwtop::before{content:'〈';position:absolute;left:12px;top:12px;font-size:18px;color:#555;z-index:10;font-family:sans-serif;font-weight:400}\nwtop::after{content:'📷';position:absolute;right:12px;top:14px;font-size:16px;z-index:10;filter:grayscale(1) contrast(1.2);opacity:0.8}\n\n/* 蓝天白云打底图 */\nwbg{position:absolute;top:0;left:0;width:100%;height:145px;background-color:#e0f2fe;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='80' font-size='70' opacity='0.5' text-anchor='middle'%3E☁️%3C/text%3E%3C/svg%3E\"),url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='80' font-size='100' opacity='0.4' text-anchor='middle'%3E☁️%3C/text%3E%3C/svg%3E\"),url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='80' font-size='60' opacity='0.8' text-anchor='middle'%3E⛅%3C/text%3E%3C/svg%3E\"),url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='80' font-size='40' opacity='0.7' text-anchor='middle' transform='rotate(15 50 50)'%3E🍃%3C/text%3E%3C/svg%3E\"),url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='80' font-size='90' opacity='0.3' text-anchor='middle'%3E☁️%3C/text%3E%3C/svg%3E\");background-size:60px 60px,110px 110px,50px 50px,35px 35px,130px 130px;background-position:5% 20%,110% -10%,30% 60%,85% 70%,50% 110%;background-repeat:no-repeat;border-bottom:.5px solid #eaeaea}\nwx{position:absolute;bottom:0;right:12px;display:flex;align-items:flex-start;justify-content:flex-end}\nwx::before{content:attr(data-n);font-size:14px;font-weight:600;color:#fff;text-shadow:1px 1px 3px rgba(0,0,0,.5);margin-right:12px;margin-top:11px}\nwx::after{content:attr(data-a);width:45px;height:45px;border-radius:6px;background:#576b95;color:#fff;font-size:18px;font-weight:500;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.15)}\nwlist{display:block;padding-bottom:20px}\nwi{display:block;position:relative;padding:12px 12px 12px 50px;border-bottom:.5px solid #f2f2f2}\nwi::before{content:attr(data-a);position:absolute;left:12px;top:12px;width:30px;height:30px;border-radius:4px;background:#07c160;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center}\nwi:nth-child(2n)::before{background:#ff9800}\nwi:nth-child(3n)::before{background:#e53935}\nwi:nth-child(4n)::before{background:#576b95}\nwi::after{content:attr(data-n);position:absolute;left:50px;top:12px;font-size:13px;font-weight:500;color:#576b95;line-height:1}\nit{display:block;margin-top:16px;font-size:11.5px;color:#111;line-height:1.45;word-break:break-word;margin-bottom:6px}\nip{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:6px;max-width:170px}\nip s{display:flex;align-items:center;justify-content:center;aspect-ratio:1;background:#f0f0f0;font-size:20px;border-radius:2px;text-decoration:none;position:relative;overflow:hidden;box-sizing:border-box}\nif{display:flex;justify-content:space-between;align-items:center;font-size:9.5px;color:#b2b2b2;margin-top:8px}\n\n/* 微信朋友圈 - 评论区 */\nic{display:block;background:#f7f7f7;padding:6px 8px;font-size:11px;color:#111;margin-top:10px;border-radius:4px;line-height:1.4;position:relative}\nic::before{content:'';position:absolute;top:-8px;left:10px;border:4px solid transparent;border-bottom-color:#f7f7f7}\nic b{color:#576b95;font-weight:500;font-style:normal}\n\n\n\n\n\n\n\n\n\n\n\n",
+      "shortcut_commands": [
+        {
+          "command_text": "（**消除HTML空行**）",
+          "label": "消除状态栏空行"
+        }
+      ],
+      "preset_type": 1,
+      "preset_chats": [],
+      "is_have_cg_image": false,
+      "bgm": {
+        "autoplay": true
+      },
+      "dmm_points": 0,
+      "default_sent_message_count": 6,
+      "regex_replaces": [],
+      "ai_variable_prompt": "",
+      "ai_variable_json": "",
+      "ai_variable_template": "",
+      "extend": {}
+    },
+    "tags": [
+      {
+        "id": "4a857ea4-fba0-458f-a8d2-976f089efed5",
+        "name": "可剧情可涩涩"
+      },
+      {
+        "id": "150685c9-598e-4995-854d-5429f027159c",
+        "name": "单人卡"
+      },
+      {
+        "id": "e490f953-63ea-490f-950a-6ea197a0806f",
+        "name": "开局即可色"
+      },
+      {
+        "id": "a5bc9b34-db00-43a5-a6ff-50e8b612a4f4",
+        "name": "低消耗"
+      },
+      {
+        "id": "38c0fddc-2383-4c33-aedb-fad3b0a0c0fb",
+        "name": "纯爱"
+      },
+      {
+        "id": "0fb03550-7bb3-4edb-abcf-91dfe4db2d9c",
+        "name": "巨乳"
+      },
+      {
+        "id": "08554cd2-2e4b-44c7-8ca6-d58ec972b186",
+        "name": "妈妈"
+      }
+    ],
+    "author": {
+      "id": "ef8fca32-0775-41dd-991f-c7341ceb0a4a",
+      "name": "逆天App",
+      "avatar": "https://user.catai.wiki/62d2c879-9453-4368-afc6-e3521d37dbe7",
+      "is_follow": false,
+      "is_owner": false,
+      "medals_info": {
+        "author_medal": {
+          "flower": 0,
+          "gold": 0,
+          "grant_level": 0,
+          "silver": 0
+        },
+        "big_moon_medal": {
+          "grant_level": 0
+        },
+        "consume_medal": {
+          "grant_level": 0
+        },
+        "heat_medal": {
+          "grant_level": 1
+        },
+        "manual_grant_medal": {},
+        "moon_medal": {
+          "grant_level": 0
+        },
+        "official_medal": {
+          "grant_level": 0
+        },
+        "promotion_medal": {
+          "grant_level": 0
+        },
+        "recharge_activity_202507_medal": {
+          "grant_level": 0
+        },
+        "shennong_medal": {
+          "grant_level": 0
+        }
+      },
+      "show_tipping_switch": true
+    },
+    "a_cache": true,
+    "u_cache": true,
+    "is_favorite": false,
+    "is_like": false,
+    "is_available": true
+  }
+}

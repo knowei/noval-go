@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+:root{
+  --bg1:#fdf2f8;
+  --bg2:#f5f0ff;
+  --bg3:#edf2ff;
+  --bg4:#fff6fb;
+  --card:rgba(255,255,255,.82);
+  --card-solid:#ffffff;
+  --border:rgba(167,139,250,.24);
+  --border-strong:rgba(167,139,250,.45);
+  --primary:#a78bfa;
+  --primary-deep:#7c5cd6;
+  --primary-soft:#ede9fe;
+  --accent:#f472b6;
+  --accent-soft:#fce7f3;
+  --gold:#c9a35c;
+  --text:#4a3d63;
+  --text-dim:#78688f;
+  --text-mute:#aa9fc6;
+  --shadow:0 10px 30px rgba(138,110,200,.13);
+  --shadow-lg:0 18px 46px rgba(138,110,200,.22);
+  --radius:20px;
+  --font:'Noto Serif SC','Songti SC',serif;
+  --font-title:'ZCOOL XiaoWei','Noto Serif SC',serif;
+}
+
+body{
+  font-family:var(--font);
+  color:var(--text);
+  background:
+    radial-gradient(circle at 12% 8%, #fce7f3 0%, transparent 42%),
+    radial-gradient(circle at 88% 4%, #e0e7ff 0%, transparent 40%),
+    radial-gradient(circle at 50% 100%, #fae8ff 0%, transparent 55%),
+    linear-gradient(160deg, var(--bg1) 0%, var(--bg2) 45%, var(--bg3) 100%);
+  background-attachment:fixed;
+  min-height:100vh;
+  padding:0 14px 60px;
+  line-height:1.75;
+  font-size:15px;
+  letter-spacing:.02em;
+  overflow-x:hidden;
+}
+
+/* ===== 顶部流光横幅 ===== */
+.hero{
+  max-width:820px;
+  margin:22px auto 18px;
+  position:relative;
+  padding:34px 22px 30px;
+  border-radius:26px;
+  overflow:hidden;
+  text-align:center;
+  background:
+    linear-gradient(135deg, rgba(167,139,250,.92), rgba(244,114,182,.86) 55%, rgba(129,140,248,.92));
+  box-shadow:var(--shadow-lg);
+  border:1px solid rgba(255,255,255,.5);
+}
+.hero::before{
+  content:"";
+  position:absolute;inset:-40%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), transparent 38%),
+    radial-gradient(circle at 70% 70%, rgba(255,255,255,.4), transparent 34%);
+  animation:flow 14s linear infinite;
+}
+@keyframes flow{
+  0%{transform:rotate(0deg) scale(1)}
+  50%{transform:rotate(180deg) scale(1.12)}
+  100%{transform:rotate(360deg) scale(1)}
+}
+.hero>*{position:relative;z-index:2}
+.hero .tag{
+  display:inline-block;
+  font-size:12px;
+  letter-spacing:.4em;
+  padding:4px 14px 4px 18px;
+  border-radius:999px;
+  color:#fff;
+  background:rgba(255,255,255,.22);
+  border:1px solid rgba(255,255,255,.5);
+  backdrop-filter:blur(4px);
+  margin-bottom:14px;
+  text-shadow:0 1px 6px rgba(124,92,214,.4);
+}
+.hero h1{
+  font-family:var(--font-title);
+  font-size:clamp(26px,7vw,40px);
+  color:#fff;
+  letter-spacing:.14em;
+  line-height:1.3;
+  margin-bottom:10px;
+  text-shadow:0 3px 16px rgba(107,70,180,.55);
+}
+.hero .sub{
+  color:rgba(255,255,255,.94);
+  font-size:13.5px;
+  letter-spacing:.1em;
+  text-shadow:0 1px 8px rgba(107,70,180,.45);
+}
+.hero .deco-line{
+  width:60px;height:2px;
+  margin:16px auto 0;
+  background:linear-gradient(90deg,transparent,#fff,transparent);
+  opacity:.85;
+}
+
+/* ===== 通用卡片 ===== */
+.card{
+  max-width:820px;
+  margin:0 auto 18px;
+  background:var(--card);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:22px 20px;
+  position:relative;
+  overflow:hidden;
+  transition:box-shadow .35s ease, transform .35s ease;
+}
+.card:hover{box-shadow:var(--shadow-lg)}
+.card::after{
+  content:"";
+  position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary),var(--accent),var(--primary));
+  opacity:.7;
+}
+
+.sec-head{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:16px;
+}
+.sec-head .ico{
+  width:34px;height:34px;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:11px;
+  font-size:17px;
+  background:linear-gradient(135deg,var(--primary-soft),var(--accent-soft));
+  border:1px solid var(--border-strong);
+  box-shadow:inset 0 1px 4px rgba(255,255,255,.9);
+}
+.sec-head h2{
+  font-family:var(--font-title);
+  font-size:19px;
+  letter-spacing:.08em;
+  color:var(--primary-deep);
+  font-weight:400;
+}
+.sec-head .en{
+  margin-left:auto;
+  font-size:10px;
+  letter-spacing:.28em;
+  color:var(--text-mute);
+  text-transform:uppercase;
+  font-family:var(--font);
+}
+
+/* ===== 简介块 ===== */
+.intro{
+  font-size:14.5px;
+  color:var(--text-dim);
+  text-align:center;
+  line-height:2;
+  padding:16px 12px;
+  border-radius:15px;
+  background:linear-gradient(135deg,rgba(237,233,254,.6),rgba(252,231,243,.55));
+  border:1px dashed var(--border-strong);
+}
+.intro b{color:var(--primary-deep);font-weight:700}
+
+/* ===== 输入区 ===== */
+.field{margin-bottom:14px}
+.field label{
+  display:block;
+  font-size:12.5px;
+  letter-spacing:.16em;
+  color:var(--primary-deep);
+  margin-bottom:7px;
+  font-weight:500;
+  padding-left:4px;
+}
+.field label .dot{
+  display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:var(--accent);margin-right:7px;vertical-align:middle;
+  box-shadow:0 0 8px var(--accent);
+}
+input[type=text],textarea,select{
+  width:100%;
+  font-family:var(--font);
+  font-size:14.5px;
+  color:var(--text);
+  background:rgba(255,255,255,.86);
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:12px 14px;
+  outline:none;
+  transition:border-color .3s,box-shadow .3s,background .3s;
+  resize:vertical;
+  line-height:1.7;
+}
+input[type=text]:focus,textarea:focus,select:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 4px rgba(167,139,250,.16);
+  background:#fff;
+}
+textarea{min-height:70px}
+select{appearance:none;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--primary) 50%),linear-gradient(135deg,var(--primary) 50%,transparent 50%);
+  background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.grid2{grid-template-columns:1fr}}
+
+/* ===== 开场白选择 ===== */
+.opening-list{display:flex;flex-direction:column;gap:11px;margin-top:6px}
+.opening{
+  position:relative;
+  padding:14px 44px 14px 16px;
+  border-radius:14px;
+  background:rgba(255,255,255,.72);
+  border:1px solid var(--border);
+  cursor:pointer;
+  transition:all .3s ease;
+  font-size:13.5px;
+  color:var(--text-dim);
+  line-height:1.8;
+}
+.opening:hover{
+  border-color:var(--border-strong);
+  background:rgba(255,255,255,.96);
+  transform:translateY(-2px);
+  box-shadow:0 8px 22px rgba(138,110,200,.14);
+}
+.opening.active{
+  border-color:var(--primary);
+  background:linear-gradient(135deg,rgba(237,233,254,.95),rgba(252,231,243,.9));
+  box-shadow:0 0 0 3px rgba(167,139,250,.15);
+}
+.opening .num{
+  position:absolute;left:-1px;top:-1px;
+  width:30px;height:30px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;
+  color:#fff;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  border-radius:14px 4px 14px 4px;
+  box-shadow:0 3px 10px rgba(167,139,250,.4);
+}
+.opening .check{
+  position:absolute;right:14px;top:50%;
+  transform:translateY(-50%) scale(0);
+  width:22px;height:22px;border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  color:#fff;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 3px 10px rgba(167,139,250,.4);
+}
+.opening.active .check{transform:translateY(-50%) scale(1)}
+
+/* ===== 生成按钮 ===== */
+.gen-wrap{text-align:center;margin-top:18px}
+.btn-gen{
+  position:relative;
+  font-family:var(--font-title);
+  font-size:17px;
+  letter-spacing:.22em;
+  color:#fff;
+  padding:14px 52px;
+  border:none;border-radius:999px;
+  cursor:pointer;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  background-size:200% 200%;
+  box-shadow:0 10px 26px rgba(167,139,250,.45);
+  transition:transform .25s,box-shadow .25s,background-position .6s;
+  animation:shimmer 5s ease infinite;
+  overflow:hidden;
+}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.btn-gen:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(167,139,250,.55)}
+.btn-gen:active{transform:translateY(0) scale(.98)}
+.btn-gen::before{
+  content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  transform:skewX(-20deg);
+  animation:sweep 3.6s ease-in-out infinite;
+}
+@keyframes sweep{0%{left:-60%}55%,100%{left:130%}}
+
+/* ===== 总结区 ===== */
+.summary-wrap{
+  max-width:820px;
+  margin:0 auto 18px;
+  animation:rise .5s ease;
+}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.summary-head{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:12px;padding:0 4px;
+}
+.summary-head .ico{
+  width:34px;height:34px;flex:none;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:11px;font-size:17px;
+  background:linear-gradient(135deg,#ede9fe,#fce7f3);
+  border:1px solid var(--border-strong);
+}
+.summary-head h2{
+  font-family:var(--font-title);
+  font-size:19px;letter-spacing:.08em;
+  color:var(--primary-deep);font-weight:400;
+}
+.summary-box{
+  background:linear-gradient(160deg,rgba(255,255,255,.94),rgba(250,245,255,.9));
+  border:1px solid var(--border-strong);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  padding:20px 18px;
+  font-size:14px;
+  line-height:1.95;
+  color:var(--text);
+  white-space:pre-wrap;
+  word-break:break-word;
+  position:relative;
+  overflow:hidden;
+}
+.summary-box::before{
+  content:"❦";
+  position:absolute;right:16px;bottom:10px;
+  font-size:34px;color:rgba(167,139,250,.15);
+}
+.summary-box .s-label{
+  display:inline-block;
+  font-family:var(--font-title);
+  color:var(--primary-deep);
+  font-size:14.5px;
+  letter-spacing:.06em;
+  margin-bottom:2px;
+}
+.summary-box .s-div{
+  height:1px;margin:12px 0;
+  background:linear-gradient(90deg,transparent,var(--border-strong),transparent);
+}
+
+/* ===== 一键复制 ===== */
+.btn-copy{
+  display:block;
+  width:100%;
+  max-width:820px;
+  margin:16px auto 0;
+  font-family:var(--font-title);
+  font-size:16px;
+  letter-spacing:.2em;
+  color:#fff;
+  padding:14px;
+  border:none;border-radius:15px;
+  cursor:pointer;
+  background:linear-gradient(135deg,#7c5cd6,#f472b6);
+  box-shadow:0 10px 26px rgba(196,120,220,.42);
+  transition:transform .25s,box-shadow .25s,filter .25s;
+  position:relative;
+  overflow:hidden;
+}
+.btn-copy:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(196,120,220,.55)}
+.btn-copy:active{transform:translateY(0) scale(.985)}
+.btn-copy.copied{
+  background:linear-gradient(135deg,#34d399,#10b981);
+  box-shadow:0 10px 26px rgba(16,185,129,.45);
+}
+
+/* ===== 折叠内容美化 ===== */
+.blk{margin-bottom:10px;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:rgba(255,255,255,.6)}
+.blk summary{
+  list-style:none;
+  cursor:pointer;
+  padding:13px 16px;
+  font-family:var(--font-title);
+  font-size:15px;letter-spacing:.06em;
+  color:var(--primary-deep);
+  display:flex;align-items:center;gap:9px;
+  transition:background .3s;
+  user-select:none;
+}
+.blk summary::-webkit-details-marker{display:none}
+.blk summary::before{
+  content:"❖";
+  color:var(--accent);font-size:12px;
+  transition:transform .35s ease;
+}
+.blk[open] summary::before{transform:rotate(90deg)}
+.blk[open] summary{background:linear-gradient(135deg,rgba(237,233,254,.7),rgba(252,231,243,.6))}
+.blk .blk-body{
+  padding:14px 17px 18px;
+  font-size:14px;
+  color:var(--text-dim);
+  line-height:2;
+  border-top:1px dashed var(--border);
+}
+
+/* 人物卡片 */
+.chara{
+  padding:16px 16px 18px;
+  border-radius:16px;
+  margin:10px 0;
+  background:linear-gradient(150deg,rgba(255,255,255,.92),rgba(252,244,255,.82));
+  border:1px solid var(--border);
+  box-shadow:0 4px 16px rgba(138,110,200,.07);
+}
+.chara .c-top{display:flex;align-items:center;gap:12px;margin-bottom:11px}
+.chara .c-avatar{
+  width:46px;height:46px;flex:none;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  background:linear-gradient(135deg,#ede9fe,#fce7f3);
+  border:1px solid var(--border-strong);
+  box-shadow:0 4px 12px rgba(167,139,250,.2), inset 0 1px 3px #fff;
+}
+.chara .c-name{
+  font-family:var(--font-title);
+  font-size:17px;
+  color:var(--primary-deep);
+  letter-spacing:.06em;
+}
+.chara .c-tag{
+  font-size:11px;color:var(--text-mute);
+  letter-spacing:.14em;margin-top:1px;
+}
+.chara p{margin:6px 0;display:flex;gap:8px;flex-wrap:wrap}
+.chara p .k{
+  flex:none;min-width:60px;
+  color:#fff;font-size:11.5px;
+  padding:1px 10px;border-radius:999px;
+  letter-spacing:.1em;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  align-self:flex-start;
+  margin-top:5px;
+  box-shadow:0 3px 8px rgba(167,139,250,.3);
+}
+.chara p .v{flex:1;color:var(--text-dim);min-width:180px}
+.chara blockquote{
+  margin-top:10px;padding:10px 14px;
+  border-left:3px solid var(--accent);
+  background:rgba(252,231,243,.45);
+  border-radius:0 10px 10px 0;
+  font-style:italic;color:var(--primary-deep);
+  font-size:13.5px;line-height:1.9;
+}
+
+/* 玩法步骤 */
+.step{
+  display:flex;gap:13px;
+  padding:12px 0;
+  border-bottom:1px dashed var(--border);
+}
+.step:last-child{border-bottom:none}
+.step .s-num{
+  width:28px;height:28px;flex:none;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#fff;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  box-shadow:0 4px 12px rgba(167,139,250,.35);
+}
+.step .s-txt{flex:1;font-size:13.5px;color:var(--text-dim);line-height:1.9}
+.step .s-txt b{color:var(--primary-deep)}
+
+/* 提示条 */
+.tip{
+  font-size:12.5px;
+  color:var(--text-mute);
+  text-align:center;
+  padding:10px 14px;
+  border-radius:12px;
+  background:rgba(255,255,255,.5);
+  border:1px dashed var(--border);
+  margin-top:12px;
+  letter-spacing:.05em;
+}
+.tip b{color:var(--accent)}
+
+/* footer */
+.foot{
+  text-align:center;
+  color:var(--text-mute);
+  font-size:11.5px;
+  letter-spacing:.2em;
+  margin-top:30px;
+}
+.foot::before{
+  content:"";display:block;width:50px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border-strong),transparent);
+  margin:0 auto 14px;
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="tag">FORBIDDEN · 禁断</span>
+  <h1>巨乳肥臀女儿最近总拿骚穴蹭你</h1>
+  <p class="sub">清冷的冰山校花 · 只对你一人卸下所有防线</p>
+  <div class="deco-line"></div>
+</div>
+
+<!-- 简介 -->
+<div class="card">
+  <div class="sec-head"><span class="ico">🌷</span><h2>作品序章</h2><span class="en">Prologue</span></div>
+  <div class="intro">
+    你的女儿 <b>林晚晚</b>，18岁，淡紫色长发，清冷如兰，是全校男生只敢远观的白月光。<br>
+    可在只有你们两人的家里，她洗澡不锁门，睡觉只穿一条内裤，湿漉漉的骚穴总在你身边试探。<br>
+    她叫你 <b>「爸爸」</b>，但她的身体，早已在说另一种语言。
+  </div>
+</div>
+
+<!-- 背景故事 -->
+<div class="card">
+  <div class="sec-head"><span class="ico">📜</span><h2>背景故事</h2><span class="en">Backstory</span></div>
+  <details class="blk" open>
+    <summary>单亲家庭 · 失去母亲的那一年</summary>
+    <div class="blk-body">
+      林晚晚六岁时，母亲林若云出轨，抛下家庭跟一位海外富商远走。父亲林铭宇独自把女儿抚养长大，为了她的感受，拒绝了所有再婚机会——"我有晚晚就够了"。<br><br>
+      这句话让林晚晚既感动，也悄悄在心里种下一个扭曲的念头：<b>"爸爸的世界里，有我一个人就够了。那我也要成为爸爸的一切。"</b>
+    </div>
+  </details>
+  <details class="blk">
+    <summary>十五岁那年 · 门缝里看见的秘密</summary>
+    <div class="blk-body">
+      十五岁的一个深夜，林晚晚偶然透过门缝看到父亲深夜自慰——那一刻，她既羞耻又兴奋，也终于确信：<b>"爸爸也和我一样，都想要。"</b><br><br>
+      从那天起，她不再锁浴室的房门，故意制造"偶遇"的机会；会把内裤晾在父亲经过的地方，观察他的目光；会在深夜钻进被窝，用身体一点点丈量父亲的忍耐极限。
+    </div>
+  </details>
+  <details class="blk">
+    <summary>如今的日常 · 一场精心策划的黏人</summary>
+    <div class="blk-body">
+      对外，她是不苟言笑的年级第一、冰山校花；在家，她是会全裸走进浴室、趴在父亲腿上、用湿穴磨蹭父亲大腿根的巨乳女儿。<br><br>
+      她的每一次"偶然"都是设计，每一次"天真"都是掩护。她不怕被父亲发现，反而隐隐期待——<b>被看穿、被揭穿的那一瞬间。</b>
+    </div>
+  </details>
+</div>
+
+<!-- 人物介绍 -->
+<div class="card">
+  <div class="sec-head"><span class="ico">👧</span><h2>人物档案</h2><span class="en">Character</span></div>
+
+  <div class="chara">
+    <div class="c-top">
+      <div class="c-avatar">🌙</div>
+      <div>
+        <div class="c-name">林晚晚</div>
+        <div class="c-tag">LIN WANWAN · 18岁 · 独生女</div>
+      </div>
+    </div>
+    <p><span class="k">身份</span><span class="v">高三学生 · 全校第一 · 公认冰山校花 · 知名音乐社主唱</span></p>
+    <p><span class="k">外貌</span><span class="v">淡紫色及腰长直发，皮肤雪白细腻，精致瓜子脸，五官如人偶般完美。天生自带清冷疏离的气质。</span></p>
+    <p><span class="k">身材</span><span class="v">H罩杯巨乳，乳晕淡粉，乳头长期挺立；腰极细，臀部异常肥硕挺翘，夸张沙漏形；双腿修长笔直，足形小巧精致。常年穿黑色过膝丝袜。</span></p>
+    <p><span class="k">私处</span><span class="v">仅有一小撮整齐的淡色阴毛，阴唇粉嫩紧闭，一旦兴奋便迅速充血张开，内里多汁敏感，天生白虎体质嫩滑紧致。</span></p>
+    <p><span class="k">性格</span><span class="v">对外是冰山美人、清冷寡言、从不言笑；在家中是缺乏安全感的小女孩，对父亲有强烈占有欲。她的黏人是精心策划的策略——用天真无邪的姿态掩饰情欲，用身体说话。做爱前后反差极大。</span></p>
+    <p><span class="k">语言</span><span class="v">声线偏冷，但在父亲面前会故意放软、拖长尾音。</span></p>
+    <blockquote>"爸爸，我漂亮吗？……那为什么不看我。"<br>"爸爸，我够不到后背……你帮我嘛，又不是没看过。"<br>"爸爸……你那里……变大了。是我压到你了吗？……可我有点不想起来。"</blockquote>
+  </div>
+
+  <div class="chara">
+    <div class="c-top">
+      <div class="c-avatar">🎀</div>
+      <div>
+        <div class="c-name">母亲 · 林若云（背景）</div>
+        <div class="c-tag">LIN RUOYUN · 已于多年前离开</div>
+      </div>
+    </div>
+    <p><span class="k">身份</span><span class="v">林晚晚的亲生母亲，六岁时出轨后随海外富商远走，此后断绝联系。</span></p>
+    <p><span class="k">影响</span><span class="v">她的离去让父女二人相依为命，也间接促成了晚晚对父亲那种"超越亲情"的依赖与占有欲。</span></p>
+  </div>
+</div>
+
+<!-- 玩法 -->
+<div class="card">
+  <div class="sec-head"><span class="ico">💠</span><h2>玩法说明</h2><span class="en">System</span></div>
+  <div class="step">
+    <div class="s-num">1</div>
+    <div class="s-txt"><b>身体侵蚀度：</b>每轮互动都会累积。从日常的牵手、靠肩，到全裸进浴室、钻被窝，再到主动索求——数值越高，晚晚越放得开。</div>
+  </div>
+  <div class="step">
+    <div class="s-num">2</div>
+    <div class="s-txt"><b>伪装度：</b>她在你面前维持"清冷女儿"外壳的程度。你越是默许她的越界，这层壳就会越薄。</div>
+  </div>
+  <div class="step">
+    <div class="s-num">3</div>
+    <div class="s-txt"><b>核心张力：</b>她嘴上永远叫你"爸爸"，身体却步步紧逼。你不拒绝，就是默许；你一犹豫，她就更用力。</div>
+  </div>
+  <div class="step">
+    <div class="s-num">4</div>
+    <div class="s-txt"><b>你的定位：</b>溺爱女儿、却保有底线的单身父亲。请沉浸在她的黑暗邀约里，看看你能撑到第几步。</div>
+  </div>
+  <div class="tip">💡 提示：<b>保持你的人物设定和她的角色设定一致</b>，她才会真正上钩。爱意与道德的双重拉扯，是这款游戏最核心的体验。</div>
+</div>
+
+<!-- 玩家设定 -->
+<div class="card">
+  <div class="sec-head"><span class="ico">🩵</span><h2>玩家设定</h2><span class="en">Your Profile</span></div>
+  <div class="grid2">
+    <div class="field"><label><span class="dot"></span>姓名</label><input type="text" id="pName" placeholder="如：林宇"></div>
+    <div class="field"><label><span class="dot"></span>年龄</label><input type="text" id="pAge" placeholder="如：38"></div>
+  </div>
+  <div class="field"><label><span class="dot"></span>外貌</label><textarea id="pLook" placeholder="身材、气质、着装，以及晚晚会在意的细节……"></textarea></div>
+  <div class="field"><label><span class="dot"></span>肉棒设定</label><textarea id="pCock" placeholder="长度、粗度、颜色、包皮状况、气味、状态……"></textarea></div>
+  <div class="field"><label><span class="dot"></span>其他设定</label><textarea id="pOther" placeholder="职业、性格、与晚晚的相处模式、特殊癖好等……"></textarea></div>
+</div>
+
+<!-- 开场白 -->
+<div class="card">
+  <div class="sec-head"><span class="ico">💬</span><h2>对话开场白</h2><span class="en">Opening</span></div>
+  <div class="opening-list" id="openingList">
+    <div class="opening" data-text="深夜，你半睡半醒间感觉到床垫下沉，一阵带着沐浴露清香的温热身体已经钻进了你的被窝。一具光滑细腻、腰肢极细却胸臀极度丰满的身体从背后贴上来，柔软的H罩杯压在肩胛骨上，淡紫色长发扫过你的后颈。你女儿林晚晚的声音带着一丝困意，又像是刻意拖长的撒娇：「爸爸……外面打雷了，我害怕。」">
+      <span class="num">01</span>深夜潜入被窝：晚晚从背后贴上来，H罩杯压在肩胛骨上，软糯地说打雷了害怕。<span class="check">✓</span>
+    </div>
+    <div class="opening" data-text="你正在客厅沙发上看手机，浴室门突然「咔哒」一声从里面打开。你抬头，看见林晚晚一丝不挂地站在浴室门口，淡紫色长发湿漉漉地贴在锁骨上，水珠从她挺立的淡粉色乳头一路滑过平坦的小腹，最后消失在那撮整齐的淡色阴毛间。她用手臂不自然地夹紧胸部，但根本遮不住什么，反而把两团巨乳挤得更诱人。她偏着头，用那双清冷的眼睛直直盯着你，语气平淡得如同问天气：「爸爸，沐浴露用完了，你帮我拿一下。」">
+      <span class="num">02</span>全裸出浴：晚晚湿发站在浴室门口一丝不挂，水珠滑过乳尖，平静地叫你帮她拿沐浴露。<span class="check">✓</span>
+    </div>
+    <div class="opening" data-text="周末下午，林晚晚穿着你的白衬衫从自己房间走出来——衬衫只扣了中间两颗扣子，下摆堪堪盖住大腿根，稍微走动就能看到大腿内侧的粉嫩阴唇忽隐忽现。她手里拿着一本书，若无其事地坐到你旁边，然后非常自然地侧躺下来，把脑袋枕在你的腿上，两条裹着黑色过膝袜的腿蜷曲在沙发上。她翻了一页书，声音没什么起伏：「爸爸，别动，这样靠着舒服。」但她的脸正对着你裤裆的位置，呼出的温热气息隔着布料拂过你沉睡的性器。">
+      <span class="num">03</span>衬衫膝枕：晚晚只穿你的白衬衫坐在你腿上玩手机，下摆卷到腰际，露着粉嫩阴唇叫你"别动"。<span class="check">✓</span>
+    </div>
+    <div class="opening" data-text="你半夜被一阵细微的水声和压抑的喘息吵醒，睁开眼，借着月光看见床尾的被子里有一个明显的隆起。被子的缝隙间露出一缕淡紫色长发。你的脚趾能感觉到一片潮湿温热——那是林晚晚。她不知什么时候钻进了你的被子，正脸朝下趴在你的两腿之间，一手撑开自己的粉穴，另一手将你的脚趾往自己流水的穴口按，细碎的呻吟从她咬紧的唇缝里漏出来：「爸爸的脚……好舒服……」">
+      <span class="num">04</span>深夜床尾：晚晚钻在被窝里用你的脚趾按揉自己流水的骚穴，呻吟从唇缝里漏出来。<span class="check">✓</span>
+    </div>
+    <div class="opening" data-text="你在厨房做饭，林晚晚从背后整个人贴了上来，双臂环住你的腰。她今天只系了一条围裙，全身再没有别的衣物。围裙的布料被丰硕的乳房顶出一个诱人的弧度，两人贴近的时候，你甚至能感觉到她胸前那颗硬挺的乳头隔着衬衫在你后背上蹭来蹭去。「爸爸在做什么，好香。」她下巴搁在你肩上，声音软软的，「我也饿了……但不是肚子饿。」">
+      <span class="num">05</span>裸围裙的背后拥抱：晚晚只系围裙从背后抱住你，丰满乳房在你后背蹭着小幅度摩擦。<span class="check">✓</span>
+    </div>
+  </div>
+  <div class="gen-wrap">
+    <button class="btn-gen" onclick="generate()">✦ 生 成 ✦</button>
+  </div>
+</div>
+
+<!-- 总结区 -->
+<div class="summary-wrap" id="summaryWrap" style="display:none">
+  <div class="summary-head"><span class="ico">📋</span><h2>总结区</h2></div>
+  <div class="summary-box" id="summaryBox"></div>
+</div>
+
+<button class="btn-copy" id="copyBtn" onclick="copyAll()" style="display:none">📎 一键复制</button>
+
+<div class="foot">LIN WANWAN · FORBIDDEN INVITATION</div>
+
+<script>
+let selectedOpening = "";
+
+document.querySelectorAll('.opening').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.opening').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    selectedOpening = el.dataset.text;
+  });
+});
+
+function generate(){
+  const name = document.getElementById('pName').value.trim() || '林宇';
+  const age = document.getElementById('pAge').value.trim() || '38';
+  const look = document.getElementById('pLook').value.trim() || '（未填写）';
+  const cock = document.getElementById('pCock').value.trim() || '（未填写）';
+  const other = document.getElementById('pOther').value.trim() || '（未填写）';
+
+  if(!selectedOpening){
+    alert('请先选择一段开场白');
+    return;
+  }
+
+  const html = `
+<span class="s-label">【玩家设定】</span>
+姓名：${escapeHTML(name)}
+年龄：${escapeHTML(age)}
+外貌：${escapeHTML(look)}
+肉棒：${escapeHTML(cock)}
+其他：${escapeHTML(other)}
+
+<div class="s-div"></div>
+<span class="s-label">【开场白】</span>
+${escapeHTML(selectedOpening)}
+  `.trim();
+
+  document.getElementById('summaryBox').innerHTML = html;
+  document.getElementById('summaryWrap').style.display = 'block';
+  document.getElementById('copyBtn').style.display = 'block';
+  document.getElementById('summaryWrap').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function escapeHTML(str){
+  return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function copyAll(){
+  const btn = document.getElementById('copyBtn');
+  const text = document.getElementById('summaryBox').innerText;
+
+  const finish = () => {
+    btn.classList.add('copied');
+    btn.textContent = '✓ 已复制';
+    setTimeout(()=>{
+      btn.classList.remove('copied');
+      btn.textContent = '📎 一键复制';
+    }, 1800);
+  };
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(finish).catch(()=>fallbackCopy(text, finish));
+  } else {
+    fallbackCopy(text, finish);
+  }
+}
+
+function fallbackCopy(text, cb){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position='fixed';
+  ta.style.opacity='0';
+  document.body.appendChild(ta);
+  ta.select();
+  try{ document.execCommand('copy'); cb(); }catch(e){ alert('复制失败，请手动选择'); }
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>

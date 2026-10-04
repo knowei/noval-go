@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>她的出差行李 · 设定集</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Ma+Shan+Zheng&display=swap');
+
+    :root{
+        --bg-1:#f6f0fb;
+        --bg-2:#efe3f7;
+        --bg-3:#fbeef3;
+        --card-bg:rgba(255,255,255,0.76);
+        --card-border:rgba(168,120,214,0.35);
+        --text:#4a3a5c;
+        --text-soft:#7a668f;
+        --title:#8e5cc4;
+        --accent:#e0689a;
+        --accent-2:#b07ad6;
+        --gold:#c99a4b;
+        --shadow:0 6px 22px rgba(142,92,196,0.16);
+        --font:'Noto Serif SC', serif;
+    }
+
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+    }
+
+    body{
+        font-family:var(--font);
+        background:
+            radial-gradient(1200px 800px at 10% -10%, #fde7f3 0%, transparent 60%),
+            radial-gradient(900px 700px at 110% 10%, #eee3fb 0%, transparent 55%),
+            linear-gradient(160deg,var(--bg-1),var(--bg-2) 55%,var(--bg-3));
+        color:var(--text);
+        line-height:1.75;
+        padding:24px 16px 60px;
+        min-height:100vh;
+    }
+
+    .page-wrap{
+        max-width:860px;
+        margin:0 auto;
+        position:relative;
+    }
+
+    /* 装饰光斑 */
+    .page-wrap::before,
+    .page-wrap::after{
+        content:"";
+        position:fixed;
+        border-radius:50%;
+        filter:blur(70px);
+        opacity:.35;
+        z-index:-1;
+        pointer-events:none;
+    }
+    .page-wrap::before{
+        width:320px;height:320px;
+        background:#f7c6e0;
+        top:-80px;left:-100px;
+    }
+    .page-wrap::after{
+        width:280px;height:280px;
+        background:#cdb6f2;
+        bottom:-60px;right:-80px;
+    }
+
+    /* ============ 顶部标题 ============ */
+    .header{
+        text-align:center;
+        margin-bottom:30px;
+        padding:18px 12px 6px;
+    }
+
+    .header .sub{
+        font-size:12px;
+        letter-spacing:6px;
+        color:var(--accent-2);
+        text-transform:uppercase;
+        opacity:.9;
+    }
+
+    .header h1{
+        font-family:'Ma Shan Zheng', cursive;
+        font-size:clamp(30px,8vw,46px);
+        color:var(--title);
+        margin:6px 0 4px;
+        text-shadow:0 2px 0 rgba(255,255,255,.8), 0 6px 18px rgba(142,92,196,.22);
+        font-weight:400;
+        letter-spacing:2px;
+    }
+
+    .header .line{
+        width:120px;
+        height:2px;
+        margin:10px auto 8px;
+        background:linear-gradient(90deg,transparent,var(--accent-2),transparent);
+        border-radius:2px;
+    }
+
+    .header .desc{
+        font-size:13px;
+        color:var(--text-soft);
+        letter-spacing:1px;
+    }
+
+    /* ============ 卡片通用 ============ */
+    .card{
+        background:var(--card-bg);
+        backdrop-filter:blur(14px);
+        -webkit-backdrop-filter:blur(14px);
+        border:1px solid var(--card-border);
+        border-radius:20px;
+        padding:22px 20px;
+        margin-bottom:22px;
+        box-shadow:var(--shadow);
+        position:relative;
+        overflow:hidden;
+        transition:transform .25s ease, box-shadow .25s ease;
+    }
+
+    .card::before{
+        content:"";
+        position:absolute;
+        top:0;left:0;right:0;
+        height:3px;
+        background:linear-gradient(90deg,transparent,var(--accent),var(--accent-2),transparent);
+        opacity:.7;
+    }
+
+    .card:hover{
+        transform:translateY(-2px);
+        box-shadow:0 12px 28px rgba(142,92,196,0.22);
+    }
+
+    .card-title{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        font-size:17px;
+        font-weight:700;
+        color:var(--title);
+        margin-bottom:14px;
+        padding-bottom:8px;
+        border-bottom:1px dashed rgba(168,120,214,.35);
+    }
+
+    .card-title .dot{
+        width:9px;height:9px;border-radius:50%;
+        background:linear-gradient(135deg,var(--accent),var(--accent-2));
+        box-shadow:0 0 8px rgba(224,104,154,.6);
+        flex-shrink:0;
+    }
+
+    .card-title small{
+        font-size:11px;
+        color:var(--text-soft);
+        font-weight:400;
+        margin-left:auto;
+        letter-spacing:1px;
+    }
+
+    /* ============ 玩家设定 ============ */
+    .player-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+        gap:10px 14px;
+    }
+
+    .field{
+        display:flex;
+        align-items:flex-start;
+        gap:6px;
+        font-size:13.5px;
+    }
+
+    .field .label{
+        color:var(--accent-2);
+        font-weight:600;
+        flex-shrink:0;
+        min-width:62px;
+        padding-top:8px;
+    }
+
+    /* 可编辑控件统一风格 */
+    .field input,
+    .field textarea{
+        flex:1;
+        min-width:0;
+        width:100%;
+        border:1px solid rgba(176,122,214,.35);
+        border-radius:12px;
+        padding:8px 12px;
+        font-family:var(--font);
+        font-size:13px;
+        color:var(--text);
+        background:rgba(255,255,255,.7);
+        outline:none;
+        transition:border .2s, box-shadow .2s, background .2s;
+        line-height:1.7;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder{
+        color:#b8a8cc;
+    }
+
+    .field input:hover,
+    .field textarea:hover{
+        border-color:rgba(224,104,154,.55);
+        background:rgba(255,255,255,.85);
+    }
+
+    .field input:focus,
+    .field textarea:focus{
+        border-color:var(--accent);
+        background:#fff;
+        box-shadow:0 0 0 3px rgba(224,104,154,.15);
+    }
+
+    .field textarea{
+        resize:vertical;
+        min-height:64px;
+    }
+
+    .field.full{
+        grid-column:1/-1;
+    }
+
+    .note{
+        font-size:12px;
+        color:var(--text-soft);
+        margin-top:12px;
+        padding-left:4px;
+        border-left:2px solid var(--accent-2);
+        padding-top:2px;
+        padding-bottom:2px;
+        line-height:1.7;
+    }
+
+    /* ============ 开场白 ============ */
+    .opening-list{
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+    }
+
+    .opening-item{
+        display:flex;
+        gap:10px;
+        align-items:flex-start;
+        background:rgba(255,255,255,.55);
+        border:1px solid rgba(224,104,154,.22);
+        border-radius:14px;
+        padding:12px 14px;
+        cursor:pointer;
+        transition:all .22s ease;
+        position:relative;
+    }
+
+    .opening-item:hover{
+        background:rgba(255,238,247,.9);
+        border-color:var(--accent);
+        transform:translateX(3px);
+    }
+
+    .opening-item.active{
+        background:linear-gradient(135deg,rgba(253,231,243,.95),rgba(238,227,251,.95));
+        border-color:var(--accent-2);
+        box-shadow:0 4px 14px rgba(176,122,214,.25);
+    }
+
+    .opening-item.active::after{
+        content:"✓";
+        position:absolute;
+        top:8px;right:10px;
+        font-size:12px;
+        color:#fff;
+        background:var(--accent-2);
+        width:18px;height:18px;
+        border-radius:50%;
+        display:flex;align-items:center;justify-content:center;
+        font-weight:700;
+    }
+
+    .opening-num{
+        flex-shrink:0;
+        width:24px;height:24px;
+        border-radius:50%;
+        background:linear-gradient(135deg,var(--accent),var(--accent-2));
+        color:#fff;
+        font-size:12px;
+        font-weight:700;
+        display:flex;align-items:center;justify-content:center;
+        margin-top:2px;
+        box-shadow:0 2px 6px rgba(224,104,154,.4);
+    }
+
+    .opening-text{
+        font-size:13.5px;
+        color:var(--text);
+        line-height:1.72;
+        flex:1;
+    }
+
+    .opening-text em{
+        color:var(--accent);
+        font-style:normal;
+        font-weight:600;
+    }
+
+    .custom-opening{
+        margin-top:14px;
+    }
+
+    .custom-opening label{
+        font-size:12.5px;
+        color:var(--accent-2);
+        font-weight:600;
+        display:block;
+        margin-bottom:6px;
+    }
+
+    .custom-opening textarea{
+        width:100%;
+        min-height:72px;
+        resize:vertical;
+        border:1px solid rgba(176,122,214,.35);
+        border-radius:12px;
+        padding:10px 12px;
+        font-family:var(--font);
+        font-size:13px;
+        color:var(--text);
+        background:rgba(255,255,255,.7);
+        outline:none;
+        transition:border .2s, box-shadow .2s;
+        line-height:1.7;
+    }
+
+    .custom-opening textarea:focus{
+        border-color:var(--accent);
+        box-shadow:0 0 0 3px rgba(224,104,154,.15);
+    }
+
+    .custom-opening textarea::placeholder{
+        color:#b8a8cc;
+    }
+
+    /* ============ 总结区 ============ */
+    .summary{
+        background:linear-gradient(145deg,rgba(255,246,252,.95),rgba(245,238,255,.95));
+        border:1.5px solid var(--card-border);
+        border-radius:20px;
+        padding:20px 20px 18px;
+        margin-bottom:22px;
+        box-shadow:0 8px 26px rgba(142,92,196,.18);
+        position:relative;
+    }
+
+    .summary::before{
+        content:"";
+        position:absolute;
+        inset:0;
+        border-radius:20px;
+        padding:1.5px;
+        background:linear-gradient(135deg,var(--accent),var(--accent-2),var(--gold));
+        -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite:xor;
+        mask-composite:exclude;
+        opacity:.55;
+        pointer-events:none;
+    }
+
+    .summary-title{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        font-size:16px;
+        font-weight:700;
+        color:var(--title);
+        margin-bottom:12px;
+    }
+
+    .summary-title .icon{
+        font-size:16px;
+    }
+
+    .summary-content{
+        font-size:13.5px;
+        line-height:1.9;
+        color:var(--text);
+        white-space:pre-wrap;
+        word-break:break-word;
+        max-height:320px;
+        overflow-y:auto;
+        padding-right:6px;
+    }
+
+    .summary-content::-webkit-scrollbar{
+        width:5px;
+    }
+    .summary-content::-webkit-scrollbar-thumb{
+        background:rgba(176,122,214,.45);
+        border-radius:6px;
+    }
+
+    .summary-content .s-label{
+        color:var(--accent-2);
+        font-weight:700;
+    }
+
+    .summary-content .s-opening{
+        color:var(--accent);
+    }
+
+    .summary-empty{
+        font-size:13px;
+        color:#b8a8cc;
+        text-align:center;
+        padding:14px 0;
+        font-style:italic;
+    }
+
+    /* ============ 按钮组 ============ */
+    .btn-row{
+        display:flex;
+        gap:12px;
+        margin-top:16px;
+        flex-wrap:wrap;
+    }
+
+    .btn{
+        flex:1;
+        min-width:140px;
+        border:none;
+        border-radius:14px;
+        padding:13px 18px;
+        font-family:var(--font);
+        font-size:15px;
+        font-weight:700;
+        letter-spacing:2px;
+        cursor:pointer;
+        transition:all .25s ease;
+        position:relative;
+        overflow:hidden;
+    }
+
+    .btn-primary{
+        background:linear-gradient(135deg,var(--accent),var(--accent-2));
+        color:#fff;
+        box-shadow:0 6px 18px rgba(224,104,154,.4);
+    }
+
+    .btn-primary:hover{
+        transform:translateY(-2px);
+        box-shadow:0 10px 24px rgba(224,104,154,.55);
+    }
+
+    .btn-primary:active{
+        transform:translateY(0) scale(.98);
+    }
+
+    .btn-copy{
+        background:linear-gradient(135deg,#a06cd5,#c58ad9);
+        color:#fff;
+        box-shadow:0 6px 18px rgba(160,108,213,.4);
+    }
+
+    .btn-copy:hover{
+        transform:translateY(-2px);
+        box-shadow:0 10px 24px rgba(160,108,213,.55);
+    }
+
+    .btn-copy:active{
+        transform:translateY(0) scale(.98);
+    }
+
+    .btn-copy.copied{
+        background:linear-gradient(135deg,#7ec48f,#9bd8a8);
+        box-shadow:0 6px 18px rgba(126,196,143,.4);
+    }
+
+    /* ============ 背景故事 / 人物介绍 ============ */
+    .story-text{
+        font-size:13.5px;
+        line-height:2;
+        color:var(--text);
+    }
+
+    .story-text p{
+        margin-bottom:12px;
+        text-indent:2em;
+    }
+
+    .story-text p:last-child{
+        margin-bottom:0;
+    }
+
+    .highlight{
+        color:var(--accent);
+        font-weight:600;
+    }
+
+    .highlight-2{
+        color:var(--title);
+        font-weight:600;
+    }
+
+    /* 人物卡美化 */
+    .char-block{
+        background:rgba(255,255,255,.5);
+        border-radius:16px;
+        padding:16px 16px 14px;
+        margin-bottom:16px;
+        border:1px solid rgba(168,120,214,.2);
+        position:relative;
+    }
+
+    .char-block:last-child{
+        margin-bottom:0;
+    }
+
+    .char-block .char-name{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        font-size:15.5px;
+        font-weight:700;
+        color:var(--title);
+        margin-bottom:10px;
+    }
+
+    .char-block .char-name .tag{
+        font-size:10.5px;
+        font-weight:600;
+        color:#fff;
+        padding:2px 9px;
+        border-radius:20px;
+        letter-spacing:1px;
+        background:linear-gradient(135deg,var(--accent),var(--accent-2));
+        box-shadow:0 2px 6px rgba(224,104,154,.3);
+    }
+
+    .char-block .char-name .tag.gold{
+        background:linear-gradient(135deg,#c99a4b,#e0b96a);
+        box-shadow:0 2px 6px rgba(201,154,75,.3);
+    }
+
+    .char-block .char-name .tag.blue{
+        background:linear-gradient(135deg,#5b8def,#7fa8f5);
+        box-shadow:0 2px 6px rgba(91,141,239,.3);
+    }
+
+    .char-row{
+        font-size:13px;
+        line-height:1.9;
+        margin-bottom:4px;
+        display:flex;
+        gap:6px;
+        align-items:flex-start;
+    }
+
+    .char-row .label{
+        color:var(--accent-2);
+        font-weight:600;
+        flex-shrink:0;
+        min-width:62px;
+    }
+
+    .char-row .val{
+        color:var(--text);
+        word-break:break-word;
+        flex:1;
+    }
+
+    .char-row .val em{
+        color:var(--accent);
+        font-style:normal;
+        font-weight:600;
+    }
+
+    .char-quote{
+        margin-top:10px;
+        padding:9px 12px;
+        background:rgba(253,231,243,.6);
+        border-left:3px solid var(--accent);
+        border-radius:0 10px 10px 0;
+        font-size:12.5px;
+        color:var(--text-soft);
+        line-height:1.8;
+    }
+
+    .char-quote .q{
+        color:var(--accent);
+        font-weight:600;
+    }
+
+    /* ============ 数值/路线 ============ */
+    .value-grid{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:14px;
+        margin-bottom:16px;
+    }
+
+    @media (max-width:520px){
+        .value-grid{
+            grid-template-columns:1fr;
+        }
+    }
+
+    .value-box{
+        background:rgba(255,255,255,.6);
+        border-radius:16px;
+        padding:14px 16px;
+        border:1px solid rgba(168,120,214,.22);
+    }
+
+    .value-box .v-name{
+        font-size:12.5px;
+        font-weight:700;
+        color:var(--title);
+        letter-spacing:1px;
+        margin-bottom:8px;
+        display:flex;
+        align-items:center;
+        gap:6px;
+    }
+
+    .value-box .v-name .v-dot{
+        width:8px;height:8px;border-radius:50%;
+        flex-shrink:0;
+    }
+    .value-box .v-name .v-dot.red{
+        background:#e0689a;
+        box-shadow:0 0 6px rgba(224,104,154,.7);
+    }
+    .value-box .v-name .v-dot.green{
+        background:#7ec48f;
+        box-shadow:0 0 6px rgba(126,196,143,.7);
+    }
+
+    .value-bar{
+        height:10px;
+        background:rgba(168,120,214,.15);
+        border-radius:10px;
+        overflow:hidden;
+        margin-bottom:6px;
+    }
+
+    .value-bar span{
+        display:block;
+        height:100%;
+        border-radius:10px;
+        transition:width .8s ease;
+    }
+
+    .value-bar .fill-red{
+        background:linear-gradient(90deg,#e0689a,#c9557f);
+        width:10%;
+    }
+
+    .value-bar .fill-green{
+        background:linear-gradient(90deg,#7ec48f,#5bb37a);
+        width:0%;
+    }
+
+    .value-box .v-desc{
+        font-size:11.5px;
+        color:var(--text-soft);
+        line-height:1.7;
+        margin-top:4px;
+    }
+
+    .route-title{
+        font-size:14px;
+        font-weight:700;
+        color:var(--title);
+        margin:18px 0 10px;
+        display:flex;
+        align-items:center;
+        gap:8px;
+    }
+
+    .route-title .r-line{
+        flex:1;
+        height:1px;
+        background:linear-gradient(90deg,rgba(176,122,214,.4),transparent);
+    }
+
+    .route-list{
+        display:flex;
+        flex-direction:column;
+        gap:10px;
+    }
+
+    .route-item{
+        display:flex;
+        gap:10px;
+        align-items:flex-start;
+        padding:11px 14px;
+        border-radius:14px;
+        background:rgba(255,255,255,.5);
+        border:1px solid rgba(168,120,214,.2);
+        transition:all .2s ease;
+    }
+
+    .route-item:hover{
+        background:rgba(255,238,247,.75);
+        border-color:var(--accent-2);
+    }
+
+    .route-icon{
+        flex-shrink:0;
+        width:28px;height:28px;
+        border-radius:50%;
+        display:flex;align-items:center;justify-content:center;
+        font-size:14px;
+        margin-top:1px;
+    }
+
+    .route-icon.green{
+        background:linear-gradient(135deg,#e3f6e6,#c9eccd);
+    }
+    .route-icon.red{
+        background:linear-gradient(135deg,#fde3ee,#f7c6dc);
+    }
+    .route-icon.purple{
+        background:linear-gradient(135deg,#efe3fb,#e0ccf7);
+    }
+
+    .route-item .r-text{
+        font-size:13px;
+        line-height:1.8;
+        color:var(--text);
+    }
+
+    .route-item .r-text b{
+        color:var(--title);
+    }
+
+    /* ============ 底部 ============ */
+    .footer{
+        text-align:center;
+        font-size:11.5px;
+        color:#b8a8cc;
+        letter-spacing:2px;
+        margin-top:28px;
+        padding-bottom:10px;
+    }
+
+    /* ============ 响应式 ============ */
+    @media (max-width:480px){
+        body{
+            padding:16px 10px 46px;
+        }
+        .card{
+            padding:17px 14px;
+            border-radius:17px;
+        }
+        .card-title{
+            font-size:15.5px;
+        }
+        .player-grid{
+            grid-template-columns:1fr;
+            gap:8px;
+        }
+        .field .label{
+            min-width:58px;
+            padding-top:8px;
+        }
+        .field input,
+        .field textarea{
+            font-size:12.5px;
+            padding:7px 10px;
+        }
+        .opening-text{
+            font-size:13px;
+        }
+        .btn{
+            font-size:14px;
+            padding:12px 14px;
+            letter-spacing:1px;
+        }
+        .summary-content{
+            font-size:13px;
+        }
+        .char-block{
+            padding:13px 12px;
+        }
+        .value-box{
+            padding:12px 13px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+    <!-- ============ 顶部标题 ============ -->
+    <div class="header">
+        <div class="sub">✦ 思维实验 · 设定集 ✦</div>
+        <h1>肥臀巨乳美妻要跟男闺蜜出差？</h1>
+        <div class="line"></div>
+        <div class="desc">NTR危机 · 抉择时刻 · 你的选择决定结局</div>
+    </div>
+
+    <!-- ============ 玩家设定 ============ -->
+    <div class="card" id="playerCard">
+        <div class="card-title">
+            <span class="dot"></span>
+            玩家设定
+            <small>所有字段可直接编辑</small>
+        </div>
+        <div class="player-grid">
+            <div class="field">
+                <span class="label">姓名</span>
+                <input type="text" id="pName" value="林川" placeholder="输入姓名">
+            </div>
+            <div class="field">
+                <span class="label">年龄</span>
+                <input type="text" id="pAge" value="27岁" placeholder="输入年龄">
+            </div>
+            <div class="field full">
+                <span class="label">外貌</span>
+                <textarea id="pLooks" placeholder="输入外貌描述">身高178cm，体型偏瘦但结实，五官清秀带着一丝书卷气，不善言辞却眼神温柔。</textarea>
+            </div>
+            <div class="field full">
+                <span class="label">肉棒</span>
+                <textarea id="pCock" placeholder="输入生理设定">勃起约17cm，粗细适中，龟头饱满粉嫩，耐力极佳，能持续抽插四十分钟以上不射。</textarea>
+            </div>
+            <div class="field full">
+                <span class="label">其他设定</span>
+                <textarea id="pOther" placeholder="输入其他设定">普通公司职员，收入稳定但不高。深爱妻子苏婉晴，占有欲强却缺乏安全感。婚后因工作忙碌忽略了她的情感需求，导致她与陆明远走得更近。骨子里有韧劲，一旦决定守护就不会轻易放手。</textarea>
+            </div>
+        </div>
+        <div class="note">✦ 上方字段均可直接点击修改，改完点下方「生成」即可同步到总结区。</div>
+    </div>
+
+    <!-- ============ 开场白 ============ -->
+    <div class="card" id="openingCard">
+        <div class="card-title">
+            <span class="dot"></span>
+            开场白
+            <small>点击选择或自定义</small>
+        </div>
+        <div class="opening-list" id="openingList">
+            <!-- 开场白1 -->
+            <div class="opening-item active" data-index="0">
+                <div class="opening-num">1</div>
+                <div class="opening-text">卧室里，苏婉晴正弯腰把最后一叠衣服塞进行李箱。她穿着那条黑色紧身吊带裙，没穿内衣，从你站的角度能清楚看见那对巨乳在裙子里晃动的弧度。她回头冲你一笑，手里拎出一套布料少得可怜的黑色蕾丝内衣：“老公，这套带过去，我晚上穿给你看视频啊，好不好？”</div>
+            </div>
+            <!-- 开场白2 -->
+            <div class="opening-item" data-index="1">
+                <div class="opening-num">2</div>
+                <div class="opening-text">第二天清晨，你被闹钟吵醒。苏婉晴已经洗漱完毕，穿着一套深蓝色职业套裙站在玄关。裙子的领口开得有点低，露出一道诱人的乳沟；包臀裙紧紧裹着她挺翘的肥臀，黑色丝袜包裹着笔直的双腿。她正对着手机说话，语气轻快：“嗯嗯，到高铁站啦，明远你到了吗？好呀好呀，到时候请你吃上次说的那家火锅。”</div>
+            </div>
+            <!-- 开场白3 -->
+            <div class="opening-item" data-index="2">
+                <div class="opening-num">3</div>
+                <div class="opening-text">手机屏幕亮起，是苏婉晴发来的视频通话请求。接通后，是酒店房间的画面。她穿着酒店的白色浴袍坐在床边，头发还湿漉漉的，浴袍领口松垮地敞着，露出大片雪白的胸脯和若隐若现的乳晕。她打了个哈欠，声音带着困意：“老公，我到啦，刚洗完澡。这房间还行吧？就我一个人睡。”镜头扫过房间，你能看见床头柜上放着一瓶红酒和两个玻璃杯，地上还有一双男士拖鞋——显然不是酒店的标配。</div>
+            </div>
+            <!-- 开场白4 -->
+            <div class="opening-item" data-index="3">
+                <div class="opening-num">4</div>
+                <div class="opening-text">晚上十点，你收到苏婉晴的微信语音，背景音是餐厅的嘈杂声和轻音乐。她声音带着微醺的慵懒：“老公……客户非要喝酒，我喝了一点点……明远说帮我挡，结果他自己也喝了不少……我们现在回酒店了，他送我到门口就走啦，你放心吧……”语音最后几秒，你听见一个低沉的男声很近地说了句“晴晴，门卡给我，我帮你开门”。</div>
+            </div>
+            <!-- 开场白5 -->
+            <div class="opening-item" data-index="4">
+                <div class="opening-num">5</div>
+                <div class="opening-text">出差第二天深夜，你独自在家翻来覆去睡不着。手机突然弹出一条彩信，来自一个陌生号码——是陆明远。照片里是酒店走廊，苏婉晴穿着那条黑色紧身吊带裙站在房门口，头发凌乱，脸颊泛红，手里攥着房卡。照片下方附了一行字：“你老婆喝多了，我送她回房。放心，我会‘照顾’好她的。”</div>
+            </div>
+        </div>
+
+        <!-- 自定义开场白 -->
+        <div class="custom-opening">
+            <label>✎ 自定义开场白（选填，留空则使用上方选中的开场白）</label>
+            <textarea id="customOpening" placeholder="在这里写下你想用的开场白……"></textarea>
+        </div>
+    </div>
+
+    <!-- ============ 按钮区 ============ -->
+    <div class="btn-row">
+        <button class="btn btn-primary" id="generateBtn">✦ 生 成 ✦</button>
+    </div>
+
+    <!-- ============ 总结区 ============ -->
+    <div class="summary" id="summaryCard">
+        <div class="summary-title">
+            <span class="icon">📋</span>
+            总结区 · 玩家设定与开场白
+        </div>
+        <div class="summary-content" id="summaryContent">
+            <div class="summary-empty">点击上方「生成」按钮，将玩家设定与开场白同步到此处。</div>
+        </div>
+        <div class="btn-row" style="margin-top:14px;">
+            <button class="btn btn-copy" id="copyBtn">📋 一键复制</button>
+        </div>
+    </div>
+
+    <!-- ============ 背景故事 ============ -->
+    <div class="card">
+        <div class="card-title">
+            <span class="dot"></span>
+            背景故事
+        </div>
+        <div class="story-text">
+            <p>你和苏婉晴结婚两年。她是广告公司的客户总监，你是普通公司职员。你们住在城东一套不大不小的两居室里，日子谈不上富足，但也算安稳。她每天早出晚归，你加班是常态，两个人真正坐在一起吃顿饭的时间，一周不超过三次。</p>
+            <p>陆明远是她的大学同学，认识七年。他追过她，被拒了，退成“男闺蜜”。她总说“他就是个哥儿们”，你每次表现出介意，她就撅嘴说你小心眼儿。你选择相信她——毕竟她每次被你进入时那副又羞又爽的模样，装不出来。</p>
+            <p>但三天前，她告诉你公司有个外地项目，要去邻市出差三天。原本配的女同事崴了脚，公司临时换成陆明远——因为他是那个项目的健身顾问。她收拾行李时弯腰把内衣扔进箱子，黑色蕾丝丁字裤勒进雪白臀缝的画面，在你脑海里挥之不去。</p>
+            <p>她今天穿了一条黑色紧身吊带裙，没穿内衣。她拎着一套布料少得可怜的黑色蕾丝内衣回头冲你笑：“老公，这套带过去，我晚上穿给你看视频啊，好不好？”那双水汪汪的眼睛看着你，仿佛完全不知道自己的身材对别的男人有多大杀伤力。</p>
+            <p class="highlight">三天，七十二个小时。你可以选择完全信任，可以选择暗中行动，也可以选择直接摊牌。每一个选择，都会导向不同的结局。</p>
+        </div>
+    </div>
+
+    <!-- ============ 人物介绍 ============ -->
+    <div class="card">
+        <div class="card-title">
+            <span class="dot"></span>
+            人物介绍
+        </div>
+
+        <!-- 苏婉晴 -->
+        <div class="char-block">
+            <div class="char-name">
+                苏婉晴
+                <span class="tag">妻子 · 26岁</span>
+            </div>
+            <div class="char-row">
+                <span class="label">外貌</span>
+                <span class="val">身高168，三围傲人到不像话——<em>H罩杯巨乳</em>，腰围极细，臀部浑圆挺翘。乳晕粉嫩，蜜穴天生多汁，白虎无毛。容貌是“贤妻良母”与“美艳尤物”的混合体，笑起来两个梨涡很甜，身材却是纯粹的色情。</span>
+            </div>
+            <div class="char-row">
+                <span class="label">气质</span>
+                <span class="val">“不自知的性感”——她本人有时候真的意识不到自己弯腰时有多要命，走路时那两团软肉在衬衫下微微晃动，足以让任何男人移不开眼。</span>
+            </div>
+            <div class="char-row">
+                <span class="label">性格</span>
+                <span class="val">表面大大咧咧、开朗活泼，有点傻白甜。其实很聪明，只是习惯在老公面前撒娇示弱。对陆明远，确确实实当成“纯哥儿们”相处，至少她自己认为是这样。对丈夫的爱是真实的，喜欢在丈夫面前展示自己的身体。</span>
+            </div>
+            <div class="char-quote">
+                <span class="q">“老公～你看这个好不好看？”</span> ·
+                <span class="q">“哎呀你别多想啦，明远就是我大学同学，哥儿们那种！”</span> ·
+                <span class="q">“你过来抱抱我嘛。”</span>
+            </div>
+        </div>
+
+        <!-- 陆明远 -->
+        <div class="char-block">
+            <div class="char-name">
+                陆明远
+                <span class="tag gold">男闺蜜 · 29岁</span>
+            </div>
+            <div class="char-row">
+                <span class="label">外貌</span>
+                <span class="val">身高185，肌肉线条完美，五官硬朗阳光。穿衣显瘦脱衣有肉，是那种让女人有安全感的类型。健身教练，浑身散发着荷尔蒙。</span>
+            </div>
+            <div class="char-row">
+                <span class="label">性格</span>
+                <span class="val">表面豪爽仗义、阳光大男孩，实则<em>心思缜密、极有耐心</em>。他暗恋苏婉晴多年，一直以“好朋友”身份潜伏在她身边。懂得等待时机，懂得用“关心”和“体贴”慢慢瓦解她的心防。</span>
+            </div>
+            <div class="char-row">
+                <span class="label">威胁</span>
+                <span class="val">他对苏婉晴的身体有着近乎痴迷的渴望，但用兄弟情义完美伪装。他的攻势是缓慢的、循序渐进的、以“关心”为名的。他知道她喝醉会脸红，知道她怕痒，知道她生理期爱喝红糖姜茶——有些细节连你都不知道。</span>
+            </div>
+            <div class="char-quote">
+                <span class="q">“晴晴，你老公要是欺负你，你跟我说。”</span> ·
+                <span class="q">“就我们俩，喝点呗，老同学叙叙旧。”</span> ·
+                <span class="q">“你喝多了，我扶你回房间。”</span>
+            </div>
+        </div>
+
+        <!-- 玩家自己 -->
+        <div class="char-block">
+            <div class="char-name">
+                你（林川）
+                <span class="tag blue">丈夫 · 27岁</span>
+            </div>
+            <div class="char-row">
+                <span class="label">外貌</span>
+                <span class="val">身高178，体型偏瘦但结实，五官清秀带着一丝书卷气，不善言辞却眼神温柔。</span>
+            </div>
+            <div class="char-row">
+                <span class="label">肉棒</span>
+                <span class="val">勃起约17cm，粗细适中，龟头饱满粉嫩，耐力极佳，能持续抽插四十分钟以上不射。</span>
+            </div>
+            <div class="char-row">
+                <span class="label">处境</span>
+                <span class="val">普通公司职员，收入稳定但不高。深爱妻子，占有欲强却缺乏安全感。婚后因工作忙碌忽略了她的情感需求，导致她与陆明远走得更近。骨子里有韧劲，一旦决定守护就不会轻易放手。</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ 数值与路线 ============ -->
+    <div class="card">
+        <div class="card-title">
+            <span class="dot"></span>
+            核心机制 · 数值与路线
+        </div>
+
+        <div class="value-grid">
+            <!-- NTR进度值 -->
+            <div class="value-box">
+                <div class="v-name">
+                    <span class="v-dot red"></span>
+                    NTR进度值
+                    <span style="margin-left:auto;font-size:11px;color:var(--text-soft);">初始10 / 满100</span>
+                </div>
+                <div class="value-bar">
+                    <span class="fill-red" id="ntrBar"></span>
+                </div>
+                <div class="v-desc">
+                    0-30 安全区：她只有朋友情谊。<br>
+                    31-60 暧昧区：内心出现动摇。<br>
+                    61-90 沦陷区：身体开始接受亲近。<br>
+                    91-100 出轨区：完全沦陷。
+                </div>
+            </div>
+            <!-- 干预值 -->
+            <div class="value-box">
+                <div class="v-name">
+                    <span class="v-dot green"></span>
+                    干预值
+                    <span style="margin-left:auto;font-size:11px;color:var(--text-soft);">初始0 / 满100</span>
+                </div>
+                <div class="value-bar">
+                    <span class="fill-green" id="interBar"></span>
+                </div>
+                <div class="v-desc">
+                    玩家的主动干预行为会提升此值。高干预值能有效抑制NTR进度值增长，甚至触发苏婉晴的愧疚与回归。
+                </div>
+            </div>
+        </div>
+
+        <div class="route-title">
+            <span>🛤️ 路线选择</span>
+            <span class="r-line"></span>
+        </div>
+
+        <div class="route-list">
+            <div class="route-item">
+                <div class="route-icon green">🛡️</div>
+                <div class="r-text">
+                    <b>守护路线</b> —— 成功阻止NTR，婚姻加固。通过跟踪出差、深夜查岗、突然视频、直接摊牌等方式提升干预值，让苏婉晴意识到你的在意，重新回归。
+                </div>
+            </div>
+            <div class="route-item">
+                <div class="route-icon red">💔</div>
+                <div class="r-text">
+                    <b>绿帽路线</b> —— 未能阻止，苏婉晴被陆明远攻陷。NTR进度值自然增长，她在不知不觉中一步步堕落，最终发生实质性关系。
+                </div>
+            </div>
+            <div class="route-item">
+                <div class="route-icon purple">🌀</div>
+                <div class="r-text">
+                    <b>堕落路线</b> —— 玩家主动推动或默许，甚至参与其中。你亲手将妻子推向陆明远，享受这场失控的游戏。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ 底部 ============ -->
+    <div class="footer">
+        ✦ 思维实验 · 她的出差行李 ✦
+    </div>
+
+</div>
+
+<script>
+(function(){
+    "use strict";
+
+    // ---------- 元素引用 ----------
+    var openingItems   = document.querySelectorAll(".opening-item");
+    var customOpening  = document.getElementById("customOpening");
+    var generateBtn    = document.getElementById("generateBtn");
+    var summaryContent = document.getElementById("summaryContent");
+    var copyBtn        = document.getElementById("copyBtn");
+
+    var pName   = document.getElementById("pName");
+    var pAge    = document.getElementById("pAge");
+    var pLooks  = document.getElementById("pLooks");
+    var pCock   = document.getElementById("pCock");
+    var pOther  = document.getElementById("pOther");
+
+    // ---------- 选择开场白 ----------
+    var selectedIndex = 0;
+
+    for(var i = 0; i < openingItems.length; i++){
+        (function(idx){
+            openingItems[idx].addEventListener("click", function(){
+                for(var j = 0; j < openingItems.length; j++){
+                    openingItems[j].classList.remove("active");
+                }
+                openingItems[idx].classList.add("active");
+                selectedIndex = idx;
+                // 选择预设开场白时清空自定义输入
+                customOpening.value = "";
+            });
+        })(i);
+    }
+
+    // ---------- 读取可编辑字段的值 ----------
+    function readValue(el){
+        if(!el) return "";
+        return (el.value || "").trim();
+    }
+
+    // ---------- 生成总结 ----------
+    function generateSummary(){
+        var name   = readValue(pName)  || "未命名";
+        var age    = readValue(pAge)   || "未知";
+        var looks  = readValue(pLooks) || "未填写";
+        var cock   = readValue(pCock)  || "未填写";
+        var other  = readValue(pOther) || "未填写";
+
+        // 获取开场白
+        var openingText = "";
+        var custom = (customOpening.value || "").trim();
+        if(custom){
+            openingText = custom;
+        } else {
+            var activeItem = document.querySelector(".opening-item.active");
+            if(activeItem){
+                var t = activeItem.querySelector(".opening-text");
+                openingText = t ? t.textContent.trim() : "";
+            }
+        }
+
+        var summaryHTML = "";
+        summaryHTML += '<span class="s-label">【玩家设定】</span>\n';
+        summaryHTML += "姓名：" + name + "\n";
+        summaryHTML += "年龄：" + age + "\n";
+        summaryHTML += "外貌：" + looks + "\n";
+        summaryHTML += "肉棒：" + cock + "\n";
+        summaryHTML += "其他设定：" + other + "\n\n";
+        summaryHTML += '<span class="s-label">【开场白】</span>\n';
+        summaryHTML += '<span class="s-opening">' + openingText + '</span>';
+
+        summaryContent.innerHTML = summaryHTML;
+    }
+
+    // ---------- 一键复制 ----------
+    function copySummary(){
+        var text = summaryContent.innerText || summaryContent.textContent || "";
+        if(!text.trim()){
+            return;
+        }
+
+        if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(text).then(function(){
+                showCopied();
+            }).catch(function(){
+                fallbackCopy(text);
+            });
+        } else {
+            fallbackCopy(text);
+        }
+    }
+
+    function fallbackCopy(text){
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        ta.style.top = "0";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try{
+            document.execCommand("copy");
+            showCopied();
+        }catch(e){
+            // 静默失败
+        }
+        document.body.removeChild(ta);
+    }
+
+    function showCopied(){
+        var originalText = copyBtn.textContent;
+        copyBtn.textContent = "✓ 已复制";
+        copyBtn.classList.add("copied");
+        setTimeout(function(){
+            copyBtn.textContent = originalText;
+            copyBtn.classList.remove("copied");
+        }, 1800);
+    }
+
+    // ---------- 事件绑定 ----------
+    generateBtn.addEventListener("click", function(){
+        generateSummary();
+        var summaryCard = document.getElementById("summaryCard");
+        if(summaryCard){
+            summaryCard.scrollIntoView({behavior:"smooth", block:"start"});
+        }
+    });
+
+    copyBtn.addEventListener("click", copySummary);
+
+    // ---------- 初始化：显示默认总结 ----------
+    generateSummary();
+
+})();
+</script>
+</body>
+</html>

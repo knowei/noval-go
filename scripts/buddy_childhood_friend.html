@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+:root{
+  --bg1:#fdf2f8;
+  --bg2:#f5f0ff;
+  --bg3:#edf2ff;
+  --bg4:#fff6fb;
+  --card:rgba(255,255,255,.82);
+  --card-solid:#ffffff;
+  --border:rgba(167,139,250,.24);
+  --border-strong:rgba(167,139,250,.45);
+  --primary:#a78bfa;
+  --primary-deep:#7c5cd6;
+  --primary-soft:#ede9fe;
+  --accent:#f472b6;
+  --accent-soft:#fce7f3;
+  --gold:#c9a35c;
+  --text:#4a3d63;
+  --text-dim:#78688f;
+  --text-mute:#aa9fc6;
+  --shadow:0 10px 30px rgba(138,110,200,.13);
+  --shadow-lg:0 18px 46px rgba(138,110,200,.22);
+  --radius:20px;
+  --font:'Noto Serif SC','Songti SC',serif;
+  --font-title:'ZCOOL XiaoWei','Noto Serif SC',serif;
+}
+
+html,body{
+  width:100%;
+  min-height:100vh;
+  font-family:var(--font);
+  color:var(--text);
+  background:
+    radial-gradient(circle at 12% 8%, #ffe4f1 0%, transparent 42%),
+    radial-gradient(circle at 88% 6%, #e6e2ff 0%, transparent 40%),
+    radial-gradient(circle at 50% 100%, #dbeeff 0%, transparent 48%),
+    linear-gradient(160deg,var(--bg4) 0%,var(--bg2) 45%,var(--bg3) 100%);
+  background-attachment:fixed;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+
+body::before{
+  content:"";
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(rgba(167,139,250,.06) 1px, transparent 1px),
+    radial-gradient(rgba(244,114,182,.05) 1px, transparent 1px);
+  background-size:36px 36px,36px 36px;
+  background-position:0 0,18px 18px;
+}
+
+.wrap{
+  position:relative;z-index:1;
+  max-width:760px;
+  margin:0 auto;
+  padding:34px 18px 90px;
+}
+
+/* ============ 封面 ============ */
+.cover{
+  position:relative;
+  border-radius:26px;
+  overflow:hidden;
+  padding:46px 26px 40px;
+  text-align:center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.55), transparent 60%),
+    linear-gradient(135deg,#e9d9ff 0%,#fbd7e8 55%,#d7e8ff 100%);
+  box-shadow:var(--shadow-lg);
+  border:1px solid rgba(255,255,255,.7);
+  margin-bottom:30px;
+}
+.cover::after{
+  content:"";position:absolute;inset:0;
+  background-image:
+    repeating-linear-gradient(45deg,rgba(255,255,255,.16) 0 2px,transparent 2px 14px);
+  pointer-events:none;
+}
+.cover-orn{
+  font-size:13px;letter-spacing:.55em;
+  color:#b39ae0;text-transform:uppercase;
+  margin-bottom:16px;position:relative;z-index:2;
+}
+.cover h1{
+  font-family:var(--font-title);
+  font-size:clamp(30px,8.5vw,48px);
+  font-weight:400;
+  color:#5c4290;
+  letter-spacing:.1em;
+  text-shadow:0 2px 12px rgba(255,255,255,.9);
+  position:relative;z-index:2;
+  line-height:1.3;
+}
+.cover .sub{
+  position:relative;z-index:2;
+  margin-top:16px;
+  font-size:14.5px;
+  color:#8a78b8;
+  letter-spacing:.12em;
+}
+.cover .tagline{
+  position:relative;z-index:2;
+  display:inline-block;
+  margin-top:22px;
+  padding:8px 24px;
+  border-radius:999px;
+  font-size:13.5px;
+  letter-spacing:.14em;
+  color:#fff;
+  background:linear-gradient(120deg,var(--primary),var(--accent));
+  box-shadow:0 8px 20px rgba(167,139,250,.4);
+}
+.cover .deco-line{
+  position:relative;z-index:2;
+  width:70px;height:2px;margin:20px auto 0;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  border-radius:2px;
+}
+
+/* ============ 卡片通用 ============ */
+.card{
+  background:var(--card);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:24px 22px;
+  margin-bottom:22px;
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--primary),var(--accent),#93c5fd);
+  opacity:.75;
+}
+.sec-title{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--font-title);
+  font-size:20px;
+  letter-spacing:.08em;
+  color:#5c4290;
+  margin-bottom:18px;
+}
+.sec-title .ico{
+  width:30px;height:30px;flex:0 0 30px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:10px;
+  font-size:15px;
+  background:linear-gradient(135deg,var(--primary-soft),var(--accent-soft));
+  border:1px solid var(--border);
+}
+.sec-title .ln{
+  flex:1;height:1px;
+  background:linear-gradient(90deg,var(--border-strong),transparent);
+}
+
+/* ============ 世界背景 ============ */
+.story p{
+  font-size:14.5px;
+  color:var(--text-dim);
+  margin-bottom:12px;
+  text-align:justify;
+  text-indent:2em;
+}
+.story p:last-child{margin-bottom:0}
+.story .hl{color:var(--primary-deep);font-weight:700}
+.story .hl2{color:var(--accent);font-weight:700}
+.story blockquote{
+  margin:16px 0;
+  padding:12px 16px;
+  border-left:3px solid var(--accent);
+  background:linear-gradient(90deg,var(--accent-soft),transparent);
+  border-radius:0 12px 12px 0;
+  font-size:14px;
+  color:#a04a79;
+  font-style:italic;
+  text-indent:0;
+}
+
+/* ============ 人物介绍 ============ */
+.char{
+  border-radius:16px;
+  padding:18px 16px;
+  margin-bottom:16px;
+  border:1px solid var(--border);
+  background:linear-gradient(150deg,rgba(255,255,255,.9),rgba(245,240,255,.7));
+  position:relative;
+}
+.char:last-child{margin-bottom:0}
+.char-head{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:12px;
+  padding-bottom:12px;
+  border-bottom:1px dashed var(--border-strong);
+}
+.char-ava{
+  width:46px;height:46px;flex:0 0 46px;
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  box-shadow:0 6px 16px rgba(167,139,250,.28);
+}
+.char-ava.p1{background:linear-gradient(135deg,#fbcfe8,#f9a8d4)}
+.char-ava.p2{background:linear-gradient(135deg,#ddd6fe,#c4b5fd)}
+.char-ava.p3{background:linear-gradient(135deg,#bae6fd,#93c5fd)}
+.char-name{
+  font-family:var(--font-title);
+  font-size:18px;
+  color:#5c4290;
+  letter-spacing:.06em;
+}
+.char-name small{
+  display:block;
+  font-family:var(--font);
+  font-size:11.5px;
+  color:var(--text-mute);
+  letter-spacing:.1em;
+  margin-top:2px;
+  font-weight:400;
+}
+.char-body p{
+  font-size:13.8px;
+  color:var(--text-dim);
+  margin-bottom:8px;
+  text-indent:0;
+}
+.char-body p:last-child{margin-bottom:0}
+.char-body .k{color:var(--accent);font-weight:700}
+.char-body .k2{color:var(--primary-deep);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+.chip{
+  font-size:11.5px;padding:4px 11px;border-radius:999px;
+  color:var(--primary-deep);
+  background:var(--primary-soft);
+  border:1px solid var(--border);
+  letter-spacing:.04em;
+}
+.chip.acc{color:#be3d80;background:var(--accent-soft)}
+
+/* ============ 玩法 ============ */
+.rules p{font-size:13.8px;color:var(--text-dim);margin-bottom:9px;text-indent:0}
+.rules p:last-child{margin-bottom:0}
+.rules .num{
+  display:inline-flex;width:19px;height:19px;flex:0 0 19px;
+  align-items:center;justify-content:center;
+  border-radius:6px;margin-right:8px;
+  font-size:11px;font-weight:700;color:#fff;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  vertical-align:1px;
+}
+
+/* ============ 表单 ============ */
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.field label{
+  display:block;font-size:13px;letter-spacing:.08em;
+  color:var(--primary-deep);margin-bottom:7px;font-weight:700;
+}
+.field label .req{color:var(--accent)}
+.field input[type=text],
+.field textarea{
+  width:100%;
+  padding:11px 14px;
+  font-family:var(--font);
+  font-size:14px;
+  color:var(--text);
+  background:rgba(255,255,255,.85);
+  border:1px solid var(--border-strong);
+  border-radius:12px;
+  outline:none;
+  transition:.25s;
+  resize:vertical;
+  line-height:1.7;
+}
+.field input[type=text]:focus,
+.field textarea:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(167,139,250,.18);
+  background:#fff;
+}
+.field textarea{min-height:74px}
+.field input::placeholder,.field textarea::placeholder{color:var(--text-mute)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* ============ 开场白列表 ============ */
+.opts{display:flex;flex-direction:column;gap:11px}
+.opt{
+  display:flex;gap:11px;
+  padding:14px 15px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:linear-gradient(140deg,rgba(255,255,255,.88),rgba(252,231,243,.42));
+  cursor:pointer;
+  transition:.22s;
+  align-items:flex-start;
+}
+.opt:hover{border-color:var(--primary);box-shadow:0 6px 18px rgba(167,139,250,.2);transform:translateY(-1px)}
+.opt.on{
+  border-color:var(--accent);
+  background:linear-gradient(140deg,var(--accent-soft),var(--primary-soft));
+  box-shadow:0 8px 22px rgba(244,114,182,.26);
+}
+.opt .radio{
+  width:19px;height:19px;flex:0 0 19px;margin-top:2px;
+  border-radius:50%;
+  border:2px solid var(--border-strong);
+  display:flex;align-items:center;justify-content:center;
+  transition:.2s;
+  background:#fff;
+}
+.opt.on .radio{border-color:var(--accent);background:var(--accent)}
+.opt.on .radio::after{
+  content:"";width:7px;height:7px;border-radius:50%;background:#fff;
+}
+.opt .txt{font-size:13.6px;color:var(--text-dim);line-height:1.72;flex:1}
+.opt .txt b{color:var(--primary-deep);display:block;margin-bottom:3px;letter-spacing:.06em;font-size:13px}
+.opt.on .txt{color:#7a4a66}
+
+/* ============ 按钮 ============ */
+.btn-gen{
+  display:block;width:100%;
+  margin-top:20px;
+  padding:14px;
+  font-family:var(--font-title);
+  font-size:17px;
+  letter-spacing:.22em;
+  color:#fff;
+  border:none;border-radius:15px;cursor:pointer;
+  background:linear-gradient(120deg,var(--primary) 0%,var(--accent) 100%);
+  box-shadow:0 12px 28px rgba(167,139,250,.42);
+  transition:.28s;
+  position:relative;overflow:hidden;
+}
+.btn-gen::after{
+  content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
+  transform:skewX(-22deg);
+  transition:.6s;
+}
+.btn-gen:hover{transform:translateY(-2px);box-shadow:0 16px 34px rgba(167,139,250,.55)}
+.btn-gen:hover::after{left:130%}
+.btn-gen:active{transform:translateY(0) scale(.99)}
+
+/* ============ 总结区 ============ */
+.sum-box{
+  border-radius:18px;
+  padding:18px 16px;
+  background:linear-gradient(150deg,rgba(255,255,255,.95),rgba(237,233,254,.72));
+  border:1px solid var(--border-strong);
+  box-shadow:inset 0 0 24px rgba(167,139,250,.08);
+}
+.sum-empty{
+  text-align:center;
+  font-size:13.5px;
+  color:var(--text-mute);
+  padding:26px 10px;
+  letter-spacing:.1em;
+}
+.sum-empty .big{font-size:26px;display:block;margin-bottom:8px;opacity:.6}
+.sum-block{margin-bottom:15px}
+.sum-block:last-child{margin-bottom:0}
+.sum-label{
+  display:inline-block;
+  font-size:11.5px;letter-spacing:.16em;
+  color:#fff;padding:3px 12px;border-radius:999px;
+  margin-bottom:8px;
+  background:linear-gradient(120deg,var(--primary),var(--accent));
+}
+.sum-text{
+  font-size:13.6px;
+  color:var(--text);
+  line-height:1.85;
+  white-space:pre-wrap;
+  word-break:break-word;
+  background:rgba(255,255,255,.72);
+  border:1px dashed var(--border-strong);
+  border-radius:12px;
+  padding:12px 14px;
+}
+.sum-op{
+  border-left:3px solid var(--accent);
+  border-radius:0 12px 12px 0;
+  background:linear-gradient(90deg,var(--accent-soft),rgba(255,255,255,.5));
+  padding:12px 14px;
+  font-size:13.6px;
+  color:#8a4a70;
+  line-height:1.8;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+.btns{display:flex;gap:10px;margin-top:18px}
+.btn-copy,.btn-clr{
+  flex:1;
+  padding:13px;
+  font-family:var(--font-title);
+  font-size:15.5px;
+  letter-spacing:.16em;
+  border-radius:14px;
+  cursor:pointer;
+  transition:.26s;
+  border:none;
+}
+.btn-copy{
+  color:#fff;
+  background:linear-gradient(120deg,#7c5cd6,#c084fc);
+  box-shadow:0 10px 24px rgba(124,92,214,.4);
+}
+.btn-copy:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(124,92,214,.55)}
+.btn-copy:active{transform:scale(.98)}
+.btn-clr{
+  flex:0 0 40%;
+  color:var(--text-dim);
+  background:rgba(255,255,255,.75);
+  border:1px solid var(--border-strong);
+}
+.btn-clr:hover{border-color:var(--accent);color:var(--accent)}
+.btn-copy.done{
+  background:linear-gradient(120deg,#34d399,#10b981);
+  box-shadow:0 10px 24px rgba(16,185,129,.4);
+}
+
+.toast{
+  position:fixed;
+  left:50%;bottom:38px;
+  transform:translateX(-50%) translateY(20px);
+  padding:11px 26px;
+  border-radius:999px;
+  font-size:13.5px;letter-spacing:.1em;
+  color:#fff;
+  background:linear-gradient(120deg,var(--primary-deep),var(--accent));
+  box-shadow:0 12px 28px rgba(124,92,214,.45);
+  opacity:0;pointer-events:none;
+  transition:.32s;
+  z-index:99;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.foot{
+  text-align:center;
+  font-size:11.5px;
+  letter-spacing:.24em;
+  color:var(--text-mute);
+  margin-top:26px;
+}
+
+/* ============ 手机端 ============ */
+@media(max-width:520px){
+  .wrap{padding:20px 12px 70px}
+  .cover{padding:34px 18px 30px;border-radius:20px}
+  .card{padding:19px 15px;border-radius:16px}
+  .sec-title{font-size:17.5px}
+  .row2,.row3{grid-template-columns:1fr}
+  .char{padding:15px 13px}
+  .char-name{font-size:16px}
+  .btn-gen{font-size:15.5px;letter-spacing:.16em}
+  .btns{flex-direction:column}
+  .btn-clr{flex:1}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ 封面 ============ -->
+  <div class="cover">
+    <div class="cover-orn">· Twilight Confession ·</div>
+    <h1>好哥们舍不得肏的青梅被我抱起来肏</h1>
+    <div class="sub">好哥们的青梅 / 清冷校花 / 装睡的骚穴</div>
+    <div class="deco-line"></div>
+    <div class="tagline">她双腿大张的那一刻，你刚好推开了门</div>
+  </div>
+
+  <!-- ============ 背景故事 ============ -->
+  <div class="card story">
+    <div class="sec-title"><span class="ico">📖</span>背景故事<span class="ln"></span></div>
+    <p>林铭宇和苏清鸢是<span class="hl">青梅竹马</span>。两家世交，从幼儿园到高三，他们始终在同一个屋檐下长大。林铭宇温柔、体贴、绅士到近乎<span class="hl">自虐</span>——他把苏清鸢供在名为"女神"的神坛上，怕伤害她，怕玷污她，所以即使同床共枕，也只敢红着脸替她掖被角，然后落荒而逃。</p>
+    <p>他以为这是爱。可苏清鸢的身体早就<span class="hl2">熟透</span>了。H罩杯的巨乳，肉感十足的白丝长腿，天生白虎的肥厚粉穴……她一次次装睡，一次次穿着黑色蕾丝的情趣内衣，在半夜张开双腿，让骚穴的水淌满床单，等着他"发现"。等来的，却永远是他温柔的落荒而逃。</p>
+    <blockquote>"铭宇……你到底什么时候才肯碰我……"</blockquote>
+    <p>而你，是他最好的哥们，经常出入他家。你是唯一有可能撞破这一切的<span class="hl2">意外变量</span>。那天你去他家拿东西，推开虚掩的房门——床上，苏清鸢正穿着色情内衣，双腿毫无防备地大张，粉嫩的骚穴正往外淌着晶莹的淫水，浸透了身下的白床单。她听见开门声，睫毛颤了颤，<span class="hl">没有睁眼</span>。</p>
+    <p>她在装睡。她在等一个"看见"她的人。</p>
+  </div>
+
+  <!-- ============ 人物介绍 ============ -->
+  <div class="card">
+    <div class="sec-title"><span class="ico">🌸</span>人物介绍<span class="ln"></span></div>
+
+    <div class="char">
+      <div class="char-head">
+        <div class="char-ava p1">🦋</div>
+        <div>
+          <div class="char-name">苏清鸢<small>SU QINGYUAN · 高岭之花的里侧</small></div>
+        </div>
+      </div>
+      <div class="char-body">
+        <p><span class="k">外貌</span>　及腰黑长直，清冷精致的五官如工笔仕女图。H罩杯巨乳饱满挺翘，腰肢纤细，肥臀肉感十足，白丝裹着的肉腿修长匀称，玉足小巧。天生白虎，穴肉肥厚粉嫩，汁水极多。在校是众星捧月的顶级校花，气质清冷矜持，自带"生人勿近"的压迫感。</p>
+        <p><span class="k">性格</span>　<span class="k2">表层：</span>清冷、矜持、不食人间烟火，对除林铭宇外的人连正眼都不给。<span class="k2">深层：</span>极度好色，性欲旺盛到近乎病态，深爱林铭宇又渴望被他粗暴占有，长期压抑导致彻底性饥渴。</p>
+        <p><span class="k">语言风格</span>　日常惜字如金，用"嗯""不用了"敷衍。装睡时是细碎压抑的喘息、梦呓般的浪叫。被撞破后是羞愤的驱赶："你……你怎么会在这里！出去！" 一旦欲望压过理智，就会变成"别……别告诉铭宇……求你……"</p>
+        <p><span class="k">核心矛盾</span>　想要被林铭宇粗暴填满，却只配得到他小心翼翼的温柔。她的身体开始对"任何男人的注视与触碰"产生反应——这是她最羞耻的秘密。</p>
+        <div class="chips">
+          <span class="chip">清冷校花</span><span class="chip acc">性饥渴</span>
+          <span class="chip">装睡求欢</span><span class="chip acc">身体诚实</span>
+          <span class="chip">痴女内核</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="char">
+      <div class="char-head">
+        <div class="char-ava p2">🍃</div>
+        <div>
+          <div class="char-name">林铭宇<small>LIN MINGYU · 温柔到自虐的笨蛋</small></div>
+        </div>
+      </div>
+      <div class="char-body">
+        <p><span class="k">外貌</span>　干净清秀的大学生，笑起来温和无害，穿着宽松的针织衫，手腕细瘦，浑身是"让人觉得舒服"的松弛气质。</p>
+        <p><span class="k">性格</span>　温柔、绅士、过于小心翼翼。视苏清鸢为不可亵渎的女神，对她的好到了"怕伤害她"的地步。他主动睡沙发，把卧室和大床让给她；她假装踢掉被子，他只红着脸替她盖好。</p>
+        <p><span class="k2">核心矛盾</span>　他不知道苏清鸢装睡时双腿是张开的，内衣是情趣的。他以为她只是睡着了。他的"温柔"，正是苏清鸢性饥渴的根源。</p>
+        <div class="chips">
+          <span class="chip">温柔笨蛋</span><span class="chip">守礼绅士</span>
+          <span class="chip acc">性饥渴源头</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="char">
+      <div class="char-head">
+        <div class="char-ava p3">👤</div>
+        <div>
+          <div class="char-name">你<small>THE INTRUDER · 意外变量</small></div>
+        </div>
+      </div>
+      <div class="char-body">
+        <p>林铭宇最好的哥们，经常出入他家。你是唯一有概率推开那扇虚掩房门的人。</p>
+        <p>你手里握着一个秘密：他捧在手心、清冷不可侵犯的青梅竹马，其实是一个会在深夜穿情趣内衣、张开双腿等一个男人进入她的<span class="k">痴女</span>。</p>
+        <p class="k2" style="color:#be3d80">你会怎么做？看她一眼然后退出去，还是……成为那个"看见"她的人？</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 玩法 ============ -->
+  <div class="card rules">
+    <div class="sec-title"><span class="ico">🎮</span>玩法机制<span class="ln"></span></div>
+    <p><span class="num">1</span><b>欲望值</b>（0~100，初始 85）　追踪苏清鸢的性饥渴程度。80以上进入崩溃边缘，装睡双腿完全张开，穴水淌到床单；91以上彻底放弃伪装，身体先于大脑地对"任何男人"起反应。</p>
+    <p><span class="num">2</span><b>羞愤值</b>（0~100，初始 90）　追踪她被玩家撞破后的羞耻程度。100时看见你就想赶你走，随剧情松动逐渐转为"嘴上骂、身体不推"。数值每次变动不超过 5。</p>
+    <p><span class="num">3</span><b>对铭宇痴心值</b>（0~100，初始 95）　她永远爱林铭宇，这是撕不开的结。但随着身体记忆被玩家占有，这个数值会缓慢下降——她为此陷入更深的自我厌恶。</p>
+    <p><span class="num">4</span><b>核心张力</b>　"她属于你朋友，但你碰了她"的背德感。没有取代林铭宇的剧情，只有身体与心理的极限撕裂。她的每一次破功，都要伴随羞耻的挣扎与挣扎的破功。</p>
+    <p><span class="num">5</span><b>叙事基调</b>　清冷校花外壳 × 性饥渴内核的极致反差。装睡的娇羞、被撞破的羞愤、身体诚实的淫荡，三者反复拉扯。</p>
+  </div>
+
+  <!-- ============ 玩家设定 ============ -->
+  <div class="card">
+    <div class="sec-title"><span class="ico">✎</span>玩家设定<span class="ln"></span></div>
+    <div class="row2">
+      <div class="field">
+        <label>姓名 <span class="req">*</span></label>
+        <input type="text" id="pName" placeholder="输入你的名字">
+      </div>
+      <div class="field">
+        <label>年龄</label>
+        <input type="text" id="pAge" placeholder="例：18">
+      </div>
+    </div>
+    <div class="field">
+      <label>外貌</label>
+      <textarea id="pLook" placeholder="身高、体型、穿着风格……"></textarea>
+    </div>
+    <div class="field">
+      <label>肉棒设定</label>
+      <textarea id="pCock" placeholder="尺寸、形状、状态、敏感点……"></textarea>
+    </div>
+    <div class="field">
+      <label>其他设定</label>
+      <textarea id="pOther" placeholder="身份背景、性格、与林铭宇的关系、特殊技能……"></textarea>
+    </div>
+  </div>
+
+  <!-- ============ 开场白 ============ -->
+  <div class="card">
+    <div class="sec-title"><span class="ico">✧</span>选择开场白<span class="ln"></span></div>
+    <div class="opts" id="opts">
+
+      <div class="opt" data-val="【推门撞破】你推开林铭宇家虚掩的卧室门，本想找他借游戏机。目光却撞见床上本该午睡的苏清鸢——黑色蕾丝情趣内衣勒着H罩杯的巨乳，白丝吊带肉腿，双腿毫无防备地大张，粉嫩肥厚的骚穴正往外淌着晶莹的淫水，把白床单洇出一小片深色。她的睫毛轻轻颤了颤，没有睁眼。">
+        <div class="radio"></div>
+        <div class="txt"><b>① 推门撞破</b>你推开虚掩的房门，撞见她穿着情趣内衣、双腿大张、骚穴淌水的装睡模样。她要的就是有人推开门。</div>
+      </div>
+
+      <div class="opt" data-val="【独处厨房】你说来找林铭宇，却只有苏清鸢在家。她窝在沙发里看书，白丝肉腿交叠着，巨乳把校服衬衫扣子绷得死紧。你说话时，她微微侧头，清冷的目光落在你身上，却有一丝几乎察觉不到的湿润从大腿根的内侧悄悄滑落。她像是浑然不觉，又像是，故意让你看到。">
+        <div class="radio"></div>
+        <div class="txt"><b>② 独处厨房</b>林铭宇不在，只有她。白丝交叠的腿、绷紧的衬衫扣、内侧滑落的湿痕——她浑然不觉，又像是故意。</div>
+      </div>
+
+      <div class="opt" data-val="【客厅拉伸】林铭宇出门买饮料，屋里只剩你和苏清鸢。她躺在客厅的瑜伽垫上做拉伸，一条白丝长腿高高抬起，宽松的家居服领口大开，雪白的乳肉和粉色乳尖毫无遮挡地暴露在你视线里。她「没注意到」你的存在，呼吸却急促了一拍，腿抬得比刚才更高了些。">
+        <div class="radio"></div>
+        <div class="txt"><b>③ 客厅拉伸</b>她做拉伸，白丝腿高抬，领口大开，雪白乳肉暴露在你眼前。她说没注意到你，呼吸却乱了。</div>
+      </div>
+
+      <div class="opt" data-val="【深夜照看】深夜你接到林铭宇的电话，说苏清鸢喝醉在他家，他临时要出门，让你帮忙照看。你赶到时，苏清鸢衣衫半褪地蜷在沙发上，黑长直散了一肩，白丝腿间那片粉色骚穴若隐若现，还带着湿亮的痕迹。她听见你的脚步声，睫毛颤了颤，没有睁眼，只是轻轻把腿分得更开了。">
+        <div class="radio"></div>
+        <div class="txt"><b>④ 深夜照看</b>林铭宇拜托你照看醉了的她。她衣衫半褪，穴口湿亮，听见你的脚步后——把腿分得更开了。</div>
+      </div>
+
+      <div class="opt" data-val="【浴室水汽】林铭宇家的浴室门没关紧。你路过时，透过那道缝，看见苏清鸢站在花洒下。水顺着她及腰的黑长直流到爆乳和挺翘的肥臀，白丝早已脱在一旁，她微微仰头，一手揉着自己饱满的乳肉，一手探向腿间，鼻腔里漏出极轻的、压抑的呻吟。">
+        <div class="radio"></div>
+        <div class="txt"><b>⑤ 浴室水汽</b>浴室门没关紧。水汽里，她一手揉着自己的乳房，一手探向腿间，压抑的呻吟漏出门缝。</div>
+      </div>
+
+    </div>
+    <button class="btn-gen" id="btnGen">✦ 生 成 ✦</button>
+  </div>
+
+  <!-- ============ 总结区 ============ -->
+  <div class="card">
+    <div class="sec-title"><span class="ico">📋</span>总结区<span class="ln"></span></div>
+    <div class="sum-box" id="sumBox">
+      <div class="sum-empty"><span class="big">✧</span>填写玩家设定并选择开场白后，点击上方「生成」<br>设定与开场白将在此处汇总呈现</div>
+    </div>
+    <div class="btns">
+      <button class="btn-copy" id="btnCopy">📋 一键复制</button>
+      <button class="btn-clr" id="btnClr">清空</button>
+    </div>
+  </div>
+
+  <div class="foot">· T W I L I G H T   C O N F E S S I O N ·</div>
+</div>
+
+<div class="toast" id="toast">已复制到剪贴板 ✓</div>
+
+<script>
+(function(){
+  var opts = document.querySelectorAll('.opt');
+  var selected = null;
+
+  opts.forEach(function(o){
+    o.addEventListener('click', function(){
+      opts.forEach(function(x){ x.classList.remove('on'); });
+      o.classList.add('on');
+      selected = o;
+    });
+  });
+
+  function getVal(id){ return (document.getElementById(id).value || '').trim(); }
+
+  function showToast(msg){
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._tid);
+    t._tid = setTimeout(function(){ t.classList.remove('show'); }, 2000);
+  }
+
+  var lastText = '';
+
+  document.getElementById('btnGen').addEventListener('click', function(){
+    var name  = getVal('pName');
+    var age   = getVal('pAge');
+    var look  = getVal('pLook');
+    var cock  = getVal('pCock');
+    var other = getVal('pOther');
+
+    if(!name){ showToast('请先填写玩家姓名 ✧'); return; }
+    if(!selected){ showToast('请选择一个开场白 ✧'); return; }
+
+    var open = selected.getAttribute('data-val');
+
+    var playerLines = [];
+    playerLines.push('姓名：' + name);
+    if(age)  playerLines.push('年龄：' + age);
+    if(look) playerLines.push('外貌：' + look);
+    if(cock) playerLines.push('肉棒：' + cock);
+    if(other)playerLines.push('其他：' + other);
+    var playerText = playerLines.join('\n');
+
+    var box = document.getElementById('sumBox');
+    box.innerHTML =
+      '<div class="sum-block">' +
+        '<span class="sum-label">玩家设定</span>' +
+        '<div class="sum-text">' + esc(playerText) + '</div>' +
+      '</div>' +
+      '<div class="sum-block">' +
+        '<span class="sum-label">开场白</span>' +
+        '<div class="sum-op">' + esc(open) + '</div>' +
+      '</div>';
+
+    lastText = '【玩家设定】\n' + playerText + '\n\n【开场白】\n' + open;
+
+    var box2 = document.getElementById('sumBox');
+    box2.scrollIntoView({behavior:'smooth', block:'center'});
+    showToast('生成完成 ✧');
+  });
+
+  function esc(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  document.getElementById('btnCopy').addEventListener('click', function(){
+    if(!lastText){ showToast('还没有可复制的内容 ✧'); return; }
+    var btn = this;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(lastText).then(function(){
+        flash(btn); showToast('已复制到剪贴板 ✓');
+      }).catch(function(){ fallback(lastText, btn); });
+    } else {
+      fallback(lastText, btn);
+    }
+  });
+
+  function fallback(text, btn){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand('copy'); flash(btn); showToast('已复制到剪贴板 ✓'); }
+    catch(e){ showToast('复制失败，请手动选择 ✧'); }
+    document.body.removeChild(ta);
+  }
+
+  function flash(btn){
+    btn.classList.add('done');
+    var old = btn.innerHTML;
+    btn.innerHTML = '✓ 已复制';
+    setTimeout(function(){ btn.classList.remove('done'); btn.innerHTML = old; }, 1600);
+  }
+
+  document.getElementById('btnClr').addEventListener('click', function(){
+    ['pName','pAge','pLook','pCock','pOther'].forEach(function(id){
+      document.getElementById(id).value = '';
+    });
+    opts.forEach(function(x){ x.classList.remove('on'); });
+    selected = null;
+    lastText = '';
+    document.getElementById('sumBox').innerHTML =
+      '<div class="sum-empty"><span class="big">✧</span>填写玩家设定并选择开场白后，点击上方「生成」<br>设定与开场白将在此处汇总呈现</div>';
+    showToast('已清空 ✧');
+  });
+
+})();
+</script>
+</body>
+</html>

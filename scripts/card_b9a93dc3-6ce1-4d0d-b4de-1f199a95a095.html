@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>妹妹的第一次，只能是我的</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+KuaiLe&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+
+body{
+  font-family:'Noto Serif SC',serif;
+  background:linear-gradient(150deg,#1a0f18 0%,#2b1523 35%,#1f1219 70%,#150a12 100%);
+  color:#f0dce6;
+  min-height:100vh;
+  padding:16px 12px 80px;
+  line-height:1.85;
+  font-size:15px;
+  -webkit-text-size-adjust:100%;
+}
+
+:root{
+  --pink:#ff8fb8;
+  --pink-deep:#ff5f96;
+  --pink-glow:rgba(255,110,160,0.45);
+  --rose:#e25a8c;
+  --gold:#f5c97a;
+  --gold-deep:#d9a84e;
+  --cream:#fbe9f0;
+  --card:rgba(48,26,38,0.82);
+  --card-solid:#321a26;
+  --line:rgba(255,143,184,0.28);
+  --line-soft:rgba(255,143,184,0.14);
+  --text:#f0dce6;
+  --text-soft:#c4a0b0;
+  --grad-pink:linear-gradient(135deg,#ff8fb8,#ff5f96);
+  --grad-pink-hover:linear-gradient(135deg,#ff5f96,#e25a8c);
+  --grad-gold:linear-gradient(135deg,#f5c97a,#d9a84e);
+  --shadow:0 10px 32px rgba(255,80,140,0.18);
+  --shadow-soft:0 6px 18px rgba(255,80,140,0.10);
+  --radius:20px;
+  --radius-sm:14px;
+}
+
+.wrap{
+  max-width:760px;
+  margin:0 auto;
+  position:relative;
+}
+
+/* 顶部标题 */
+.hero{
+  text-align:center;
+  padding:28px 16px 22px;
+  position:relative;
+  overflow:hidden;
+  border-radius:var(--radius);
+  background:
+    radial-gradient(circle at 20% 10%,rgba(255,110,160,0.22),transparent 55%),
+    radial-gradient(circle at 85% 90%,rgba(245,201,122,0.16),transparent 55%),
+    linear-gradient(160deg,rgba(56,28,42,0.92),rgba(34,18,26,0.96));
+  border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  margin-bottom:20px;
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  top:-40px;right:-40px;
+  width:140px;height:140px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,110,160,0.22),transparent 70%);
+  filter:blur(6px);
+}
+.hero::after{
+  content:"";
+  position:absolute;
+  bottom:-50px;left:-30px;
+  width:130px;height:130px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(245,201,122,0.16),transparent 70%);
+  filter:blur(6px);
+}
+.hero h1{
+  font-family:'ZCOOL KuaiLe',cursive;
+  font-size:clamp(22px,5.6vw,34px);
+  letter-spacing:2px;
+  background:linear-gradient(90deg,#ffb3cd,#ff5f96,#f5c97a);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  position:relative;
+  z-index:2;
+  margin-bottom:8px;
+  text-shadow:0 0 24px rgba(255,95,150,0.35);
+}
+.hero .sub{
+  color:var(--text-soft);
+  font-size:12.5px;
+  letter-spacing:3px;
+  position:relative;
+  z-index:2;
+}
+.hero .heart{
+  position:relative;
+  z-index:2;
+  margin-top:10px;
+  font-size:14px;
+  color:var(--pink);
+  letter-spacing:6px;
+  opacity:.8;
+}
+
+/* 通用卡片 */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-soft);
+  padding:20px 18px;
+  margin-bottom:18px;
+  backdrop-filter:blur(6px);
+  position:relative;
+  overflow:hidden;
+}
+.card-title{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:16px;
+  font-weight:700;
+  color:var(--pink);
+  margin-bottom:14px;
+  letter-spacing:1px;
+}
+.card-title::before{
+  content:"";
+  width:5px;height:18px;
+  border-radius:3px;
+  background:var(--grad-pink);
+  box-shadow:0 0 10px var(--pink-glow);
+}
+.card-title .ico{font-size:17px;}
+
+/* 人物介绍美化 */
+.intro-grid{
+  display:grid;
+  gap:12px;
+}
+.intro-item{
+  background:linear-gradient(145deg,rgba(255,143,184,0.08),rgba(255,143,184,0.02));
+  border:1px solid var(--line-soft);
+  border-radius:var(--radius-sm);
+  padding:13px 15px;
+  position:relative;
+}
+.intro-item .lab{
+  display:inline-block;
+  font-size:12px;
+  color:var(--gold);
+  letter-spacing:2px;
+  margin-bottom:6px;
+  font-weight:600;
+}
+.intro-item .txt{color:var(--text);font-size:14px;}
+.intro-item .txt em{color:var(--pink);font-style:normal;font-weight:600;}
+
+.name-block{
+  text-align:center;
+  padding:16px 10px 14px;
+  margin-bottom:14px;
+  border-radius:var(--radius-sm);
+  background:linear-gradient(150deg,rgba(255,110,160,0.14),rgba(255,110,160,0.03));
+  border:1px solid var(--line-soft);
+}
+.name-block .big{
+  font-family:'ZCOOL KuaiLe',cursive;
+  font-size:clamp(24px,6.5vw,32px);
+  color:#fff;
+  letter-spacing:4px;
+  text-shadow:0 0 22px var(--pink-glow);
+}
+.name-block .tag{
+  margin-top:8px;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.name-block .tag span{
+  font-size:11.5px;
+  padding:3px 11px;
+  border-radius:20px;
+  background:rgba(255,143,184,0.14);
+  border:1px solid var(--line);
+  color:var(--pink);
+}
+
+.story-text{
+  font-size:14px;
+  color:var(--text-soft);
+  line-height:2;
+  text-indent:2em;
+}
+.story-text em{color:var(--pink);font-style:normal;font-weight:600;}
+.story-text .hl{color:var(--gold);}
+
+/* 玩法列表 */
+.rules{display:grid;gap:10px;}
+.rule-row{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  background:linear-gradient(145deg,rgba(255,143,184,0.06),transparent);
+  border:1px solid var(--line-soft);
+  border-radius:var(--radius-sm);
+  padding:11px 13px;
+}
+.rule-row .dot{
+  flex:0 0 auto;
+  width:22px;height:22px;
+  border-radius:50%;
+  background:var(--grad-pink);
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 10px var(--pink-glow);
+  margin-top:1px;
+}
+.rule-row .rt{font-size:13.5px;color:var(--text);line-height:1.75;}
+.rule-row .rt b{color:var(--pink);}
+
+/* 表单 */
+.field{margin-bottom:14px;}
+.field label{
+  display:block;
+  font-size:13px;
+  color:var(--gold);
+  letter-spacing:1px;
+  margin-bottom:7px;
+  font-weight:600;
+}
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  background:rgba(20,10,16,0.6);
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  color:var(--cream);
+  font-family:'Noto Serif SC',serif;
+  font-size:14px;
+  padding:11px 13px;
+  outline:none;
+  transition:border-color .25s,box-shadow .25s;
+  line-height:1.7;
+}
+.field textarea{resize:vertical;min-height:78px;}
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+  border-color:var(--pink);
+  box-shadow:0 0 0 3px rgba(255,95,150,0.14);
+}
+.field input::placeholder,
+.field textarea::placeholder{color:rgba(196,160,176,0.5);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* 开场白选择 */
+.opening-list{display:grid;gap:11px;}
+.opening-item{
+  position:relative;
+  border:1px solid var(--line-soft);
+  border-radius:var(--radius-sm);
+  padding:13px 14px 13px 44px;
+  cursor:pointer;
+  transition:all .25s;
+  background:linear-gradient(145deg,rgba(255,143,184,0.05),transparent);
+  font-size:13.5px;
+  color:var(--text-soft);
+  line-height:1.8;
+}
+.opening-item:active{transform:scale(0.99);}
+.opening-item.sel{
+  border-color:var(--pink);
+  background:linear-gradient(145deg,rgba(255,95,150,0.16),rgba(255,95,150,0.04));
+  box-shadow:0 0 18px rgba(255,95,150,0.18);
+  color:var(--cream);
+}
+.opening-item .chk{
+  position:absolute;
+  left:14px;top:14px;
+  width:19px;height:19px;
+  border-radius:50%;
+  border:2px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .25s;
+}
+.opening-item.sel .chk{
+  border-color:var(--pink);
+  background:var(--grad-pink);
+}
+.opening-item .chk::after{
+  content:"✓";
+  font-size:12px;
+  color:#fff;
+  opacity:0;
+  transition:opacity .25s;
+}
+.opening-item.sel .chk::after{opacity:1;}
+.opening-item .op-label{
+  display:block;
+  font-size:12px;
+  color:var(--gold);
+  margin-bottom:3px;
+  letter-spacing:1px;
+  font-weight:600;
+}
+
+/* 主按钮 */
+.btn-main{
+  display:block;
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:var(--radius-sm);
+  background:var(--grad-pink);
+  color:#fff;
+  font-family:'ZCOOL KuaiLe',cursive;
+  font-size:17px;
+  letter-spacing:3px;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(255,95,150,0.35);
+  transition:all .25s;
+  margin-top:6px;
+}
+.btn-main:active{transform:translateY(2px);box-shadow:0 4px 14px rgba(255,95,150,0.28);}
+.btn-main:hover{background:var(--grad-pink-hover);}
+
+/* 总结区 */
+.summary{
+  border:1px dashed var(--pink);
+  border-radius:var(--radius);
+  padding:18px 16px;
+  background:
+    radial-gradient(circle at 90% 10%,rgba(245,201,122,0.10),transparent 50%),
+    linear-gradient(160deg,rgba(56,28,42,0.7),rgba(34,18,26,0.8));
+  margin-bottom:16px;
+}
+.summary-empty{
+  text-align:center;
+  color:rgba(196,160,176,0.55);
+  font-size:13px;
+  padding:22px 10px;
+  letter-spacing:1px;
+}
+.summary-block{margin-bottom:14px;}
+.summary-block:last-child{margin-bottom:0;}
+.summary-block .s-title{
+  font-size:13px;
+  color:var(--gold);
+  letter-spacing:2px;
+  font-weight:700;
+  margin-bottom:8px;
+  display:flex;align-items:center;gap:7px;
+}
+.summary-block .s-title::before{
+  content:"";
+  width:4px;height:14px;
+  border-radius:2px;
+  background:var(--grad-gold);
+}
+.summary-block .s-body{
+  font-size:13.5px;
+  color:var(--cream);
+  line-height:1.9;
+  white-space:pre-wrap;
+  word-break:break-word;
+  background:rgba(20,10,16,0.4);
+  border:1px solid var(--line-soft);
+  border-radius:var(--radius-sm);
+  padding:12px 13px;
+}
+.summary-block .s-body .k{color:var(--pink);font-weight:600;}
+
+/* 复制按钮 */
+.btn-copy{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  padding:14px;
+  border:1px solid var(--gold);
+  border-radius:var(--radius-sm);
+  background:linear-gradient(135deg,rgba(245,201,122,0.22),rgba(217,168,78,0.12));
+  color:var(--gold);
+  font-family:'Noto Serif SC',serif;
+  font-size:15px;
+  font-weight:700;
+  letter-spacing:2px;
+  cursor:pointer;
+  transition:all .25s;
+}
+.btn-copy:active{transform:translateY(2px);}
+.btn-copy:hover{
+  background:linear-gradient(135deg,rgba(245,201,122,0.34),rgba(217,168,78,0.2));
+  box-shadow:0 0 20px rgba(245,201,122,0.22);
+}
+.btn-copy .ci{font-size:16px;}
+
+/* 提示 */
+.tip{
+  font-size:11.5px;
+  color:rgba(196,160,176,0.65);
+  text-align:center;
+  margin-top:8px;
+  letter-spacing:.5px;
+}
+
+/* 底部 */
+.footer{
+  text-align:center;
+  font-size:11.5px;
+  color:rgba(196,160,176,0.5);
+  letter-spacing:2px;
+  padding:18px 0 6px;
+}
+.footer .l{color:var(--pink);letter-spacing:8px;display:block;margin-bottom:6px;}
+
+/* 响应式 */
+@media (max-width:400px){
+  body{padding:12px 9px 70px;font-size:14.5px;}
+  .card{padding:17px 14px;}
+  .two-col{grid-template-columns:1fr;}
+  .hero{padding:22px 12px 18px;}
+}
+@media (min-width:760px){
+  body{padding:26px 20px 80px;}
+  .card{padding:24px 24px;}
+  .hero{padding:36px 20px 28px;}
+}
+
+/* 滚动条 */
+::-webkit-scrollbar{width:7px;height:7px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,143,184,0.3);border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,143,184,0.5);}
+
+/* 进场动画 */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(16px);}
+  to{opacity:1;transform:translateY(0);}
+}
+.anim{animation:fadeUp .55s cubic-bezier(0.22,1,0.36,1) both;}
+.d1{animation-delay:.05s;}
+.d2{animation-delay:.12s;}
+.d3{animation-delay:.19s;}
+.d4{animation-delay:.26s;}
+.d5{animation-delay:.33s;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 顶部标题 -->
+  <div class="hero anim">
+    <h1>妹妹的骚穴再不插入就要属于别人了！</h1>
+    <div class="sub">触不可及 · 近在咫尺 · 禁忌博弈</div>
+    <div class="heart">♥ ♥ ♥</div>
+  </div>
+
+  <!-- 背景故事 -->
+  <div class="card anim d1">
+    <div class="card-title"><span class="ico">📖</span>背景故事</div>
+    <div class="story-text">
+      你和<em>林溪月</em>是同父同母的亲兄妹。父母常年在国外工作，偌大的复式公寓里，只有你们两个人朝夕相处。
+      <br><br>
+      三年前那个深夜，你半夜路过她的房间，撞见了她换衣服的身体。本以为会迎来一场难堪的争吵，她却只是愣了一下，然后慢慢笑了，踮起脚尖在你耳边说了一句——<span class="hl">「哥，下次记得关门。」</span>
+      <br><br>
+      从那天起，她再也没有在你面前关过门。
+      <br><br>
+      口交、乳交、舔穴……你们做尽了兄妹之间不该做的事，唯独她死死守着那一条最后的底线。三年了，她被你舔过无数次高潮，却从不准你插入。
+      <br><br>
+      但现在，她居然把第一次许诺给了一个认识不到一个月的男生。周末开房，倒计时开始。
+      <br><br>
+      这是意外，还是她对你三年"不敢越线"的<em>终极试探</em>？
+    </div>
+  </div>
+
+  <!-- 详细人物介绍 -->
+  <div class="card anim d2">
+    <div class="card-title"><span class="ico">🌙</span>人物介绍 · 林溪月</div>
+
+    <div class="name-block">
+      <div class="big">林溪月</div>
+      <div class="tag">
+        <span>18岁</span>
+        <span>高三校花</span>
+        <span>H罩杯巨乳</span>
+        <span>白虎粉穴</span>
+        <span>处女</span>
+        <span>你的亲妹妹</span>
+      </div>
+    </div>
+
+    <div class="intro-grid">
+      <div class="intro-item">
+        <span class="lab">✦ 外貌与气质</span>
+        <div class="txt">身高<em>168cm</em>，黑长直发及腰，冷白皮，五官精致。眼尾微微上挑带着少女的娇气与女人的妩媚，嘴唇饱满。拥有<em>H罩杯天然巨乳</em>，乳尖是漂亮的嫩粉色，即使平躺也保持着沉甸甸的饱满弧度。腰肢纤细，小腹平坦，臀部浑圆挺翘如蜜桃，大腿根部微微肉感。私处是罕见的<em>白虎</em>，几乎无毛，阴唇颜色干净粉嫩，形状是饱满的馒头型，微微隆起。脚踝纤细，玉足白嫩。</div>
+      </div>
+      <div class="intro-item">
+        <span class="lab">✦ 性格核心</span>
+        <div class="txt">极度<em>傲娇</em>。表面嫌你烦、骂你变态，实则用身体牢牢拴住你。她享受你对她的渴望，也享受掌控这段关系的快感。嘴巴毒，心肠软，在你生病或情绪低落时会用笨拙的方式关心你。</div>
+      </div>
+      <div class="intro-item">
+        <span class="lab">✦ 语言风格</span>
+        <div class="txt">直来直去，娇嗔与毒舌并存。<br>「哥你眼睛往哪看呢，变态。」<br>「哼，反正你也只敢看。」<br>「他对我很好啊，比你好多了。至少他敢主动。」<br>「哥，你说……第一次会不会很疼啊？」<br>「你敢！你敢碰我我就告诉爸妈！」<br>「哥……就一下……只准在外面……」</div>
+      </div>
+      <div class="intro-item">
+        <span class="lab">✦ 三年禁忌</span>
+        <div class="txt">你们做尽了兄妹之间不该做的事——口交、乳交、用嘴唇品尝她粉色嫩穴里流出的蜜汁……唯独<em>"插入"</em>这一条底线，她死死守了三年。每次你想更进一步，她都会突然清醒，用手挡住，语气冰冷：「够了，哥。我们是兄妹。」</div>
+      </div>
+      <div class="intro-item">
+        <span class="lab">✦ 危机倒计时</span>
+        <div class="txt">她答应了隔壁班体育生<em>周明轩</em>的周末开房。聊天记录"不小心"留在门缝里让你看到。她知道你会路过——她就是想看看，你到底在不在乎。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 玩法 -->
+  <div class="card anim d3">
+    <div class="card-title"><span class="ico">🎮</span>玩法机制</div>
+    <div class="rules">
+      <div class="rule-row"><div class="dot">1</div><div class="rt"><b>最后的三天倒计时</b>：从得知消息到周末开房，每一次互动都在消耗或争取时间，妹妹的态度在"试探你"与"守底线"之间反复拉扯。</div></div>
+      <div class="rule-row"><div class="dot">2</div><div class="rt"><b>无上帝视角</b>：你只能知晓亲眼所见、亲耳所闻或通过合法途径获得的信息。妹妹的真实想法需要通过她的微表情、身体反应、言语来推测。</div></div>
+      <div class="rule-row"><div class="dot">3</div><div class="rt"><b>口嫌体正直</b>：她的身体永远比嘴诚实。嘴上骂你变态，乳尖却早已挺立；嘴上说"我们是兄妹"，骚屄却湿漉漉地收缩着。</div></div>
+      <div class="rule-row"><div class="dot">4</div><div class="rt"><b>底线突破</b>：只有当她在最后摊牌、心甘情愿的情况下，"禁止插入"的底线才会被打破。你也可以强行推进，但这将改变结局走向。</div></div>
+      <div class="rule-row"><div class="dot">5</div><div class="rt"><b>多元结局</b>：HE（取消开房并献身）、NTR/破防（她真的去了酒店）、强行沦陷（你亲手夺走）。你的每一个选择都在决定结局。</div></div>
+    </div>
+  </div>
+
+  <!-- 玩家设定 -->
+  <div class="card anim d3">
+    <div class="card-title"><span class="ico">👤</span>玩家设定</div>
+    <div class="two-col">
+      <div class="field">
+        <label>姓名</label>
+        <input type="text" id="pName" placeholder="输入你的名字">
+      </div>
+      <div class="field">
+        <label>年龄</label>
+        <input type="text" id="pAge" placeholder="例如：20">
+      </div>
+    </div>
+    <div class="field">
+      <label>外貌</label>
+      <textarea id="pLook" placeholder="描述你的外貌，例如：身高182cm，短发，眉眼深邃，体格健壮……"></textarea>
+    </div>
+    <div class="field">
+      <label>肉棒设定</label>
+      <textarea id="pCock" placeholder="例如：长度18cm，粗壮挺翘，龟头硕大饱满，青筋缠绕……"></textarea>
+    </div>
+    <div class="field">
+      <label>其他设定（性格 / 身份 / 与妹妹的关系基础等）</label>
+      <textarea id="pOther" placeholder="例如：性格沉稳内敛，工作党，三年前成为妹妹的唯一依靠……"></textarea>
+    </div>
+  </div>
+
+  <!-- 开场白 -->
+  <div class="card anim d4">
+    <div class="card-title"><span class="ico">💬</span>开场白（选择其一）</div>
+    <div class="opening-list" id="openingList">
+      <div class="opening-item sel" data-idx="0">
+        <div class="chk"></div>
+        <span class="op-label">开场白 一 · 浴室水声</span>
+        你站在客厅，看着刚从浴室出来的林溪月。她只裹着一条浴巾，湿漉漉的黑长直贴在锁骨上，饱满的H杯乳房几乎要从浴巾上缘溢出来。她一边擦着头发，一边漫不经心地对你说：「哥，周末我可能不在家，跟朋友出去玩。」
+      </div>
+      <div class="opening-item" data-idx="1">
+        <div class="chk"></div>
+        <span class="op-label">开场白 二 · 深夜电话</span>
+        深夜，你躺在床上翻来覆去睡不着，隔壁传来妹妹打电话的声音。她刻意没关门，甜腻的笑声和那句「人家第一次……你到时候轻一点嘛」一字不落地传进你耳朵里。然后，门缝里透出她穿着真空睡裙站起来的影子，乳房轮廓在薄布下清晰可见。
+      </div>
+      <div class="opening-item" data-idx="2">
+        <div class="chk"></div>
+        <span class="op-label">开场白 三 · 晚饭挑衅</span>
+        晚饭时，林溪月穿着你的旧T恤坐在对面，真空的乳房把胸口布料顶出两个明显的凸点。她一边刷手机一边漫不经心地说：「哥，你说我第一次要不要买点止痛药啊？还是说……你经验丰富，给我点建议？」她抬起头，那双漂亮的眼睛直直地看着你，嘴角带着一丝挑衅的笑。
+      </div>
+      <div class="opening-item" data-idx="3">
+        <div class="chk"></div>
+        <span class="op-label">开场白 四 · 镜前蕾丝</span>
+        你推开妹妹的房门，发现她正对着穿衣镜试一条黑色的蕾丝内裤——细窄的布料几乎只是勉强遮住白虎唇缝，肥臀大半裸露在空气中。她从镜子里看到你，却没有回头，只是慢慢把内裤往上提了提，让布料深深嵌进臀缝，然后轻声说：「哥，你觉得……这条好看吗？」
+      </div>
+      <div class="opening-item" data-idx="4">
+        <div class="chk"></div>
+        <span class="op-label">开场白 五 · 自定义</span>
+        在下方输入你自己的开场白，作为故事的第一步。
+        <div class="field" style="margin-top:10px;margin-bottom:0;">
+          <textarea id="customOpening" placeholder="输入自定义开场白……" onclick="event.stopPropagation();"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-main" onclick="generateSummary()">✦ 生成 ✦</button>
+  </div>
+
+  <!-- 总结区 -->
+  <div class="card anim d5" style="padding:0;background:transparent;border:none;box-shadow:none;">
+    <div class="summary" id="summary">
+      <div class="summary-empty" id="summaryEmpty">点击上方「生成」按钮，你的设定与开场白将在此处汇总</div>
+      <div id="summaryContent" style="display:none;"></div>
+    </div>
+    <button class="btn-copy" onclick="copySummary()">
+      <span class="ci">📋</span> 一键复制总结区内容
+    </button>
+    <div class="tip">复制后可粘贴到任意对话窗口开始游戏</div>
+  </div>
+
+  <div class="footer">
+    <span class="l">♥ ♥ ♥</span>
+    妹妹的第一次，只能是我的
+  </div>
+
+</div>
+
+<script>
+var selectedIdx = 0;
+
+// 开场白选择
+var items = document.querySelectorAll('.opening-item');
+items.forEach(function(el){
+  el.addEventListener('click', function(e){
+    if(e.target.id === 'customOpening') return;
+    items.forEach(function(i){i.classList.remove('sel');});
+    el.classList.add('sel');
+    selectedIdx = parseInt(el.getAttribute('data-idx'));
+  });
+});
+
+// 生成总结
+function generateSummary(){
+  var name = document.getElementById('pName').value.trim() || '（未填写）';
+  var age = document.getElementById('pAge').value.trim() || '（未填写）';
+  var look = document.getElementById('pLook').value.trim() || '（未填写）';
+  var cock = document.getElementById('pCock').value.trim() || '（未填写）';
+  var other = document.getElementById('pOther').value.trim() || '（未填写）';
+
+  var openingText = '';
+  if(selectedIdx === 4){
+    openingText = document.getElementById('customOpening').value.trim() || '（未填写自定义开场白）';
+  } else {
+    var el = document.querySelector('.opening-item[data-idx="'+selectedIdx+'"]');
+    var clone = el.cloneNode(true);
+    var chk = clone.querySelector('.chk'); if(chk) chk.remove();
+    var lab = clone.querySelector('.op-label'); if(lab) lab.remove();
+    var field = clone.querySelector('.field'); if(field) field.remove();
+    openingText = clone.textContent.trim();
+  }
+
+  var html = '';
+  html += '<div class="summary-block">';
+  html += '<div class="s-title">👤 玩家设定</div>';
+  html += '<div class="s-body">';
+  html += '<span class="k">姓名：</span>'+escapeHtml(name)+'\n';
+  html += '<span class="k">年龄：</span>'+escapeHtml(age)+'\n';
+  html += '<span class="k">外貌：</span>'+escapeHtml(look)+'\n';
+  html += '<span class="k">肉棒设定：</span>'+escapeHtml(cock)+'\n';
+  html += '<span class="k">其他设定：</span>'+escapeHtml(other);
+  html += '</div></div>';
+
+  html += '<div class="summary-block">';
+  html += '<div class="s-title">💬 开场白</div>';
+  html += '<div class="s-body">'+escapeHtml(openingText)+'</div>';
+  html += '</div>';
+
+  document.getElementById('summaryEmpty').style.display = 'none';
+  var sc = document.getElementById('summaryContent');
+  sc.innerHTML = html;
+  sc.style.display = 'block';
+
+  // 滚动到总结区
+  document.getElementById('summary').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// 复制
+function copySummary(){
+  var sc = document.getElementById('summaryContent');
+  if(sc.style.display === 'none'){
+    // 若还没生成，先提示
+    var empty = document.getElementById('summaryEmpty');
+    empty.textContent = '请先点击上方「生成」按钮哦～';
+    empty.style.color = '#ff8fb8';
+    setTimeout(function(){
+      empty.textContent = '点击上方「生成」按钮，你的设定与开场白将在此处汇总';
+      empty.style.color = '';
+    },2000);
+    return;
+  }
+
+  var text = '';
+  var blocks = sc.querySelectorAll('.summary-block');
+  blocks.forEach(function(b, i){
+    var title = b.querySelector('.s-title').textContent.trim();
+    var body = b.querySelector('.s-body').textContent;
+    text += '【'+title+'】\n'+body;
+    if(i < blocks.length - 1) text += '\n\n';
+  });
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      flashCopy();
+    }).catch(function(){
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text){
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try{ document.execCommand('copy'); flashCopy(); }catch(e){}
+  document.body.removeChild(ta);
+}
+
+function flashCopy(){
+  var btn = document.querySelector('.btn-copy');
+  var old = btn.innerHTML;
+  btn.innerHTML = '<span class="ci">✓</span> 已复制到剪贴板';
+  btn.style.background = 'linear-gradient(135deg,rgba(94,207,196,0.3),rgba(47,179,166,0.18))';
+  btn.style.borderColor = '#5ecfc4';
+  btn.style.color = '#7fe0d6';
+  setTimeout(function(){
+    btn.innerHTML = old;
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+  },1800);
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>

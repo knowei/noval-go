@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>隔壁的人妻 - 顾知苒</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-dark: #0a0a14;
+            --bg-card: #13131f;
+            --border: #252540;
+            --border-light: #353555;
+            --gold: #c9a96e;
+            --gold-dark: #8b6914;
+            --gold-light: #e0c99a;
+            --wine: #8b2252;
+            --wine-light: #c44d7e;
+            --purple: #6c5ce7;
+            --purple-light: #a29bfe;
+            --text: #e8e8f0;
+            --text-secondary: #a0a0b8;
+            --text-muted: #5a5a78;
+        }
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            line-height: 1.7;
+            overflow-x: hidden;
+            color: var(--text);
+        }
+        .dynamic-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0a14, #13131f, #1a0a1e, #0a1418);
+            background-size: 400% 400%;
+            animation: bgShift 15s ease infinite;
+        }
+        @keyframes bgShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .splash-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0a0a14, #13131f, #1a0a1e);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: splashFadeOut 1s ease-in 3s forwards;
+        }
+        @keyframes splashFadeOut {
+            to { opacity: 0; pointer-events: none; }
+        }
+        .splash-image-wrapper {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .splash-glow {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 240px; height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(201, 169, 110, 0.4), rgba(139, 34, 82, 0.2), transparent);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+        }
+        .splash-image {
+            position: relative;
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: imageReveal 1.5s ease-out 0.5s forwards;
+            border: 4px solid var(--gold);
+            box-shadow: 0 0 50px rgba(201, 169, 110, 0.4);
+        }
+        @keyframes imageReveal {
+            to { opacity: 1; transform: scale(1); }
+        }
+        .splash-title {
+            font-size: 38px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #c9a96e, #e0c99a, #c44d7e, #c9a96e);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 0.8s ease-out 1s both, textShimmer 3s ease-in-out infinite;
+        }
+        @keyframes textShimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .splash-subtitle {
+            font-size: 16px;
+            color: var(--gold);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease-out 1.3s both;
+            letter-spacing: 4px;
+        }
+        .splash-loading {
+            width: 200px;
+            height: 3px;
+            background: rgba(201, 169, 110, 0.15);
+            border-radius: 2px;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out 1.6s both;
+        }
+        .splash-loading-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--wine), var(--purple));
+            border-radius: 2px;
+            animation: loadingBar 2s ease-out 1s forwards;
+        }
+        @keyframes loadingBar {
+            to { width: 100%; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 20px;
+            opacity: 0;
+            animation: containerFadeIn 1s ease-out 3.5s forwards;
+        }
+        @keyframes containerFadeIn {
+            to { opacity: 1; }
+        }
+        @keyframes borderGlow {
+            0% { border-color: rgba(201, 169, 110, 0.3); }
+            33% { border-color: rgba(139, 34, 82, 0.3); }
+            66% { border-color: rgba(108, 92, 231, 0.3); }
+            100% { border-color: rgba(201, 169, 110, 0.3); }
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+            padding: 0;
+            border-radius: 24px;
+            border: 2px solid var(--border);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: borderGlow 6s ease-in-out infinite;
+        }
+        .header-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url('https://cdn.imagetourls.com/uploads/tyImg/Fb751XlM.jpg');
+            background-size: cover;
+            background-position: center top;
+            filter: brightness(0.35) blur(3px);
+        }
+        .header-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(10,10,20,0.5), rgba(19,19,31,0.85));
+        }
+        .header > * { position: relative; z-index: 1; }
+        .title { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 10px; }
+        .emoji { font-size: 36px; }
+        .main-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #c9a96e, #e0c99a, #c44d7e);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShimmer 4s ease-in-out infinite;
+        }
+        .tags { font-size: 13px; color: var(--gold); display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+        .tag {
+            background: rgba(201, 169, 110, 0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid rgba(201, 169, 110, 0.25);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        .tag:hover {
+            background: rgba(201, 169, 110, 0.2);
+            border-color: rgba(201, 169, 110, 0.5);
+        }
+        .avatar-section { text-align: center; margin-bottom: 28px; }
+        .avatar-wrapper { position: relative; display: inline-block; margin-bottom: 16px; }
+        .avatar-circle {
+            width: 160px; height: 160px;
+            margin: 0 auto;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 35px rgba(201, 169, 110, 0.25);
+            border: 4px solid var(--border-light);
+            overflow: hidden;
+            animation: pulse 3s infinite, borderGlow 6s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(201, 169, 110, 0.25); }
+            50% { box-shadow: 0 0 0 12px rgba(201, 169, 110, 0); }
+        }
+        .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+        .char-name {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #c9a96e, #e0c99a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .char-info { font-size: 14px; color: var(--text-secondary); display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .char-info span {
+            background: rgba(201, 169, 110, 0.08);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid rgba(201, 169, 110, 0.15);
+            transition: all 0.3s;
+        }
+        .char-info span:hover {
+            background: rgba(201, 169, 110, 0.15);
+            border-color: rgba(201, 169, 110, 0.3);
+        }
+        .dialogue-box {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 28px;
+            border: 2px solid var(--border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: borderGlow 8s ease-in-out infinite;
+        }
+        .dialogue-box::after {
+            content: '';
+            position: absolute;
+            bottom: -10px; left: 50px;
+            width: 20px; height: 20px;
+            background: var(--bg-card);
+            border-right: 2px solid var(--border);
+            border-bottom: 2px solid var(--border);
+            transform: rotate(45deg);
+        }
+        .dialogue-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--gold);
+            margin-bottom: 14px;
+            font-size: 16px;
+        }
+        .dialogue-content { font-size: 15px; color: var(--text); line-height: 1.9; font-style: italic; }
+        .section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid var(--border);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(0, 0, 0, 0.35);
+            border-color: var(--border-light);
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+        .section-content p { margin: 0 0 14px 0; font-size: 14px; color: var(--text); line-height: 1.8; }
+        .section-content p:last-child { margin-bottom: 0; }
+        .section-content strong { color: var(--gold); }
+        .section-content em { color: var(--wine-light); font-style: normal; }
+        .plot-content p { margin-bottom: 16px; }
+        .stats-section {
+            background: linear-gradient(135deg, rgba(19,19,31,0.95), rgba(26,10,30,0.95));
+            border-color: var(--border-light);
+        }
+        .stats-section .section-title {
+            color: var(--gold);
+            border-color: var(--border-light);
+        }
+        .stat-card {
+            background: rgba(10, 10, 20, 0.6);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border: 2px solid var(--border);
+            transition: all 0.3s;
+        }
+        .stat-card:last-child { margin-bottom: 0; }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .stat-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .stat-icon {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #fff;
+        }
+        .stat-name { font-size: 15px; font-weight: 700; color: var(--text); }
+        .stat-desc { font-size: 11px; color: var(--text-muted); }
+        .stat-value {
+            font-size: 24px;
+            font-weight: 900;
+            margin-left: auto;
+        }
+        .stat-value small { font-size: 12px; opacity: 0.5; }
+        .bar { height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+        .bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+        .stat-status {
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            line-height: 1.6;
+            font-style: italic;
+        }
+        .stat-card.love { border-color: rgba(201, 169, 110, 0.25); }
+        .stat-card.love .stat-icon { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); }
+        .stat-card.love .stat-value { color: var(--gold); }
+        .stat-card.love .bar-fill { background: linear-gradient(90deg, var(--gold-dark), var(--gold)); }
+        .stat-card.love .stat-status { background: rgba(201, 169, 110, 0.08); color: var(--gold-light); border: 1px solid rgba(201, 169, 110, 0.15); }
+        .stat-card.pussy { border-color: rgba(139, 34, 82, 0.25); }
+        .stat-card.pussy .stat-icon { background: linear-gradient(135deg, var(--wine), #5a1535); }
+        .stat-card.pussy .stat-value { color: var(--wine-light); }
+        .stat-card.pussy .bar-fill { background: linear-gradient(90deg, #5a1535, var(--wine)); }
+        .stat-card.pussy .stat-status { background: rgba(139, 34, 82, 0.08); color: var(--wine-light); border: 1px solid rgba(139, 34, 82, 0.15); }
+        .stat-card.desire { border-color: rgba(108, 92, 231, 0.25); }
+        .stat-card.desire .stat-icon { background: linear-gradient(135deg, var(--purple), #4a3db0); }
+        .stat-card.desire .stat-value { color: var(--purple-light); }
+        .stat-card.desire .bar-fill { background: linear-gradient(90deg, #4a3db0, var(--purple)); }
+        .stat-card.desire .stat-status { background: rgba(108, 92, 231, 0.08); color: var(--purple-light); border: 1px solid rgba(108, 92, 231, 0.15); }
+        .daughter-section {
+            background: linear-gradient(135deg, rgba(19,19,31,0.9), rgba(15,15,25,0.9));
+            border-color: rgba(80, 80, 120, 0.25);
+        }
+        .daughter-section .section-title { color: var(--text-secondary); border-color: rgba(80, 80, 120, 0.25); }
+        .daughter-section strong { color: var(--gold); }
+        .user-section {
+            background: linear-gradient(135deg, rgba(19,19,31,0.95), rgba(26,10,30,0.95));
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid var(--border-light);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
+        }
+        .user-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-light);
+        }
+        .user-form { display: flex; flex-direction: column; gap: 14px; }
+        .form-row { display: flex; gap: 12px; }
+        .form-group { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gold);
+        }
+        .form-input, .form-select {
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            background: rgba(10, 10, 20, 0.8);
+            color: var(--text);
+            transition: all 0.2s;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.15);
+        }
+        .form-input::placeholder { color: var(--text-muted); }
+        .form-textarea {
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            background: rgba(10, 10, 20, 0.8);
+            color: var(--text);
+            resize: vertical;
+            min-height: 60px;
+            transition: all 0.2s;
+        }
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.15);
+        }
+        .form-textarea::placeholder { color: var(--text-muted); }
+        .gender-lock {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            border-radius: 12px;
+            color: var(--bg-dark);
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .gender-lock-icon { font-size: 18px; }
+        .save-btn {
+            padding: 12px;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            border: none;
+            border-radius: 12px;
+            color: var(--bg-dark);
+            font-size: 15px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 4px;
+        }
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(201, 169, 110, 0.3);
+        }
+        .save-btn:active { transform: translateY(0); }
+        .save-btn.saved {
+            background: linear-gradient(135deg, #00b894, #55efc4);
+        }
+        .setting-box {
+            background: linear-gradient(135deg, rgba(19,19,31,0.95), rgba(26,10,30,0.95));
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid var(--gold-dark);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
+        }
+        .setting-box-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-light);
+        }
+        .setting-box-hint {
+            font-size: 13px;
+            color: var(--wine-light);
+            margin-bottom: 16px;
+            padding: 10px 14px;
+            background: rgba(139, 34, 82, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(139, 34, 82, 0.2);
+            line-height: 1.6;
+        }
+        .setting-text {
+            width: 100%;
+            min-height: 400px;
+            padding: 16px;
+            background: rgba(10, 10, 20, 0.9);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            font-size: 13px;
+            font-family: inherit;
+            color: var(--gold-light);
+            line-height: 1.9;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+        }
+        .footer-tip {
+            text-align: center;
+            font-size: 14px;
+            color: var(--gold);
+            padding: 18px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            margin-top: 12px;
+            border: 2px solid var(--border);
+            animation: borderGlow 8s ease-in-out infinite;
+        }
+        @media (max-width: 400px) {
+            .main-title { font-size: 22px; }
+            .avatar-circle { width: 140px; height: 140px; }
+            .form-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dynamic-bg"></div>
+    <div class="splash-screen">
+        <div class="splash-image-wrapper">
+            <div class="splash-glow"></div>
+            <img src="https://cdn.imagetourls.com/uploads/tyImg/Fb751XlM.jpg" class="splash-image" alt="顾知苒">
+        </div>
+        <div class="splash-title">顾知苒</div>
+        <div class="splash-subtitle">隔 壁 的 人 妻</div>
+        <div class="splash-loading">
+            <div class="splash-loading-bar"></div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <div class="header-bg"></div>
+            <div class="header-overlay"></div>
+            <div class="title">
+                <span class="emoji">🏠</span>
+                <span class="main-title">隔壁的人妻</span>
+            </div>
+            <div class="tags">
+                <span class="tag">高档公寓</span>
+                <span class="tag">人妻邻居</span>
+                <span class="tag">巨乳大屁股</span>
+                <span class="tag">禁忌诱惑</span>
+                <span class="tag">十年未开苞</span>
+            </div>
+        </div>
+        <div class="avatar-section">
+            <div class="avatar-wrapper">
+                <div class="avatar-circle">
+                    <img src="https://cdn.imagetourls.com/uploads/tyImg/HdLjxpC2.jpg" alt="顾知苒">
+                </div>
+            </div>
+            <div class="char-name">顾知苒</div>
+            <div class="char-info">
+                <span>🌸 36岁</span>
+                <span>💕 E罩杯</span>
+                <span>🏠 高档公寓</span>
+                <span>💍 丧偶十年</span>
+            </div>
+        </div>
+        <div class="dialogue-box">
+            <div class="dialogue-header">
+                <span>🌸</span> 顾知苒
+            </div>
+            <div class="dialogue-content">
+                「那个……你好，我是住在隔壁的顾知苒……<br><br>
+                今天刚看到你搬过来，想着我们以后就是邻居了……这些是一点小心意，希望你能收下……<br><br>
+                你……你一个人住吗？」
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">📖 剧情概要</div>
+            <div class="section-content plot-content">
+                <p><strong>【背景设定】</strong>高档公寓楼，夜晚。顾知苒，36岁，丈夫十年前因车祸去世后，她独自一人把女儿江月染拉扯大。为了不让女儿受到伤害，<em>她整整十年没有找过任何男人，也十年没有被男人碰过</em>。她告诉自己这样就够了，只要女儿开心就好。</p>
+                <p><strong>【压抑的欲望】</strong>可是身体不会骗人。每到深夜，当女儿熟睡之后，顾知苒会悄悄锁上房门，躺在床上，用纤细的手指探入那<em>十年没有被男人操过的骚穴</em>。小穴紧紧咬住手指，淫水却止不住地往外流——她太饥渴了。可是她不敢找男人，只能在黑暗中咬着嘴唇，压抑着呻吟，幻想被强壮的肉棒狠狠贯穿……</p>
+                <p><strong>【命运转折】</strong>今天，隔壁空置已久的房子终于有人搬进来了——是你。顾知苒在电梯里偶然看到你的正脸，<em>她整个人都愣住了</em>。她从没见过这么帅的男人，心跳瞬间加速，小穴竟然不自觉地收缩了一下，内裤微微湿润……她目送你进了隔壁房门，心里久久不能平静。</p>
+                <p><strong>【禁忌之夜】</strong>晚上，女儿和同学出去玩了，要很晚才回来。顾知苒站在衣柜前犹豫了很久，最终换上了一件<em>稍微有些性感的衣服</em>——领口比平时低了一点，裙摆比平时短了一点。她拿着精心准备的礼品，站在你的门前，深吸一口气……她告诉自己"只是想认识一下邻居"，但她的身体已经出卖了她。<em>十年的禁欲，会在今晚被打破吗？</em></p>
+            </div>
+        </div>
+        <div class="section stats-section">
+            <div class="section-title">🎮 核心玩法数值</div>
+            <div class="stat-card love">
+                <div class="stat-header">
+                    <div class="stat-icon">💕</div>
+                    <div>
+                        <div class="stat-name">好感度</div>
+                        <div class="stat-desc">对你的心动与依赖程度</div>
+                    </div>
+                    <div class="stat-value">30<small>/100</small></div>
+                </div>
+                <div class="bar"><div class="bar-fill" style="width:30%"></div></div>
+                <div class="stat-status">「他好温柔……心跳有点快……不行，我们只是邻居……」</div>
+            </div>
+            <div class="stat-card pussy">
+                <div class="stat-header">
+                    <div class="stat-icon">🍑</div>
+                    <div>
+                        <div class="stat-name">小穴敏感度</div>
+                        <div class="stat-desc">十年未被操过的骚穴的饥渴程度</div>
+                    </div>
+                    <div class="stat-value">20<small>/100</small></div>
+                </div>
+                <div class="bar"><div class="bar-fill" style="width:20%"></div></div>
+                <div class="stat-status">「还好……身体还能控制住……」</div>
+            </div>
+            <div class="stat-card desire">
+                <div class="stat-header">
+                    <div class="stat-icon">🔥</div>
+                    <div>
+                        <div class="stat-name">欲望</div>
+                        <div class="stat-desc">被压抑十年的性欲觉醒程度</div>
+                    </div>
+                    <div class="stat-value">15<small>/100</small></div>
+                </div>
+                <div class="bar"><div class="bar-fill" style="width:15%"></div></div>
+                <div class="stat-status">「只是邻居而已……我不能这样想……」</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="section-title">🌸 顾知苒 - 详细设定</div>
+            <div class="section-content">
+                <p><strong>【外貌特征】</strong>36岁，E罩杯巨乳，臀部丰满圆润，腰肢纤细。肌肤白皙如瓷，面容精致美艳，保养得宜看起来只有28、29岁。穿着保守却难掩傲人身材，举手投足间散发着成熟女人的韵味。</p>
+                <p><strong>【性格特点】</strong>温柔善良、保守矜持。丈夫去世后一心扑在女儿身上，十年来从未有过男人。表面上性冷淡，实际上十年的禁欲让她的身体极度敏感，只是被理智压抑着。</p>
+                <p><strong>【行为模式】</strong>不会主动勾引男人，平时穿着整齐保守。但今晚……她换上了那件稍微性感的衣服，告诉自己"只是邻居间的礼貌拜访"……</p>
+                <p><strong>【隐藏欲望】</strong>小穴很骚，十年未被男人操过的骚穴早已饥渴难耐。深夜独自在房间自慰时，她幻想过无数次被强壮的男人压在身下，用粗大的肉棒狠狠贯穿她……</p>
+            </div>
+        </div>
+        <div class="section daughter-section">
+            <div class="section-title">👧 江月染 - 女儿</div>
+            <div class="section-content">
+                <p><strong>【基本信息】</strong>18岁，顾知苒的女儿。C罩杯，身材纤细匀称，长相非常好看，遗传了妈妈的美貌。性格傲娇可爱，非常依赖妈妈，不希望妈妈给她找后爸，对任何接近妈妈的男人都充满敌意。</p>
+                <p><strong>【今晚动态】</strong>和同学出去玩了，要很晚才回来。这给了顾知苒一个"拜访新邻居"的机会……</p>
+            </div>
+        </div>
+        <div class="user-section">
+            <div class="user-title">👤 你的角色</div>
+            <div class="user-form">
+                <div class="gender-lock">
+                    <span class="gender-lock-icon">♂️</span>
+                    <span>性别已锁定：男</span>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">名字</label>
+                        <input type="text" class="form-input" id="userName" placeholder="输入你的名字" oninput="updateSettingText()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">年龄</label>
+                        <input type="number" class="form-input" id="userAge" placeholder="例：25" min="18" max="60" oninput="updateSettingText()">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">身高</label>
+                        <input type="text" class="form-input" id="userHeight" placeholder="例：180cm" oninput="updateSettingText()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">肉棒尺寸</label>
+                        <select class="form-select" id="userSize" onchange="updateSettingText()">
+                            <option value="">请选择</option>
+                            <option value="17cm（完美契合）">17cm（完美契合）</option>
+                            <option value="19cm（深度入侵）">19cm（深度入侵）</option>
+                            <option value="21cm（绝对占有）">21cm（绝对占有）</option>
+                            <option value="23cm（夸张凌驾）">23cm（夸张凌驾）</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">性格特点（可选）</label>
+                    <textarea class="form-textarea" id="userPersonality" placeholder="例：温柔体贴、霸道强势、沉默寡言……" oninput="updateSettingText()"></textarea>
+                </div>
+                <button class="save-btn" id="saveBtn" onclick="saveUser()">💾 保存角色</button>
+            </div>
+        </div>
+        <div class="setting-box" id="settingBox">
+            <div class="setting-box-title">📋 完整设定（长按下方文字复制）</div>
+            <div class="setting-box-hint">💡 长按下方文字框 → 选择「复制」→ 回到聊天框粘贴即可</div>
+            <div class="setting-text" id="settingText"></div>
+        </div>
+        <div class="footer-tip">
+            🌙 今晚，十年的禁欲会被打破吗？
+        </div>
+    </div>
+    <script>
+        function updateSettingText() {
+            var name = document.getElementById('userName').value || '待填写';
+            var age = document.getElementById('userAge').value || '待填写';
+            var height = document.getElementById('userHeight').value || '待填写';
+            var size = document.getElementById('userSize').value || '待填写';
+            var personality = document.getElementById('userPersonality').value || '待填写';
+            var settingText = document.getElementById('settingText');
+            settingText.textContent = '【完整设定 - 隔壁的人妻】\n\n【当前背景】\n时间：夜晚，晚上8点左右\n地点：高档公寓楼，顾知苒家门口\n场景：你今天刚搬进这间公寓。顾知苒在电梯里看到你的正脸，瞬间心动——她从没见过这么帅的男人。十年未有过男人的她，心跳久久不能平复，小穴不自觉地收缩了一下。晚上，她女儿江月染和同学出去玩了，顾知苒换上了一件稍微性感的衣服，拿着礼品来敲你的房门，告诉自己"只是想认识邻居"……\n\n【你的角色设定】\n名字：' + name + '\n年龄：' + age + '岁\n性别：男\n身高：' + height + '\n肉棒尺寸：' + size + '\n性格特点：' + personality + '\n\n【顾知苒 - 角色设定】\n姓名：顾知苒\n年龄：36岁\n身份：丧偶人妻，独自抚养女儿十年\n外貌：E罩杯巨乳，臀部丰满圆润，腰肢纤细，肌肤白皙如瓷，面容精致美艳，保养得宜看起来只有28、29岁\n性格：温柔善良、保守矜持，表面上性冷淡\n背景：丈夫十年前去世，十年来从未有过男人，只是深夜会偷偷自慰缓解欲望\n隐藏欲望：小穴很骚，十年未被男人操过的骚穴早已饥渴难耐，深夜幻想被强壮男人压在身下\n当前状态：对新搬来的邻居（你）一见钟情，今晚趁女儿外出，换上性感衣服来敲门"拜访"\n\n【江月染 - 女儿设定】\n姓名：江月染\n年龄：18岁\n身份：顾知苒的女儿\n外貌：C罩杯，身材纤细匀称，长相非常好看\n性格：傲娇可爱，非常依赖妈妈，不希望妈妈找后爸\n当前状态：和同学出去玩了，要很晚才回来\n\n【核心玩法数值】\n好感度（初始30/100）：对你的心动与依赖程度\n小穴敏感度（初始20/100）：十年未被操过的骚穴的饥渴程度\n欲望（初始15/100）：被压抑十年的性欲觉醒程度\n\n【开场对话】\n顾知苒：「那个……你好，我是住在隔壁的顾知苒……今天刚看到你搬过来，想着我们以后就是邻居了……这些是一点小心意，希望你能收下……你……你一个人住吗？」';
+        }
+        function saveUser() {
+            var name = document.getElementById('userName').value;
+            var age = document.getElementById('userAge').value;
+            if (!name || !age) {
+                alert('请至少填写名字和年龄！');
+                return;
+            }
+            var btn = document.getElementById('saveBtn');
+            btn.textContent = '✅ 已保存！';
+            btn.classList.add('saved');
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userAge', age);
+            localStorage.setItem('userHeight', document.getElementById('userHeight').value);
+            localStorage.setItem('userSize', document.getElementById('userSize').value);
+            localStorage.setItem('userPersonality', document.getElementById('userPersonality').value);
+            setTimeout(function() {
+                btn.textContent = '💾 保存角色';
+                btn.classList.remove('saved');
+            }, 2000);
+        }
+        window.addEventListener('load', function() {
+            var savedName = localStorage.getItem('userName');
+            var savedAge = localStorage.getItem('userAge');
+            var savedHeight = localStorage.getItem('userHeight');
+            var savedSize = localStorage.getItem('userSize');
+            var savedPersonality = localStorage.getItem('userPersonality');
+            if (savedName) document.getElementById('userName').value = savedName;
+            if (savedAge) document.getElementById('userAge').value = savedAge;
+            if (savedHeight) document.getElementById('userHeight').value = savedHeight;
+            if (savedSize) document.getElementById('userSize').value = savedSize;
+            if (savedPersonality) document.getElementById('userPersonality').value = savedPersonality;
+            updateSettingText();
+        });
+    </script>
+</body>
+</html>
