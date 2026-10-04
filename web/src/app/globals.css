@@ -35,6 +35,18 @@ body {
   scrollbar-width: none;  /* Firefox */
 }
 
+/* Extra-small breakpoint for tight headers */
+@media (min-width: 420px) {
+  .xs\:inline { display: inline; }
+  .xs\:inline-flex { display: inline-flex; }
+  .xs\:hidden { display: none; }
+}
+
+/* Smooth width transition for collapsible sidebar */
+.sidebar-collapse-transition {
+  transition: width 0.25s ease, min-width 0.25s ease, opacity 0.2s ease;
+}
+
 /* Novel typography and dialogue quote highlights */
 .novel-text {
   line-height: 1.9;

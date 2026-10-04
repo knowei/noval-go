@@ -17,7 +17,9 @@ import {
   Volume2,
   VolumeX,
   MoreHorizontal,
-  Settings
+  Settings,
+  PanelLeftClose,
+  PanelLeftOpen
 } from 'lucide-react';
 
 import { isCheckpointId, useAppStore } from '@/lib/store';
@@ -103,10 +105,22 @@ export default function ChatPage() {
   const [activeLoreEntries, setActiveLoreEntries] = useState<LoreEntry[]>([]);
   const [isHeaderMoreOpen, setIsHeaderMoreOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
+    try {
+      setIsSidebarCollapsed(localStorage.getItem('rp_sidebar_collapsed') === '1');
+    } catch {}
   }, []);
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev;
+      try { localStorage.setItem('rp_sidebar_collapsed', next ? '1' : '0'); } catch {}
+      return next;
+    });
+  };
 
   // Stop ambient sound on unmount
   useEffect(() => {
@@ -651,12 +665,18 @@ export default function ChatPage() {
   return (
     <div className="flex-1 flex min-h-screen">
       <SessionWorkbench open={isWorkbenchOpen} onClose={() => setIsWorkbenchOpen(false)} report={promptReport} busy={isLoading || isBranching} />
-      {/* Secondary Scenario & Saves Sidebar (Desktop: 270px) */}
-      <div className="hidden md:block shrink-0">
-        <ScenarioSidebar
-          onOpenHandbook={handleOpenHandbook}
-          onOpenLorebook={() => setIsLorebookOpen(true)}
-        />
+      {/* Secondary Scenario & Saves Sidebar (Desktop: collapsible) */}
+      <div
+        className={`hidden md:block shrink-0 sidebar-collapse-transition overflow-hidden ${
+          isSidebarCollapsed ? 'w-0 min-w-0' : 'w-64 lg:w-72'
+        }`}
+      >
+        {!isSidebarCollapsed && (
+          <ScenarioSidebar
+            onOpenHandbook={handleOpenHandbook}
+            onOpenLorebook={() => setIsLorebookOpen(true)}
+          />
+        )}
       </div>
 
       {/* Mobile Slide-out Drawer for Scenario Sidebar */}
@@ -713,74 +733,78 @@ export default function ChatPage() {
         {/* Theater Sticky Header */}
         <header
           id="theater-header"
-          className="sticky top-0 z-20 border-b border-[#20222e] bg-[#0e0f14]/95 backdrop-blur-md px-2.5 sm:px-6 py-2 flex items-center justify-between gap-2 select-none"
+          className="sticky top-0 z-20 border-b border-[#20222e] bg-[#0e0f14]/95 backdrop-blur-md px-2 sm:px-4 py-1.5 flex items-center justify-between gap-1.5 select-none"
         >
-          <button onClick={() => setIsWorkbenchOpen(true)} className="shrink-0 rounded-lg border border-sky-700 px-2 py-1 text-xs text-sky-200">会话工作台</button>
-          {/* 左侧：返回探索、剧本标题与桌面端快捷药丸 */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
+          {/* 左侧：折叠开关 + 返回探索 + 剧本标题 + 当前模型 */}
+          <div className="flex items-center gap-1.5 min-w-0 flex-1">
+            {/* 桌面端侧边栏折叠开关 */}
+            <button
+              onClick={toggleSidebar}
+              className="hidden md:flex p-1.5 rounded-lg hover:bg-[#1a1c27] text-gray-400 hover:text-white transition shrink-0 cursor-pointer"
+              title={isSidebarCollapsed ? '展开场景侧边栏' : '折叠场景侧边栏'}
+            >
+              {isSidebarCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+            </button>
+
+            {/* 移动端场景抽屉开关 */}
+            <button
+              onClick={() => setIsMobileScenarioOpen(true)}
+              className="md:hidden p-1.5 rounded-lg hover:bg-[#1a1c27] text-gray-400 hover:text-white transition shrink-0 cursor-pointer"
+              title="打开场景与存档"
+            >
+              <PanelLeftOpen className="w-4 h-4" />
+            </button>
+
             <Link
               href="/"
               className="p-1 rounded-lg hover:bg-[#1a1c27] text-gray-400 hover:text-white transition flex items-center gap-1 text-xs shrink-0 group"
+              title="返回探索广场"
             >
               <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition" />
-              <span className="hidden xs:inline">探索</span>
+              <span className="hidden sm:inline">探索</span>
             </Link>
-
-            <span className="text-gray-700 font-mono hidden xs:inline">|</span>
 
             <div className="flex items-center gap-1.5 min-w-0">
               <span className="text-base shrink-0">
                 {isCoser ? '🎀' : isFatherDaughter ? '💔' : isSister ? '👭' : currentDeck?.coverIcon || '📖'}
               </span>
-              <span className="font-bold text-xs sm:text-sm text-gray-200 truncate max-w-[130px] xs:max-w-[170px] sm:max-w-[220px] md:max-w-xs">
+              <span className="font-bold text-xs sm:text-sm text-gray-200 truncate max-w-[110px] xs:max-w-[150px] sm:max-w-[200px] lg:max-w-[280px]">
                 {currentDeck?.title || '沉浸剧场'}
               </span>
               {currentDeck?.badge && (
-                <span className="hidden lg:inline px-2 py-0.5 rounded-full text-[10px] bg-pink-500/20 text-pink-300 border border-pink-500/30 shrink-0">
+                <span className="hidden xl:inline px-2 py-0.5 rounded-full text-[10px] bg-pink-500/20 text-pink-300 border border-pink-500/30 shrink-0">
                   {currentDeck.badge}
                 </span>
               )}
             </div>
 
-            <span className="text-gray-700 font-mono hidden md:inline">|</span>
-
-            {/* 桌面端直显：当前模型 */}
+            {/* 当前模型（md 起直显，紧凑药丸） */}
             <button
               onClick={() => setIsSettingsOpen(true)}
-              className="hidden md:flex items-center gap-1.5 text-xs text-emerald-300 hover:text-emerald-200 bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-500/50 hover:border-emerald-400 px-2.5 sm:px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-sm shrink-0 group"
+              className="hidden md:inline-flex items-center gap-1.5 text-xs text-emerald-300 hover:text-emerald-200 bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-500/50 hover:border-emerald-400 px-2 py-1 rounded-full font-mono cursor-pointer transition shadow-sm shrink-0 group max-w-[140px]"
               title="点击切换推演大模型或配置 API 密钥"
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-              <span suppressHydrationWarning className="font-semibold text-xs">{modelSettings.model || 'deepseek-flash'}</span>
-              <span className="text-[10px] text-emerald-400 opacity-70 group-hover:opacity-100 transition">▼</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)] shrink-0" />
+              <span suppressHydrationWarning className="font-semibold text-[11px] truncate">{modelSettings.model || 'deepseek-flash'}</span>
             </button>
 
-            <span className="hidden lg:inline text-xs text-sky-200">{sessionSettings.mode === 'chat' ? '自由聊天' : sessionSettings.mode === 'adventure' ? '规则冒险' : '小说叙事'}</span>
+            <span className="hidden xl:inline text-[11px] text-sky-200/80 shrink-0">{sessionSettings.mode === 'chat' ? '自由聊天' : sessionSettings.mode === 'adventure' ? '规则冒险' : '小说叙事'}</span>
           </div>
 
-          {/* 右侧操作按钮区：自适应响应式排版 */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0 relative">
-            {/* Ambient Rain White Noise (桌面端直显) */}
+          {/* 右侧操作按钮区：宽屏直显 / 小窗全部收纳进「更多」菜单 */}
+          <div className="flex items-center gap-1 shrink-0 relative">
+            {/* 会话工作台 */}
             <button
-              onClick={() => {
-                const active = soundEngine.toggleRain();
-                setIsRainActive(active);
-              }}
-              className={`hidden md:flex px-2 sm:px-2.5 py-1 rounded-xl border text-xs items-center gap-1 transition cursor-pointer shrink-0 ${
-                isRainActive
-                  ? 'bg-sky-500/20 text-sky-300 border-sky-500/50 shadow-sm animate-pulse'
-                  : 'bg-[#1b1d28] hover:bg-[#252838] border-[#2e3142] text-gray-400 hover:text-gray-200'
-              }`}
-              title={isRainActive ? '点击关闭沉浸雨夜白噪音' : '点击开启沉浸雨夜白噪音'}
+              onClick={() => setIsWorkbenchOpen(true)}
+              className="rounded-lg border border-sky-700/70 bg-sky-950/40 px-2 py-1 text-[11px] text-sky-200 hover:bg-sky-900/50 transition shrink-0 cursor-pointer"
             >
-              <span>{isRainActive ? '🌧️' : '🎧'}</span>
-              <span className="hidden lg:inline text-[11px]">{isRainActive ? '雨声开' : '氛围音效'}</span>
+              工作台
             </button>
 
-            {/* Lorebook World Archive Modal Trigger (桌面端直显) */}
+            {/* 世界书 (lg 起直显) */}
             <button
               onClick={() => setIsLorebookOpen(true)}
-              className={`hidden md:flex px-2 sm:px-2.5 py-1 rounded-xl border text-xs items-center gap-1.5 transition cursor-pointer shrink-0 ${
+              className={`hidden lg:inline-flex px-2 py-1 rounded-lg border text-[11px] items-center gap-1 transition cursor-pointer shrink-0 ${
                 activeLoreEntries.length > 0
                   ? 'bg-indigo-950/70 hover:bg-indigo-900/80 border-indigo-500/60 text-indigo-200 shadow-sm'
                   : 'bg-[#1b1d28] hover:bg-[#252838] border-[#2e3142] text-gray-300 hover:text-indigo-300'
@@ -788,82 +812,121 @@ export default function ChatPage() {
               title="打开世界书背景设定与自定义词条"
             >
               <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="hidden lg:inline text-[11px]">世界书</span>
+              <span>世界书</span>
               {activeLoreEntries.length > 0 && (
                 <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
               )}
             </button>
 
-            {/* Export Story Full Record (桌面端直显) */}
+            {/* 导出长文 (xl 起直显) */}
             <button
               onClick={() => setIsExportModalOpen(true)}
-              className="hidden lg:flex px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-amber-500/50 text-gray-300 hover:text-amber-300 text-xs items-center gap-1 transition cursor-pointer shrink-0"
+              className="hidden xl:inline-flex px-2 py-1 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-amber-500/50 text-gray-300 hover:text-amber-300 text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
               title="导出或复制整场推演故事长文记录"
             >
               <Share2 className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-[11px]">导出长文</span>
+              <span>导出</span>
             </button>
 
-            {/* Settings (桌面端直显) */}
+            {/* 模型设置 (lg 起直显) */}
             <button
               onClick={() => setIsSettingsOpen(true)}
-              className="hidden md:flex px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-emerald-500/50 text-gray-300 hover:text-emerald-300 text-xs items-center gap-1 transition cursor-pointer shrink-0"
+              className="hidden lg:inline-flex px-2 py-1 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-emerald-500/50 text-gray-300 hover:text-emerald-300 text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
               title="切换推演大模型与接口配置"
             >
               <Settings className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="hidden lg:inline text-[11px]">模型设置</span>
+              <span>设置</span>
             </button>
 
-            {/* Reset Story (桌面端直显) */}
+            {/* 重新开卷 (xl 起直显) */}
             <button
               onClick={() => setIsResetConfirmOpen(true)}
-              className="hidden md:flex px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-amber-300 text-xs items-center gap-1 transition cursor-pointer shrink-0"
+              className="hidden xl:inline-flex px-2 py-1 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-amber-300 text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
               title="重置到第一幕开局"
             >
               <RotateCcw className="w-3.5 h-3.5" />
-              <span className="hidden lg:inline text-[11px]">重新开卷</span>
+              <span>重开</span>
             </button>
 
             {/* 作品专属人物设定卡入口 */}
             {currentDeck?.customHtml && (
               <button
                 onClick={handleOpenHandbook}
-                className="px-2 sm:px-2.5 py-1 rounded-xl bg-purple-950/60 hover:bg-purple-900/70 border border-purple-500/40 text-purple-300 hover:text-white text-xs flex items-center gap-1 transition cursor-pointer shrink-0"
+                className="hidden sm:inline-flex px-2 py-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/70 border border-purple-500/40 text-purple-300 hover:text-white text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
                 title="查看作者专属排版作品详情与人物卡"
               >
                 <BookOpen className="w-3.5 h-3.5 text-purple-400" />
-                <span className="hidden xs:inline text-[11px]">设定卡</span>
+                <span className="hidden md:inline">设定卡</span>
               </button>
             )}
 
             {/* 存档抽屉 */}
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="px-2 sm:px-2.5 py-1 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-pink-300 text-xs flex items-center gap-1 transition cursor-pointer shrink-0"
+              className="inline-flex px-2 py-1 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-pink-300 text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
               title="打开会话存档抽屉"
             >
               <History className="w-3.5 h-3.5 text-pink-400" />
-              <span className="text-[11px]">存档</span>
+              <span className="hidden sm:inline">存档</span>
             </button>
 
-            {/* 移动端专属「更多」折叠下拉菜单按钮 */}
+            {/* 「更多」菜单按钮 */}
             <button
               onClick={() => setIsHeaderMoreOpen(!isHeaderMoreOpen)}
-              className="md:hidden p-1.5 rounded-xl bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-white text-xs flex items-center gap-1 transition cursor-pointer shrink-0"
+              className="p-1.5 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-white transition cursor-pointer shrink-0"
               title="更多操作"
             >
               <MoreHorizontal className="w-4 h-4 text-gray-300" />
             </button>
 
-              {/* 移动端专属「更多」下拉菜单弹出浮层 */}
+              {/* 「更多」下拉菜单：小窗下收纳全部次要操作 */}
               {isHeaderMoreOpen && (
-                <div className="md:hidden absolute right-0 top-full mt-2 w-48 py-2 bg-[#171822] border border-[#2f3244] rounded-2xl shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150 space-y-1">
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsHeaderMoreOpen(false)} />
+                  <div className="absolute right-0 top-full mt-2 w-52 py-2 bg-[#171822] border border-[#2f3244] rounded-2xl shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150 space-y-1 max-h-[80vh] overflow-y-auto">
+                  {/* md 以下显示模型切换入口 */}
                   <button
                     onClick={() => {
                       setIsHeaderMoreOpen(false);
                       setIsSettingsOpen(true);
                     }}
-                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
+                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition md:hidden"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <span className="truncate">当前模型：{modelSettings.model || 'deepseek-flash'}</span>
+                  </button>
+
+                  {/* lg 以下显示世界书 */}
+                  <button
+                    onClick={() => {
+                      setIsHeaderMoreOpen(false);
+                      setIsLorebookOpen(true);
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition lg:hidden"
+                  >
+                    <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>世界书档案{activeLoreEntries.length > 0 ? `（${activeLoreEntries.length} 条已激活）` : ''}</span>
+                  </button>
+
+                  {/* xl 以下显示导出 */}
+                  <button
+                    onClick={() => {
+                      setIsHeaderMoreOpen(false);
+                      setIsExportModalOpen(true);
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition xl:hidden"
+                  >
+                    <Share2 className="w-3.5 h-3.5 text-amber-400" />
+                    <span>导出全景长文</span>
+                  </button>
+
+                  {/* lg 以下显示模型设置 */}
+                  <button
+                    onClick={() => {
+                      setIsHeaderMoreOpen(false);
+                      setIsSettingsOpen(true);
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition lg:hidden"
                   >
                     <Settings className="w-3.5 h-3.5 text-emerald-400" />
                     <span>切换模型与设置</span>
@@ -903,41 +966,35 @@ export default function ChatPage() {
                     <span>{isRainActive ? '关闭雨声白噪音' : '开启雨声白噪音'}</span>
                   </button>
 
-                  <button
-                    onClick={() => {
-                      setIsHeaderMoreOpen(false);
-                      setIsLorebookOpen(true);
-                    }}
-                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
-                  >
-                    <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>世界书档案</span>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setIsHeaderMoreOpen(false);
-                      setIsExportModalOpen(true);
-                    }}
-                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
-                  >
-                    <Share2 className="w-3.5 h-3.5 text-amber-400" />
-                    <span>导出全景长文</span>
-                  </button>
+                  {/* sm 以下显示设定卡入口 */}
+                  {currentDeck?.customHtml && (
+                    <button
+                      onClick={() => {
+                        setIsHeaderMoreOpen(false);
+                        handleOpenHandbook();
+                      }}
+                      className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition sm:hidden"
+                    >
+                      <BookOpen className="w-3.5 h-3.5 text-purple-400" />
+                      <span>作品设定卡</span>
+                    </button>
+                  )}
 
                   <div className="border-t border-[#262836] my-1" />
 
+                  {/* xl 以下显示重新开卷 */}
                   <button
                     onClick={() => {
                       setIsHeaderMoreOpen(false);
                       setIsResetConfirmOpen(true);
                     }}
-                    className="w-full px-3 py-2 text-left text-xs text-rose-400 hover:bg-rose-950/30 flex items-center gap-2 transition"
+                    className="w-full px-3 py-2 text-left text-xs text-rose-400 hover:bg-rose-950/30 flex items-center gap-2 transition xl:hidden"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>重新开卷</span>
                   </button>
-                </div>
+                  </div>
+                </>
               )}
             </div>
         </header>
