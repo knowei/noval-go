@@ -17,16 +17,26 @@ export function SiteAccessGate({ children }: SiteAccessGateProps) {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successAnimation, setSuccessAnimation] = useState(false);
-  const [hasCheckedInit, setHasCheckedInit] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   // 初始化检查客户端或服务端状态
   useEffect(() => {
-    const localToken = typeof window !== 'undefined' ? localStorage.getItem('noval_site_access_token') : null;
+    setIsMounted(true);
+    let localToken: string | null = null;
+
+    try {
+      if (typeof window !== 'undefined') {
+        localToken = localStorage.getItem('noval_site_access_token');
+      }
+    } catch (e) {
+      console.warn('localStorage read error:', e);
+    }
+
     if (localToken) {
-      // 保证 Cookie 与 localStorage 持久化同步
-      setSiteToken(localToken);
+      try {
+        setSiteToken(localToken);
+      } catch {}
       setIsSiteUnlocked(true);
-      setHasCheckedInit(true);
 
       // 后台静默校验 Token 是否依然合法（防止服务端修改或重置密码导致死锁）
       checkSiteStatusApi().then((status) => {
@@ -35,18 +45,16 @@ export function SiteAccessGate({ children }: SiteAccessGateProps) {
           setIsSiteUnlocked(false);
         }
       }).catch(() => {});
-      return;
+    } else {
+      // 无本地 Token 时探测站点是否为免密模式或已通过服务端认证
+      checkSiteStatusApi()
+        .then((status) => {
+          if (status.authenticated) {
+            setIsSiteUnlocked(true);
+          }
+        })
+        .catch(() => {});
     }
-
-    // 无本地 Token 时探测站点是否为免密模式或已通过服务端认证
-    checkSiteStatusApi().then((status) => {
-      if (status.authenticated) {
-        setIsSiteUnlocked(true);
-      }
-      setHasCheckedInit(true);
-    }).catch(() => {
-      setHasCheckedInit(true);
-    });
   }, [setIsSiteUnlocked]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,7 +76,7 @@ export function SiteAccessGate({ children }: SiteAccessGateProps) {
           setPassword('');
           setErrorMsg('');
           setSuccessAnimation(false);
-        }, 500);
+        }, 300);
       } else {
         setErrorMsg(res.error || '访问密码错误，请重新输入');
       }
@@ -79,25 +87,8 @@ export function SiteAccessGate({ children }: SiteAccessGateProps) {
     }
   };
 
-  // 若还在客户端挂载与 token 探针中，先展示暗黑背景占位避免闪烁
-  if (!hasCheckedInit) {
-    return (
-      <div className="fixed inset-0 bg-[#0a0b10] flex items-center justify-center z-[99999]">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl overflow-hidden border border-amber-500/40 shadow-lg shadow-rose-500/30 animate-pulse bg-[#13151f]">
-            <img src="/logo.png" alt="幻诺剧场" className="w-full h-full object-cover" />
-          </div>
-          <div className="flex items-center gap-2 text-xs text-gray-400 font-mono">
-            <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-500" />
-            <span>正在校验「幻诺剧场」安全环境...</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // 已解锁状态，正常渲染整个网站应用
-  if (isSiteUnlocked) {
+  // 服务端渲染或已解锁状态，正常渲染整个网站应用（绝不死锁在等待遮罩）
+  if (!isMounted || isSiteUnlocked) {
     return <>{children}</>;
   }
 

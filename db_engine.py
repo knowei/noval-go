@@ -121,8 +121,16 @@ class DatabaseEngine:
                         dbname=self._parsed_config['database']
                     )
                     return Psycopg2Adapter(conn)
-                except ImportError:
-                    raise ImportError('检测到配置了 PostgreSQL 数据库，但未安装连接驱动。请运行：pip install pg8000 或 pip install psycopg2-binary')
+                except Exception as e:
+                    print(f"[db_engine] PostgreSQL driver/connection unavailable ({e}), automatically falling back to local SQLite.")
+                    self.dialect = 'sqlite'
+                    self._sqlite_path = NOVAL_DB_PATH
+                    return self.get_connection()
+            except Exception as e:
+                print(f"[db_engine] PostgreSQL connection failed ({e}), automatically falling back to local SQLite.")
+                self.dialect = 'sqlite'
+                self._sqlite_path = NOVAL_DB_PATH
+                return self.get_connection()
 
         elif self.dialect == 'mysql':
             try:
@@ -330,6 +338,16 @@ class DatabaseEngine:
                     for s in alter_stmts:
                         try:
                             cur.execute(s)
+                        except Exception:
+                            pass
+
+                    for col, col_def in [
+                        ("system_prompt", "TEXT DEFAULT ''"),
+                        ("status_template", "TEXT DEFAULT ''"),
+                        ("lorebook_json", "TEXT DEFAULT '[]'")
+                    ]:
+                        try:
+                            cur.execute(f"ALTER TABLE stories ADD COLUMN IF NOT EXISTS {col} {col_def}")
                         except Exception:
                             pass
 

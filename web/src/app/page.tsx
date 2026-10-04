@@ -7,6 +7,7 @@ import { StoryCard } from '@/components/plaza/StoryCard';
 import { SearchBar } from '@/components/plaza/SearchBar';
 import { Sparkles, Compass, Flame, TrendingUp, Layers } from 'lucide-react';
 import Link from 'next/link';
+import { PrivateCardLibrary } from '@/components/plaza/PrivateCardLibrary';
 
 export default function PlazaPage() {
   const [cards, setCards] = useState<PlazaCard[]>([]);
@@ -86,6 +87,7 @@ export default function PlazaPage() {
 
   return (
     <div className="flex-1 p-3 sm:p-8 pt-16 md:pt-6 pb-20 md:pb-8 max-w-7xl mx-auto w-full space-y-6 sm:space-y-8">
+      <PrivateCardLibrary />
       {/* Hero Banner */}
       <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#201026] via-[#161224] to-[#121626] border border-pink-500/30 p-6 sm:p-10 shadow-2xl">
         <div className="absolute top-0 right-0 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl pointer-events-none" />

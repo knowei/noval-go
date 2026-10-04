@@ -27,4 +27,6 @@ Thumbs.db
 *.sqlite3
 noval_data.db
 pgdata/
+/.run/
+/data/generated-images/
 

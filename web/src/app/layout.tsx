@@ -23,8 +23,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className="dark">
-      <body className="min-h-screen bg-[#0e0f14] text-gray-100 antialiased flex flex-row font-sans selection:bg-pink-500/30 selection:text-pink-200 overflow-x-hidden">
+    <html lang="zh-CN" className="dark" suppressHydrationWarning>
+      <head>
+        <meta name="darkreader-lock" content="darkreader-lock" />
+      </head>
+      <body suppressHydrationWarning className="min-h-screen bg-[#0e0f14] text-gray-100 antialiased flex flex-row font-sans selection:bg-pink-500/30 selection:text-pink-200 overflow-x-hidden">
         <SiteAccessGate>
           {/* Leftmost Global Navigation Sidebar */}
           <PrimarySidebar />

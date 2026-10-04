@@ -146,12 +146,17 @@ export function PrimarySidebar() {
                   <span className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-gradient-to-b from-amber-400 to-rose-500" />
                 )}
 
-                <div className="relative">
-                  <Icon
-                    className={`w-5 h-5 shrink-0 transition duration-200 group-hover:scale-110 ${
-                      item.isActive ? item.activeText : item.color
-                    }`}
-                  />
+                <div className="relative w-5 h-5 flex items-center justify-center" suppressHydrationWarning>
+                  {mounted ? (
+                    <Icon
+                      suppressHydrationWarning
+                      className={`w-5 h-5 shrink-0 transition duration-200 group-hover:scale-110 ${
+                        item.isActive ? item.activeText : item.color
+                      }`}
+                    />
+                  ) : (
+                    <span className="w-5 h-5 block" />
+                  )}
                 </div>
 
                 <span className="text-xs font-bold tracking-wider leading-none whitespace-nowrap">
@@ -166,6 +171,7 @@ export function PrimarySidebar() {
 
           {/* Action Button: Saves Drawer */}
           <button
+            suppressHydrationWarning
             onClick={() => {
               setIsDrawerOpen(true);
               if (isMobile) setIsMobileDrawerOpen(false);
@@ -177,7 +183,13 @@ export function PrimarySidebar() {
             } transition-all duration-200 group cursor-pointer text-gray-400 hover:text-amber-300 hover:bg-[#161824] border border-transparent`}
             title="查看与管理我的推演存档"
           >
-            <History className="w-5 h-5 shrink-0 text-cyan-400 group-hover:scale-110 transition duration-200" />
+            <div className="w-5 h-5 flex items-center justify-center shrink-0" suppressHydrationWarning>
+              {mounted ? (
+                <History suppressHydrationWarning className="w-5 h-5 text-cyan-400 group-hover:scale-110 transition duration-200" />
+              ) : (
+                <span className="w-5 h-5 block" />
+              )}
+            </div>
             <span className="text-xs font-bold tracking-wider leading-none whitespace-nowrap">
               存档
             </span>
@@ -249,6 +261,7 @@ export function PrimarySidebar() {
         <div className="flex items-center gap-1 mt-1">
           {/* Settings gear */}
           <button
+            suppressHydrationWarning
             onClick={() => {
               setIsSettingsOpen(true);
               if (isMobile) setIsMobileDrawerOpen(false);
@@ -256,11 +269,12 @@ export function PrimarySidebar() {
             className="p-1.5 rounded-xl text-gray-500 hover:text-gray-300 hover:bg-[#1a1c28] transition cursor-pointer flex items-center justify-center"
             title="系统与API设置"
           >
-            <Settings className="w-4 h-4" />
+            {mounted ? <Settings suppressHydrationWarning className="w-4 h-4" /> : <span className="w-4 h-4 block" />}
           </button>
 
           {/* Lock site button */}
           <button
+            suppressHydrationWarning
             onClick={() => {
               if (window.confirm('确定要锁定站点吗？锁定后需要重新输入访问密码才能进入。')) {
                 clearSiteToken();
@@ -271,7 +285,7 @@ export function PrimarySidebar() {
             className="p-1.5 rounded-xl text-gray-500 hover:text-rose-400 hover:bg-rose-950/30 transition cursor-pointer flex items-center justify-center"
             title="锁定站点 / 重新输入密码"
           >
-            <Lock className="w-4 h-4" />
+            {mounted ? <Lock suppressHydrationWarning className="w-4 h-4" /> : <span className="w-4 h-4 block" />}
           </button>
         </div>
       </div>
@@ -303,10 +317,11 @@ export function PrimarySidebar() {
         <div className="md:hidden fixed top-0 left-0 right-0 h-12 bg-[#0c0d12]/90 backdrop-blur-md border-b border-[#1b1d26] z-30 flex items-center justify-between px-3">
           <div className="flex items-center gap-2">
             <button
+              suppressHydrationWarning
               onClick={() => setIsMobileDrawerOpen(true)}
               className="p-1 rounded-lg text-gray-400 hover:text-white cursor-pointer"
             >
-              <Menu className="w-5 h-5" />
+              {mounted ? <Menu suppressHydrationWarning className="w-5 h-5" /> : <span className="w-5 h-5 block" />}
             </button>
             <div className="flex items-center gap-1.5">
               <div className="w-6 h-6 rounded-lg overflow-hidden border border-amber-500/40 shrink-0">

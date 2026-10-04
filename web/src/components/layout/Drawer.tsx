@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useAppStore } from '@/lib/store';
+import { isCheckpointId, useAppStore } from '@/lib/store';
 import { deleteConversation, fetchConversation } from '@/lib/api';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { X, Plus, Trash2, BookOpen, Clock } from 'lucide-react';
@@ -52,6 +52,7 @@ export function Drawer() {
   const targetSaves = activeTab === 'current' ? currentDeckSaves : savedConversations;
 
   const filteredSaves = targetSaves.filter(s => {
+    if (isCheckpointId(s.id)) return false;
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
     const titleMatch = (s.title || '').toLowerCase().includes(q);

@@ -20,13 +20,19 @@ import {
   Settings
 } from 'lucide-react';
 
-import { useAppStore } from '@/lib/store';
+import { isCheckpointId, useAppStore } from '@/lib/store';
 import { fetchStory, fetchConversations, fetchConversation, getSiteToken, clearSiteToken } from '@/lib/api';
-import { parseModelOutput, generateContextualBranches } from '@/lib/modelParser';
-import { buildSystemPrompt } from '@/lib/promptEngine';
-import { Turn, Branch, LoreEntry } from '@/lib/types';
+import { selectReplyVersion, resolveSnapshot, PromptReport } from '@/lib/sessionEngine';
+import { streamCompletion, CompletionStreamError, CompletionUsage } from '@/lib/streamCompletion';
+import { inspectReplyEnvelope, mergeReplyContinuation } from '@/lib/replyEnvelope';
+import { ReplyCompletionNotice } from '@/components/chat/ReplyCompletionNotice';
+import { prepareSessionRequest, completeSessionReply } from '@/lib/playtestRuntime';
+import { storyOpenings } from '@/lib/storyDiagnostics';
+import { SessionWorkbench } from '@/components/chat/SessionWorkbench';
+import { ScenePresentation } from '@/components/chat/ScenePresentation';
+import { Turn, LoreEntry } from '@/lib/types';
 import { soundEngine } from '@/lib/soundEngine';
-import { retrieveActiveLore, compactMilestoneMemory } from '@/lib/lorebookEngine';
+import { getDeckLorebook } from '@/lib/lorebookEngine';
 import { ScenarioSidebar } from '@/components/chat/ScenarioSidebar';
 import { ChatInput } from '@/components/chat/ChatInput';
 import { CoserCard } from '@/components/chat/CoserCard';
@@ -42,6 +48,7 @@ import { LorebookModal } from '@/components/chat/LorebookModal';
 import { InteractiveHandbookCard } from '@/components/InteractiveHandbookCard';
 import { FloatingStatusHud } from '@/components/chat/FloatingStatusHud';
 import { scopeDeckCustomCss } from '@/lib/scopeCss';
+import { registerDeckCgMap, extractCgMapFromCss } from '@/lib/cgManager';
 
 export default function ChatPage() {
   const params = useParams();
@@ -54,9 +61,12 @@ export default function ChatPage() {
     setCurrentDeck,
     conversationHistory,
     setConversationHistory,
+    setSavedConversations,
     addTurn,
     updateTurn,
     truncateHistory,
+    replaceHistoryWithCheckpoint,
+    isBranching,
     currentConversationId,
     setCurrentConversationId,
     startNewStory,
@@ -67,10 +77,22 @@ export default function ChatPage() {
     isModCenterOpen,
     setIsModCenterOpen,
     enabledMods,
+    sessionSettings,
+    saveError,
     setIsSiteUnlocked,
   } = useAppStore();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isDeckReady, setIsDeckReady] = useState(false);
+  const [isWorkbenchOpen, setIsWorkbenchOpen] = useState(false);
+  const [promptReport, setPromptReport] = useState<PromptReport | null>(null);
+  const generationRef = useRef<AbortController | null>(null);
+  const generationContext = useRef('');
+  generationContext.current = [currentUserId, currentConversationId, deckId].join(':');
+  useEffect(() => {
+    setPromptReport(null); setActiveLoreEntries([]); setIsLoading(false);
+    return () => { generationRef.current?.abort(); generationRef.current = null; };
+  }, [currentUserId, currentConversationId, deckId]);
   const [inputText, setInputText] = useState('');
   const [isMobileScenarioOpen, setIsMobileScenarioOpen] = useState(false);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
@@ -189,19 +211,47 @@ export default function ChatPage() {
   }, [conversationHistory]);
 
   useEffect(() => {
+    let cancelled = false;
+    setIsDeckReady(false);
     async function init() {
       if (!deckId) return;
 
       const deck = await fetchStory(deckId);
+      if (cancelled) return;
       if (deck) {
         setCurrentDeck(deckId, deck);
+        if (deck.cgMap) {
+          registerDeckCgMap(deckId, deck.cgMap);
+        } else if (deck.customCss) {
+          registerDeckCgMap(deckId, extractCgMapFromCss(deck.customCss));
+        }
 
         // Check if there are existing saves for this deck
         const saves = await fetchConversations(currentUserId);
-        const deckSaves = saves.filter((s) => s.deck_id === deckId);
+        if (cancelled) return;
+        setSavedConversations(saves);
+
+        const isMatchDeck = (s: any) => {
+          if (!deckId) return true;
+          if (s.deck_id === deckId) return true;
+          if (deckId === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7' && s.deck_id === 'deck_xiuxian_world') return true;
+          if (deckId === 'deck_xiuxian_world' && s.deck_id === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7') return true;
+          if (deckId === 'b93fc029-e704-42e1-a1a8-d51c62fc8b55' && s.deck_id === 'deck_suyu_contract') return true;
+          if (deckId === 'deck_suyu_contract' && s.deck_id === 'b93fc029-e704-42e1-a1a8-d51c62fc8b55') return true;
+          if (deckId === '2c10c41f-de54-407a-a6e0-a1475b0f2d33' && s.deck_id === 'deck_wife_business_trip') return true;
+          if (deckId === 'deck_wife_business_trip' && s.deck_id === '2c10c41f-de54-407a-a6e0-a1475b0f2d33') return true;
+          if (deck?.title && s.deck_title) {
+            if (s.deck_title === deck.title) return true;
+            if (s.deck_title.includes(deck.title) || deck.title.includes(s.deck_title)) return true;
+          }
+          return false;
+        };
+
+        const deckSaves = saves.filter(s => !isCheckpointId(s.id) && isMatchDeck(s));
 
         if (deckSaves.length > 0 && deckSaves[0].id) {
           const loaded = await fetchConversation(deckSaves[0].id);
+          if (cancelled) return;
           const isDummyOnly = Boolean(
             loaded &&
             loaded.history &&
@@ -215,15 +265,18 @@ export default function ChatPage() {
           if (loaded && loaded.history && loaded.history.length > 0 && !isDummyOnly) {
             setCurrentConversationId(loaded.id);
             setConversationHistory(loaded.history);
+            setIsDeckReady(true);
             return;
           }
         }
 
         // Start new story if no previous saves
         startNewStory(deck);
+        setIsDeckReady(true);
       }
     }
-    init();
+    void init();
+    return () => { cancelled = true; };
   }, [deckId, currentUserId]);
 
   const isCoser = deckId === 'deck_coser_sister';
@@ -296,175 +349,10 @@ export default function ChatPage() {
     [currentDeck?.customCss]
   );
 
-  const getFallbackStory = (actionText: string, turnIdx: number, prevBranches?: Branch[]) => {
-    const act = actionText.replace(/【.*?】：?/, '').trim();
-    let baseStory = '';
-    if (isModifier) {
-      baseStory = `现实修改器的指示灯在暗处规律地闪烁着幽紫色微光，因果律常识覆写的波长在空气中无声激荡。
-
-面对“${act || '顺应当前氛围深入探索'}”的指令，顾小梦身子猛然一轻，原本作为大学校花残存的最后一丝羞耻感也如同冰雪初融般悄然溃退。她眼眸半阖，双颊染上绯红的酡色，细密的汗珠顺着白皙修长的脖颈滑落。
-
-“学长……唔……身体好像已经完全习惯了……”少女柔弱无骨地靠了过来，湿透的白袜在木地板上轻轻蹭动，嗓音里夹杂着她自己都未曾察觉的战栗与深层顺从。
-
-而在门外，走廊深处传来了细碎的高跟鞋敲击地砖声——隔壁的成熟插画师苏婉清似乎也正朝着这边走来，空气中的暧昧与危险指数正在疯狂攀升。`;
-    } else if (isCoser) {
-      baseStory = `听到你关于“${act || '继续互动'}”的话语，林知念捏着洛丽塔裙摆的手指稍稍攥紧，但耳尖那抹艳丽的薄红却迅速蔓延到了雪白的锁骨。
-
-她悄悄抬起眼帘望向你，在触及你眼神的刹那又慌乱地偏过头去，长长的睫毛在黄昏落日的余晖中剧烈颤动：“哥……你、你怎么总是趁人家换衣服的时候说这种话……要是骗我，我以后就真的一套新衣服都不给你看了……”
-
-虽然嘴上娇哼着表达抗议，但她身后的落地穿衣镜里，少女那微微扬起的嘴角与微促的心跳，却早已将她心底藏不住的窃喜与依赖暴露无遗。`;
-    } else if (isSister) {
-      baseStory = `话音未落，客厅原本稍显轻松的氛围顿时微妙地凝固了一瞬。
-
-宋晚的脸颊刷地一下通红，抓起沙发上的抱枕挡在身前：“喂！你、你怎么能选这个大冒险啊！夏绮，林初，你们快管管他呀……”
-
-坐在地毯上的夏绮双手托腮，一双桃花眼里满是玩味的促狭笑意：“晚晚，大冒险的规矩可是你自己开局定下的哦，愿赌服输，不许耍赖~”
-
-而在角落一直有些羞怯的林初则微微低下了头，手指紧扣着易拉罐，心跳声在安静的客厅里似乎格外清晰。`;
-    } else if (isFatherDaughter) {
-      baseStory = `面对你的质问与动作，女儿的身子微微发颤。在你的注视下，她眼底最初的委屈与抗拒逐渐瓦解，取而代之的是一丝无法掩饰的慌乱与羞愧。
-
-她紧紧揪着睡衣下摆，眼圈泛红，胸口由于情绪激动而起伏不定：“爸……你凭什么这样管我……你、你根本不知道我心里有多难受……”
-
-然而她微弱的反抗并没能掩饰她身躯的紧绷与依赖，在你的威严与妒意交织的气场下，卧室里的气氛变得愈发危险与禁断。`;
-    } else if (isRentApartment) {
-      baseStory = `针对你的举动【${act || '行使房东特权深入查房'}】，狭窄的门厅里空气瞬间凝固到了冰点。
-
-苏玉兰紧紧咬着苍白的下唇，丰满成熟的身躯止不住地轻颤，双手慌乱地抓着围裙边缘，那对H罩杯的饱满巨乳随着急促的呼吸大幅度起伏：“房东先生……求您别赶我们走……只要能宽限几天，我……我什么都听您的……”
-
-而在门边的苏小雅虽然狠狠咬着烟蒂别过头去，但通红的耳尖与下意识攥紧的指节，却暴露了她内心的极度动摇。面对掌控着整栋大楼唯一的绝对主宰，母女二人的心理防线正在步步瓦解。`;
-    } else if (isNudeHousekeeping) {
-      baseStory = `面对你的互动【${act || '贴身指导保洁侍奉'}】，客厅里原本清爽的空气逐渐染上了甜腻而躁动的温度。
-
-玉姐跪伏在地毯上的丰腴身躯猛地一僵，随后极有风情地直起腰肢，成熟娇媚的脸颊上泛起动人的红晕。她非但没有退缩，反而温柔一笑，将胸前呼之欲出的硕大乳球更加贴近了几分：“老板……您要是这么盯着看，玉姐这地可就没法专心擦了呢……”
-
-而在旁侧端着水桶的小柒更是羞得满面通红，百褶裙摆下的双腿不安地并拢交叠，在母亲默许纵容的注视下，不知所措地将目光投向你。`;
-    } else if (isCousinStay) {
-      baseStory = `听到你关于“${act || '教训不听话的表妹'}”的话语，林晚晚气鼓鼓地鼓起腮帮子，下意识抬手护住自己露在短T外平坦纤细的马甲线。
-
-“喂！你别仗着是我表哥就动手动脚的啊！”她虽然嘴上凶巴巴地嚷嚷，但那双修长白皙的大腿却不自在地蹭了蹭沙发边缘，整张俏脸一路红到了锁骨：“大不了……大不了今晚点外卖的钱我来出一半还不行吗！笨蛋表哥……”
-
-看着这位平日在学校耀武扬威的叛逆小太妹此刻在自己面前破防娇羞的模样，同居屋檐下的微妙氛围正在迅速升温。`;
-    } else if (isFriendSister) {
-      baseStory = `顺应着你的举动【${act || '打破深夜走廊的禁忌'}】，独栋别墅深夜的寂静被彻底撕裂。
-
-客房门内，刚刚经历失望的林若曦听到动静猛然抬头，发丝凌乱地贴在潮红的脸侧，那双平日冷若冰霜的美眸在与你对视的刹那闪过一丝惊慌与无法言说的炽热渴求。她没有立刻拉起床单遮掩自己白腻迷人的E罩杯躯体，反而下意识挺直了腰肢。
-
-而在走廊深处，母亲苏青岚房中那声压抑的低咽也戛然而止，空气中弥漫着让人血脉偾张的危险与偷窥刺激。`;
-    } else if (isJiangshiAyane) {
-      baseStory = `面对你的互动【${act || '抚慰死而复生的青梅'}】，弥漫着冷香的水汽在狭小的空间里轻轻打旋。
-
-绫音那双淡紫色的眼眸微微睁大，那张平日习惯了面无表情的“冷萌脸”上，浮现出一抹无法言喻的依恋与战栗。她那具常年维持在10℃冰冷的躯体顺从地依偎在你掌心，胸前沉甸甸的H罩杯巨乳随着呼吸轻轻贴覆着你的胸口，触感细腻冰凉得宛如最高等的羊脂玉石。
-
-“唔……身体好冷……可是碰着你，里面好像又在发烫……”她轻启冰润的唇瓣，微弱地喘息着，紧贴着你的双腿不自觉地微微内扣，毫无杂草的白虎粉穴深处渗出贪婪的温润，整个人如溺水者抓住救命稻草般死死抱住你的腰身：“……求你……快点喂我……别让我再变僵硬了……”
-
-感受着她胸腔里寂静无声的死寂与肉体对精液近乎本能的渴望，这场跨越生死的契约让空气中的危险与诱惑达到了极致。`;
-    } else if (isAtour) {
-      baseStory = `面对你的举措【${act || '行使金主特权深入互动'}】，豪华行政套房内原本紧绷的气氛骤然收紧。
-
-站在玄关地毯上的女生身子猛然一僵，原本紧攥着帆布包背带的纤细指节因为用力而微微发白。她偷偷抬眼打量着你的神色，在触及你深邃而带着压迫感的目光时，又触电般慌忙低下头去，耳根与修长的脖颈迅速泛起一抹羞耻与紧张交织的潮红。
-
-“我……我既然拿了APP的定金，就会遵守约定的……”她轻咬下唇，声音带着一丝不易察觉的轻颤。尽管内心对于初次涉足这种关系的耻感还在激烈翻涌，但在你强大的金主气场与现实金钱的威慑下，少女的防线正不可逆转地步步瓦解。
-
-落地窗外，整座城市的万家灯火在雨幕中迷离闪烁，套房内的奢华与私密，正在为这场金钱与欲望的契约揭开最隐秘的一幕。`;
-    } else if (isHeisiDaughter) {
-      baseStory = `面对你的动作【${act || '霸道管教叛逆女儿'}】，书桌前原本慵懒傲娇的气氛骤然凝固。
-
-陈佳慧娇躯猛地一颤，下意识想要收回搭在软垫上的黑丝长腿，却被你顺势压制。薄薄的黑色连裤袜将她圆润饱满的大腿与脚背紧紧包裹，指腹摩擦过弹性惊人的丝织物，能清晰感受到她皮下肌肉的紧绷与体温的急剧攀升。少女原本轻哼不耐烦的神情荡然无存，白皙的耳根瞬间红透，眼神慌乱得无处安放。
-
-“爸……你干什么呀……快放开我……”她咬着下唇，声音里原本叛逆的尖刺在你的强硬触碰下迅速软化成带着微弱哭腔的娇喘，脚趾在黑色薄丝下不安地蜷缩着，在父权威严与私密羞耻的冲撞中，少女的心理防线彻底溃不成军。`;
-    } else if (isSisterInLawNiece) {
-      baseStory = `针对你的安排【${act || '接纳避难的母女二人'}】，门厅玄关里弥漫的惊恐与寒意瞬间消散了大半。
-
-林晚晴长长地舒了一口气，泛红的眼眶里涌出滚烫的感激泪水，双手紧紧揪着被雨水湿透的风衣衣角。湿漉漉的布料紧贴在她饱满丰润的D罩杯胸脯与丰腴腰臀上，成熟少妇曼妙诱人的梨形轮廓在暖黄灯光下一览无遗。身旁18岁的侄女周若宁也乖巧地收起了平日里的挑衅坏笑，小脸微红地缩在母亲身侧，偷偷打量着这位高大沉稳的叔叔。
-
-“小叔……真的太谢谢你了……如果不是你，今晚我和若宁真不知道该去哪……”嫂子声音微颤，成熟人妻那股走投无路后的柔软依附感，在温暖的房间里悄然滋长成不可言说的隐秘羁绊。`;
-    } else if (isApocalypse) {
-      baseStory = `面对你的指令【${act || '废土生存法则的支配'}】，避难所地下安全屋内的气氛冷酷到了极点。
-
-跪倒在水泥地上的昔日校花苏晓染浑身剧烈颤抖，干裂泛白的嘴唇死死咬住，屈辱的眼泪在布满灰尘的脸颊上冲出两道清晰的泪痕。残破的衬衫难以遮掩她发育绝佳的D罩杯傲人曲线，在冰冷的枪口与纯净水源的巨大诱惑面前，昔日万人追捧的高岭之花终于低下了骄傲的头颅。
-
-“我……我听你的……只要给我水喝……我什么都答应……”她颤抖着向前挪动膝盖，双手伏在你的军靴旁，将残存的文明自尊彻底碾碎在废土的尘埃中，沦为这间安全屋专属的私人禁脔。`;
-    } else if (isSuccubusWife) {
-      baseStory = `面对你的举动【${act || '行使代喂养特权深入互动'}】，昏暗的客厅里空气温度骤然升高，弥漫开一股如蜜糖般浓郁诱人的魅魔冷香。
-
-原本因饥渴而瘫软在沙发上的温雅身子猛地战栗，那对小巧精致的恶魔角微颤，心形尾巴尖在你的大腿处不安分地勾缠摩挲。她羞愤欲绝地咬住下唇，美眸泛着迷离水雾，胸前呼之欲出的硕大雪乳在单薄睡袍下剧烈起伏：“阿言……求你别看了……我、我真的快要克制不住吸食精气的本能了……明宇他还在外面出差，要是被他知道……”
-
-嘴上虽然还在维持着作为新婚人妻的最后一丝道德挣扎，但魅魔受孕发情体质带来的本能反应却背叛了一切，湿润温热的气息直往你颈间喷洒，禁断狂乱的NTL暗流彻底决堤。`;
-    } else if (isPerfectGirl) {
-      baseStory = `针对你的互动【${act || '推演少女的救赎与堕落'}】，滨江公园的长椅周围细雨蒙蒙，晚风卷起地上的潮湿落叶。
-
-作为全校公认的“完美少女”与学生会副主席，江怀月此刻将脸深深埋在膝盖间，单薄的双肩剧烈颤抖。平日里无可挑剔的得体微笑与完美面具彻底破碎，散落在地上的涂鸦草稿纸被雨水渐渐打湿：“你……你别看我……我现在这么狼狈……不要管我……”
-
-虽然哭腔里还带着最后一丝自尊的倔强，但随着你的靠近与低语，她微红的眼眸中满是受惊小鹿般的无助与隐秘渴望。内心深处那座在沉重期望下苦苦维系的骄傲堡垒，正在纯爱救赎的治愈与放纵堕落的诱惑之间激烈摇摆。`;
-    } else if (isDaughterMorningWood) {
-      baseStory = `面对你清晨的反应【${act || '纵容女儿的危险止痒试探'}】，主卧大床上被窝里的热度瞬间攀升到了极点。
-
-念念整个人像只黏人的小奶猫般趴在你怀里，薄薄的丝绸睡裙早已在蹭动中卷到了纤细的腰际。她娇小的身躯死死贴着你晨勃挺立的热物，一边磨蹭着自己又痒又湿的幼嫩花蕊，一边扬起那张不谙世事却又媚态天成的清纯小脸，眼角挂着水汽，奶声娇喘：“呜……爸爸……好舒服……可是里面还是好痒……爸爸的大鸡巴好硬好热，快帮念念彻底磨一磨嘛……”
-
-听着亲生女儿毫无防备的荒谬索求，感受着大腿间那抹滑腻泥泞的湿痕，清晨的道德伦理防线在娇软身躯的疯狂摩擦下摇摇欲坠。`;
-    } else if (isTenYuanChildhood) {
-      baseStory = `面对你的交易指令【${act || '支付十块钱行使青梅特权'}】，略显局促的卧室里瞬间安静下来，只剩下粗重的呼吸与窗外的蝉鸣。
-
-林小悠小心翼翼地把刚收到的皱巴巴十块钱纸币塞进小钱包，随后像是下定决心般缓缓抬起眼眸。这位全校知名的巨乳肥臀校花，此刻双颊红得仿佛能滴出血来，颤巍巍地解开校服领口的纽扣，一对呼之欲出的饱满巨乳伴随着白腻的深沟沉甸甸地弹跳出来，丰腴饱满的肉感臀瓣局促地挪动着：“那……阿伟……说好了就十块钱一次哦……你不许告诉其他人……要是舒服的话，以后……以后也可以经常照顾我生意的……”
-
-看着眼前为了零花钱而彻底沦陷的青梅竹马，纯真与低廉肉体交易的反差感在这一刻引爆了最原始的冲动。`;
-    } else if (isGirlsDormitory) {
-      baseStory = `面对你的举动【${act || '小心掩饰男儿身深入周旋'}】，女寝302室空气中弥漫的甜腻沐浴水汽骤然变得焦灼危险。
-
-苏小可正拉扯着薄薄的棉质睡裙下摆，一双圆溜溜的杏眼闪烁着恶作剧的光芒，冷不防伸出软绵绵的小手勾住你的纤细手腕：“哎呀新来的，大家都是平胸好姐妹，有什么好害羞的嘛！走，跟小可一起去洗澡去~”
-
-而在书桌前，穿着黑丝包臀裙的高冷大姐大凌玥敏锐地眯起狭长眼眸，指间夹着细烟轻轻吐出一缕白雾，意味深长地上下审视着你紧绷的身体；刚洗完澡裹着单薄浴巾的清纯校花叶芷柔更是羞红了脸颊，温软的体温与若隐若现的锁骨在水汽中蒸腾。身处这片脂粉香艳却危机四伏的温柔乡，你下体那根沉睡的肉棒正如铁棍般疯狂胀痛，随时面临彻底暴露的悬崖边缘。`;
-    } else if (isHousewifeApartment) {
-      baseStory = `行使着作为月桂庄公寓管理员的特权【${act || '刷卡突击查房深入调教'}】，万能主卡在门锁上发出清脆的“滴——”一声轻鸣。
-
-房门推开，暖黄的廊灯洒在玄关地毯上，屋内的人妻娇躯剧烈一颤。面对你居高临下的巡视目光，平日里高高在上的人妻慌乱地揪住单薄睡袍的领口，成熟丰腴的娇躯止不住地轻微战栗。丈夫常年异地出差所积压的无尽空虚，在这一刻化作了滚烫的泪水与隐秘的渴望。
-
-“管理员先生……这么晚了……您、您怎么突然来巡查了……”她咬着下唇，声音带着一丝不易察觉的轻颤与哀求，而你反手将房门反锁的咔哒声，彻底将这间充斥着成熟肉欲的私密囚笼与外界隔绝开来。`;
-    } else if (isNudeGirlsSchool) {
-      baseStory = `顺应着圣伊甸女子学园不可违抗的至高铁律【${act || '全裸特招生的校园支配'}】，你缓缓褪去了身上最后一件衣物。
-
-恒温26℃的微风轻拂过你精壮赤裸的身躯，校门林荫道两旁，成百上千名一丝不挂的贵族少女们齐刷刷投来震惊、羞怯与极度好奇的目光。全校三千名平日里只习惯了百合相亲相爱的纯洁名媛，此刻第一次近距离目睹真正成年雄性的肌肉线条与粗硕雄性象征，整座校园的私密气氛瞬间被引爆。
-
-讲台前，戴着金丝眼镜的巨乳女教师嘴角扬起玩味的笑意，在教案上轻轻敲动指节；而一丝不挂的女校长塞西莉亚优雅地端着茶杯，深邃的美眸中满是探寻与期待——这场属于唯一男性的肉体征服盛宴，正式拉开帷幕。`;
-    } else if (isXiuxianWorld) {
-      baseStory = `面对你的修仙抉择【${act || '步入苍澜大千世界寻仙问道'}】，太白峰下的灵压潮汐骤然剧烈翻腾，九霄之上的浩瀚云海被漫天剑气与五彩霞光生生撕裂！
-
-台前巍峨矗立的九龙测灵石柱嗡鸣激荡，幽蓝的冰魄与赤金的真火在玄奥符印中交相辉映，引来全场数万求道者与各大宗门长老的齐声惊呼。玉台之巅，天剑门剑首萧寒衣原本紧闭的双眸倏然睁开，深邃如渊的眼底划过一抹极罕见的剑意锋芒；昆仑宗掌门君亦尘拂须微笑，目光温润而赞赏；而合欢宗妖娆绝色的宗主魅姬更是掩唇轻笑，足踝的金铃清脆作响，一双秋水长眸脉脉含情地朝你投来暗波流转的深意视线。
-
-“善！此子根骨灵韵卓绝，天地造化钟神秀……”
-
-冥冥之中，苍澜修仙界的风云大势正在为你悄然倾斜，各大宗门的招揽、魔道强者的觊觎、以及一段荡气回肠的仙凡传说，正自此揭开波澜壮阔的序幕！`;
-    } else if (isDaughterDoorBlock) {
-      baseStory = `面对你的举措【${act || '化解女儿的堵门撒娇'}】，玄关防盗门前的气氛瞬间紧绷而灼热。
-
-林可可那双光洁白皙的纤细小腿依旧紧紧搭在门把锁扣上，粉白睡裙下摆因激烈的动作而微微上卷，露出大片泛着象牙光泽的娇嫩肌肤。她仰着微红的小脸，一双眸子满是委屈与狡黠：“老爸，你少拿上班迟到当借口！从小到大你都说最宠我，凭什么昨晚只跟妈妈亲热都不理我？你今天不把我也哄得高高兴兴的，就休想从这道门走出去！”
-
-厨房里，妻子林婉清哼着歌将荷包蛋盛进盘中，脚步声由远及近。听着妻子随时可能走出来的动静，看着面前肆无忌惮用身体封锁大门的调皮女儿，禁断的人伦推拉在此刻被拉扯到了极致。`;
-    } else if (isMotherSisterBaby) {
-      baseStory = `面对你的反应【${act || '应对家中的微妙修罗场'}】，飘着煎蛋与咖啡香气的大平层客厅里空气静得落针可闻。
-
-餐桌对面的超模姐姐顾清颜猛地咬紧吸管，修长九头身的完美曲线在男士旧T恤下若隐若现。昨夜自慰被你撞破的画面如火烧般在她脑海中翻腾，她甚至不敢抬眼正视你，整张冷艳的俏脸一路红透到了修长的脖颈与耳根：“喂……你看什么看！昨晚你最好真的是梦游……要是敢在外面或者跟妈胡说八道一个字，看我不打断你的腿……”
-
-而此时，刚晨浴完的母亲沈韵只裹着一条薄浴巾款款走来，傲人丰腴的H罩杯雪乳随着步伐微微晃颤，笑语盈盈地将刚烤好的吐司放在你面前：“大清早的，你们姐弟俩又在嘀咕什么悄悄话呢？儿子，快趁热吃，一会儿帮妈妈把后面的长发吹一吹。”
-
-在这间毫无防备的私密公寓里，昨夜失控的秘密正像藤蔓般无声缠绕，将这个三口之家拉入无法回头的甜蜜漩涡。`;
-    } else {
-      baseStory = `针对你的行动【${act || '深入推进'}】，场间的气氛产生了明显的微妙变化。
-
-窗外的夜色如墨，灯光在两人之间洒下斑驳的光影。对方抬起眼帘凝视着你，眼底闪过复杂的情绪波动，似乎正在重新审视你与彼此之间的界限。随着沉默的打破，彼此的距离在不知不觉中悄然拉近。`;
-    }
-
-    const allHistoryBranches = conversationHistory.flatMap((t: Turn) => (t && t.branches) || []);
-    const branches = generateContextualBranches(deckId, baseStory, turnIdx, act, prevBranches, allHistoryBranches);
-    return {
-      story: baseStory,
-      branches
-    };
-  };
-
-  const runGeneration = async (historyContext: Turn[], existingSwipes?: Turn[]) => {
+  const runGeneration = async (historyContext: Turn[], existingSwipes?: Turn[], repair?: Turn) => {
+    if (generationRef.current) return;
     setIsLoading(true);
+    setPromptReport(null);
     const activeModel = modelSettings.model || 'deepseek-flash';
     const lastUserTurn = historyContext[historyContext.length - 1];
     const userActionText = lastUserTurn?.text || '';
@@ -478,6 +366,12 @@ export default function ChatPage() {
     const prevBranches = prevAiTurn?.branches;
 
     let hasLiveStreamSuccess = false;
+    const repairPrefix = repair ? repair.rawText || repair.story || repair.text || '' : '';
+    let streamedStory = repairPrefix;
+    let receivedSuffix = '';
+    let usage: CompletionUsage | undefined;
+    const startedAt = Date.now();
+    let finishReason = 'done_only';
 
     // 检查是否配置了 API Key 或指定了服务地址
     const hasApiKey = Boolean(modelSettings.apiKey && modelSettings.apiKey.trim().length > 0);
@@ -499,61 +393,24 @@ export default function ChatPage() {
       return;
     }
 
+    const requestContext = generationContext.current;
+    const isCurrent = () => requestContext === generationContext.current && useAppStore.getState().currentConversationId === currentConversationId && useAppStore.getState().currentUserId === currentUserId;
+    const controller = new AbortController();
+    generationRef.current = controller;
+    const timeoutId = setTimeout(() => controller.abort(), 120000);
     try {
-      // 动态检索当前交互动作与最新上下文命中的世界书背景词条
-      const lastAiTurn = [...historyContext].reverse().find((h) => !h.isUser);
-      const contextForLore = `${userActionText} ${lastAiTurn?.story || ''}`;
-      const { activeEntries, formattedPrompt: activeLoreText } = retrieveActiveLore(
-        deckId,
-        contextForLore,
-        currentDeck?.lorebook
-      );
-      if (activeEntries && activeEntries.length > 0) {
-        setActiveLoreEntries(activeEntries);
-      }
-
-      // 自动将较早轮次（前6轮之前）沉淀为事实里程碑，彻底解决长剧本失忆
-      const milestoneMemoryText = compactMilestoneMemory(historyContext, 6);
-
-      const systemPromptText = buildSystemPrompt({
-        deckId,
-        deckTitle: currentDeck?.title,
-        deckDesc: currentDeck?.desc,
-        previousBranches: prevBranches,
-        allHistoryBranches,
-        turnIndex: aiTurnIndex,
-        activeLoreText,
-        milestoneMemoryText,
-        roleplayMode: modelSettings.roleplayMode,
-        enabledMods
-      });
-
-      const promptMessages = [
-        {
-          role: 'system',
-          content: systemPromptText
-        },
-        ...historyContext.slice(-6).map((h, idx, arr) => {
-          const isLast = idx === arr.length - 1;
-          let content = h.text || h.story || '';
-          if (isLast && h.isUser) {
-            content = `【用户最新推进指令】：${content}。\n【核心执行纪律】：\n1. 🎬【番剧演出与剧情强推进】：拒绝原地打太极与车轱辘话复读！本轮必须带来实质性的空间位置迁移、心理秘密暴露或肢体界限突破；运用番剧特写运镜与视听拟音（<fx>），必要时主动触发突发事件（<alert>）或名场面（<climax>）；\n2. 严格遵循防抢话原则，严禁替玩家说台词或做心理决策；输出高质量感官与情绪张力描写；\n3. 🎲【互动抉择必达要求】：正文推演结束后，必须在末尾输出 <opt><suggested_questions> 标签，包含4项紧密结合当前最新情节、完全不同于历史选项的全新【玩家可选行动】（使用 <d> 标签包裹），严禁省略！`;
-          }
-          return {
-            role: h.isUser ? 'user' : 'assistant',
-            content
-          };
-        })
-      ];
+      if (!currentDeck) throw new Error('剧本尚未加载');
+      const report = await prepareSessionRequest(currentDeck, historyContext, sessionSettings, getDeckLorebook(deckId, currentDeck.lorebook), repair ? repairPrefix : undefined);
+      if (!isCurrent() || controller.signal.aborted) return;
+      setPromptReport(report);
+      const activeEntries = report.activeLore;
+      setActiveLoreEntries(activeEntries);
+      const promptMessages = report.messages;
 
       const targetUrl = `${modelSettings.baseUrl || 'https://api.openai.com/v1'}/chat/completions`;
       const apiModel = targetUrl.includes('deepseek.com') && (activeModel === 'deepseek-flash' || activeModel === 'deepseek-v4-pro')
         ? 'deepseek-chat'
         : activeModel;
-
-      const controller = new AbortController();
-      // 客户端等待上限设为 120 秒，适应 DeepSeek 等推理模型长上下文的高思考延迟
-      const timeoutId = setTimeout(() => controller.abort(), 120000);
 
       const siteToken = getSiteToken();
       const requestHeaders: Record<string, string> = {
@@ -571,15 +428,15 @@ export default function ChatPage() {
         body: JSON.stringify({
           model: apiModel,
           messages: promptMessages,
-          temperature: modelSettings.temperature ?? 0.7,
-          top_p: modelSettings.topP ?? 0.95,
-          max_tokens: 4096,
+          temperature: sessionSettings.sampling.temperature ?? modelSettings.temperature ?? 0.7,
+          top_p: sessionSettings.sampling.topP ?? modelSettings.topP ?? 0.95,
+          max_tokens: sessionSettings.responseTokens,
           stream: true
         }),
         signal: controller.signal
       });
 
-      clearTimeout(timeoutId);
+      if (!isCurrent()) return;
 
       if (!resp.ok) {
         let errDetail = `模型服务响应异常 (HTTP ${resp.status})`;
@@ -613,119 +470,56 @@ export default function ChatPage() {
         return;
       }
 
-      if (resp.body) {
-        const reader = resp.body.getReader();
-        const decoder = new TextDecoder();
-        let done = false;
-        let streamedStory = '';
-        let isFirstToken = true;
-        let lastUpdateTime = 0;
-
-        while (!done) {
-          const { value, done: doneReading } = await reader.read();
-          done = doneReading;
-          const chunkValue = decoder.decode(value);
-          const lines = chunkValue.split('\n');
-          for (const line of lines) {
-            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-              try {
-                const parsed = JSON.parse(line.slice(6));
-                const delta = parsed.choices?.[0]?.delta?.content || '';
-                if (delta) {
-                  streamedStory += delta;
-                  hasLiveStreamSuccess = true;
-
-                  if (isFirstToken) {
-                    isFirstToken = false;
-                    const initialBranches = generateContextualBranches(deckId, streamedStory, aiTurnIndex, userActionText, prevBranches);
-                    addTurn({
-                      isUser: false,
-                      model: activeModel,
-                      location: currentDeck?.title,
-                      story: streamedStory,
-                      branches: initialBranches
-                    });
-                    lastUpdateTime = Date.now();
-                  } else {
-                    const now = Date.now();
-                    // 节流更新 (60ms)，避免移动端每秒触发上百次重绘导致 JS 堆内存暴涨崩溃
-                    if (now - lastUpdateTime >= 60 || done) {
-                      lastUpdateTime = now;
-                      soundEngine.playTypewriterClick();
-                      updateTurn(aiTurnIndex, {
-                        isUser: false,
-                        model: activeModel,
-                        location: currentDeck?.title,
-                        story: streamedStory
-                      });
-                    }
-                  }
-                }
-              } catch (e) {}
-            }
-          }
-        }
-
-        if (hasLiveStreamSuccess && streamedStory) {
-          const parsed = parseModelOutput(streamedStory, deckId, aiTurnIndex, userActionText, prevBranches, allHistoryBranches);
-          const currentGeneratedTurn: Turn = {
-            isUser: false,
-            model: activeModel,
-            location: currentDeck?.title || '室内场景',
-            story: parsed.story || streamedStory,
-            branches: parsed.branches && parsed.branches.length > 0
-              ? parsed.branches
-              : generateContextualBranches(deckId, streamedStory, aiTurnIndex, userActionText, prevBranches, allHistoryBranches),
-            activeLoreEntries: activeEntries,
-            npcThought: parsed.npcThought,
-            modReport: parsed.modReport,
-            npcClothes: parsed.npcClothes,
-            modifyEffect: parsed.modifyEffect,
-            memory: parsed.memory,
-            status: parsed.status,
-            cot: parsed.cot,
-            tl: parsed.tl,
-          };
-
-          const finalSwipes = existingSwipes && existingSwipes.length > 0
-            ? [...existingSwipes, currentGeneratedTurn]
-            : undefined;
-
-          updateTurn(aiTurnIndex, {
-            ...currentGeneratedTurn,
-            swipes: finalSwipes,
-            swipeIndex: finalSwipes ? finalSwipes.length - 1 : undefined,
-          });
-
-          // 推演生成结束后平滑滚至最底端，确保玩家清晰可见 4 个动作分支与交互条
-          setTimeout(() => {
-            handleScrollToBottom(true);
-          }, 150);
+      if (!resp.body) throw new Error('模型没有返回可读的回复');
+      if (repair) {
+        hasLiveStreamSuccess = true;
+        addTurn({isUser:false,model:activeModel,location:currentDeck.title,rawText:repairPrefix,story:inspectReplyEnvelope(repairPrefix).story,branches:[],runtimeVersion:1,incomplete:true});
+      }
+      let lastUpdateTime = 0;
+      for await (const delta of streamCompletion(resp.body, reason => { finishReason = reason; }, value => { usage = value; })) {
+        if (!isCurrent()) { controller.abort(); return; }
+        receivedSuffix += delta;
+        streamedStory = repair ? mergeReplyContinuation(repairPrefix, receivedSuffix) : receivedSuffix;
+        if (!hasLiveStreamSuccess) {
+          hasLiveStreamSuccess = true;
+          addTurn({ isUser: false, model: activeModel, location: currentDeck.title, rawText: streamedStory, story: inspectReplyEnvelope(streamedStory).story, branches: [], runtimeVersion: 1, incomplete: true });
+        } else if (Date.now() - lastUpdateTime > 60) {
+          lastUpdateTime = Date.now();
+          updateTurn(aiTurnIndex, { rawText: streamedStory, story: inspectReplyEnvelope(streamedStory).story, incomplete: true });
         }
       }
-    } catch (err: any) {
-      console.error('[Generation Error]:', err);
-      if (!hasLiveStreamSuccess) {
-        const isTimeout = err?.name === 'AbortError' || err?.message?.includes('aborted');
-        const errorMsg = isTimeout
-          ? '模型响应超时 (已等待 120 秒)。大模型长文本处理耗时较长或网络连接中断，请点击下方【重新生成】重试。'
-          : `推演连接异常: ${err?.message || '网络连接发生故障'}`;
-
-        addTurn({
-          isUser: false,
-          isError: true,
-          error: errorMsg,
-          model: activeModel,
-          location: currentDeck?.title || '推演超时'
-        });
+      if (!receivedSuffix.trim()) throw new Error('模型没有返回新的正文，请重试；已保留原有内容。');
+      const parsed = await completeSessionReply(streamedStory, historyContext, sessionSettings, true);
+      if (!isCurrent()) return;
+      const currentGeneratedTurn: Turn = {
+        ...parsed, model: activeModel, location: currentDeck.title, activeLoreEntries: activeEntries, imageOriginId: crypto.randomUUID(), illustrations: [],
+        completion: { reason: finishReason, responseTokens: sessionSettings.responseTokens, protocolVersion: 2, receivedChars: receivedSuffix.length, elapsedMs: Date.now()-startedAt, repairs: repair ? (repair.completion?.repairs || 0)+1 : 0, usage },
+      };
+      currentGeneratedTurn.snapshot = resolveSnapshot([...historyContext, currentGeneratedTurn]);
+      const finalSwipes = existingSwipes?.length ? [...existingSwipes, currentGeneratedTurn] : undefined;
+      updateTurn(aiTurnIndex, { ...currentGeneratedTurn, swipes: finalSwipes, swipeIndex: finalSwipes ? finalSwipes.length - 1 : undefined });
+      if (currentGeneratedTurn.incomplete) void useAppStore.getState().autoSave();
+      setTimeout(() => { if (isCurrent()) handleScrollToBottom(true); }, 150);
+    } catch (err: unknown) {
+      if (!isCurrent()) return;
+      const error = err instanceof Error ? err : new Error(String(err));
+      const message = error.name === 'AbortError' ? '生成已中断或超时。可以重新生成；未完成的回复不会进入记忆。' : error.message;
+      if (hasLiveStreamSuccess) {
+        updateTurn(aiTurnIndex, { rawText: streamedStory, story: inspectReplyEnvelope(streamedStory).story, incomplete: true, status: {}, memory: [], memoryEntries: [], branches: [], runtimeWarnings: [message], completion: { reason: error instanceof CompletionStreamError ? error.reason : error.name === 'AbortError' ? 'interrupted' : 'error', responseTokens: sessionSettings.responseTokens, protocolVersion: 2, receivedChars: receivedSuffix.length, elapsedMs: Date.now()-startedAt, repairs: repair ? (repair.completion?.repairs || 0)+1 : 0, usage } });
+        void useAppStore.getState().autoSave();
+      } else {
+        addTurn({ isUser: false, isError: true, error: message, model: activeModel });
       }
+    } finally {
+      clearTimeout(timeoutId);
+      if (generationRef.current === controller) generationRef.current = null;
+      if (isCurrent()) setIsLoading(false);
     }
 
-    setIsLoading(false);
   };
 
   const handleSend = async (actionText: string) => {
-    if (!actionText.trim() || isLoading) return;
+    if (!actionText.trim() || isLoading || useAppStore.getState().isBranching || generationRef.current || !isDeckReady) return;
     const userTurn = { isUser: true, text: actionText.trim() };
     const nextHistory = [...conversationHistory, userTurn];
     addTurn(userTurn);
@@ -741,7 +535,7 @@ export default function ChatPage() {
   };
 
   const handleRegenerate = async (turnIndex: number) => {
-    if (isLoading) return;
+    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
     const existingTurn = conversationHistory[turnIndex];
     if (!existingTurn) return;
 
@@ -751,50 +545,63 @@ export default function ChatPage() {
       : (!existingTurn.isError && (existingTurn.story || existingTurn.text) ? [{ ...existingTurn }] : undefined);
 
     const truncated = conversationHistory.slice(0, turnIndex);
-    setConversationHistory(truncated);
+    if (!await replaceHistoryWithCheckpoint(truncated, '重新生成前')) return;
     await runGeneration(truncated, existingSwipes);
   };
 
-  const handleSwipeChange = (turnIndex: number, newSwipeIndex: number) => {
-    const existing = conversationHistory[turnIndex];
-    if (!existing || !existing.swipes || !existing.swipes[newSwipeIndex]) return;
+  const handleRepairReply = async (turnIndex: number) => {
+    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
+    const original = conversationHistory[turnIndex];
+    if (!original || original.isUser || original.isError || original.completion?.reason === 'content_filter') return;
+    const versions = original.swipes?.length ? [...original.swipes] : [{...original}];
+    const history = conversationHistory.slice(0,turnIndex);
+    if (!await replaceHistoryWithCheckpoint(history,'补全回复前')) return;
+    await runGeneration(history,versions,original);
+  };
 
-    const target = existing.swipes[newSwipeIndex];
-    updateTurn(turnIndex, {
-      ...target,
-      swipes: existing.swipes,
-      swipeIndex: newSwipeIndex
-    });
+  const handleSwipeChange = async (turnIndex: number, newSwipeIndex: number) => {
+    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
+    if ((conversationHistory[turnIndex]?.swipeIndex ?? 0) === newSwipeIndex) return;
+    const next = selectReplyVersion(conversationHistory, turnIndex, newSwipeIndex);
+    if (next !== conversationHistory) await replaceHistoryWithCheckpoint(next, '切换回复前');
   };
 
   const handleContinueWriting = async (turnIndex: number) => {
-    if (isLoading) return;
-    handleSend('（请顺应当前这一幕的语境与人物状态，接着往后深层次推演剧情，展开更多细节与对白）');
+    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
+    const kept = conversationHistory.slice(0, turnIndex + 1);
+    const userTurn: Turn = { isUser: true, text: '请根据当前场景继续，给我留出回应的空间。' };
+    const next = [...kept, userTurn];
+    if (kept.length < conversationHistory.length) {
+      if (!await replaceHistoryWithCheckpoint(next, '从旧消息续写前')) return;
+    } else {
+      addTurn(userTurn);
+    }
+    await runGeneration(next);
   };
 
-  const handleEditTurn = (turnIndex: number, newStory: string) => {
+  const handleEditTurn = async (turnIndex: number, newStory: string) => {
+    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
     const existing = conversationHistory[turnIndex];
     if (!existing) return;
-    updateTurn(turnIndex, {
-      ...existing,
-      story: newStory,
-      text: newStory,
-    });
+    const next = conversationHistory.slice(0, turnIndex + 1);
+    next[turnIndex] = { ...existing, story: newStory, text: newStory, rawText: newStory, displayText: undefined, memory: [], memoryEntries: [], status: {}, snapshot: undefined, swipes: undefined, swipeIndex: undefined, imageOriginId: undefined, illustrations: [] };
+    await replaceHistoryWithCheckpoint(next, '编辑回复前');
   };
 
-  const handleEditAndResendUserTurn = (turnIndex: number, text: string) => {
-    setInputText(text);
-    truncateHistory(turnIndex);
+  const handleEditAndResendUserTurn = async (turnIndex: number, text: string) => {
+    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
+    if (await replaceHistoryWithCheckpoint(conversationHistory.slice(0, turnIndex), '编辑提问前')) setInputText(text);
   };
 
   const handleResendUserTurn = async (turnIndex: number) => {
-    if (isLoading) return;
+    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
     const kept = conversationHistory.slice(0, turnIndex + 1);
-    setConversationHistory(kept);
+    if (kept.length < conversationHistory.length && !await replaceHistoryWithCheckpoint(kept, '重新发送前')) return;
     await runGeneration(kept);
   };
 
   const handleRetractUserTurn = (turnIndex: number) => {
+    if (isLoading || generationRef.current) return;
     truncateHistory(turnIndex);
   };
 
@@ -843,6 +650,7 @@ export default function ChatPage() {
 
   return (
     <div className="flex-1 flex min-h-screen">
+      <SessionWorkbench open={isWorkbenchOpen} onClose={() => setIsWorkbenchOpen(false)} report={promptReport} busy={isLoading || isBranching} />
       {/* Secondary Scenario & Saves Sidebar (Desktop: 270px) */}
       <div className="hidden md:block shrink-0">
         <ScenarioSidebar
@@ -907,6 +715,7 @@ export default function ChatPage() {
           id="theater-header"
           className="sticky top-0 z-20 border-b border-[#20222e] bg-[#0e0f14]/95 backdrop-blur-md px-2.5 sm:px-6 py-2 flex items-center justify-between gap-2 select-none"
         >
+          <button onClick={() => setIsWorkbenchOpen(true)} className="shrink-0 rounded-lg border border-sky-700 px-2 py-1 text-xs text-sky-200">会话工作台</button>
           {/* 左侧：返回探索、剧本标题与桌面端快捷药丸 */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0">
             <Link
@@ -946,40 +755,7 @@ export default function ChatPage() {
               <span className="text-[10px] text-emerald-400 opacity-70 group-hover:opacity-100 transition">▼</span>
             </button>
 
-            {/* 桌面端直显：推演风格切换药丸 */}
-            <button
-              suppressHydrationWarning
-              onClick={toggleRoleplayMode}
-              className={`hidden md:flex items-center gap-1.5 text-xs px-2.5 sm:px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-xs shrink-0 border ${
-                (isMounted ? modelSettings.roleplayMode : 'unrestricted') === 'unrestricted'
-                  ? 'text-pink-300 bg-pink-950/60 hover:bg-pink-900/70 border-pink-500/50 hover:border-pink-400'
-                  : 'text-amber-300 bg-amber-950/60 hover:bg-amber-900/70 border-amber-500/50 hover:border-amber-400'
-              }`}
-              title={
-                isMounted
-                  ? (modelSettings.roleplayMode === 'unrestricted'
-                    ? '当前模式：💖 绝对顺从（点击切换为 🛡️ 真实推拉·硬核底线）'
-                    : '当前模式：🛡️ 真实推拉·硬核底线（违背意志强推会自卫逃跑，点击切换为 💖 绝对顺从）')
-                  : undefined
-              }
-            >
-              <span suppressHydrationWarning className={`w-1.5 h-1.5 rounded-full ${(isMounted ? modelSettings.roleplayMode : 'unrestricted') === 'unrestricted' ? 'bg-pink-400' : 'bg-amber-400'} animate-pulse`} />
-              <span suppressHydrationWarning className="font-semibold text-xs">{(isMounted ? modelSettings.roleplayMode : 'unrestricted') === 'unrestricted' ? '💖 绝对顺从' : '🛡️ 真实推拉'}</span>
-            </button>
-
-            {/* 桌面端直显：玩法模组中心快捷入口 */}
-            <button
-              suppressHydrationWarning
-              onClick={() => setIsModCenterOpen(true)}
-              className="hidden lg:flex items-center gap-1.5 text-xs px-2.5 sm:px-3 py-1 rounded-full font-mono cursor-pointer transition shadow-xs shrink-0 border border-orange-500/50 bg-orange-950/60 hover:bg-orange-900/70 text-orange-300 hover:border-orange-400 group"
-              title="打开玩法模组中心 (MOD 插件与机制管理)"
-            >
-              <span className="text-xs group-hover:rotate-12 transition-transform">🧩</span>
-              <span className="font-semibold text-xs">模组</span>
-              <span suppressHydrationWarning className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-orange-500/30 text-orange-200 border border-orange-500/40">
-                {isMounted ? Object.values(enabledMods).filter(Boolean).length : 0}
-              </span>
-            </button>
+            <span className="hidden lg:inline text-xs text-sky-200">{sessionSettings.mode === 'chat' ? '自由聊天' : sessionSettings.mode === 'adventure' ? '规则冒险' : '小说叙事'}</span>
           </div>
 
           {/* 右侧操作按钮区：自适应响应式排版 */}
@@ -1220,17 +996,10 @@ export default function ChatPage() {
             </div>
           )}
 
-          {/* Real-time Dynamic HUD for Love Affection & RPG Adventure */}
-          {isMounted && (
-            <FloatingStatusHud
-              turns={conversationHistory}
-              enabledMods={enabledMods}
-              deckId={deckId}
-              deckTitle={currentDeck?.title}
-              onTriggerAction={(actionText) => handleSend(actionText)}
-            />
-          )}
+          <ScenePresentation key={currentConversationId} />
+          {Object.keys(resolveSnapshot(conversationHistory).state).length > 0 && <details className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-slate-200"><summary className="cursor-pointer text-sm">当前状态</summary><dl className="mt-2 grid grid-cols-2 gap-2 text-xs">{Object.entries(resolveSnapshot(conversationHistory).state).map(([key,value]) => <div key={key}><dt className="text-slate-400">{sessionSettings.stateFields.find(f => f.key === key)?.label || key}</dt><dd>{Array.isArray(value) ? value.join('、') || '无' : String(value ?? '未设置')}</dd></div>)}</dl></details>}
 
+          {currentDeck && conversationHistory.length === 0 && storyOpenings(currentDeck, sessionSettings).length > 0 ? <section className="space-y-3 rounded-xl border border-sky-800 p-4 text-slate-200"><h2>选择开场</h2>{storyOpenings(currentDeck, sessionSettings).map((opening, i) => <button key={i} className="block w-full whitespace-pre-wrap rounded-lg bg-slate-900 p-3 text-left text-sm hover:bg-slate-800" onClick={() => addTurn(opening)}>{opening.story}</button>)}</section> : null}
           {conversationHistory
             .filter((t): t is Turn => Boolean(t && typeof t === 'object'))
             .map((turn, idx, arr) => {
@@ -1265,9 +1034,16 @@ export default function ChatPage() {
                   index={idx}
                   onRegenerate={handleRegenerate}
                   onOpenSettings={() => setIsSettingsOpen(true)}
-                  onDelete={(dIdx) => truncateHistory(dIdx)}
+                  onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
                 />
               );
+            }
+
+            if (turn.runtimeVersion === 1) {
+              return <div key={idx}>
+                <ReplyCompletionNotice turn={turn} busy={isLoading || isBranching} onRepair={() => handleRepairReply(idx)} onRetry={() => handleRegenerate(idx)} onBudget={() => setIsWorkbenchOpen(true)} />
+                <GenericCard turn={turn} index={idx} deckId={deckId} onSendAction={handleSend} onDelete={(i) => { if (!isLoading) truncateHistory(i); }} onRegenerate={handleRegenerate} onContinueWriting={handleContinueWriting} onEdit={handleEditTurn} onSwipeChange={handleSwipeChange} />
+              </div>;
             }
 
             if (isCoser) {
@@ -1277,7 +1053,7 @@ export default function ChatPage() {
                   turn={turn}
                   index={idx}
                   onSendAction={handleSend}
-                  onDelete={(dIdx) => truncateHistory(dIdx)}
+                  onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
@@ -1293,7 +1069,7 @@ export default function ChatPage() {
                   turn={turn}
                   index={idx}
                   onSendAction={handleSend}
-                  onDelete={(dIdx) => truncateHistory(dIdx)}
+                  onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
@@ -1309,7 +1085,7 @@ export default function ChatPage() {
                   turn={turn}
                   index={idx}
                   onSendAction={handleSend}
-                  onDelete={(dIdx) => truncateHistory(dIdx)}
+                  onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
@@ -1325,7 +1101,7 @@ export default function ChatPage() {
                   turn={turn}
                   index={idx}
                   onSendAction={handleSend}
-                  onDelete={(dIdx) => truncateHistory(dIdx)}
+                  onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
@@ -1341,7 +1117,7 @@ export default function ChatPage() {
                   turn={turn}
                   index={idx}
                   onSendAction={handleSend}
-                  onDelete={(dIdx) => truncateHistory(dIdx)}
+                  onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
@@ -1357,7 +1133,7 @@ export default function ChatPage() {
                 index={idx}
                 deckId={deckId}
                 onSendAction={handleSend}
-                onDelete={(dIdx) => truncateHistory(dIdx)}
+                onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
                 onRegenerate={handleRegenerate}
                 onContinueWriting={handleContinueWriting}
                 onEdit={handleEditTurn}
@@ -1369,10 +1145,13 @@ export default function ChatPage() {
           <div ref={streamBottomRef} />
         </div>
 
+        {saveError && <div role="alert" className="p-3 text-sm text-amber-200">{saveError}<button className="ml-3 underline" onClick={() => void useAppStore.getState().autoSave()}>重试保存</button></div>}
+        {isLoading && <button className="p-2 text-sm text-sky-200" onClick={() => generationRef.current?.abort()}>停止生成</button>}
         {/* Floating Bottom Input with Docked Toolbar directly above */}
         <ChatInput
           onSend={handleSend}
-          isLoading={isLoading}
+          onOpenWorkbench={() => setIsWorkbenchOpen(true)}
+          isLoading={isLoading || isBranching || !isDeckReady}
           onRegenerateLast={handleRegenerateLast}
           inputText={inputText}
           setInputText={setInputText}
