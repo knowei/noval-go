@@ -6,6 +6,7 @@ import { useAppStore } from '@/lib/store';
 
 interface ChatInputProps {
   onSend: (text: string) => void;
+  onOpenWorkbench?: () => void;
   isLoading: boolean;
   onRegenerateLast?: () => void;
   inputText?: string;
@@ -15,6 +16,7 @@ interface ChatInputProps {
 
 export function ChatInput({
   onSend,
+  onOpenWorkbench,
   isLoading,
   onRegenerateLast,
   inputText,
@@ -33,7 +35,7 @@ export function ChatInput({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       handleSend();
     }
@@ -63,17 +65,17 @@ export function ChatInput({
           <button
             type="button"
             suppressHydrationWarning
-            onClick={() => setIsModCenterOpen(true)}
+            onClick={() => onOpenWorkbench ? onOpenWorkbench() : setIsModCenterOpen(true)}
             className="px-2.5 py-0.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 hover:border-amber-400 text-[11px] text-amber-200 font-mono flex items-center gap-1.5 shrink-0 transition cursor-pointer shadow-xs group active:scale-95"
-            title="点击打开玩法模组中心 (MOD 插件与机制管理)"
+            title={onOpenWorkbench ? "打开会话工作台" : "打开旧版模组设置"}
           >
             <span className="text-xs group-hover:scale-110 transition-transform">🗂️</span>
-            <span className="font-bold">Mod</span>
+            <span className="font-bold">{onOpenWorkbench ? "会话设置" : "Mod"}</span>
             <span
               suppressHydrationWarning
               className="px-1 py-0.2 rounded-full text-[9px] bg-amber-400/30 text-amber-200 font-bold border border-amber-400/40"
             >
-              {isMounted ? activeModCount : 4}
+              {onOpenWorkbench ? "⋯" : isMounted ? activeModCount : 4}
             </span>
           </button>
 

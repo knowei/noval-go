@@ -1,6 +1,12 @@
 import { create } from 'zustand';
 import { UserProfile, StoryDeck, Turn, ConversationSave, ModelSettings, EnabledMods } from './types';
-import { fetchConversations, saveConversation, deleteConversation } from './api';
+import { fetchConversations, fetchConversation, saveConversation, deleteConversation } from './api';
+import { normalizeSession, SessionSettings } from './sessionEngine';
+
+// Serialize writes so an older streaming save cannot overwrite a completed reply.
+let saveQueue: Promise<void> = Promise.resolve();
+
+export const isCheckpointId = (id: string) => id.startsWith('branch_');
 
 const defaultMods: EnabledMods = {
   apocalypseSurvival: true,
@@ -40,16 +46,28 @@ const getInitialMods = (): EnabledMods => {
 
 const getOrCreateUserId = (): string => {
   if (typeof window === 'undefined') return 'guest_default';
-  let uid = localStorage.getItem('rp_current_user_id') || localStorage.getItem('noval_user_id');
-  if (!uid || uid === 'default_user') {
-    uid = 'guest_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
-    localStorage.setItem('rp_current_user_id', uid);
-    localStorage.setItem('noval_user_id', uid);
+  try {
+    let uid = localStorage.getItem('rp_current_user_id') || localStorage.getItem('noval_user_id');
+    if (!uid || uid === 'default_user') {
+      uid = 'guest_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+      localStorage.setItem('rp_current_user_id', uid);
+      localStorage.setItem('noval_user_id', uid);
+    }
+    return uid;
+  } catch {
+    return 'guest_default';
   }
-  return uid;
 };
 
 interface AppState {
+  sessionSettings: SessionSettings;
+  setSessionSettings: (settings: Partial<SessionSettings>) => void;
+  saveError: string | null;
+  isBranching: boolean;
+  currentLineage: Turn['lineage'];
+  updateCheckpoint: (id: string, update: { name?: string; trashed?: boolean }) => Promise<boolean>;
+  replaceHistoryWithCheckpoint: (history: Turn[], reason: string) => Promise<boolean>;
+  restoreCheckpoint: (id: string) => Promise<boolean>;
   currentUserId: string;
   currentUser: UserProfile | null;
   authToken: string | null;
@@ -76,7 +94,7 @@ interface AppState {
   setCurrentConversationId: (id: string) => void;
   addTurn: (turn: Turn) => void;
   updateTurn: (index: number, turn: Partial<Turn>) => void;
-  truncateHistory: (fromIndex: number) => void;
+  truncateHistory: (fromIndex: number) => Promise<boolean>;
   setSavedConversations: (saves: ConversationSave[]) => void;
   setModelSettings: (settings: Partial<ModelSettings>) => void;
   toggleRoleplayMode: () => void;
@@ -92,6 +110,30 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
+  sessionSettings: normalizeSession(),
+  saveError: null,
+  isBranching: false,
+  currentLineage: undefined,
+  updateCheckpoint: (id, update) => editCheckpoint(id, update),
+  replaceHistoryWithCheckpoint: (history, reason) => changeBranch(async () => history, reason),
+  restoreCheckpoint: (id) => changeBranch(async () => {
+    const { currentUserId, currentDeckKey } = get();
+    if (!isCheckpointId(id)) throw new Error('请选择剧情分支。');
+    const saved = await fetchConversation(id);
+    if (!saved || saved.user_id !== currentUserId || saved.deck_id !== currentDeckKey || !saved.history?.length) {
+      throw new Error('无法读取此分支，请刷新列表后重试。');
+    }
+    return saved.history;
+  }, '恢复分支前', id),
+  setSessionSettings: (settings) => {
+    set(state => {
+      const next = normalizeSession({ ...state.sessionSettings, ...settings });
+      const history = [...state.conversationHistory];
+      if (history[0]) history[0] = { ...history[0], session: next };
+      return { sessionSettings: next, conversationHistory: history };
+    });
+    void get().autoSave();
+  },
   currentUserId: getOrCreateUserId(),
   currentUser: null,
   authToken: typeof window !== 'undefined' ? localStorage.getItem('rp_auth_token') : null,
@@ -113,12 +155,21 @@ export const useAppStore = create<AppState>((set, get) => ({
   isDrawerOpen: false,
   isModCenterOpen: false,
   enabledMods: getInitialMods(),
-  isSiteUnlocked: typeof window !== 'undefined' ? !!localStorage.getItem('noval_site_access_token') : false,
+  isSiteUnlocked: (() => {
+    if (typeof window === 'undefined') return false;
+    try {
+      return !!localStorage.getItem('noval_site_access_token');
+    } catch {
+      return false;
+    }
+  })(),
   setIsSiteUnlocked: (unlocked: boolean) => {
     if (typeof window !== 'undefined') {
       if (!unlocked) {
-        localStorage.removeItem('noval_site_access_token');
-        document.cookie = 'site_access_token=; path=/; max-age=0; SameSite=Lax';
+        try {
+          localStorage.removeItem('noval_site_access_token');
+          document.cookie = 'site_access_token=; path=/; max-age=0; SameSite=Lax';
+        } catch {}
       }
     }
     set({ isSiteUnlocked: unlocked });
@@ -199,15 +250,18 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   setCurrentDeck: (deckKey, deck) => set({ currentDeckKey: deckKey, currentDeck: deck }),
   setConversationHistory: (history) => set({
+    currentLineage: history?.[0]?.lineage || get().currentLineage,
+    sessionSettings: normalizeSession(history?.[0]?.session || get().sessionSettings),
     conversationHistory: Array.isArray(history)
       ? history.filter((t): t is Turn => Boolean(t && typeof t === 'object'))
       : []
   }),
-  setCurrentConversationId: (id) => set({ currentConversationId: id }),
+  setCurrentConversationId: (id) => set({ currentConversationId: id, currentLineage: { rootId: id }, sessionSettings: normalizeSession(get().currentDeck?.sessionDefaults), saveError: null }),
   
   addTurn: (turn) => {
     if (!turn) return;
-    set((state) => ({ conversationHistory: [...state.conversationHistory.filter(Boolean), turn] }));
+    set((state) => ({ conversationHistory: [...state.conversationHistory.filter(Boolean), state.conversationHistory.length ? turn : { ...turn, session: state.sessionSettings, lineage: state.currentLineage }] }));
+    if (turn.incomplete) return;
     get().autoSave();
   },
 
@@ -221,13 +275,10 @@ export const useAppStore = create<AppState>((set, get) => ({
       }
       return { conversationHistory: next.filter((t): t is Turn => Boolean(t && typeof t === 'object')) };
     });
-    get().autoSave();
+    if (!turn.incomplete) get().autoSave();
   },
 
-  truncateHistory: (fromIndex) => {
-    set((state) => ({ conversationHistory: state.conversationHistory.slice(0, fromIndex).filter(Boolean) }));
-    get().autoSave();
-  },
+  truncateHistory: (fromIndex) => get().replaceHistoryWithCheckpoint(get().conversationHistory.slice(0, fromIndex), '回退前'),
 
   setSavedConversations: (saves) => set({ savedConversations: saves }),
   
@@ -290,7 +341,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   refreshSaves: async () => {
     const { currentUserId } = get();
     const saves = await fetchConversations(currentUserId);
-    set({ savedConversations: saves });
+    if (get().currentUserId === currentUserId) set({ savedConversations: saves });
   },
 
   startNewStory: (deck: StoryDeck) => {
@@ -299,6 +350,9 @@ export const useAppStore = create<AppState>((set, get) => ({
       currentDeckKey: deck.id,
       currentDeck: deck,
       currentConversationId: newId,
+      currentLineage: { rootId: newId },
+      sessionSettings: normalizeSession(deck.sessionDefaults),
+      saveError: null,
       conversationHistory: []
     });
   },
@@ -306,11 +360,17 @@ export const useAppStore = create<AppState>((set, get) => ({
   autoSave: async () => {
     const { currentConversationId, currentUserId, currentDeckKey, currentDeck, conversationHistory } = get();
     const cleanHistory = (conversationHistory || []).filter((t): t is Turn => Boolean(t && typeof t === 'object'));
+    if (cleanHistory[0]) cleanHistory[0] = { ...cleanHistory[0], session: get().sessionSettings, lineage: get().currentLineage };
     if (!currentConversationId) return;
 
     if (cleanHistory.length === 0) {
-      await deleteConversation(currentConversationId);
-      get().refreshSaves();
+      saveQueue = saveQueue.catch(() => {}).then(async () => {
+        if (get().currentUserId !== currentUserId) return;
+        const ok = await deleteConversation(currentConversationId);
+        if (get().currentConversationId === currentConversationId) set({ saveError: ok ? null : '存档删除失败，请重试。' });
+        await get().refreshSaves();
+      });
+      await saveQueue;
       return;
     }
 
@@ -324,7 +384,88 @@ export const useAppStore = create<AppState>((set, get) => ({
       history: cleanHistory
     };
 
-    await saveConversation(payload);
-    get().refreshSaves();
+    saveQueue = saveQueue.catch(() => {}).then(async () => {
+      if (get().currentUserId !== currentUserId) return;
+      const ok = await saveConversation(payload);
+      if (get().currentConversationId === currentConversationId) set({ saveError: ok ? null : '自动保存失败，请重试或导出会话备份。' });
+      await get().refreshSaves();
+    });
+    await saveQueue;
   }
 }));
+
+// Checkpoints are independent saves. Never mutate the active timeline until its
+// previous contents are durable, and never apply a delayed result to another chat.
+async function changeBranch(loadHistory: () => Promise<Turn[]>, reason: string, restoredId?: string): Promise<boolean> {
+  const initial = useAppStore.getState();
+  if (initial.isBranching || !initial.currentConversationId || isCheckpointId(initial.currentConversationId)) return false;
+  const isCurrent = () => {
+    const now = useAppStore.getState();
+    return now.currentUserId === initial.currentUserId && now.currentConversationId === initial.currentConversationId
+      && now.currentDeckKey === initial.currentDeckKey && now.conversationHistory === initial.conversationHistory
+      && now.sessionSettings === initial.sessionSettings;
+  };
+  useAppStore.setState({ isBranching: true, saveError: null });
+  try {
+    const next = await loadHistory();
+    if (!isCurrent()) return false;
+    const oldHistory = initial.conversationHistory;
+    const archiveId = 'branch_' + crypto.randomUUID();
+    let saved = !oldHistory.length;
+    if (oldHistory.length) {
+      const createdAt = new Date().toISOString();
+      const payload = {
+        id: archiveId, user_id: initial.currentUserId,
+        deck_id: initial.currentDeckKey, deck_title: initial.currentDeck?.title || '剧本',
+        title: `${reason} · ${oldHistory.length} 条消息`,
+        history: oldHistory.map((turn, i) => i ? turn : {
+          ...turn, session: initial.sessionSettings,
+          branchInfo: { sourceId: initial.currentConversationId, reason, createdAt, rootId: initial.currentLineage?.rootId || initial.currentConversationId, parentId: initial.currentLineage?.parentId }
+        })
+      };
+      saveQueue = saveQueue.catch(() => {}).then(async () => {
+        if (!isCurrent()) return;
+        saved = await saveConversation(payload);
+      });
+      await saveQueue;
+    }
+    if (!isCurrent()) return false;
+    if (!saved) throw new Error('旧剧情保存失败，当前内容未改动。请重试或先导出会话备份。');
+    // Archive metadata belongs to the checkpoint, not to the working copy.
+    const lineage = { rootId: restoredId ? next[0]?.branchInfo?.rootId || next[0]?.branchInfo?.sourceId || initial.currentConversationId : initial.currentLineage?.rootId || initial.currentConversationId, parentId: restoredId || (oldHistory.length ? archiveId : initial.currentLineage?.parentId) };
+    const history = next.map((turn, i) => i ? turn : { ...turn, branchInfo: undefined, lineage });
+    useAppStore.setState({ currentLineage: lineage });
+    initial.setConversationHistory(history);
+    void useAppStore.getState().autoSave();
+    return true;
+  } catch (error) {
+    if (isCurrent()) useAppStore.setState({ saveError: error instanceof Error ? error.message : '分支操作失败，当前内容未改动。' });
+    return false;
+  } finally {
+    useAppStore.setState({ isBranching: false });
+  }
+}
+
+async function editCheckpoint(id: string, update: { name?: string; trashed?: boolean }): Promise<boolean> {
+  const initial = useAppStore.getState();
+  if (initial.isBranching || !isCheckpointId(id)) return false;
+  useAppStore.setState({ isBranching: true, saveError: null });
+  const sameUser = () => useAppStore.getState().currentUserId === initial.currentUserId;
+  try {
+    const saved = await fetchConversation(id);
+    if (!sameUser()) return false;
+    if (!saved?.history?.length || saved.user_id !== initial.currentUserId || saved.deck_id !== initial.currentDeckKey) throw new Error('分支不存在或不属于当前剧本');
+    const original = saved.history[0].branchInfo || { sourceId: '', reason: saved.title || '旧分支', createdAt: saved.created_at || '' };
+    const name = update.name === undefined ? original.name : update.name.trim().slice(0, 100);
+    const info = { ...original, ...update, name };
+    const payload = { id, user_id: saved.user_id, deck_id: saved.deck_id, deck_title: saved.deck_title || '', title: name || `${info.reason} · ${saved.history.length} 条消息`, history: saved.history.map((t,i)=>i?t:{...t,branchInfo:info}) };
+    let ok = false;
+    saveQueue = saveQueue.catch(()=>{}).then(async()=>{ if (sameUser()) ok = await saveConversation(payload); });
+    await saveQueue;
+    if (!sameUser()) return false;
+    if (!ok) throw new Error('分支整理保存失败，请重试。');
+    await initial.refreshSaves();
+    return true;
+  } catch (error) { if (sameUser()) useAppStore.setState({saveError:error instanceof Error?error.message:'分支整理失败'}); return false; }
+  finally { useAppStore.setState({isBranching:false}); }
+}

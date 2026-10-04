@@ -21,6 +21,17 @@ export interface TurnStatus {
 }
 
 export interface Turn {
+  imageOriginId?: string;
+  illustrations?: import('./illustrations').Illustration[];
+  branchInfo?: { sourceId: string; reason: string; createdAt: string; rootId?: string; parentId?: string; name?: string; trashed?: boolean };
+  lineage?: { rootId: string; parentId?: string };
+  session?: import('./sessionEngine').SessionSettings;
+  snapshot?: import('./sessionEngine').SessionSnapshot;
+  runtimeVersion?: 1;
+  runtimeWarnings?: string[];
+  incomplete?: boolean;
+  completion?: { reason: string; responseTokens: number; protocolVersion?: 2; receivedChars?: number; elapsedMs?: number; repairs?: number; usage?: { promptTokens?: number; completionTokens?: number; reasoningTokens?: number } };
+  displayText?: string;
   isUser?: boolean;
   text?: string;
   story?: string;
@@ -28,6 +39,7 @@ export interface Turn {
   model?: string;
   location?: string;
   memory?: string[];
+  memoryEntries?: import('./memoryResolution').MemoryEntry[];
   status?: TurnStatus;
   branches?: Branch[];
   npcThought?: string;
@@ -62,6 +74,18 @@ export interface StoryHandbook {
 }
 
 export interface LoreEntry {
+  secondaryKeys?: string[];
+  secondaryMode?: 'andAny' | 'andAll' | 'notAny' | 'notAll';
+  probability?: number;
+  group?: string;
+  groupWeight?: number;
+  groupPriority?: boolean;
+  recursive?: boolean;
+  excludeRecursion?: boolean;
+  constant?: boolean;
+  priority?: number;
+  scanDepth?: number;
+  position?: 'early' | 'late';
   id: string;
   keys: string[];
   title: string;
@@ -71,6 +95,13 @@ export interface LoreEntry {
 }
 
 export interface StoryDeck {
+  characterName?: string;
+  roles?: unknown[];
+  exampleDialogue?: string;
+  postHistoryInstructions?: string;
+  alternateGreetings?: string[];
+  sessionDefaults?: Partial<import('./sessionEngine').SessionSettings>;
+  sourceCard?: unknown;
   id: string;
   title: string;
   badge?: string;
@@ -87,6 +118,9 @@ export interface StoryDeck {
   lorebook?: LoreEntry[];
   customCss?: string;
   customHtml?: string;
+  systemPrompt?: string;
+  statusTemplate?: string;
+  cgMap?: Record<string, string>;
   desc?: string;
   author?: string;
   rating?: string;
@@ -115,6 +149,7 @@ export interface PlazaCard {
 }
 
 export interface ConversationSave {
+  branch_info?: Turn['branchInfo'];
   id: string;
   user_id: string;
   deck_id: string;

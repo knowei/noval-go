@@ -1,4 +1,5 @@
 import { Turn } from './types';
+import { resolveCgUrl } from './cgManager';
 
 export interface StatMetric {
   name: string;
@@ -11,12 +12,23 @@ export interface StatMetric {
   icon: string;
 }
 
+export interface MoneyDebtInfo {
+  debt?: string;
+  totalDebt?: string;
+  cash?: string;
+  costume?: string;
+  costumeCode?: string;
+  costumeUrl?: string;
+  day?: string;
+}
+
 export interface CharacterStatusSnapshot {
   characterName: string;
   stageName?: string;
   mood?: string;
   thought?: string;
   stats: StatMetric[];
+  moneyInfo?: MoneyDebtInfo;
 }
 
 /**
@@ -103,11 +115,27 @@ function parseExplicitCharStatus(content: string, deckId: string, deckTitle: str
     const isExclusivity = key.includes('独占渴求') || key.includes('独占欲') || key.includes('吃醋') || key.includes('占有');
     const isCubeResonance = key.includes('魔方') || key.includes('共鸣');
 
+    const isDebt = key.includes('债务') || key.includes('还款') || key.includes('清偿') || key.includes('借款') || key.includes('欠债');
+    const isCash = key.includes('现金') || key.includes('资金') || key.includes('存款') || key.includes('收入') || key.includes('打工');
+    const isCostume = key.includes('着装') || key.includes('服装') || key.includes('立绘') || key.includes('装扮');
+
     let icon = '📊';
     let color = 'from-purple-500 to-indigo-500';
     let barColor = 'linear-gradient(90deg, #a855f7, #6366f1)';
 
-    if (isOath) {
+    if (isDebt) {
+      icon = '💰';
+      color = 'from-amber-500 to-emerald-400';
+      barColor = 'linear-gradient(90deg, #f59e0b, #10b981)';
+    } else if (isCash) {
+      icon = '💵';
+      color = 'from-emerald-500 to-teal-400';
+      barColor = 'linear-gradient(90deg, #10b981, #06b6d4)';
+    } else if (isCostume) {
+      icon = '👗';
+      color = 'from-purple-500 to-pink-500';
+      barColor = 'linear-gradient(90deg, #8b5cf6, #ec4899)';
+    } else if (isOath) {
       icon = '💍';
       color = 'from-cyan-400 to-blue-500';
       barColor = 'linear-gradient(90deg, #06b6d4, #3b82f6)';
@@ -178,11 +206,39 @@ function parseExplicitCharStatus(content: string, deckId: string, deckTitle: str
     }
   }
 
+  const debtMatch = content.match(/\[(?:债务清偿进度|债务|剩余债务|欠款)\]:\s*([^|]+)/i);
+  const cashMatch = content.match(/\[(?:手头可用现金|手头现金|现金|资金)\]:\s*([^|]+)/i);
+  const costumeMatch = content.match(/\[(?:当前着装|当前服装|立绘装扮|着装|服装)\]:\s*([^|]+)/i);
+  const dayMatch = content.match(/\[(?:还债日程|日程|天数|当前天数)\]:\s*([^|]+)/i);
+
+  let moneyInfo: MoneyDebtInfo | undefined;
+  if (debtMatch || cashMatch || costumeMatch || dayMatch) {
+    const rawCostume = costumeMatch ? costumeMatch[1].trim() : undefined;
+    let costumeCode: string | undefined;
+    let costumeUrl: string | undefined;
+    if (rawCostume) {
+      const codeMatch = rawCostume.match(/img-[A-Za-z0-9_-]+/i) || rawCostume.match(/FZ-\d+/i);
+      if (codeMatch) {
+        costumeCode = codeMatch[0].startsWith('img-') ? codeMatch[0] : `img-${codeMatch[0]}`;
+        costumeUrl = resolveCgUrl(costumeCode, deckId) || undefined;
+      }
+    }
+    moneyInfo = {
+      debt: debtMatch ? debtMatch[1].trim() : undefined,
+      cash: cashMatch ? cashMatch[1].trim() : undefined,
+      costume: rawCostume,
+      costumeCode,
+      costumeUrl,
+      day: dayMatch ? dayMatch[1].trim() : undefined,
+    };
+  }
+
   return {
     characterName,
     stageName: stats.find(s => s.stageDesc)?.stageDesc,
     mood,
-    stats
+    stats,
+    moneyInfo
   };
 }
 
@@ -603,6 +659,97 @@ function generateHeuristicStatus(
           color: 'from-cyan-400 to-blue-500',
           barColor: 'linear-gradient(90deg, #06b6d4, #3b82f6)',
           icon: '💍'
+        }
+      ]
+    };
+  }
+
+  // 💰 还债与金钱经济类剧本（以《【CG立绘】巨乳妹妹还债生活》为典型，以及所有涉及还债、债务的剧本）
+  const isDebtSister = deckId === 'deck_sister_debt_cg' || deckId.includes('7a68d42a') || deckTitle.includes('还债') || deckTitle.includes('债务') || text.includes('还债') || text.includes('欠债');
+  if (isDebtSister) {
+    const fzRegex = /img-FZ-(\d+)/i;
+    let costumeName = '居家单薄旧睡裙 (FZ-01)';
+    const fzMatch = text.match(fzRegex);
+    if (fzMatch) {
+      const fzId = fzMatch[1];
+      costumeName = `第${fzId}套服装 (img-FZ-${fzId})`;
+    } else if (text.includes('女仆')) {
+      costumeName = '心动黑白女仆装 (img-FZ-03)';
+    } else if (text.includes('水手服') || text.includes('校服')) {
+      costumeName = '青春日系水手服 (img-FZ-05)';
+    } else if (text.includes('兔女郎')) {
+      costumeName = '高叉丝袜兔女郎 (img-FZ-08)';
+    } else if (text.includes('睡裙') || text.includes('睡衣')) {
+      costumeName = '居家单薄旧睡裙 (img-FZ-01)';
+    }
+
+    const totalDebt = 50000;
+    const repaidBase = Math.min(totalDebt, 5000 + turnIndex * 3500);
+    const remainingDebt = Math.max(0, totalDebt - repaidBase);
+    const debtProgress = Math.min(100, Math.round((repaidBase / totalDebt) * 100));
+
+    const cashBase = 1200 + (turnIndex % 3) * 600 + turnIndex * 400;
+    const sisterAffection = Math.min(100, 40 + turnIndex * 6);
+    const sisterDefense = Math.max(10, 60 - turnIndex * 5);
+
+    let stage = sisterAffection >= 80 ? '相濡以沫 · 矢志不渝' : sisterAffection >= 60 ? '倾心依恋 · 默契相伴' : sisterAffection >= 40 ? '初步动摇 · 渐生情愫' : '相依为命 · 战战兢兢';
+
+    const costumeCode = fzMatch ? `img-FZ-${fzMatch[1]}` : 'img-FZ-01';
+    const costumeUrl = resolveCgUrl(costumeCode, deckId) || 'https://miha.wiki/bvqXru.png';
+
+    return {
+      characterName: '妹妹',
+      stageName: stage,
+      mood: innerThought || '紧咬着红唇数着账单上的数字，看向你的目光满是依赖与羞怯……',
+      moneyInfo: {
+        debt: `¥${remainingDebt.toLocaleString()}`,
+        totalDebt: `¥${totalDebt.toLocaleString()}`,
+        cash: `¥${cashBase.toLocaleString()}`,
+        costume: costumeName,
+        costumeCode,
+        costumeUrl,
+        day: `第 ${Math.max(1, Math.floor(turnIndex / 2) + 1)} 天`
+      },
+      stats: [
+        {
+          name: '债务清偿进度',
+          value: debtProgress,
+          max: 100,
+          delta: '+7% ▲',
+          stageDesc: `已还 ¥${repaidBase.toLocaleString()} / 剩 ¥${remainingDebt.toLocaleString()}`,
+          color: 'from-amber-500 to-emerald-400',
+          barColor: 'linear-gradient(90deg, #f59e0b, #10b981)',
+          icon: '💰'
+        },
+        {
+          name: '手头可用现金',
+          value: Math.min(100, Math.round((cashBase / 10000) * 100)),
+          max: 100,
+          delta: '+600 ▲',
+          stageDesc: `可用资金: ¥${cashBase.toLocaleString()}`,
+          color: 'from-emerald-500 to-teal-400',
+          barColor: 'linear-gradient(90deg, #10b981, #06b6d4)',
+          icon: '💵'
+        },
+        {
+          name: '心动好感度',
+          value: sisterAffection,
+          max: 100,
+          delta: '+6 ▲',
+          stageDesc: stage,
+          color: 'from-pink-500 to-rose-400',
+          barColor: 'linear-gradient(90deg, #ec4899, #f472b6)',
+          icon: '💖'
+        },
+        {
+          name: '戒备防线',
+          value: sisterDefense,
+          max: 100,
+          delta: '-5 ▼',
+          stageDesc: sisterDefense > 50 ? '有所保留' : sisterDefense > 25 ? '心理破防' : '几近全开',
+          color: 'from-purple-500 to-indigo-500',
+          barColor: 'linear-gradient(90deg, #a855f7, #6366f1)',
+          icon: '🔒'
         }
       ]
     };

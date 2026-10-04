@@ -8,6 +8,8 @@ import { MapPin } from 'lucide-react';
 import { RichStoryRenderer } from './RichStoryRenderer';
 import { parseTurnCharacterStatus } from '@/lib/characterStatusParser';
 import { TurnStatusCard } from './TurnStatusCard';
+import { TurnIllustrations } from './IllustrationPanel';
+import { inspectReplyEnvelope } from '@/lib/replyEnvelope';
 
 interface GenericCardProps {
   turn: Turn;
@@ -34,7 +36,10 @@ export const GenericCard = React.memo(function GenericCard({
 }: GenericCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedStory, setEditedStory] = useState(turn.story || turn.text || '');
-  const storyText = turn.story || turn.text || '';
+  const originalText = turn.displayText ?? turn.story ?? turn.text ?? '';
+  const health = inspectReplyEnvelope(turn.rawText || originalText, turn.completion?.protocolVersion === 2);
+  const brokenEnvelope = turn.runtimeVersion === 1 && (health.incomplete || health.suspected);
+  const storyText = turn.runtimeVersion === 1 ? inspectReplyEnvelope(originalText).story : originalText;
 
   const renderStoryParagraphs = (text: string) => {
     return text.split('\n').map((line, li) => {
@@ -59,18 +64,20 @@ export const GenericCard = React.memo(function GenericCard({
     });
   };
 
-  const hasStatus = turn.status && Object.keys(turn.status).length > 0;
-  const hasMemory = turn.memory && turn.memory.length > 0;
+  const hasStatus = !brokenEnvelope && !turn.incomplete && turn.status && Object.keys(turn.status).length > 0;
+  const hasMemory = !brokenEnvelope && !turn.incomplete && turn.memory && turn.memory.length > 0;
   const cardDeckKey = deckId || 'generic';
   const activeBranches = React.useMemo(() => {
+    if (turn.runtimeVersion === 1) return turn.incomplete || brokenEnvelope ? [] : turn.branches || [];
     return turn.branches && turn.branches.length > 0
       ? turn.branches
       : generateContextualBranches(cardDeckKey, storyText, index);
-  }, [turn.branches, cardDeckKey, storyText, index]);
+  }, [turn.branches, turn.runtimeVersion, turn.incomplete, brokenEnvelope, cardDeckKey, storyText, index]);
   const hasBranches = activeBranches && activeBranches.length > 0;
   const hasAnyPanel = hasStatus || hasMemory || hasBranches;
 
   const parsedCharStatus = React.useMemo(() => {
+    if (turn.runtimeVersion === 1) return null;
     return parseTurnCharacterStatus(turn, deckId, '', index);
   }, [turn, deckId, index]);
 
@@ -123,13 +130,14 @@ export const GenericCard = React.memo(function GenericCard({
         </div>
       ) : (
         <div className="novel-text space-y-1">
-          <RichStoryRenderer rawStory={storyText} />
+          <RichStoryRenderer rawStory={storyText} deckId={deckId} />
         </div>
       )}
 
       {/* 📊 方案3：每轮对话底部·即时心理与数值结算卡 */}
+      {turn.runtimeVersion === 1 && !brokenEnvelope && <TurnIllustrations key={turn.rawText || turn.story || index} turn={turn} index={index}/>}
       {parsedCharStatus && (
-        <TurnStatusCard status={parsedCharStatus} />
+        <TurnStatusCard status={parsedCharStatus} deckId={deckId} />
       )}
 
       {/* 统一折叠面板群 (1:1 风格对齐第一版) */}
@@ -248,7 +256,7 @@ export const GenericCard = React.memo(function GenericCard({
         index={index}
         model={turn.model}
         storyContent={storyText}
-        onContinueWriting={onContinueWriting}
+        onContinueWriting={turn.incomplete || brokenEnvelope ? undefined : onContinueWriting}
         onRegenerate={onRegenerate}
         onEditToggle={() => setIsEditing(!isEditing)}
         onDelete={onDelete}

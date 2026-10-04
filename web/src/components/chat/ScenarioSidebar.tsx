@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useAppStore } from '@/lib/store';
+import { isCheckpointId, useAppStore } from '@/lib/store';
 import { fetchConversation, deleteConversation } from '@/lib/api';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { ArrowLeft, Plus, Trash2, ArrowUpDown, Clock, Heart, Award, Sparkles, X } from 'lucide-react';
@@ -32,10 +32,15 @@ export function ScenarioSidebar({ onClose, onOpenHandbook, onOpenLorebook }: Sce
   }, [currentDeckKey, refreshSaves]);
 
   const isMatchDeck = (s: any) => {
+    if (isCheckpointId(s.id)) return false;
     if (!currentDeckKey) return true;
     if (s.deck_id === currentDeckKey) return true;
     if (currentDeckKey === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7' && s.deck_id === 'deck_xiuxian_world') return true;
     if (currentDeckKey === 'deck_xiuxian_world' && s.deck_id === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7') return true;
+    if (currentDeckKey === 'b93fc029-e704-42e1-a1a8-d51c62fc8b55' && s.deck_id === 'deck_suyu_contract') return true;
+    if (currentDeckKey === 'deck_suyu_contract' && s.deck_id === 'b93fc029-e704-42e1-a1a8-d51c62fc8b55') return true;
+    if (currentDeckKey === '2c10c41f-de54-407a-a6e0-a1475b0f2d33' && s.deck_id === 'deck_wife_business_trip') return true;
+    if (currentDeckKey === 'deck_wife_business_trip' && s.deck_id === '2c10c41f-de54-407a-a6e0-a1475b0f2d33') return true;
     if (currentDeck?.title && s.deck_title) {
       if (s.deck_title === currentDeck.title) return true;
       if (s.deck_title.includes(currentDeck.title) || currentDeck.title.includes(s.deck_title)) return true;

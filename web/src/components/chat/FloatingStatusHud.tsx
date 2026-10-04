@@ -17,9 +17,12 @@ import {
   Wine,
   Shirt,
   Blinds,
-  AlertTriangle
+  AlertTriangle,
+  ZoomIn
 } from 'lucide-react';
 import { parseTurnCharacterStatus, CharacterStatusSnapshot } from '@/lib/characterStatusParser';
+import { resolveCgUrl } from '@/lib/cgManager';
+import { CgImageViewerModal } from './CgImageViewerModal';
 
 interface FloatingStatusHudProps {
   turns: Turn[];
@@ -40,6 +43,7 @@ export function FloatingStatusHud({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isBagOpen, setIsBagOpen] = useState(false);
   const [isPropPanelOpen, setIsPropPanelOpen] = useState(true);
+  const [activeCgModal, setActiveCgModal] = useState<{ url: string; title: string; subtitle?: string; code?: string } | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -317,12 +321,100 @@ export function FloatingStatusHud({
                   )}
                 </div>
 
+                {/* 经济与资产罗盘 (债务/现金/装扮/日程) */}
+                {charStatus.moneyInfo && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-[#0c0d14]/90 p-2.5 rounded-xl border border-amber-500/25 shadow-inner">
+                    {charStatus.moneyInfo.debt && (
+                      <div className="flex flex-col gap-0.5 bg-[#141622]/90 p-2 rounded-lg border border-amber-500/20">
+                        <span className="text-[10px] text-amber-400 font-semibold flex items-center gap-1">
+                          <span>💰</span> 剩余债务
+                        </span>
+                        <span className="text-xs sm:text-sm font-mono font-bold text-amber-200 truncate">
+                          {charStatus.moneyInfo.debt}
+                        </span>
+                      </div>
+                    )}
+                    {charStatus.moneyInfo.cash && (
+                      <div className="flex flex-col gap-0.5 bg-[#141622]/90 p-2 rounded-lg border border-emerald-500/20">
+                        <span className="text-[10px] text-emerald-400 font-semibold flex items-center gap-1">
+                          <span>💵</span> 手头现金
+                        </span>
+                        <span className="text-xs sm:text-sm font-mono font-bold text-emerald-200 truncate">
+                          {charStatus.moneyInfo.cash}
+                        </span>
+                      </div>
+                    )}
+                    {charStatus.moneyInfo.costume && (() => {
+                      const costumeUrl = charStatus.moneyInfo?.costumeUrl || resolveCgUrl(charStatus.moneyInfo?.costumeCode || charStatus.moneyInfo?.costume || '', deckId);
+                      const costumeCode = charStatus.moneyInfo?.costumeCode || charStatus.moneyInfo?.costume?.match(/img-[A-Za-z0-9_-]+/i)?.[0];
+                      return (
+                        <div 
+                          onClick={() => {
+                            if (costumeUrl) {
+                              setActiveCgModal({
+                                url: costumeUrl,
+                                title: `${charStatus.characterName} · 全身立绘鉴赏`,
+                                subtitle: `当前着装：${charStatus.moneyInfo?.costume || '日常装扮'} (阶段: ${charStatus.stageName || '互动'})`,
+                                code: costumeCode
+                              });
+                            }
+                          }}
+                          className={`flex items-center gap-2 bg-[#141622]/90 p-2 rounded-lg border border-purple-500/20 group ${costumeUrl ? 'cursor-pointer hover:border-pink-500/50 hover:bg-[#1b192e] transition' : ''}`}
+                          title={costumeUrl ? '点击查看高清立绘大图' : charStatus.moneyInfo.costume}
+                        >
+                          {costumeUrl ? (
+                            <div className="relative w-8 h-10 rounded overflow-hidden shrink-0 border border-pink-400/40 shadow-sm bg-black/50 group-hover:scale-105 transition-transform">
+                              <img
+                                src={costumeUrl}
+                                alt="立绘"
+                                className="w-full h-full object-cover object-top"
+                                loading="lazy"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end justify-center pb-0.5">
+                                <ZoomIn className="w-2.5 h-2.5 text-pink-300 opacity-80 group-hover:opacity-100" />
+                              </div>
+                            </div>
+                          ) : null}
+                          <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+                            <span className="text-[10px] text-purple-400 font-semibold flex items-center justify-between">
+                              <span className="flex items-center gap-1">
+                                <span>👗</span> 当前立绘装扮
+                              </span>
+                              {costumeUrl && (
+                                <span className="text-[9px] text-pink-400 font-normal underline decoration-pink-500/50">看立绘</span>
+                              )}
+                            </span>
+                            <span className="text-xs sm:text-sm font-medium text-purple-200 truncate" title={charStatus.moneyInfo.costume}>
+                              {charStatus.moneyInfo.costume}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                    {charStatus.moneyInfo.day && (
+                      <div className="flex flex-col gap-0.5 bg-[#141622]/90 p-2 rounded-lg border border-cyan-500/20">
+                        <span className="text-[10px] text-cyan-400 font-semibold flex items-center gap-1">
+                          <span>📅</span> 还债日程
+                        </span>
+                        <span className="text-xs sm:text-sm font-mono font-medium text-cyan-200 truncate">
+                          {charStatus.moneyInfo.day}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* 数值进度卡片网格 */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {charStatus.stats.map((st, idx) => {
                     const pct = Math.min(100, Math.max(0, Math.round((st.value / st.max) * 100)));
                     const isNtr = st.name.includes('NTR') || st.name.includes('沦陷');
                     const isIntervention = st.name.includes('干预');
+                    const isPositive = st.delta && st.delta.includes('+');
+                    const isNegative = st.delta && st.delta.includes('-');
+                    const isNegativeFavorable = st.name.includes('债务') || st.name.includes('欠款') || st.name.includes('防线') || st.name.includes('戒备') || st.name.includes('NTR') || st.name.includes('沦陷') || st.name.includes('羞耻');
+                    const isPositiveFavorable = st.name.includes('干预') || st.name.includes('好感') || st.name.includes('心动') || st.name.includes('守护') || st.name.includes('生命') || st.name.includes('气血') || st.name.includes('法力') || st.name.includes('真元') || st.name.includes('清偿') || st.name.includes('现金') || st.name.includes('收入') || st.name.includes('存款');
+                    const isFavorable = isNegativeFavorable ? isNegative : isPositiveFavorable ? isPositive : true;
 
                     return (
                       <div key={idx} className="bg-[#0e1017]/90 rounded-xl p-3 border border-gray-800/80 space-y-2">
@@ -336,7 +428,7 @@ export function FloatingStatusHud({
                             <span className="text-gray-500 text-[10px]">/{st.max}</span>
                             {st.delta && (
                               <span className={`text-[10px] px-1.5 py-0.2 rounded font-bold ${
-                                (isIntervention ? st.delta.includes('+') : st.delta.includes('-'))
+                                isFavorable
                                   ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                                   : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                               }`}>
@@ -592,6 +684,18 @@ export function FloatingStatusHud({
           </div>
         )}
       </div>
+
+      {/* 高清立绘鉴赏模态框 */}
+      {activeCgModal && (
+        <CgImageViewerModal
+          isOpen={Boolean(activeCgModal)}
+          onClose={() => setActiveCgModal(null)}
+          imageUrl={activeCgModal.url}
+          title={activeCgModal.title}
+          subtitle={activeCgModal.subtitle}
+          code={activeCgModal.code}
+        />
+      )}
     </div>
   );
 }

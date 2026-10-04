@@ -1,4 +1,5 @@
 import { PlazaCard, StoryDeck, ConversationSave, UserProfile, ModelSettings, Turn } from './types';
+import { readPrivateCards } from './cardImport';
 
 export async function fetchPlazaFeatured(keyword: string = ''): Promise<PlazaCard[]> {
   try {
@@ -30,6 +31,13 @@ export async function fetchPlazaCategories(): Promise<string[]> {
 
 export async function fetchStory(id: string): Promise<StoryDeck | null> {
   try {
+    if (id.startsWith('local_') && typeof localStorage !== 'undefined') {
+      const user = localStorage.getItem('rp_current_user_id') || localStorage.getItem('noval_user_id') || '';
+      const local = readPrivateCards(user).find(card => card.id === id);
+      if (local) return local;
+      if (!getAuthToken()) return null;
+      return (await fetchPrivateCards(id)).find(card => !card.deleted)?.deck || null;
+    }
     const resp = await fetch(`/api/stories?id=${encodeURIComponent(id)}`);
     if (!resp.ok) return null;
     return await resp.json();
@@ -39,6 +47,21 @@ export async function fetchStory(id: string): Promise<StoryDeck | null> {
   }
 }
 
+export interface PrivateCardRecord { id: string; deck: StoryDeck; revision: number; deleted: boolean; updated_at: string }
+export async function fetchPrivateCards(id?: string): Promise<PrivateCardRecord[]> {
+  const response = await fetch('/api/private-cards' + (id ? `?id=${encodeURIComponent(id)}` : ''), { headers: getAuthHeaders() });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || '无法读取云端角色卡');
+  if (!Array.isArray(data)) throw new Error('云端角色卡格式无效');
+  return data;
+}
+export async function updatePrivateCard(id: string, revision: number, action: 'save' | 'trash' | 'restore', deck?: StoryDeck): Promise<PrivateCardRecord> {
+  const response = await fetch('/api/private-cards', { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify({ id, revision, action, deck }) });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || '云端保存失败');
+  return data;
+}
+
 export function getAuthToken(): string | null {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem('rp_auth_token');
@@ -46,20 +69,32 @@ export function getAuthToken(): string | null {
 
 export function getSiteToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem('noval_site_access_token');
+  try {
+    return localStorage.getItem('noval_site_access_token');
+  } catch {
+    return null;
+  }
 }
 
 export function setSiteToken(token: string) {
   if (typeof window !== 'undefined') {
-    localStorage.setItem('noval_site_access_token', token);
-    document.cookie = `site_access_token=${token}; path=/; max-age=2592000; SameSite=Lax`;
+    try {
+      localStorage.setItem('noval_site_access_token', token);
+    } catch {}
+    try {
+      document.cookie = `site_access_token=${token}; path=/; max-age=2592000; SameSite=Lax`;
+    } catch {}
   }
 }
 
 export function clearSiteToken() {
   if (typeof window !== 'undefined') {
-    localStorage.removeItem('noval_site_access_token');
-    document.cookie = `site_access_token=; path=/; max-age=0; SameSite=Lax`;
+    try {
+      localStorage.removeItem('noval_site_access_token');
+    } catch {}
+    try {
+      document.cookie = `site_access_token=; path=/; max-age=0; SameSite=Lax`;
+    } catch {}
   }
 }
 
@@ -88,7 +123,17 @@ export async function checkSiteStatusApi(): Promise<{ isProtected: boolean; auth
     const token = getSiteToken();
     const headers: Record<string, string> = {};
     if (token) headers['X-Site-Token'] = token;
-    const resp = await fetch('/api/auth/site-status', { headers });
+
+    // 保护性快速超时：防止移动端弱网或环境阻断时死等卡在初始化加载
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+    const resp = await fetch('/api/auth/site-status', {
+      headers,
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
     if (!resp.ok) return { isProtected: true, authenticated: false };
     return await resp.json();
   } catch {

@@ -1,6 +1,9 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
+import { resolveCgUrl, extractCgItemsFromStory, getCgDefaultTitle } from '@/lib/cgManager';
+import { CgImageViewerModal } from './CgImageViewerModal';
+import { Sparkles, ZoomIn, Image as ImageIcon } from 'lucide-react';
 
 interface RichStoryRendererProps {
   rawStory: string;
@@ -9,6 +12,8 @@ interface RichStoryRendererProps {
 }
 
 export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStory, className = '', deckId = '' }: RichStoryRendererProps) {
+  const [activeCgModal, setActiveCgModal] = useState<{ url: string; title: string; subtitle?: string; code?: string } | null>(null);
+
   if (!rawStory) return null;
 
   const isModifier = deckId === 'deck_reality_modifier';
@@ -129,11 +134,56 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
   // 渲染段落内部的高亮标签 (<w>, <m>, <thk>, <fx> 及常规引号对白)
   const renderParagraphContent = (para: string) => {
     // 识别各高亮语法块（支持含有属性或轻微格式异化的闭合标签）
-    const tokenRegex = /(<w[^>]*>[\s\S]*?<\/w>|<m[^>]*>[\s\S]*?<\/m>|<thk[^>]*>[\s\S]*?<\/thk>|<fx[^>]*>[\s\S]*?<\/fx>|<alert[^>]*>[\s\S]*?<\/alert>|<climax[^>]*>[\s\S]*?<\/climax>|[“「][^”」]+[”」])/gi;
+    const tokenRegex = /(<cg[^>]*>[\s\S]*?<\/cg>|<cg\s+[^>]*\/?>|<div[^>]*class=["'][^"']*\b(?:story-image|rs-avatar)\b[^"']*["'][^>]*>[\s\S]*?<\/div>|<div[^>]*class=["'][^"']*\b(?:story-image|rs-avatar)\b[^"']*["'][^>]*\/>|<w[^>]*>[\s\S]*?<\/w>|<m[^>]*>[\s\S]*?<\/m>|<thk[^>]*>[\s\S]*?<\/thk>|<fx[^>]*>[\s\S]*?<\/fx>|<alert[^>]*>[\s\S]*?<\/alert>|<climax[^>]*>[\s\S]*?<\/climax>|[“「][^”」]+[”」])/gi;
     const parts = para.split(tokenRegex);
 
     return parts.map((part, idx) => {
       if (!part) return null;
+
+      // 0. CG 原画与立绘插画 (<cg> 或 <div class="story-image ...">)
+      if (/^<cg[^>]*>[\s\S]*?<\/cg>$|^<cg\s+[^>]*\/?>$/i.test(part) || /^<div[^>]*class=["'][^"']*\b(?:story-image|rs-avatar)\b/i.test(part)) {
+        const idMatch = part.match(/\bid=["']([^"']+)["']/i) || part.match(/<cg>([^<]+)<\/cg>/i) || part.match(/\b(img-[A-Za-z0-9_-]+)\b/i);
+        const titleMatch = part.match(/\btitle=["']([^"']*)["']/i);
+        const cgId = idMatch ? (idMatch[1] || idMatch[0]).trim() : '';
+        const cgTitle = titleMatch ? titleMatch[1] : (cgId ? getCgDefaultTitle(cgId) : '剧情CG插画');
+        const cgUrl = cgId ? resolveCgUrl(cgId, deckId) : null;
+
+        if (cgUrl) {
+          return (
+            <div 
+              key={idx} 
+              onClick={() => setActiveCgModal({ url: cgUrl, title: cgTitle, subtitle: `CG编号：${cgId}`, code: cgId })}
+              className="novel-cg-card my-3.5 rounded-2xl overflow-hidden border border-pink-500/35 bg-gradient-to-b from-[#181528] to-[#100d1c] shadow-2xl group cursor-pointer transition-all duration-300 hover:border-pink-500/60 hover:shadow-[0_0_30px_rgba(236,72,153,0.25)] select-none"
+            >
+              <div className="px-3.5 py-2 bg-[#161426]/90 border-b border-gray-800/80 flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
+                  <span className="font-bold text-pink-200 flex items-center gap-1.5 font-sans">
+                    <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+                    <span>{cgTitle}</span>
+                  </span>
+                  <span className="px-1.5 py-0.2 rounded text-[10px] font-mono bg-pink-500/20 text-pink-300 border border-pink-500/30">
+                    {cgId}
+                  </span>
+                </div>
+                <span className="text-[11px] text-pink-400/90 flex items-center gap-1 group-hover:underline">
+                  <ZoomIn className="w-3.5 h-3.5" />
+                  <span>点击放大原画</span>
+                </span>
+              </div>
+              <div className="relative flex items-center justify-center p-2 sm:p-4 bg-black/40 overflow-hidden">
+                <img
+                  src={cgUrl}
+                  alt={cgTitle}
+                  className="max-h-[380px] sm:max-h-[480px] w-auto max-w-full object-contain rounded-xl shadow-lg transition-transform duration-500 group-hover:scale-[1.02]"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          );
+        }
+        return null;
+      }
 
       // 1. 女性 NPC 专属对白 (<w>)
       if (/^<w[^>]*>([\s\S]*?)<\/w>$/i.test(part)) {
@@ -197,6 +247,18 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
       // 4.5 番剧高能名场面定格特写 (<climax>)
       if (/^<climax[^>]*>([\s\S]*?)<\/climax>$/i.test(part)) {
         const inner = part.replace(/<\/?climax[^>]*>/gi, '').trim();
+        const matchedCgs = extractCgItemsFromStory(inner, deckId);
+        const climaxCg = matchedCgs[0] || (
+          (deckId?.includes('7a68d42a') || deckId?.includes('sister_debt'))
+            ? {
+                id: 'img-FZ-01',
+                url: resolveCgUrl('img-FZ-01', deckId) || 'https://miha.wiki/bvqXru.png',
+                title: '名场面定格原画 · 妹妹居家睡裙',
+                category: '名场面CG'
+              }
+            : null
+        );
+
         return (
           <div key={idx} className="novel-climax-card my-3.5 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-br from-amber-950/70 via-[#1f142a] to-rose-950/70 border border-amber-400/40 text-amber-100 text-xs sm:text-[13.5px] font-serif shadow-2xl shadow-amber-950/50 relative overflow-hidden backdrop-blur-md animate-in fade-in zoom-in-95 duration-300">
             <div className="absolute -top-6 -right-6 w-28 h-28 bg-amber-500/15 rounded-full blur-2xl pointer-events-none" />
@@ -210,6 +272,32 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
             <div className="leading-relaxed italic pl-3 border-l-2 border-amber-400/80 font-serif text-amber-100 font-medium text-[13px] sm:text-[14px]">
               {inner}
             </div>
+
+            {/* 如果名场面命中了 CG 插画，内联呈现高清原画展台 */}
+            {climaxCg && (
+              <div 
+                onClick={() => setActiveCgModal({ url: climaxCg.url, title: climaxCg.title, subtitle: `名场面CG编号：${climaxCg.id}`, code: climaxCg.id })}
+                className="mt-3 rounded-xl overflow-hidden border border-amber-400/30 bg-black/40 hover:border-amber-400/60 transition group cursor-pointer"
+              >
+                <div className="relative max-h-[320px] sm:max-h-[400px] flex items-center justify-center p-2">
+                  <img
+                    src={climaxCg.url}
+                    alt={climaxCg.title}
+                    className="max-h-[300px] sm:max-h-[380px] w-auto max-w-full object-contain rounded-lg shadow-md group-hover:scale-[1.01] transition-transform"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-between p-2.5">
+                    <span className="text-[11px] font-mono text-amber-300 font-semibold flex items-center gap-1">
+                      <Sparkles className="w-3 h-3 text-amber-400" />
+                      <span>{climaxCg.title}</span>
+                    </span>
+                    <span className="text-[10px] text-amber-200 bg-amber-950/80 px-2 py-0.5 rounded border border-amber-500/30 flex items-center gap-1 group-hover:bg-amber-900/80">
+                      <ZoomIn className="w-2.5 h-2.5" /> 点击放大原画
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         );
       }
@@ -285,6 +373,18 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
           </div>
         ))}
       </div>
+
+      {/* 原画与立绘高清全屏鉴赏模态框 */}
+      {activeCgModal && (
+        <CgImageViewerModal
+          isOpen={Boolean(activeCgModal)}
+          onClose={() => setActiveCgModal(null)}
+          imageUrl={activeCgModal.url}
+          title={activeCgModal.title}
+          subtitle={activeCgModal.subtitle}
+          code={activeCgModal.code}
+        />
+      )}
     </div>
   );
 });

@@ -105,10 +105,10 @@ export function CardTurnActionBar({
             type="button"
             onClick={() => onContinueWriting(index)}
             className="px-2 py-1 rounded-lg bg-[#2a1c18] hover:bg-[#38241d] border border-amber-500/40 text-amber-300 hover:text-amber-200 transition flex items-center gap-1 cursor-pointer font-medium"
-            title="让 AI 顺应当前剧情继续往后补全推演"
+            title="新开一轮继续剧情；不会修复上一条未完成回复"
           >
             <Play className="w-3 h-3 fill-current text-amber-400" />
-            <span>接着写/补全剧情</span>
+            <span>继续下一轮剧情</span>
           </button>
         )}
 
