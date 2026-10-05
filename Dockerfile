@@ -16,6 +16,7 @@ RUN npm ci
 COPY web/ ./
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+ENV BACKEND_URL=http://127.0.0.1:5173
 RUN npm run build
 
 # ========================================================
@@ -40,9 +41,10 @@ ENV BACKEND_URL=http://127.0.0.1:5173
 WORKDIR /app/backend
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple --break-system-packages || true
-COPY server.py db_engine.py studio_api.py stories_data.js dump_pc.json init_postgres.sql schema.sql ./
+COPY server.py db_engine.py studio_api.py private_cards_api.py illustrations_api.py stories_data.js dump_pc.json init_postgres.sql schema.sql ./
 COPY scripts/ ./scripts/
 COPY studio/ ./studio/
+COPY cards/ ./cards/
 
 # 2. 部署前端 Next.js Standalone 生产产物
 WORKDIR /app/frontend

@@ -98,6 +98,22 @@ export function clearSiteToken() {
   }
 }
 
+async function safeParseJson<T = any>(resp: Response): Promise<{ ok: boolean; data?: T; error?: string }> {
+  const text = await resp.text();
+  try {
+    const data = JSON.parse(text);
+    return { ok: true, data };
+  } catch {
+    if (!resp.ok) {
+      return {
+        ok: false,
+        error: '后端服务未响应 (HTTP ' + resp.status + ')，请检查服务器 Python 后端 (server.py) 是否正常启动'
+      };
+    }
+    return { ok: false, error: '服务返回了无法解析的数据，请刷新后重试' };
+  }
+}
+
 export async function verifySitePasswordApi(password: string): Promise<{ success: boolean; token?: string; error?: string }> {
   try {
     const resp = await fetch('/api/auth/site-verify', {
@@ -105,9 +121,13 @@ export async function verifySitePasswordApi(password: string): Promise<{ success
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password })
     });
-    const data = await resp.json();
-    if (!resp.ok || !data.success) {
-      return { success: false, error: data.error || '访问密码错误，请重新输入' };
+    const parsed = await safeParseJson(resp);
+    if (!parsed.ok) {
+      return { success: false, error: parsed.error };
+    }
+    const data = parsed.data;
+    if (!resp.ok || !data?.success) {
+      return { success: false, error: data?.error || '访问密码错误，请重新输入' };
     }
     if (data.token) {
       setSiteToken(data.token);
