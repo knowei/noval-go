@@ -399,4 +399,38 @@ details.reality-panel[open] > summary.reality-summary,
   color-scheme: dark !important;
 }
 
+/* ==========================================================================
+   长会话渲染性能：屏幕外的「幕」不参与布局与绘制
+   数百幕的会话即使只挂载最近窗口，剩余节点仍会参与样式计算与布局；
+   content-visibility 让浏览器直接跳过视口外的子树，显著降低长会话开销。
+   需要自行测量布局或做 iframe 通信的元素用 data-no-cv 排除。
+   ========================================================================== */
+.story-custom-scope > *:not([data-no-cv]) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+/* ==========================================================================
+   移动端 / 低功耗优化
+   浮动状态点等装饰性无限动画在长会话下会持续触发合成，手机端明显发热掉电；
+   小屏与「减少动态效果」偏好下统一关闭（加载用的 animate-spin 保留）。
+   ========================================================================== */
+@media (max-width: 768px) {
+  .animate-pulse,
+  .animate-ping {
+    animation: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 

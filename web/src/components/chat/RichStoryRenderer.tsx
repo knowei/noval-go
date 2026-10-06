@@ -4,12 +4,57 @@ import React, { useState } from 'react';
 import { resolveCgUrl, extractCgItemsFromStory, getCgDefaultTitle } from '@/lib/cgManager';
 import { CgImageViewerModal } from './CgImageViewerModal';
 import { Sparkles, ZoomIn, Image as ImageIcon } from 'lucide-react';
+import { extractStatusBlock } from '@/lib/characterStatusParser';
 
 interface RichStoryRendererProps {
   rawStory: string;
   className?: string;
   deckId?: string;
 }
+
+/**
+ * 流式输出期间的轻量正文渲染。
+ *
+ * 正文在流式阶段每 100~120ms 就增长一次，此时若仍走 RichStoryRenderer
+ * （十余轮全文正则 + 逐 token 生成 React 组件），主线程会被持续占满，
+ * 表现就是页面卡死、CPU 狂转，手机上尤其明显。
+ * 这里只做一次去标签与思考区切分，输出单个文本节点，成本比富文本低一个数量级；
+ * 回复完成后会自动切换回 RichStoryRenderer。
+ */
+export const StreamingStoryText = React.memo(function StreamingStoryText({ text }: { text: string }) {
+  const parsed = React.useMemo(() => {
+    const closeTag = '</details>';
+    // 仅在文本确实以思考折叠块开头时才做切分，普通回复不受影响
+    const hasThink = /^\s*<details/i.test(text);
+    const closeIdx = hasThink ? text.indexOf(closeTag) : -1;
+    const strip = (s: string) =>
+      s
+        .replace(/<summary[^>]*>[\s\S]*?<\/summary>/gi, '')
+        .replace(/<[^>]*>/g, '')
+        .replace(/^\s+/, '');
+    const thinkRaw = hasThink ? text.slice(0, closeIdx >= 0 ? closeIdx : text.length) : '';
+    const bodyRaw = hasThink ? (closeIdx >= 0 ? text.slice(closeIdx + closeTag.length) : '') : text;
+    return { think: strip(thinkRaw), body: strip(bodyRaw), thinking: hasThink && closeIdx < 0 };
+  }, [text]);
+
+  return (
+    <div className="space-y-3">
+      {parsed.think ? (
+        <div className="rounded-xl border border-[#2d303a] bg-[#16171d] px-3 py-2 max-h-40 overflow-y-auto">
+          <div className="text-[10.5px] font-mono text-gray-500 mb-1 select-none">
+            {parsed.thinking ? '💭 思考中…' : '💭 思考过程'}
+          </div>
+          <div className="text-[11.5px] leading-relaxed text-gray-400 whitespace-pre-wrap break-words">
+            {parsed.think}
+          </div>
+        </div>
+      ) : null}
+      <div className="novel-text whitespace-pre-wrap break-words font-serif text-[14px] sm:text-[14.5px] leading-relaxed text-gray-200">
+        {parsed.body}
+      </div>
+    </div>
+  );
+});
 
 export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStory, className = '', deckId = '' }: RichStoryRendererProps) {
   const [activeCgModal, setActiveCgModal] = useState<{ url: string; title: string; subtitle?: string; code?: string } | null>(null);
@@ -37,16 +82,38 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
     ? "bg-orange-500/15 border-orange-500/40 text-orange-300 shadow-[0_0_10px_rgba(249,115,22,0.2)]"
     : "bg-amber-500/15 border-amber-500/40 text-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.2)]";
 
-  // 1. 抽取思维链 (CoT) - 支持全容错解析（包括未闭合 details、粘连 </details<tl>、或裸 <!--思考过程:...-->）
+  // 1. 抽取思维链 (CoT) - 安全线性解析（杜绝流式阶段灾难性回溯 ReDoS）
   let text = rawStory;
   let cotContent: string | null = null;
-  const cotRegex = /(?:<details[^>]*>)?\s*<summary[^>]*>\s*(?:思维链|思考过程)[\s\S]*?<\/summary>\s*(?:<!--\s*(?:思考过程:?)?([\s\S]*?)-->|([\s\S]*?)(?=(?:<\/\s*details>?|<\/\s*details(?=[<>\s])|<tl>|<article>|<>|$)))/i;
-  const cotMatch = text.match(cotRegex);
-  if (cotMatch) {
-    const rawInner = cotMatch[1] || cotMatch[2] || '';
-    cotContent = rawInner.replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/<!--|-->/g, '')).replace(/<!--|-->/g, '').trim();
-    text = text.replace(cotMatch[0], '');
-    text = text.replace(/^\s*<\/\s*details\s*>?/i, '').trim();
+  const summaryIdx = text.search(/<summary[^>]*>\s*(?:思维链|思考过程)/i);
+  if (summaryIdx !== -1) {
+    const afterSummary = text.slice(summaryIdx);
+    const summaryEndMatch = afterSummary.match(/<\/summary>/i);
+    if (summaryEndMatch && summaryEndMatch.index !== undefined) {
+      const cotStart = summaryIdx + summaryEndMatch.index + summaryEndMatch[0].length;
+      const remaining = text.slice(cotStart);
+      const detailsEndIdx = remaining.search(/<\/\s*details\s*>/i);
+      let cotRaw = '';
+      let removeEnd = text.length;
+      if (detailsEndIdx !== -1) {
+        cotRaw = remaining.slice(0, detailsEndIdx);
+        removeEnd = cotStart + detailsEndIdx + (remaining.match(/<\/\s*details\s*>/i)?.[0].length || 0);
+      } else {
+        const nextTagIdx = remaining.search(/<tl>|<article>|<scene_phase>|【/i);
+        if (nextTagIdx !== -1) {
+          cotRaw = remaining.slice(0, nextTagIdx);
+          removeEnd = cotStart + nextTagIdx;
+        } else {
+          cotRaw = remaining;
+          removeEnd = text.length;
+        }
+      }
+      cotContent = cotRaw.replace(/<!--[\s\S]*?-->/g, (m) => m.replace(/<!--|-->/g, '')).replace(/<!--|-->/g, '').trim();
+      const detailsStartIdx = text.slice(0, summaryIdx).search(/<details[^>]*>\s*$/i);
+      const cutStart = detailsStartIdx !== -1 ? detailsStartIdx : summaryIdx;
+      text = (text.slice(0, cutStart) + text.slice(removeEnd)).trim();
+      text = text.replace(/^\s*<\/\s*details\s*>?/i, '').trim();
+    }
   } else {
     const commentCotMatch = text.match(/<!--\s*思考过程:?([\s\S]*?)-->/i);
     if (commentCotMatch) {
@@ -64,11 +131,11 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
     text = text.replace(tlMatch[0], '').trim();
   }
 
-  // 3. 剥除外部干扰与状态标签 (<status>, <love_status>, <rpg_status>, <scene_phase>, <opt>, <suggested_questions>)
-  text = text.replace(/<status>[\s\S]*?(?:<\/status>|$)/gi, '').trim();
-  text = text.replace(/<char_status>[\s\S]*?(?:<\/char_status>|$)/gi, '').trim();
-  text = text.replace(/<love_status>[\s\S]*?(?:<\/love_status>|$)/gi, '').trim();
-  text = text.replace(/<rpg_status>[\s\S]*?(?:<\/rpg_status>|$)/gi, '').trim();
+  // 3. 通用剥除外部干扰与状态面板 (包括各种 <*_status> 标签及 【...状态面板/监控/属性】 等方括号块)
+  const extracted = extractStatusBlock(text);
+  text = extracted.cleanText;
+  text = text.replace(/<[a-zA-Z0-9_-]*status[a-zA-Z0-9_-]*>[\s\S]*?(?:<\/[a-zA-Z0-9_-]*status[a-zA-Z0-9_-]*>|$)/gi, '').trim();
+// 状态面板已由 extractStatusBlock 安全剥离
   text = text.replace(/<scene_phase>[\s\S]*?(?:<\/scene_phase>|$)/gi, '').trim();
   text = text.replace(/<opt>[\s\S]*?(?:<\/opt>|$)/gi, '').trim();
   text = text.replace(/<suggested_questions>[\s\S]*?(?:<\/suggested_questions>|$)/gi, '').trim();
@@ -134,7 +201,7 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
   // 渲染段落内部的高亮标签 (<w>, <m>, <thk>, <fx> 及常规引号对白)
   const renderParagraphContent = (para: string) => {
     // 识别各高亮语法块（支持含有属性或轻微格式异化的闭合标签）
-    const tokenRegex = /(<cg[^>]*>[\s\S]*?<\/cg>|<cg\s+[^>]*\/?>|<div[^>]*class=["'][^"']*\b(?:story-image|rs-avatar)\b[^"']*["'][^>]*>[\s\S]*?<\/div>|<div[^>]*class=["'][^"']*\b(?:story-image|rs-avatar)\b[^"']*["'][^>]*\/>|<w[^>]*>[\s\S]*?<\/w>|<m[^>]*>[\s\S]*?<\/m>|<thk[^>]*>[\s\S]*?<\/thk>|<fx[^>]*>[\s\S]*?<\/fx>|<alert[^>]*>[\s\S]*?<\/alert>|<climax[^>]*>[\s\S]*?<\/climax>|[“「][^”」]+[”」])/gi;
+    const tokenRegex = /(<cg[^>]*>[\s\S]*?<\/cg>|<cg\s+[^>]*\/?>|<div[^>]*class=["'][^"']*\b(?:story-image|rs-avatar)\b[^"']*["'][^>]*>[\s\S]*?<\/div>|<div[^>]*class=["'][^"']*\b(?:story-image|rs-avatar)\b[^"']*["'][^>]*\/>|<w[^>]*>[\s\S]*?<\/w>|<m[^>]*>[\s\S]*?<\/m>|<thk[^>]*>[\s\S]*?<\/thk>|<fx[^>]*>[\s\S]*?<\/fx>|<alert[^>]*>[\s\S]*?<\/alert>|<climax[^>]*>[\s\S]*?<\/climax>|<game_over[^>]*>[\s\S]*?<\/game_over>|<end[^>]*>[\s\S]*?<\/end>|[“「][^”」]+[”」])/gi;
     const parts = para.split(tokenRegex);
 
     return parts.map((part, idx) => {
@@ -298,6 +365,22 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
                 </div>
               </div>
             )}
+          </div>
+        );
+      }
+
+      // 4.8 游戏失败与死局结局 (<game_over> 或 <end>)
+      if (/^<game_over[^>]*>([\s\S]*?)<\/game_over>$/i.test(part) || /^<end[^>]*>([\s\S]*?)<\/end>$/i.test(part)) {
+        const inner = part.replace(/<\/?(?:game_over|end)[^>]*>/gi, '').trim();
+        return (
+          <div key={idx} className="novel-gameover-card my-4 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-red-950/90 via-black to-red-950/80 border-2 border-red-600/80 text-red-100 shadow-[0_0_35px_rgba(239,68,68,0.35)] animate-in fade-in zoom-in-95">
+            <div className="flex items-center gap-2 text-red-400 font-black tracking-widest text-sm sm:text-base border-b border-red-500/30 pb-2 mb-2.5">
+              <span className="text-xl">☠️</span>
+              <span>【GAME OVER · 结局终章】</span>
+            </div>
+            <div className="text-xs sm:text-sm font-serif leading-relaxed text-red-200">
+              {inner}
+            </div>
           </div>
         );
       }

@@ -4,12 +4,27 @@ export class CompletionStreamError extends Error {
 
 /** Yield the last delta before reporting a cutoff, so no received text is lost. */
 export interface CompletionUsage { promptTokens?: number; completionTokens?: number; reasoningTokens?: number }
-export async function* streamCompletion(body: ReadableStream<Uint8Array>, onFinish?: (reason: string) => void, onUsage?: (usage: CompletionUsage) => void): AsyncGenerator<string> {
+
+/**
+ * 解析模型的流式输出。
+ *
+ * 关于推理模型的思考内容：本项目约定 **不把思考正文写进回复正文，也不落库**
+ * （见 docs/会话引擎升级说明.md：「服务未提供的数据显示未提供……也不保存思考正文」）。
+ * 因此这里只把思考内容的“长度”通过 onReasoning 上报，供界面显示思考进度，
+ * 正文流里始终只有 content，避免思考文本被当作剧情正文持久化。
+ */
+export async function* streamCompletion(
+  body: ReadableStream<Uint8Array>,
+  onFinish?: (reason: string) => void,
+  onUsage?: (usage: CompletionUsage) => void,
+  onReasoning?: (chars: number) => void
+): AsyncGenerator<string> {
   const reader = body.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
   let finished = false;
   let receivedFinishReason = false;
+  let reasoningChars = 0;
   function parseEvent(event: string): { done: boolean; text?: string; error?: Error } {
     const data = event.split('\n').filter(l => l.startsWith('data:')).map(l => l.slice(5).trimStart()).join('\n');
     if (!data) return { done: false };
@@ -29,8 +44,14 @@ export async function* streamCompletion(body: ReadableStream<Uint8Array>, onFini
       else if (reason === 'content_filter') error = new CompletionStreamError('content_filter', '模型服务中止了本次输出（内容过滤），这不是长度上限。');
       else if (reason !== 'stop') error = new CompletionStreamError(reason, '模型返回了非正文结束状态，本次回复未完成。');
     }
-    if (value.choices?.[0]?.delta?.content != null && typeof value.choices[0].delta.content !== 'string') throw new Error('模型返回了不支持的消息格式');
-    return { done: false, text: value.choices?.[0]?.delta?.content, error };
+    const delta = value.choices?.[0]?.delta;
+    // 推理模型的思考增量：只累计长度用于进度提示，不进入正文流
+    if (typeof delta?.reasoning_content === 'string' && delta.reasoning_content) {
+      reasoningChars += delta.reasoning_content.length;
+      onReasoning?.(reasoningChars);
+    }
+    if (delta?.content != null && typeof delta.content !== 'string') throw new Error('模型返回了不支持的消息格式');
+    return { done: false, text: typeof delta?.content === 'string' ? delta.content : undefined, error };
   }
   try {
     while (!finished) {

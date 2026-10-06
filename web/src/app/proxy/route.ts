@@ -82,7 +82,9 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers,
       body,
-      signal: AbortSignal.any([req.signal, AbortSignal.timeout(parsedTarget.pathname.endsWith('/images/generations') ? 180000 : 120000)]),
+      // 与聊天页的客户端超时保持一致（300s）：推理模型的思考阶段经常超过 2 分钟，
+      // 代理层若仍按 120s 掐断，客户端放宽超时就形同虚设。
+      signal: AbortSignal.any([req.signal, AbortSignal.timeout(parsedTarget.pathname.endsWith('/images/generations') ? 180000 : 300000)]),
       redirect: 'error',
     });
 

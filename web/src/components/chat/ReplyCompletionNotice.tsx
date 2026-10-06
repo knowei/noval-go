@@ -2,10 +2,12 @@ import type { Turn } from '@/lib/types';
 import { inspectReplyEnvelope } from '@/lib/replyEnvelope';
 
 export function ReplyCompletionNotice({ turn, busy, onRepair, onRetry, onBudget }: { turn: Turn; busy: boolean; onRepair: () => void; onRetry: () => void; onBudget: () => void }) {
+  // 流式期间本组件一律不显示：提前返回，避免对每 100ms 都在增长的全文再跑一遍正则
+  if (busy) return null;
   const health = inspectReplyEnvelope(turn.rawText || turn.story || '', turn.completion?.protocolVersion === 2);
   const incomplete = turn.incomplete || health.incomplete;
   const needsReview = incomplete || health.suspected;
-  if (busy || (!needsReview && !turn.runtimeWarnings?.length)) return null;
+  if (!needsReview && !turn.runtimeWarnings?.length) return null;
   return <aside role="status" className="mb-3 space-y-2 rounded-xl border border-amber-700 bg-amber-950 p-3 text-sm text-amber-100">
     {incomplete ? <p className="font-medium">本幕回复尚未通过完整性检查。已保留正文，状态和记忆暂不更新。</p> : health.suspected && <p className="font-medium">这条旧回复可能在正文中间结束，请检查。此提示依据文本结尾，不代表已确认后台截断。</p>}
     {turn.runtimeWarnings?.map((warning, index) => <p key={index} className="text-xs">{warning}</p>)}

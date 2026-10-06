@@ -5,11 +5,12 @@ import { CardTurnActionBar } from './CardTurnActionBar';
 import { Turn } from '@/lib/types';
 import { generateContextualBranches } from '@/lib/modelParser';
 import { MapPin } from 'lucide-react';
-import { RichStoryRenderer } from './RichStoryRenderer';
+import { RichStoryRenderer, StreamingStoryText } from './RichStoryRenderer';
 import { parseTurnCharacterStatus } from '@/lib/characterStatusParser';
 import { TurnStatusCard } from './TurnStatusCard';
 import { TurnIllustrations } from './IllustrationPanel';
 import { inspectReplyEnvelope } from '@/lib/replyEnvelope';
+import { useAppStore } from '@/lib/store';
 
 interface GenericCardProps {
   turn: Turn;
@@ -23,7 +24,7 @@ interface GenericCardProps {
   onSwipeChange?: (index: number, newSwipeIndex: number) => void;
 }
 
-export const GenericCard = React.memo(function GenericCard({
+const GenericCardBody = React.memo(function GenericCardBody({
   turn,
   index,
   deckId,
@@ -36,6 +37,7 @@ export const GenericCard = React.memo(function GenericCard({
 }: GenericCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedStory, setEditedStory] = useState(turn.story || turn.text || '');
+
   const originalText = turn.displayText ?? turn.story ?? turn.text ?? '';
   const health = inspectReplyEnvelope(turn.rawText || originalText, turn.completion?.protocolVersion === 2);
   const brokenEnvelope = turn.runtimeVersion === 1 && (health.incomplete || health.suspected);
@@ -68,7 +70,8 @@ export const GenericCard = React.memo(function GenericCard({
   const hasMemory = !brokenEnvelope && !turn.incomplete && turn.memory && turn.memory.length > 0;
   const cardDeckKey = deckId || 'generic';
   const activeBranches = React.useMemo(() => {
-    if (turn.runtimeVersion === 1) return turn.incomplete || brokenEnvelope ? [] : turn.branches || [];
+    if (turn.incomplete || brokenEnvelope) return [];
+    if (turn.runtimeVersion === 1) return turn.branches || [];
     return turn.branches && turn.branches.length > 0
       ? turn.branches
       : generateContextualBranches(cardDeckKey, storyText, index);
@@ -77,8 +80,8 @@ export const GenericCard = React.memo(function GenericCard({
   const hasAnyPanel = hasStatus || hasMemory || hasBranches;
 
   const parsedCharStatus = React.useMemo(() => {
-    if (turn.runtimeVersion === 1) return null;
-    return parseTurnCharacterStatus(turn, deckId, '', index);
+    if (turn.incomplete) return null;
+    return parseTurnCharacterStatus(turn, deckId, '', index, useAppStore.getState().conversationHistory);
   }, [turn, deckId, index]);
 
   return (
@@ -135,7 +138,7 @@ export const GenericCard = React.memo(function GenericCard({
       )}
 
       {/* 📊 方案3：每轮对话底部·即时心理与数值结算卡 */}
-      {turn.runtimeVersion === 1 && !brokenEnvelope && <TurnIllustrations key={turn.rawText || turn.story || index} turn={turn} index={index}/>}
+      {turn.runtimeVersion === 1 && !brokenEnvelope && !turn.incomplete && <TurnIllustrations key={'illus-' + index} turn={turn} index={index}/>}
       {parsedCharStatus && (
         <TurnStatusCard status={parsedCharStatus} deckId={deckId} />
       )}
@@ -267,4 +270,27 @@ export const GenericCard = React.memo(function GenericCard({
       />
     </div>
   );
+});
+
+/**
+ * 对外的 GenericCard。
+ *
+ * 这一层刻意不调用任何 Hook，因此可以在「流式轻量渲染」与「完整富文本渲染」
+ * 之间安全切换；重型逻辑全部下沉到 GenericCardBody，避免在流式期间执行
+ * 两轮全文正则（inspectReplyEnvelope）与逐 token 的富文本解析。
+ */
+export const GenericCard = React.memo(function GenericCard(props: GenericCardProps) {
+  const { turn, index } = props;
+  if (turn.runtimeVersion === 1 && turn.incomplete) {
+    return (
+      <div className="p-4 sm:p-6 rounded-2xl border border-amber-500/25 bg-[#14151f] shadow-xl space-y-3 text-gray-200 select-text">
+        <div className="flex items-center gap-2 text-[11px] text-amber-300/90 select-none">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+          <span>AI 正在沉浸推演…（第 {index + 1} 幕）</span>
+        </div>
+        <StreamingStoryText text={turn.rawText || turn.story || ''} />
+      </div>
+    );
+  }
+  return <GenericCardBody {...props} />;
 });
