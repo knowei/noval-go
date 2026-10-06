@@ -264,7 +264,7 @@ class DatabaseEngine:
                     badge TEXT,
                     badge_color TEXT,
                     author TEXT,
-                    desc TEXT,
+                    "desc" TEXT,
                     rating TEXT DEFAULT '5.0',
                     tags_json TEXT,
                     heat TEXT,
@@ -344,7 +344,8 @@ class DatabaseEngine:
                     for col, col_def in [
                         ("system_prompt", "TEXT DEFAULT ''"),
                         ("status_template", "TEXT DEFAULT ''"),
-                        ("lorebook_json", "TEXT DEFAULT '[]'")
+                        ("lorebook_json", "TEXT DEFAULT '[]'"),
+                        ("post_history_instructions", "TEXT DEFAULT ''")
                     ]:
                         try:
                             cur.execute(f"ALTER TABLE stories ADD COLUMN IF NOT EXISTS {col} {col_def}")

@@ -190,6 +190,7 @@ def init_db():
         ("category", "TEXT DEFAULT '都市'"),
         ("system_prompt", "TEXT DEFAULT ''"),
         ("status_template", "TEXT DEFAULT ''"),
+        ("post_history_instructions", "TEXT DEFAULT ''"),
         ("lorebook_json", "TEXT DEFAULT '[]'")
     ]:
         try:
@@ -280,7 +281,7 @@ def init_db():
         badge TEXT,
         badge_color TEXT,
         author TEXT,
-        desc TEXT,
+        "desc" TEXT,
         rating TEXT DEFAULT '5.0',
         tags_json TEXT,
         heat TEXT DEFAULT '1.0 亿',
@@ -453,7 +454,7 @@ def migrate_default_data_if_needed():
         ]
         for card in default_cards:
             c.execute("""
-            INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, desc, rating, tags_json, heat, order_index)
+            INSERT INTO plaza_cards (id, deck_id, title, badge, badge_color, author, "desc", rating, tags_json, heat, order_index)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (card[0], card[1], card[2], card[3], card[4], card[5], card[6], card[7], json.dumps(card[8], ensure_ascii=False), card[9], card[10]))
         conn.commit()
@@ -489,6 +490,18 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(resp_bytes)
 
     def do_POST(self):
+        # 兜底：任何未捕获异常都不应让连接静默断开（前端只会看到网络错误）。
+        try:
+            self.dispatch_post()
+        except Exception:
+            import traceback
+            traceback.print_exc()
+            try:
+                self.send_json({'error': '服务端处理请求时发生内部错误，详情见服务端日志。'}, 500)
+            except Exception:
+                pass
+
+    def dispatch_post(self):
         if illustrations_api.handle(self, get_db, get_user_from_request, 'POST', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', 'generated-images')):
             return
         if private_cards_api.handle(self, get_db, get_user_from_request, 'POST'):
@@ -534,10 +547,11 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                     content_type = resp.headers.get('Content-Type', 'application/json')
                     self.send_header('Content-Type', content_type)
                     self.send_header('Cache-Control', 'no-cache')
+                    self.send_header('X-Accel-Buffering', 'no')
                     self.send_header('Connection', 'keep-alive')
                     self.end_headers()
                     while True:
-                        chunk = resp.read(512)
+                        chunk = resp.read1(4096) if hasattr(resp, 'read1') else resp.read(512)
                         if not chunk:
                             break
                         self.wfile.write(chunk)
@@ -561,10 +575,11 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                                 content_type = resp.headers.get('Content-Type', 'application/json')
                                 self.send_header('Content-Type', content_type)
                                 self.send_header('Cache-Control', 'no-cache')
+                                self.send_header('X-Accel-Buffering', 'no')
                                 self.send_header('Connection', 'keep-alive')
                                 self.end_headers()
                                 while True:
-                                    chunk = resp.read(512)
+                                    chunk = resp.read1(4096) if hasattr(resp, 'read1') else resp.read(512)
                                     if not chunk:
                                         break
                                     self.wfile.write(chunk)
@@ -852,12 +867,46 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
 
             conn = get_db()
             c = conn.cursor()
+
+            # 剧本级提示词字段（系统提示词 / 状态模板 / 世界书 / 尾部指令）：
+            # 前端未提交这些键时必须保留数据库原值，否则创作工坊保存一次就会把已有内容覆盖成空串。
+            existing = {}
+            try:
+                c.execute("""SELECT system_prompt, status_template,
+                                    post_history_instructions, lorebook_json
+                             FROM stories WHERE id = ?""", (deck_id,))
+                row = c.fetchone()
+                if row:
+                    existing = dict(row)
+            except Exception:
+                existing = {}
+
+            def pick_text(camel_key, column):
+                if camel_key in s:
+                    return s.get(camel_key) or ''
+                if column in s:
+                    return s.get(column) or ''
+                return existing.get(column) or ''
+
+            system_prompt = pick_text('systemPrompt', 'system_prompt')
+            status_template = pick_text('statusTemplate', 'status_template')
+            post_history = pick_text('postHistoryInstructions', 'post_history_instructions')
+            if 'lorebook' in s:
+                lorebook_json = json.dumps(s.get('lorebook') or [], ensure_ascii=False)
+            elif 'lorebook_json' in s:
+                lb = s.get('lorebook_json')
+                lorebook_json = lb if isinstance(lb, str) else json.dumps(lb or [], ensure_ascii=False)
+            else:
+                lorebook_json = existing.get('lorebook_json') or '[]'
+
             c.execute("""
             INSERT INTO stories (
                 id, title, badge, cover_icon, cover_title, cover_subtitle,
                 logo, theme_color, btn_gradient, handbook_json, roles_json,
-                scenes_json, styles_json, first_turn_demo_json, custom_html, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                scenes_json, styles_json, first_turn_demo_json, custom_html,
+                system_prompt, status_template, post_history_instructions, lorebook_json,
+                updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
             ON CONFLICT(id) DO UPDATE SET
                 title = excluded.title,
                 badge = excluded.badge,
@@ -870,35 +919,47 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                 styles_json = excluded.styles_json,
                 first_turn_demo_json = excluded.first_turn_demo_json,
                 custom_html = excluded.custom_html,
+                system_prompt = excluded.system_prompt,
+                status_template = excluded.status_template,
+                post_history_instructions = excluded.post_history_instructions,
+                lorebook_json = excluded.lorebook_json,
                 updated_at = CURRENT_TIMESTAMP
-            """, (deck_id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook, roles, scenes, styles, demo, custom_html))
+            """, (deck_id, title, badge, cover_icon, cover_title, cover_subtitle, logo, theme_color, btn_gradient, handbook, roles, scenes, styles, demo, custom_html, system_prompt, status_template, post_history, lorebook_json))
 
-            # 同步写入/更新 plaza_cards 广场卡片，让新创作的剧本即刻在首页展示
-            desc = s.get('desc') or (s.get('handbook') or {}).get('desc') or title
-            tags = s.get('tags') or []
-            if isinstance(tags, str):
-                tags = [t.strip() for t in tags.split(',') if t.strip()]
-            category = s.get('category') or '都市'
-            c.execute("""
-            INSERT OR REPLACE INTO plaza_cards (
-                id, deck_id, title, badge, badge_color, author,
-                desc, rating, tags_json, heat, is_featured, order_index, category
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                f"p_{deck_id}",
-                deck_id,
-                title,
-                badge,
-                theme_color,
-                s.get('author', '原创作者'),
-                desc,
-                '9.9',
-                json.dumps(tags, ensure_ascii=False),
-                'NEW · 刚刚创作',
-                1,
-                1,
-                category
-            ))
+            # 同步写入/更新 plaza_cards 广场卡片，让新创作的剧本即刻在首页展示。
+            # 这只是副作用：即使失败也不能连带让「保存剧本」整体失败（例如唯一标题冲突）。
+            try:
+                desc = s.get('desc') or (s.get('handbook') or {}).get('desc') or title
+                tags = s.get('tags') or []
+                if isinstance(tags, str):
+                    tags = [t.strip() for t in tags.split(',') if t.strip()]
+                category = s.get('category') or '都市'
+                c.execute("""
+                INSERT OR REPLACE INTO plaza_cards (
+                    id, deck_id, title, badge, badge_color, author,
+                    "desc", rating, tags_json, heat, is_featured, order_index, category
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    f"p_{deck_id}",
+                    deck_id,
+                    title,
+                    badge,
+                    theme_color,
+                    s.get('author', '原创作者'),
+                    desc,
+                    '9.9',
+                    json.dumps(tags, ensure_ascii=False),
+                    'NEW · 刚刚创作',
+                    1,
+                    1,
+                    category
+                ))
+            except Exception as plaza_err:
+                print(f"[Plaza Sync Warning] 广场卡片同步失败，但剧本已保存：{plaza_err}")
+                try:
+                    conn.rollback()
+                except Exception:
+                    pass
 
             conn.commit()
             conn.close()
@@ -925,7 +986,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             c.execute("""
             INSERT OR REPLACE INTO plaza_cards (
                 id, deck_id, title, badge, badge_color, author,
-                desc, rating, tags_json, order_index
+                "desc", rating, tags_json, order_index
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)
             """, (card_id, deck_id, title, badge, badge_color, author, desc, rating, tags))
             conn.commit()
@@ -1148,6 +1209,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                         'cgMap': extract_cg_map(s.get('custom_css') or ''),
                         'systemPrompt': s.get('system_prompt') or (s.get('handbook_json') and json.loads(s['handbook_json']).get('system_prompt', '')) or '',
                         'statusTemplate': s.get('status_template') or (s.get('handbook_json') and json.loads(s['handbook_json']).get('status_template', '')) or '',
+                        'postHistoryInstructions': s.get('post_history_instructions') or (s.get('handbook_json') and json.loads(s['handbook_json']).get('postHistoryInstructions', '')) or '',
                         'lorebook': json.loads(s.get('lorebook_json') or '[]') or (s.get('handbook_json') and json.loads(s['handbook_json']).get('lorebook', []))
                     }
                     self.send_json(res)
@@ -1181,6 +1243,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                         'customHtml': s.get('custom_html') or '',
                         'systemPrompt': s.get('system_prompt') or (s.get('handbook_json') and json.loads(s['handbook_json']).get('system_prompt', '')) or '',
                         'statusTemplate': s.get('status_template') or (s.get('handbook_json') and json.loads(s['handbook_json']).get('status_template', '')) or '',
+                        'postHistoryInstructions': s.get('post_history_instructions') or (s.get('handbook_json') and json.loads(s['handbook_json']).get('postHistoryInstructions', '')) or '',
                         'lorebook': json.loads(s.get('lorebook_json') or '[]') or (s.get('handbook_json') and json.loads(s['handbook_json']).get('lorebook', []))
                     }
                 response_payload = {'stories': result_map}
@@ -1200,7 +1263,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                 kw_pat = f"%{keyword}%"
                 c.execute("""
                 SELECT * FROM plaza_cards
-                WHERE is_featured = 1 AND (title LIKE ? OR desc LIKE ? OR author LIKE ? OR tags_json LIKE ?)
+                WHERE is_featured = 1 AND (title LIKE ? OR "desc" LIKE ? OR author LIKE ? OR tags_json LIKE ?)
                 ORDER BY order_index ASC
                 """, (kw_pat, kw_pat, kw_pat, kw_pat))
             else:
@@ -1284,7 +1347,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                 args.extend([category, f"%{category}%"])
 
             if keyword:
-                conditions.append("(title LIKE ? OR desc LIKE ? OR author LIKE ? OR tags_json LIKE ?)")
+                conditions.append('(title LIKE ? OR "desc" LIKE ? OR author LIKE ? OR tags_json LIKE ?)')
                 kw_pat = f"%{keyword}%"
                 args.extend([kw_pat, kw_pat, kw_pat, kw_pat])
 

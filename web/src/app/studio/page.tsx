@@ -144,6 +144,11 @@ export default function StudioPage() {
   // Generated or custom edited HTML
   const [customHtml, setCustomHtml] = useState<string>('');
   const [isHtmlDirty, setIsHtmlDirty] = useState<boolean>(false);
+  // 剧本级提示词：会随每次请求发送给模型（此前只有脚本能写，工坊保存会丢）
+  const [systemPrompt, setSystemPrompt] = useState<string>('');
+  const [statusTemplate, setStatusTemplate] = useState<string>('');
+  const [postHistoryInstructions, setPostHistoryInstructions] = useState<string>('');
+  const [lorebookText, setLorebookText] = useState<string>('');
   const [isSaving, setIsSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
@@ -288,6 +293,10 @@ export default function StudioPage() {
         setCustomHtml(s.customHtml);
         setIsHtmlDirty(true);
       }
+      setSystemPrompt(s.systemPrompt || '');
+      setStatusTemplate(s.statusTemplate || '');
+      setPostHistoryInstructions(s.postHistoryInstructions || '');
+      setLorebookText(Array.isArray(s.lorebook) && s.lorebook.length > 0 ? JSON.stringify(s.lorebook, null, 2) : '');
       if (s.firstTurnDemo?.branches && s.firstTurnDemo.branches.length > 0) {
         const ops = [
           { tag: '主线 · 第一幕开局', text: s.firstTurnDemo.story || '' },
@@ -327,6 +336,20 @@ export default function StudioPage() {
       enabledBlocks
     });
 
+    // 世界书是结构化数组，用 JSON 文本编辑；保存前校验，避免把坏数据写进库。
+    let lorebook: unknown[] = [];
+    if (lorebookText.trim()) {
+      try {
+        const parsedLore = JSON.parse(lorebookText);
+        if (!Array.isArray(parsedLore)) throw new Error('顶层必须是数组 []');
+        lorebook = parsedLore;
+      } catch (err) {
+        alert('世界书 JSON 格式有误：' + String(err));
+        setIsSaving(false);
+        return;
+      }
+    }
+
     const payload = {
       id: deckId,
       title: title.trim(),
@@ -338,6 +361,10 @@ export default function StudioPage() {
       customHtml: finalHtml,
       roles: roles,
       scenes: mechanisms,
+      systemPrompt,
+      statusTemplate,
+      postHistoryInstructions,
+      lorebook,
       handbook: {
         title: title.trim(),
         badge: badge.trim(),
@@ -763,6 +790,75 @@ export default function StudioPage() {
                   />
                 </div>
               )}
+
+              {/* 剧本级提示词：这些内容会真实随每次请求发送给模型 */}
+              <div className="pt-4 mt-1 border-t border-[#272938] space-y-4">
+                <div className="flex items-center gap-2">
+                  <Feather className="w-4 h-4 text-purple-400" />
+                  <h3 className="text-sm font-bold text-gray-200">剧本级提示词（会真实发送给模型）</h3>
+                </div>
+                <p className="text-[11px] text-gray-500 leading-relaxed">
+                  以下内容随每次对话一起发送。编辑已有剧本时会自动带出库里的原值；留空保存会同时清空库中的对应内容。
+                </p>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 mb-1.5">
+                    ① 系统提示词 <span className="font-normal text-gray-600">（角色设定 / 世界观，位于提示词靠前位置）</span>
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={systemPrompt}
+                    onChange={(e) => setSystemPrompt(e.target.value)}
+                    placeholder="例如：你现在是……；世界观与人物关系设定……"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#1b1c28] border border-[#2e3144] focus:border-purple-500 text-gray-100 text-xs outline-none leading-relaxed"
+                  />
+                  <div className="text-[10px] text-gray-600 mt-1">{systemPrompt.length} 字</div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 mb-1.5">
+                    ② 状态面板模板 <span className="font-normal text-gray-600">（要求模型每轮输出哪些状态字段）</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={statusTemplate}
+                    onChange={(e) => setStatusTemplate(e.target.value)}
+                    placeholder="例如：<status> 时间 | 地点 | 心防% </status>"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#1b1c28] border border-[#2e3144] focus:border-purple-500 text-gray-100 text-xs outline-none leading-relaxed"
+                  />
+                  <div className="text-[10px] text-gray-600 mt-1">{statusTemplate.length} 字</div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 mb-1.5">
+                    ③ 世界书 JSON <span className="font-normal text-gray-600">（按关键词触发的设定条目）</span>
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={lorebookText}
+                    onChange={(e) => setLorebookText(e.target.value)}
+                    placeholder={'[\n  { "id": "lb1", "keys": ["关键词"], "title": "条目标题", "content": "条目内容" }\n]'}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#1b1c28] border border-[#2e3144] focus:border-purple-500 text-gray-100 text-xs outline-none leading-relaxed font-mono"
+                  />
+                  <div className="text-[10px] text-gray-600 mt-1">必须是 JSON 数组，格式有误会在保存前提示</div>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-purple-500/5 border border-purple-500/25">
+                  <label className="block text-xs font-bold text-purple-300 mb-1.5">
+                    ④ 尾部指令 <span className="font-normal text-purple-400/70">（排在全部历史之后，位置最靠后、优先级最高）</span>
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={postHistoryInstructions}
+                    onChange={(e) => setPostHistoryInstructions(e.target.value)}
+                    placeholder="例如：每轮必须推进一个具体事件；称呼与语气约束；必须输出的格式要求……"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#1b1c28] border border-[#3a2f52] focus:border-purple-500 text-gray-100 text-xs outline-none leading-relaxed"
+                  />
+                  <div className="text-[10px] text-purple-400/60 mt-1">
+                    {postHistoryInstructions.length} 字 · 想强化对话体验或格式约束时优先写在这里
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 

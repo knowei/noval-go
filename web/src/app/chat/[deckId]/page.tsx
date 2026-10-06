@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -19,14 +19,17 @@ import {
   MoreHorizontal,
   Settings,
   PanelLeftClose,
-  PanelLeftOpen
+  PanelLeftOpen,
+  Puzzle
 } from 'lucide-react';
 
 import { isCheckpointId, useAppStore } from '@/lib/store';
 import { fetchStory, fetchConversations, fetchConversation, getSiteToken, clearSiteToken } from '@/lib/api';
 import { selectReplyVersion, resolveSnapshot, PromptReport } from '@/lib/sessionEngine';
+import { applyModExtensions } from '@/lib/modExtensions';
 import { streamCompletion, CompletionStreamError, CompletionUsage } from '@/lib/streamCompletion';
 import { inspectReplyEnvelope, mergeReplyContinuation } from '@/lib/replyEnvelope';
+import { safeRandomUUID } from '@/lib/uuid';
 import { ReplyCompletionNotice } from '@/components/chat/ReplyCompletionNotice';
 import { prepareSessionRequest, completeSessionReply } from '@/lib/playtestRuntime';
 import { storyOpenings } from '@/lib/storyDiagnostics';
@@ -36,7 +39,7 @@ import { Turn, LoreEntry } from '@/lib/types';
 import { soundEngine } from '@/lib/soundEngine';
 import { getDeckLorebook } from '@/lib/lorebookEngine';
 import { ScenarioSidebar } from '@/components/chat/ScenarioSidebar';
-import { ChatInput } from '@/components/chat/ChatInput';
+import { ChatInput, ChatInputHandle } from '@/components/chat/ChatInput';
 import { CoserCard } from '@/components/chat/CoserCard';
 import { RealityModifierCard } from '@/components/chat/RealityModifierCard';
 import { SisterTruthOrDareCard } from '@/components/chat/SisterTruthOrDareCard';
@@ -51,6 +54,7 @@ import { InteractiveHandbookCard } from '@/components/InteractiveHandbookCard';
 import { FloatingStatusHud } from '@/components/chat/FloatingStatusHud';
 import { scopeDeckCustomCss } from '@/lib/scopeCss';
 import { registerDeckCgMap, extractCgMapFromCss } from '@/lib/cgManager';
+import { RichStoryRenderer } from '@/components/chat/RichStoryRenderer';
 
 export default function ChatPage() {
   const params = useParams();
@@ -85,6 +89,8 @@ export default function ChatPage() {
   } = useAppStore();
 
   const [isLoading, setIsLoading] = useState(false);
+  // 推理模型的思考进度（只记长度，不保存思考正文）
+  const [thinkingChars, setThinkingChars] = useState(0);
   const [isDeckReady, setIsDeckReady] = useState(false);
   const [isWorkbenchOpen, setIsWorkbenchOpen] = useState(false);
   const [promptReport, setPromptReport] = useState<PromptReport | null>(null);
@@ -95,7 +101,7 @@ export default function ChatPage() {
     setPromptReport(null); setActiveLoreEntries([]); setIsLoading(false);
     return () => { generationRef.current?.abort(); generationRef.current = null; };
   }, [currentUserId, currentConversationId, deckId]);
-  const [inputText, setInputText] = useState('');
+  const chatInputRef = useRef<ChatInputHandle>(null);
   const [isMobileScenarioOpen, setIsMobileScenarioOpen] = useState(false);
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
@@ -106,6 +112,40 @@ export default function ChatPage() {
   const [isHeaderMoreOpen, setIsHeaderMoreOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const activeModCount = enabledMods ? Object.values(enabledMods).filter(Boolean).length : 0;
+
+  // ---------------------------------------------------------------------------
+  // 长会话性能基础设施
+  // 超长会话（数百幕）原先会因为“每次流式更新都重渲染全部卡片 + 重算整条历史”
+  // 把主线程占满，表现为页面无响应、CPU 狂转。下面三项分别解决这个问题：
+  //   1) isLoadingRef / isDeckReadyRef：让事件回调能读到最新值而不必进依赖数组，
+  //      从而保持稳定身份，让子组件的 React.memo 真正生效；
+  //   2) 渲染窗口：只挂载最近 N 幕，避免上千个 DOM 节点同时参与布局与绘制；
+  //   3) 快照签名：状态快照只在“已完成幕”变化时重算。
+  // ---------------------------------------------------------------------------
+  const isLoadingRef = useRef(isLoading);
+  isLoadingRef.current = isLoading;
+  const isDeckReadyRef = useRef(isDeckReady);
+  isDeckReadyRef.current = isDeckReady;
+  // runGeneration 现在是稳定引用（依赖为空），因此路由参数也必须通过 ref 读取最新值
+  const deckIdRef = useRef(deckId);
+  deckIdRef.current = deckId;
+
+  const TURN_WINDOW = 30;
+  const [visibleCount, setVisibleCount] = useState(TURN_WINDOW);
+
+  const completedTurns = useMemo(
+    () => conversationHistory.filter((t) => t && !t.isUser && !t.isError && !t.incomplete),
+    [conversationHistory]
+  );
+  const lastCompletedTurn = completedTurns[completedTurns.length - 1];
+  const snapshotKey = `${currentConversationId}|${completedTurns.length}|${lastCompletedTurn?.imageOriginId ?? ''}|${lastCompletedTurn?.rawText?.length ?? 0}`;
+  const currentSnapshotState = useMemo(
+    () => resolveSnapshot(useAppStore.getState().conversationHistory).state,
+    // 只以快照签名作为依赖：流式期间签名不变，因此不再逐帧重算整条历史。
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [snapshotKey]
+  );
 
   useEffect(() => {
     setIsMounted(true);
@@ -363,10 +403,30 @@ export default function ChatPage() {
     [currentDeck?.customCss]
   );
 
-  const runGeneration = async (historyContext: Turn[], existingSwipes?: Turn[], repair?: Turn) => {
+  // 渲染窗口：只挂载最近 visibleCount 幕。数百幕全部挂载会让布局/绘制成本随幕数线性增长，
+  // 这是超长会话在手机端直接卡死的第二个主因。
+  const validHistory = useMemo(
+    () => conversationHistory.filter((t): t is Turn => Boolean(t && typeof t === 'object')),
+    [conversationHistory]
+  );
+  const windowStart = Math.max(0, validHistory.length - visibleCount);
+  const visibleTurns = windowStart > 0 ? validHistory.slice(windowStart) : validHistory;
+
+  const runGeneration = useCallback(async (historyContext: Turn[], existingSwipes?: Turn[], repair?: Turn) => {
     if (generationRef.current) return;
     setIsLoading(true);
     setPromptReport(null);
+    setThinkingChars(0);
+    // 用 getState() 读取最新值：既能保证取值永远最新，又不必写进依赖数组，
+    // 这样 runGeneration 及依赖它的回调都能保持稳定身份。
+    const live = useAppStore.getState();
+    const modelSettings = live.modelSettings;
+    // 把模组中心的开关翻译成声明式扩展（尾部 system 钩子）后再组装提示词，
+    // 否则这些开关只影响界面显示，对模型毫无作用。
+    const sessionSettings = applyModExtensions(live.sessionSettings, live.enabledMods);
+    const currentDeck = live.currentDeck;
+    const currentUserId = live.currentUserId;
+    const currentConversationId = live.currentConversationId;
     const activeModel = modelSettings.model || 'deepseek-flash';
     const lastUserTurn = historyContext[historyContext.length - 1];
     const userActionText = lastUserTurn?.text || '';
@@ -411,10 +471,10 @@ export default function ChatPage() {
     const isCurrent = () => requestContext === generationContext.current && useAppStore.getState().currentConversationId === currentConversationId && useAppStore.getState().currentUserId === currentUserId;
     const controller = new AbortController();
     generationRef.current = controller;
-    const timeoutId = setTimeout(() => controller.abort(), 120000);
+    const timeoutId = setTimeout(() => controller.abort(), 300000);
     try {
       if (!currentDeck) throw new Error('剧本尚未加载');
-      const report = await prepareSessionRequest(currentDeck, historyContext, sessionSettings, getDeckLorebook(deckId, currentDeck.lorebook), repair ? repairPrefix : undefined);
+      const report = await prepareSessionRequest(currentDeck, historyContext, sessionSettings, getDeckLorebook(deckIdRef.current, currentDeck.lorebook), repair ? repairPrefix : undefined);
       if (!isCurrent() || controller.signal.aborted) return;
       setPromptReport(report);
       const activeEntries = report.activeLore;
@@ -490,30 +550,44 @@ export default function ChatPage() {
         addTurn({isUser:false,model:activeModel,location:currentDeck.title,rawText:repairPrefix,story:inspectReplyEnvelope(repairPrefix).story,branches:[],runtimeVersion:1,incomplete:true});
       }
       let lastUpdateTime = 0;
-      for await (const delta of streamCompletion(resp.body, reason => { finishReason = reason; }, value => { usage = value; })) {
+      let lastThinkingUpdate = 0;
+      for await (const delta of streamCompletion(resp.body, reason => { finishReason = reason; }, value => { usage = value; }, (chars) => {
+        // 思考进度按 400ms 节流上报：既让用户看到“确实在思考”，又不至于每个思考增量都触发渲染
+        const now = Date.now();
+        if (now - lastThinkingUpdate > 400) {
+          lastThinkingUpdate = now;
+          setThinkingChars(chars);
+        }
+      })) {
         if (!isCurrent()) { controller.abort(); return; }
         receivedSuffix += delta;
         streamedStory = repair ? mergeReplyContinuation(repairPrefix, receivedSuffix) : receivedSuffix;
         if (!hasLiveStreamSuccess) {
           hasLiveStreamSuccess = true;
-          addTurn({ isUser: false, model: activeModel, location: currentDeck.title, rawText: streamedStory, story: inspectReplyEnvelope(streamedStory).story, branches: [], runtimeVersion: 1, incomplete: true });
-        } else if (Date.now() - lastUpdateTime > 60) {
+          // 流式期间只保存原文：卡片此时走轻量纯文本渲染，
+          // 不再对不断增长的全文反复跑多轮正则（旧实现单次更新要做 5 遍全文扫描）。
+          addTurn({ isUser: false, model: activeModel, location: currentDeck.title, rawText: streamedStory, story: '', branches: [], runtimeVersion: 1, incomplete: true });
+        } else if (Date.now() - lastUpdateTime > 120) {
           lastUpdateTime = Date.now();
-          updateTurn(aiTurnIndex, { rawText: streamedStory, story: inspectReplyEnvelope(streamedStory).story, incomplete: true });
+          updateTurn(aiTurnIndex, { rawText: streamedStory, incomplete: true });
         }
       }
       if (!receivedSuffix.trim()) throw new Error('模型没有返回新的正文，请重试；已保留原有内容。');
       const parsed = await completeSessionReply(streamedStory, historyContext, sessionSettings, true);
       if (!isCurrent()) return;
       const currentGeneratedTurn: Turn = {
-        ...parsed, model: activeModel, location: currentDeck.title, activeLoreEntries: activeEntries, imageOriginId: crypto.randomUUID(), illustrations: [],
+        ...parsed, model: activeModel, location: currentDeck.title, activeLoreEntries: activeEntries, imageOriginId: safeRandomUUID(), illustrations: [],
         completion: { reason: finishReason, responseTokens: sessionSettings.responseTokens, protocolVersion: 2, receivedChars: receivedSuffix.length, elapsedMs: Date.now()-startedAt, repairs: repair ? (repair.completion?.repairs || 0)+1 : 0, usage },
       };
       currentGeneratedTurn.snapshot = resolveSnapshot([...historyContext, currentGeneratedTurn]);
       const finalSwipes = existingSwipes?.length ? [...existingSwipes, currentGeneratedTurn] : undefined;
       updateTurn(aiTurnIndex, { ...currentGeneratedTurn, swipes: finalSwipes, swipeIndex: finalSwipes ? finalSwipes.length - 1 : undefined });
       if (currentGeneratedTurn.incomplete) void useAppStore.getState().autoSave();
-      setTimeout(() => { if (isCurrent()) handleScrollToBottom(true); }, 150);
+      setTimeout(() => {
+        if (!isCurrent()) return;
+        // 内联滚动，避免 runGeneration 依赖 handleScrollToBottom 而失去稳定身份
+        chatContainerRef.current?.scrollTo({ top: chatContainerRef.current.scrollHeight, behavior: 'smooth' });
+      }, 150);
     } catch (err: unknown) {
       if (!isCurrent()) return;
       const error = err instanceof Error ? err : new Error(String(err));
@@ -528,14 +602,24 @@ export default function ChatPage() {
       clearTimeout(timeoutId);
       if (generationRef.current === controller) generationRef.current = null;
       if (isCurrent()) setIsLoading(false);
+      setThinkingChars(0);
     }
 
-  };
+  }, []);
 
-  const handleSend = async (actionText: string) => {
-    if (!actionText.trim() || isLoading || useAppStore.getState().isBranching || generationRef.current || !isDeckReady) return;
-    const userTurn = { isUser: true, text: actionText.trim() };
-    const nextHistory = [...conversationHistory, userTurn];
+  const handleSend = useCallback(async (actionText: string) => {
+    const live = useAppStore.getState();
+    if (!actionText.trim() || isLoadingRef.current || live.isBranching || generationRef.current || !isDeckReadyRef.current) return;
+    const userTurn: Turn = { isUser: true, text: actionText.trim() };
+    let baseHistory = live.conversationHistory;
+    if (baseHistory.length === 0 && live.currentDeck) {
+      const openings = storyOpenings(live.currentDeck, live.sessionSettings);
+      if (openings.length > 0) {
+        addTurn(openings[0]);
+        baseHistory = [openings[0]];
+      }
+    }
+    const nextHistory = [...baseHistory, userTurn];
     addTurn(userTurn);
 
     // Smoothly scroll the container to align the user's action at the top
@@ -546,11 +630,13 @@ export default function ChatPage() {
     }, 60);
 
     await runGeneration(nextHistory);
-  };
+  }, [addTurn, runGeneration]);
 
-  const handleRegenerate = async (turnIndex: number) => {
-    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
-    const existingTurn = conversationHistory[turnIndex];
+  const handleRegenerate = useCallback(async (turnIndex: number) => {
+    const live = useAppStore.getState();
+    if (isLoadingRef.current || generationRef.current || live.isBranching) return;
+    const history = live.conversationHistory;
+    const existingTurn = history[turnIndex];
     if (!existingTurn) return;
 
     // Preserves existing version in swipes list if not already there (unless it was an error turn)
@@ -558,88 +644,107 @@ export default function ChatPage() {
       ? [...existingTurn.swipes]
       : (!existingTurn.isError && (existingTurn.story || existingTurn.text) ? [{ ...existingTurn }] : undefined);
 
-    const truncated = conversationHistory.slice(0, turnIndex);
+    const truncated = history.slice(0, turnIndex);
     if (!await replaceHistoryWithCheckpoint(truncated, '重新生成前')) return;
     await runGeneration(truncated, existingSwipes);
-  };
+  }, [replaceHistoryWithCheckpoint, runGeneration]);
 
-  const handleRepairReply = async (turnIndex: number) => {
-    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
-    const original = conversationHistory[turnIndex];
+  const handleRepairReply = useCallback(async (turnIndex: number) => {
+    const live = useAppStore.getState();
+    if (isLoadingRef.current || generationRef.current || live.isBranching) return;
+    const history = live.conversationHistory;
+    const original = history[turnIndex];
     if (!original || original.isUser || original.isError || original.completion?.reason === 'content_filter') return;
     const versions = original.swipes?.length ? [...original.swipes] : [{...original}];
-    const history = conversationHistory.slice(0,turnIndex);
-    if (!await replaceHistoryWithCheckpoint(history,'补全回复前')) return;
-    await runGeneration(history,versions,original);
-  };
+    const truncated = history.slice(0,turnIndex);
+    if (!await replaceHistoryWithCheckpoint(truncated,'补全回复前')) return;
+    await runGeneration(truncated,versions,original);
+  }, [replaceHistoryWithCheckpoint, runGeneration]);
 
-  const handleSwipeChange = async (turnIndex: number, newSwipeIndex: number) => {
-    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
-    if ((conversationHistory[turnIndex]?.swipeIndex ?? 0) === newSwipeIndex) return;
-    const next = selectReplyVersion(conversationHistory, turnIndex, newSwipeIndex);
-    if (next !== conversationHistory) await replaceHistoryWithCheckpoint(next, '切换回复前');
-  };
+  const handleSwipeChange = useCallback(async (turnIndex: number, newSwipeIndex: number) => {
+    const live = useAppStore.getState();
+    if (isLoadingRef.current || generationRef.current || live.isBranching) return;
+    const history = live.conversationHistory;
+    if ((history[turnIndex]?.swipeIndex ?? 0) === newSwipeIndex) return;
+    const next = selectReplyVersion(history, turnIndex, newSwipeIndex);
+    if (next !== history) await replaceHistoryWithCheckpoint(next, '切换回复前');
+  }, [replaceHistoryWithCheckpoint]);
 
-  const handleContinueWriting = async (turnIndex: number) => {
-    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
-    const kept = conversationHistory.slice(0, turnIndex + 1);
+  const handleContinueWriting = useCallback(async (turnIndex: number) => {
+    const live = useAppStore.getState();
+    if (isLoadingRef.current || generationRef.current || live.isBranching) return;
+    const history = live.conversationHistory;
+    const kept = history.slice(0, turnIndex + 1);
     const userTurn: Turn = { isUser: true, text: '请根据当前场景继续，给我留出回应的空间。' };
     const next = [...kept, userTurn];
-    if (kept.length < conversationHistory.length) {
+    if (kept.length < history.length) {
       if (!await replaceHistoryWithCheckpoint(next, '从旧消息续写前')) return;
     } else {
       addTurn(userTurn);
     }
     await runGeneration(next);
-  };
+  }, [addTurn, replaceHistoryWithCheckpoint, runGeneration]);
 
-  const handleEditTurn = async (turnIndex: number, newStory: string) => {
-    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
-    const existing = conversationHistory[turnIndex];
+  const handleEditTurn = useCallback(async (turnIndex: number, newStory: string) => {
+    const live = useAppStore.getState();
+    if (isLoadingRef.current || generationRef.current || live.isBranching) return;
+    const history = live.conversationHistory;
+    const existing = history[turnIndex];
     if (!existing) return;
-    const next = conversationHistory.slice(0, turnIndex + 1);
+    const next = history.slice(0, turnIndex + 1);
     next[turnIndex] = { ...existing, story: newStory, text: newStory, rawText: newStory, displayText: undefined, memory: [], memoryEntries: [], status: {}, snapshot: undefined, swipes: undefined, swipeIndex: undefined, imageOriginId: undefined, illustrations: [] };
     await replaceHistoryWithCheckpoint(next, '编辑回复前');
-  };
+  }, [replaceHistoryWithCheckpoint]);
 
-  const handleEditAndResendUserTurn = async (turnIndex: number, text: string) => {
-    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
-    if (await replaceHistoryWithCheckpoint(conversationHistory.slice(0, turnIndex), '编辑提问前')) setInputText(text);
-  };
+  const handleDeleteTurn = useCallback((turnIndex: number) => {
+    if (!isLoadingRef.current && !generationRef.current) {
+      truncateHistory(turnIndex);
+    }
+  }, [truncateHistory]);
 
-  const handleResendUserTurn = async (turnIndex: number) => {
-    if (isLoading || generationRef.current || useAppStore.getState().isBranching) return;
-    const kept = conversationHistory.slice(0, turnIndex + 1);
-    if (kept.length < conversationHistory.length && !await replaceHistoryWithCheckpoint(kept, '重新发送前')) return;
+  const handleEditAndResendUserTurn = useCallback(async (turnIndex: number, text: string) => {
+    const live = useAppStore.getState();
+    if (isLoadingRef.current || generationRef.current || live.isBranching) return;
+    if (await replaceHistoryWithCheckpoint(live.conversationHistory.slice(0, turnIndex), '编辑提问前')) {
+      chatInputRef.current?.setValue(text);
+      chatInputRef.current?.focus();
+    }
+  }, [replaceHistoryWithCheckpoint]);
+
+  const handleResendUserTurn = useCallback(async (turnIndex: number) => {
+    const live = useAppStore.getState();
+    if (isLoadingRef.current || generationRef.current || live.isBranching) return;
+    const history = live.conversationHistory;
+    const kept = history.slice(0, turnIndex + 1);
+    if (kept.length < history.length && !await replaceHistoryWithCheckpoint(kept, '重新发送前')) return;
     await runGeneration(kept);
-  };
+  }, [replaceHistoryWithCheckpoint, runGeneration]);
 
-  const handleRetractUserTurn = (turnIndex: number) => {
-    if (isLoading || generationRef.current) return;
+  const handleRetractUserTurn = useCallback((turnIndex: number) => {
+    if (isLoadingRef.current || generationRef.current) return;
     truncateHistory(turnIndex);
-  };
+  }, [truncateHistory]);
 
-  const handleRegenerateLast = () => {
-    if (isLoading || conversationHistory.length === 0) return;
-    for (let i = conversationHistory.length - 1; i >= 0; i--) {
-      const t = conversationHistory[i];
+  const handleRegenerateLast = useCallback(() => {
+    const history = useAppStore.getState().conversationHistory;
+    if (isLoadingRef.current || history.length === 0) return;
+    for (let i = history.length - 1; i >= 0; i--) {
+      const t = history[i];
       if (t && !t.isUser) {
-        handleRegenerate(i);
+        void handleRegenerate(i);
         return;
       }
     }
-  };
+  }, [handleRegenerate]);
 
-  const handleScrollToBottom = (smooth = true) => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight,
-        behavior: smooth ? 'smooth' : 'auto'
-      });
+  const handleScrollToBottom = useCallback((smooth = true) => {
+    const el = chatContainerRef.current;
+    if (el) {
+      el.scrollTo({ top: el.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
     }
-  };
+  }, []);
 
-  const handleContainerDoubleClick = (e: React.MouseEvent) => {
+  const handleContainerDoubleClick = useCallback((e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
     // Don't trigger if user is interacting with form controls or links
     if (
@@ -653,14 +758,14 @@ export default function ChatPage() {
       return;
     }
     handleScrollToBottom(true);
-  };
+  }, [handleScrollToBottom]);
 
-  const handleOpenHandbook = () => {
+  const handleOpenHandbook = useCallback(() => {
     const el = document.getElementById('handbook-card-anchor');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  };
+  }, []);
 
   return (
     <div className="flex-1 flex min-h-screen">
@@ -799,6 +904,29 @@ export default function ChatPage() {
               className="rounded-lg border border-sky-700/70 bg-sky-950/40 px-2 py-1 text-[11px] text-sky-200 hover:bg-sky-900/50 transition shrink-0 cursor-pointer"
             >
               工作台
+            </button>
+
+            {/* 玩法模组中心 (MOD) */}
+            <button
+              suppressHydrationWarning
+              onClick={() => setIsModCenterOpen(true)}
+              className={`inline-flex px-2 py-1 rounded-lg border text-[11px] items-center gap-1 transition cursor-pointer shrink-0 ${
+                isMounted && activeModCount > 0
+                  ? 'bg-orange-950/60 hover:bg-orange-900/80 border-orange-500/50 text-orange-200 shadow-sm shadow-orange-950/40'
+                  : 'bg-[#1b1d28] hover:bg-[#252838] border-[#2e3142] text-gray-300 hover:text-orange-300'
+              }`}
+              title={isMounted ? `玩法模组中心 (MOD) · 当前已装载 ${activeModCount} 项机制` : '玩法模组中心 (MOD)'}
+            >
+              <Puzzle className="w-3.5 h-3.5 text-orange-400" />
+              <span>模组</span>
+              {isMounted && activeModCount > 0 && (
+                <span
+                  suppressHydrationWarning
+                  className="px-1.5 py-0.5 rounded-full text-[9px] font-mono bg-orange-500/30 text-orange-300 font-bold leading-none"
+                >
+                  {activeModCount}
+                </span>
+              )}
             </button>
 
             {/* 世界书 (lg 起直显) */}
@@ -948,10 +1076,20 @@ export default function ChatPage() {
                       setIsHeaderMoreOpen(false);
                       setIsModCenterOpen(true);
                     }}
-                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
+                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center justify-between transition"
                   >
-                    <span>🧩</span>
-                    <span>玩法模组中心</span>
+                    <div className="flex items-center gap-2">
+                      <Puzzle className="w-3.5 h-3.5 text-orange-400" />
+                      <span>玩法模组中心 (MOD)</span>
+                    </div>
+                    {activeModCount > 0 && (
+                      <span
+                        suppressHydrationWarning
+                        className="px-1.5 py-0.5 rounded-full text-[10px] font-mono bg-orange-500/20 text-orange-300 border border-orange-500/30"
+                      >
+                        {isMounted ? `${activeModCount}项` : ''}
+                      </span>
+                    )}
                   </button>
 
                   <button
@@ -1003,7 +1141,7 @@ export default function ChatPage() {
         <div className="story-custom-scope flex-1 max-w-3xl mx-auto w-full p-3 sm:p-6 space-y-5 sm:space-y-6 pb-72 sm:pb-80">
           {/* Author-designed Interactive Character Card & Handbook */}
           {currentDeck?.customHtml && (
-            <div id="handbook-card-anchor" className="scroll-mt-14">
+            <div id="handbook-card-anchor" data-no-cv className="scroll-mt-14">
               <InteractiveHandbookCard
                 html={currentDeck.customHtml}
                 customCss={currentDeck.customCss}
@@ -1054,13 +1192,55 @@ export default function ChatPage() {
           )}
 
           <ScenePresentation key={currentConversationId} />
-          {Object.keys(resolveSnapshot(conversationHistory).state).length > 0 && <details className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-slate-200"><summary className="cursor-pointer text-sm">当前状态</summary><dl className="mt-2 grid grid-cols-2 gap-2 text-xs">{Object.entries(resolveSnapshot(conversationHistory).state).map(([key,value]) => <div key={key}><dt className="text-slate-400">{sessionSettings.stateFields.find(f => f.key === key)?.label || key}</dt><dd>{Array.isArray(value) ? value.join('、') || '无' : String(value ?? '未设置')}</dd></div>)}</dl></details>}
+          {Object.keys(currentSnapshotState).length > 0 && <details className="rounded-xl border border-slate-700 bg-slate-900 p-3 text-slate-200"><summary className="cursor-pointer text-sm">当前状态</summary><dl className="mt-2 grid grid-cols-2 gap-2 text-xs">{Object.entries(currentSnapshotState).map(([key,value]) => <div key={key}><dt className="text-slate-400">{sessionSettings.stateFields.find(f => f.key === key)?.label || key}</dt><dd>{Array.isArray(value) ? value.join('、') || '无' : String(value ?? '未设置')}</dd></div>)}</dl></details>}
 
-          {currentDeck && conversationHistory.length === 0 && storyOpenings(currentDeck, sessionSettings).length > 0 ? <section className="space-y-3 rounded-xl border border-sky-800 p-4 text-slate-200"><h2>选择开场</h2>{storyOpenings(currentDeck, sessionSettings).map((opening, i) => <button key={i} className="block w-full whitespace-pre-wrap rounded-lg bg-slate-900 p-3 text-left text-sm hover:bg-slate-800" onClick={() => addTurn(opening)}>{opening.story}</button>)}</section> : null}
-          {conversationHistory
-            .filter((t): t is Turn => Boolean(t && typeof t === 'object'))
-            .map((turn, idx, arr) => {
-              const isLatestUserTurn = Boolean(turn.isUser) && (idx === arr.length - 1 || idx === arr.length - 2);
+          {currentDeck && conversationHistory.length === 0 && storyOpenings(currentDeck, sessionSettings).length > 0 ? (
+            <section className="space-y-4 rounded-2xl border border-pink-500/30 bg-[#161726]/85 p-5 text-slate-200 shadow-2xl backdrop-blur-sm animate-in fade-in duration-300">
+              <div className="flex items-center justify-between border-b border-gray-800/80 pb-3">
+                <div className="flex items-center gap-2 text-sm sm:text-base font-bold text-pink-300">
+                  <Sparkles className="w-4 h-4 text-pink-400 animate-pulse" />
+                  <span>预设开场剧情 · 序幕场景</span>
+                </div>
+                <span className="text-[11px] text-gray-400">点击卡片即可直接以此序幕开启推演</span>
+              </div>
+              <div className="space-y-3">
+                {storyOpenings(currentDeck, sessionSettings).map((opening, i) => (
+                  <div
+                    key={i}
+                    onClick={() => addTurn(opening)}
+                    className="group relative rounded-xl border border-gray-800/90 hover:border-pink-500/60 bg-[#12131e]/95 p-4 sm:p-5 transition-all duration-300 hover:shadow-[0_0_25px_rgba(236,72,153,0.18)] cursor-pointer"
+                  >
+                    <RichStoryRenderer rawStory={opening.story || opening.text || ''} deckId={deckId} />
+                    <div className="mt-3 pt-3 border-t border-gray-800/60 flex items-center justify-between">
+                      <span className="text-xs text-gray-400 group-hover:text-pink-300 transition">
+                        第 {i + 1} 幕序幕设定
+                      </span>
+                      <button
+                        type="button"
+                        className="px-4 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white shadow-md transition group-hover:scale-105"
+                      >
+                        选择此开场开启推演 →
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
+          {windowStart > 0 && (
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((n) => n + TURN_WINDOW)}
+                className="px-4 py-2 rounded-xl border border-[#2e3142] bg-[#1b1d28] hover:bg-[#252838] text-xs text-gray-300 hover:text-white transition cursor-pointer"
+              >
+                显示更早的 {Math.min(TURN_WINDOW, windowStart)} 幕 · 还有 {windowStart} 幕未显示
+              </button>
+            </div>
+          )}
+          {visibleTurns.map((turn, i) => {
+              const idx = windowStart + i;
+              const isLatestUserTurn = Boolean(turn.isUser) && (idx === validHistory.length - 1 || idx === validHistory.length - 2);
 
             if (turn.isUser) {
               return (
@@ -1091,7 +1271,7 @@ export default function ChatPage() {
                   index={idx}
                   onRegenerate={handleRegenerate}
                   onOpenSettings={() => setIsSettingsOpen(true)}
-                  onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
+                  onDelete={handleDeleteTurn}
                 />
               );
             }
@@ -1099,7 +1279,7 @@ export default function ChatPage() {
             if (turn.runtimeVersion === 1) {
               return <div key={idx}>
                 <ReplyCompletionNotice turn={turn} busy={isLoading || isBranching} onRepair={() => handleRepairReply(idx)} onRetry={() => handleRegenerate(idx)} onBudget={() => setIsWorkbenchOpen(true)} />
-                <GenericCard turn={turn} index={idx} deckId={deckId} onSendAction={handleSend} onDelete={(i) => { if (!isLoading) truncateHistory(i); }} onRegenerate={handleRegenerate} onContinueWriting={handleContinueWriting} onEdit={handleEditTurn} onSwipeChange={handleSwipeChange} />
+                <GenericCard turn={turn} index={idx} deckId={deckId} onSendAction={handleSend} onDelete={handleDeleteTurn} onRegenerate={handleRegenerate} onContinueWriting={handleContinueWriting} onEdit={handleEditTurn} onSwipeChange={handleSwipeChange} />
               </div>;
             }
 
@@ -1110,7 +1290,7 @@ export default function ChatPage() {
                   turn={turn}
                   index={idx}
                   onSendAction={handleSend}
-                  onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
+                  onDelete={handleDeleteTurn}
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
@@ -1126,7 +1306,7 @@ export default function ChatPage() {
                   turn={turn}
                   index={idx}
                   onSendAction={handleSend}
-                  onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
+                  onDelete={handleDeleteTurn}
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
@@ -1142,7 +1322,7 @@ export default function ChatPage() {
                   turn={turn}
                   index={idx}
                   onSendAction={handleSend}
-                  onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
+                  onDelete={handleDeleteTurn}
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
@@ -1158,7 +1338,7 @@ export default function ChatPage() {
                   turn={turn}
                   index={idx}
                   onSendAction={handleSend}
-                  onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
+                  onDelete={handleDeleteTurn}
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
@@ -1174,7 +1354,7 @@ export default function ChatPage() {
                   turn={turn}
                   index={idx}
                   onSendAction={handleSend}
-                  onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
+                  onDelete={handleDeleteTurn}
                   onRegenerate={handleRegenerate}
                   onContinueWriting={handleContinueWriting}
                   onEdit={handleEditTurn}
@@ -1190,7 +1370,7 @@ export default function ChatPage() {
                 index={idx}
                 deckId={deckId}
                 onSendAction={handleSend}
-                onDelete={(dIdx) => { if (!isLoading && !generationRef.current) truncateHistory(dIdx); }}
+                onDelete={handleDeleteTurn}
                 onRegenerate={handleRegenerate}
                 onContinueWriting={handleContinueWriting}
                 onEdit={handleEditTurn}
@@ -1203,15 +1383,23 @@ export default function ChatPage() {
         </div>
 
         {saveError && <div role="alert" className="p-3 text-sm text-amber-200">{saveError}<button className="ml-3 underline" onClick={() => void useAppStore.getState().autoSave()}>重试保存</button></div>}
-        {isLoading && <button className="p-2 text-sm text-sky-200" onClick={() => generationRef.current?.abort()}>停止生成</button>}
+        {isLoading && (
+          <div className="flex items-center justify-center gap-3 py-2">
+            {thinkingChars > 0 && (
+              <span className="text-[11px] font-mono text-gray-400 select-none">
+                💭 模型思考中… 已思考约 {thinkingChars} 字
+              </span>
+            )}
+            <button className="p-2 text-sm text-sky-200 cursor-pointer" onClick={() => generationRef.current?.abort()}>停止生成</button>
+          </div>
+        )}
         {/* Floating Bottom Input with Docked Toolbar directly above */}
         <ChatInput
+          ref={chatInputRef}
           onSend={handleSend}
           onOpenWorkbench={() => setIsWorkbenchOpen(true)}
           isLoading={isLoading || isBranching || !isDeckReady}
           onRegenerateLast={handleRegenerateLast}
-          inputText={inputText}
-          setInputText={setInputText}
           onScrollToBottom={handleScrollToBottom}
         />
       </div>

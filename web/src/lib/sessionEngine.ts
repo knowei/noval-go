@@ -5,6 +5,7 @@ import { ExtensionFeatures, extensionFeatures, extensionText, resolveExtensions 
 import { normalizeMedia, SceneMedia } from './mediaRuntime';
 import { memorySource, normalizeMemoryEntries, normalizeCorrections, resolveMemory, MemoryCorrection } from './memoryResolution';
 import { inspectReplyEnvelope } from './replyEnvelope';
+import { findLatestStatusSnapshot, formatSnapshotForPrompt } from './characterStatusParser';
 
 export interface TextRule {
   id: string;
@@ -111,10 +112,19 @@ export function normalizeSession(value?: Partial<SessionSettings>): SessionSetti
   };
 }
 
-// Conservative estimate, not a model-specific tokenizer. Reserve extra headroom below.
+// 保守估算，不是模型专用 tokenizer。下方保留额外余量。
+//
+// 实测校准（2026-10-05，本地网关 http://127.0.0.1:8045/v1）：
+//   中文输入 200 / 1000 / 4000 字符 → prompt_tokens 42 / 197 / 778
+//   即约 0.20 token/中文字符，线性关系稳定。
+// 原实现按 2.0 token/字符 估算，比实测保守约 10 倍，直接后果是超长会话里
+// 绝大多数历史被误判为“超出预算”而丢弃（实测 326 幕只发出 5 条）。
+// 这里取 0.6（对实测留 3 倍安全余量，同时兼容分词效率较低的模型）。
+const TOKENS_PER_CJK_CHAR = 0.6;
+const TOKENS_PER_ASCII_CHAR = 0.3;
 export function estimateTokens(text: string): number {
   let units = 0;
-  for (const char of text) units += char.codePointAt(0)! > 127 ? 2 : 1 / 3;
+  for (const char of text) units += char.codePointAt(0)! > 127 ? TOKENS_PER_CJK_CHAR : TOKENS_PER_ASCII_CHAR;
   return Math.ceil(units);
 }
 
@@ -229,6 +239,13 @@ export function buildSessionPrompt(deck: StoryDeck, history: Turn[], input: Sess
   const facts = resolveMemory(snapshot.memories, settings).active;
   const recalled = retrieveMemory(facts, [...history].reverse().find(t => t.isUser)?.text || '', settings.memoryTokens, estimateTokens, settings.memoryStrategy);
   const extensions = resolveExtensions(settings.extensions);
+  const latestSnapshot = findLatestStatusSnapshot(history, deck.id, deck.title);
+  const latestStatusText = latestSnapshot ? formatSnapshotForPrompt(latestSnapshot) : '';
+  const statusGuidance = latestStatusText
+    ? `【当前局势与角色状态监控基准（必须在此基准上演进）】：\n${latestStatusText}\n【状态输出铁律】：请在每次回复文末，务必依照上述状态栏格式输出更新后的最新状态面板，反映本轮互动后的数值变动与情境变化。`
+    : deck.statusTemplate
+    ? `【专属状态面板规范】：每次回复文末请输出以下状态面板：\n${deck.statusTemplate}`
+    : '';
   const sections = [
     '你负责互动故事中的环境与非玩家角色。保持设定一致，不替玩家决定、说话或行动。',
     `故事：${deck.title}\n${deck.systemPrompt || deck.handbook?.desc || deck.desc || ''}`,
@@ -241,6 +258,7 @@ export function buildSessionPrompt(deck: StoryDeck, history: Turn[], input: Sess
     active.filter(e => e.position !== 'late').map(e => `[${e.title}] ${e.content}`).join('\n'),
     settings.pinnedMemory ? `玩家确认的重要事实（优先于有冲突的自动记忆）：\n${settings.pinnedMemory}` : '',
     `当前状态：\n${JSON.stringify({ ...initialState(settings.stateFields), ...snapshot.state })}`,
+    statusGuidance,
     settings.stateFields.length ? `状态字段约束：\n${JSON.stringify(settings.stateFields)}\n只更新这些字段，遵守类型和范围。` : '',
     `相关历史事实：\n${recalled.text}`,
     '记忆仅记录已发生且可确认的事实，不把建议、猜测或尚未执行的行动记成已完成。玩家明确告知的身份、来意和目标，可记录为“玩家表示……”；物品放置、借出、接过、归还，以及许可条件的变化都属于重要事实，即使状态字段未变化也必须记录。变化中的同一事项写为 {"key":"稳定的事项名称","text":"最新事实"}，沿用已有事项名称，不为同一事项另起 key；同 key 的旧记录保留来源但不再作为当前事实发送。一次性事件继续使用字符串。当前状态代表现在，历史正文中的旧状态不代表现在。',
