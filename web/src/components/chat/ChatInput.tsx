@@ -14,7 +14,14 @@ interface ChatInputProps {
   onScrollToBottom?: () => void;
 }
 
-export function ChatInput({
+export interface ChatInputHandle {
+  setValue: (val: string) => void;
+  getValue: () => string;
+  focus: () => void;
+  clear: () => void;
+}
+
+export const ChatInput = React.memo(React.forwardRef<ChatInputHandle, ChatInputProps>(function ChatInput({
   onSend,
   onOpenWorkbench,
   isLoading,
@@ -22,11 +29,35 @@ export function ChatInput({
   inputText,
   setInputText,
   onScrollToBottom,
-}: ChatInputProps) {
-  const [internalInput, setInternalInput] = useState('');
+}, ref) {
+  const [internalInput, setInternalInput] = useState(inputText ?? '');
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+
+  // Sync if controlled inputText changes externally
+  useEffect(() => {
+    if (inputText !== undefined) {
+      setInternalInput(inputText);
+    }
+  }, [inputText]);
+
+  React.useImperativeHandle(ref, () => ({
+    setValue: (val: string) => {
+      setInternalInput(val);
+      if (setInputText) setInputText(val);
+    },
+    getValue: () => (inputText !== undefined ? inputText : internalInput),
+    focus: () => textareaRef.current?.focus(),
+    clear: () => {
+      setInternalInput('');
+      if (setInputText) setInputText('');
+    },
+  }), [internalInput, inputText, setInputText]);
 
   const inputVal = inputText !== undefined ? inputText : internalInput;
-  const setVal = setInputText || setInternalInput;
+  const setVal = (val: string) => {
+    setInternalInput(val);
+    if (setInputText) setInputText(val);
+  };
 
   const handleSend = () => {
     if (!inputVal.trim() || isLoading) return;
@@ -109,6 +140,7 @@ export function ChatInput({
         <div className="relative flex flex-col rounded-2xl bg-[#14151e] border border-[#272938] focus-within:border-amber-500/70 transition shadow-2xl p-2 sm:px-3 sm:py-2">
           <div className="flex items-center w-full">
             <textarea
+              ref={textareaRef}
               value={inputVal}
               onChange={(e) => setVal(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -143,4 +175,4 @@ export function ChatInput({
       </div>
     </div>
   );
-}
+}));

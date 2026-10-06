@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "@/lib/uuid";
 import { PrimarySidebar } from "@/components/layout/PrimarySidebar";
 import { Drawer } from "@/components/layout/Drawer";
 import { ModelSettingsModal } from "@/components/modals/ModelSettingsModal";

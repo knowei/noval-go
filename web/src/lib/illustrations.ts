@@ -1,15 +1,62 @@
 import type { StoryDeck, Turn } from './types';
 import { resolveSnapshot, normalizeSession } from './sessionEngine';
 import { resolveMemory } from './memoryResolution';
+import { extractStatusBlock } from './characterStatusParser';
 
 export interface ImageSettings { baseUrl: string; model: string; apiKey: string; size: '1024x1024' | '1536x1024' | '1024x1536'; style: string }
 export interface IllustrationMeta { source: string; conversationId: string; deckId: string; prompt: string; model: string; size: string; style: string; mode: string }
 export interface Illustration { id: string; owner: string; storage: 'local' | 'cloud'; mime: string; metadata: IllustrationMeta; createdAt: string }
-export const DEFAULT_IMAGE_SETTINGS: ImageSettings = { baseUrl: '', model: '', apiKey: '', size: '1024x1024', style: '水彩插画，柔和光线，统一色调，无文字、无水印' };
+
+export const ANIME_STYLE_PRESETS = [
+  {
+    id: 'anime_cg',
+    name: '🌸 日系二次元动漫CG（推荐）',
+    prompt: '日系二次元动漫CG画风，精致动漫角色立绘，赛璐珞上色，轻小说插画品质，细腻唯美光影，动漫大师杰作，Japanese anime style, visual novel CG, anime masterpiece, vibrant cel shading, highly detailed anime characters, clean lineart, no text, no watermark',
+  },
+  {
+    id: 'light_novel',
+    name: '📖 恋爱轻小说唯美风',
+    prompt: '日系恋爱轻小说彩色插画，唯美梦幻马卡龙色调，精致柔和光影，细腻笔触，浪漫氛围，Japanese light novel color illustration, romance anime aesthetic, soft pastel colors, delicate linework, highly detailed anime characters',
+  },
+  {
+    id: 'shinkai',
+    name: '🌅 新海诚光影风',
+    prompt: '新海诚美学风格，极具通透感的云层与逆光，电影级超广角透视，细腻日系动画唯美场景，Makoto Shinkai style, cinematic anime lighting, beautiful sky and clouds, dramatic backlighting',
+  },
+  {
+    id: 'cyber_anime',
+    name: '🔮 赛博霓虹二次元',
+    prompt: '赛博朋克二次元动漫CG，霓虹雨夜，全息光影与暗调对比，科幻机能美少女，Cyberpunk anime style, neon lighting, dark sci-fi aesthetic, detailed anime characters',
+  },
+  {
+    id: 'manga_cover',
+    name: '✒️ 经典黑白漫画扉页',
+    prompt: '日系漫画典藏扉页插画，黑白网点与高对比度光影，极富张力的分镜线条，Japanese manga cover art, expressive line art, screen tone aesthetic, masterpiece',
+  },
+];
+
+export const DEFAULT_IMAGE_SETTINGS: ImageSettings = { 
+  baseUrl: '', 
+  model: '', 
+  apiKey: '', 
+  size: '1024x1024', 
+  style: ANIME_STYLE_PRESETS[0].prompt 
+};
 export const MAX_IMAGE_BYTES = 16 * 1024 * 1024;
 
 export function normalizeImageSettings(value: Partial<ImageSettings>): ImageSettings {
-  return { baseUrl: typeof value.baseUrl === 'string' ? value.baseUrl.trim().replace(/\/+$/, '') : '', model: typeof value.model === 'string' ? value.model.trim() : '', apiKey: typeof value.apiKey === 'string' ? value.apiKey.trim() : '', size: ['1024x1024','1536x1024','1024x1536'].includes(value.size || '') ? value.size! : '1024x1024', style: typeof value.style === 'string' ? value.style.slice(0, 1000) : DEFAULT_IMAGE_SETTINGS.style };
+  let style = typeof value.style === 'string' ? value.style.slice(0, 1000) : DEFAULT_IMAGE_SETTINGS.style;
+  // 自动将老旧的“水彩插画”或空配置平滑升级为高质量日系二次元风格
+  if (!style || style.includes('水彩插画')) {
+    style = DEFAULT_IMAGE_SETTINGS.style;
+  }
+  return { 
+    baseUrl: typeof value.baseUrl === 'string' ? value.baseUrl.trim().replace(/\/+$/, '') : '', 
+    model: typeof value.model === 'string' ? value.model.trim() : '', 
+    apiKey: typeof value.apiKey === 'string' ? value.apiKey.trim() : '', 
+    size: ['1024x1024','1536x1024','1024x1536'].includes(value.size || '') ? value.size! : '1024x1024', 
+    style 
+  };
 }
 
 export function imageRequest(settings: ImageSettings, prompt: string) {
@@ -41,15 +88,22 @@ export function illustrationPrompt(deck: StoryDeck, history: Turn[], index: numb
   const snapshot = resolveSnapshot(selected);
   const facts = resolveMemory(snapshot.memories, normalizeSession(selected[0]?.session)).active;
   const turn = selected.at(-1);
+  const rawStory = turn?.story || turn?.text || '';
+  // 剥离状态栏与数值面板干扰，避免生图模型把面板数据/数字误绘进画面
+  const cleanStory = extractStatusBlock(rawStory).cleanText;
+
+  const visualGuidelines = mode === 'background'
+    ? '【画面类型】纯日系动漫/Galgame场景背景CG，光影唯美通透，空间感与氛围感强烈，画面中严禁出现任何人物。'
+    : '【画面类型】日系二次元轻小说/Galgame插画CG，精美动漫美少女/美少年角色，生动细致的面部表情与眼神微动作，动作姿态自然具有故事感与戏剧张力，构图考究，日系二次元动漫美学。';
+
   return [
-    mode === 'background' ? '为以下故事时刻绘制环境背景，不画人物。' : '为以下故事时刻绘制一幅剧情插画。',
-    '只表现画面中能够看到的内容；不要把对白、记忆说明、界面文字绘制在图片里。不添加尚未发生的事件。',
-    `作品：${deck.title}`,
-    `画风：${style || DEFAULT_IMAGE_SETTINGS.style}`,
-    `这一刻的状态：${JSON.stringify(snapshot.state)}`,
-    `相关已确认事实：${facts.slice(-8).map(f=>f.text).join('；').slice(0,2000)}`,
-    `所选回复：${(turn?.story || turn?.text || '').slice(0,6000)}`,
-  ].join('\n\n').slice(0,12000);
+    visualGuidelines,
+    `【艺术画风】${style || DEFAULT_IMAGE_SETTINGS.style}`,
+    `【作品剧本】《${deck.title}》`,
+    `【当前场景与人物动态】${cleanStory.slice(0, 4000)}`,
+    facts.length ? `【前情背景】${facts.slice(-6).map(f => f.text).join('；').slice(0, 1000)}` : '',
+    '【画面纯净度与负面约束】绝对不要写实真人摄影风格，不要欧美粗粝漫画，不要粗糙涂鸦；画面中严禁出现任何中英文字体、对话框、水印、UI元素、面板图标。',
+  ].filter(Boolean).join('\n\n').slice(0, 12000);
 }
 
 export function attachIllustration(history: Turn[], source: string, image: Illustration): Turn[] {

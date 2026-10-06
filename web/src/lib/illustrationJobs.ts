@@ -5,6 +5,7 @@ import { getSiteToken } from './api';
 import { attachIllustration, decodeGeneratedImage, imageRequest, normalizeImageSettings, ImageSettings, IllustrationMeta, Illustration } from './illustrations';
 import { saveCloudIllustration, saveLocalIllustration } from './illustrationStorage';
 import { imageResponseError } from './imageErrors';
+import { safeRandomUUID } from './uuid';
 
 export interface ImageJob { id:string; owner:string; source:string; status:'running'|'complete'|'failed'|'cancelled'; message:string; image?:Illustration }
 export const useIllustrationJobs=create<{jobs:ImageJob[];settings:Record<string,ImageSettings>}>(()=>({jobs:[],settings:{}}));
@@ -34,7 +35,7 @@ export async function generateIllustration(metadata:IllustrationMeta) {
   if(useIllustrationJobs.getState().jobs.some(j=>j.owner===owner && j.status==='running')) throw new Error('已有图片正在生成，请等待或先取消');
   const settings=readImageSettings(owner), request=imageRequest(settings,metadata.prompt);
   const meta={...metadata,model:settings.model,size:settings.size,style:settings.style};
-  const id=crypto.randomUUID(), controller=new AbortController();controllers.set(id,controller);
+  const id=safeRandomUUID(), controller=new AbortController();controllers.set(id,controller);
   useIllustrationJobs.setState(s=>({jobs:[...s.jobs.slice(-29),{id,owner,source:meta.source,status:'running',message:'正在生成，可继续聊天…'}]}));
   const timer=setTimeout(()=>controller.abort(),180000);
   try {

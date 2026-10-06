@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useAppStore } from '@/lib/store';
-import { Illustration, ImageSettings, illustrationPrompt, attachIllustration } from '@/lib/illustrations';
+import { Illustration, ImageSettings, illustrationPrompt, attachIllustration, ANIME_STYLE_PRESETS } from '@/lib/illustrations';
+import { safeRandomUUID } from '@/lib/uuid';
 import { readImageSettings, saveImageSettings, generateIllustration, useIllustrationJobs, cancelImageJob } from '@/lib/illustrationJobs';
 import { listLocalIllustrations, listCloudIllustrations, loadIllustration, saveCloudIllustration } from '@/lib/illustrationStorage';
 import type { Turn } from '@/lib/types';
@@ -37,7 +38,7 @@ export function TurnIllustrations({turn,index}:{turn:Turn;index:number}) {
     try {
       const state=useAppStore.getState(), current=state.conversationHistory[index];
       if(!current || current!==turn)throw new Error('回复已变化，请重新打开绘图描述');
-      const source=current.imageOriginId || crypto.randomUUID();
+      const source=current.imageOriginId || safeRandomUUID();
       if(!current.imageOriginId)state.updateTurn(index,{imageOriginId:source});
       await generateIllustration({source,conversationId:state.currentConversationId,deckId:state.currentDeckKey,prompt,model:'',size:'',style:'',mode});
     } catch(e){setMessage(e instanceof Error?e.message:'无法生成插图');}
@@ -46,7 +47,27 @@ export function TurnIllustrations({turn,index}:{turn:Turn;index:number}) {
   const images=(turn.illustrations || []).filter(i=>i.owner===owner);
   return <section aria-label="本幕插图" className="mt-3 space-y-3">
     <div className="flex flex-wrap gap-2"><button className={button} disabled={job?.status==='running'} onClick={()=>prepare(mode)}>生成本幕插图</button>{job?.status==='running' && <button className={button} onClick={()=>cancelImageJob(job.id)}>取消生图</button>}</div>
-    {open && <div className="space-y-2 rounded-lg border border-slate-700 p-3"><p className="text-xs text-slate-400">根据这一条回复的状态和记忆绘图。先在“会话工作台 → 生图”配置服务；每次生成会请求生图接口。</p><label className="block text-sm">画面类型<select className={field} value={mode} disabled={job?.status==='running'} onChange={e=>prepare(e.target.value as 'scene'|'background')}><option value="scene">剧情插画</option><option value="background">环境背景（不画人物）</option></select></label><label className="block text-sm">绘图描述<textarea className={field} rows={6} maxLength={12000} value={prompt} onChange={e=>setPrompt(e.target.value)} disabled={job?.status==='running'}/></label><button className={button} disabled={job?.status==='running'} onClick={()=>void generate()}>按此描述生成</button><button className={`${button} ml-2`} onClick={()=>setOpen(false)}>收起描述</button></div>}
+    {open && <div className="space-y-2 rounded-lg border border-slate-700 p-3">
+      <p className="text-xs text-slate-400">根据这一条回复的状态和记忆绘图。先在“会话工作台 → 生图”配置服务；每次生成会请求生图接口。</p>
+      <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+        <span className="text-xs text-slate-400 font-medium">切换二次元画风：</span>
+        {ANIME_STYLE_PRESETS.map(p => (
+          <button
+            key={p.id}
+            type="button"
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-xs text-slate-300 hover:border-pink-500/50 hover:bg-slate-800 transition cursor-pointer"
+            onClick={() => {
+              const state = useAppStore.getState();
+              if (state.currentDeck) {
+                setPrompt(illustrationPrompt(state.currentDeck, state.conversationHistory, index, p.prompt, mode));
+              }
+            }}
+          >
+            {p.name}
+          </button>
+        ))}
+      </div>
+      <label className="block text-sm">画面类型<select className={field} value={mode} disabled={job?.status==='running'} onChange={e=>prepare(e.target.value as 'scene'|'background')}><option value="scene">剧情插画</option><option value="background">环境背景（不画人物）</option></select></label><label className="block text-sm">绘图描述<textarea className={field} rows={6} maxLength={12000} value={prompt} onChange={e=>setPrompt(e.target.value)} disabled={job?.status==='running'}/></label><button className={button} disabled={job?.status==='running'} onClick={()=>void generate()}>按此描述生成</button><button className={`${button} ml-2`} onClick={()=>setOpen(false)}>收起描述</button></div>}
     {(job?.message || message) && <p role="status" className="text-xs text-sky-200">{message || job?.message}</p>}
     {images.length>0 && <IllustrationPreview key={images.at(-1)!.id} image={images.at(-1)!}/>}
     {images.length>1 && <><button className={button} onClick={()=>setVersions(!versions)}>{versions?'收起':'查看'}此前 {images.length-1} 张插图</button>{versions && images.slice(0,-1).map(image=><IllustrationPreview key={image.id} image={image}/>)}</>}
@@ -81,7 +102,28 @@ function Settings({owner}:{owner:string}) {
   return <section className="space-y-4">
     <p className="text-sm">配置生图服务后，即可为聊天回复绘制插图。访客图片保存在本机浏览器；登录后生成会同步私人云端，也可下载备份。</p>
     <p className="text-xs text-slate-400">密钥只在当前标签页内存中使用，刷新后需要重新填写。地址、模型、画风和尺寸保存在本机，不随剧本导出。</p>
-    {(['baseUrl','model','apiKey','style'] as const).map((key,i)=><label key={key} className="block text-sm">{['生图服务地址','生图模型','生图密钥（仅本次标签页）','统一画风'][i]}<input className={field} type={key==='apiKey'?'password':'text'} autoComplete="off" value={draft[key]} placeholder={key==='baseUrl'?'http://127.0.0.1:8045/v1':key==='model'?'gemini-3.1-flash-image':''} onChange={e=>setDraft({...draft,[key]:e.target.value})}/></label>)}
+    {(['baseUrl','model','apiKey','style'] as const).map((key,i)=>(
+      <div key={key} className="space-y-1">
+        <label className="block text-sm">{['生图服务地址','生图模型','生图密钥（仅本次标签页）','统一画风'][i]}
+          <input className={field} type={key==='apiKey'?'password':'text'} autoComplete="off" value={draft[key]} placeholder={key==='baseUrl'?'http://127.0.0.1:8045/v1':key==='model'?'gemini-3.1-flash-image':''} onChange={e=>setDraft({...draft,[key]:e.target.value})}/>
+        </label>
+        {key === 'style' && (
+          <div className="flex flex-wrap items-center gap-1.5 pt-1">
+            <span className="text-[11px] text-slate-400">二次元画风预设（点击即换）：</span>
+            {ANIME_STYLE_PRESETS.map(p => (
+              <button
+                key={p.id}
+                type="button"
+                className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-xs text-slate-300 hover:border-pink-500/50 hover:bg-slate-800 transition cursor-pointer"
+                onClick={() => setDraft({ ...draft, style: p.prompt })}
+              >
+                {p.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    ))}
     <label className="block text-sm">图片尺寸<select className={field} value={draft.size} onChange={e=>setDraft({...draft,size:e.target.value as ImageSettings['size']})}><option>1024x1024</option><option>1536x1024</option><option>1024x1536</option></select></label>
     <button className={button} onClick={()=>{try{saveImageSettings(owner,draft);setMessage('生图设置已应用，密钥仅在本次标签页有效');}catch{setMessage('设置保存失败，请检查浏览器存储权限');}}}>应用生图设置</button>
     <p role="status" className="text-sm text-sky-200">{message}</p>

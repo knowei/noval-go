@@ -1,4 +1,5 @@
 import type { Illustration, IllustrationMeta } from './illustrations';
+import { safeRandomUUID } from './uuid';
 
 interface StoredIllustration extends Illustration { blob: Blob }
 function reference(item: StoredIllustration): Illustration {
@@ -22,7 +23,7 @@ async function localOperation<T>(mode: IDBTransactionMode, run:(store:IDBObjectS
   });
 }
 export async function saveLocalIllustration(owner:string, blob:Blob, metadata:IllustrationMeta):Promise<Illustration> {
-  const item:StoredIllustration={id:crypto.randomUUID(),owner,storage:'local',mime:blob.type,metadata,createdAt:new Date().toISOString(),blob};
+  const item:StoredIllustration={id:safeRandomUUID(),owner,storage:'local',mime:blob.type,metadata,createdAt:new Date().toISOString(),blob};
   await localOperation('readwrite',store=>store.put(item));
   return reference(item);
 }

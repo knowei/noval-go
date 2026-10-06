@@ -1,4 +1,5 @@
 import { normalizeSession, SessionSettings, TextRule, validateRule } from './sessionEngine';
+import { safeRandomUUID } from './uuid';
 const record = (v: unknown): Record<string, unknown> => v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : {};
 
 export function importPreset(value: unknown): { settings: Partial<SessionSettings>; warnings: string[] } {
@@ -35,7 +36,7 @@ export function importRegexScripts(value: unknown): { rules: TextRule[]; warning
     const r = record(item), name = typeof r.scriptName === 'string' ? r.scriptName : '导入规则';
     if (!Array.isArray(r.placement) || r.placement.length !== 1 || r.placement[0] !== 2 || !r.markdownOnly || r.promptOnly || r.runOnEdit || r.minDepth != null || r.maxDepth != null || r.substituteRegex || Array.isArray(r.trimStrings) && r.trimStrings.length) { warnings.push(`「${name}」含未支持的作用范围或修剪设置，已跳过。`); continue; }
     const literal = typeof r.findRegex === 'string' ? r.findRegex.match(/^\/([\s\S]*)\/([a-z]*)$/) : null;
-    const rule: TextRule = { id: 'regex_' + crypto.randomUUID(), name, pattern: literal?.[1] || String(r.findRegex || ''), flags: literal?.[2] || 'g', replacement: String(r.replaceString || '').replaceAll('{{match}}', () => '$&'), scope: 'display', enabled: false };
+    const rule: TextRule = { id: 'regex_' + safeRandomUUID(), name, pattern: literal?.[1] || String(r.findRegex || ''), flags: literal?.[2] || 'g', replacement: String(r.replaceString || '').replaceAll('{{match}}', () => '$&'), scope: 'display', enabled: false };
     try { validateRule(rule); rules.push(rule); } catch { warnings.push(`「${name}」正则无效，已跳过。`); }
   }
   if (!rules.length && !warnings.length) throw new Error('没有可导入的正则规则');

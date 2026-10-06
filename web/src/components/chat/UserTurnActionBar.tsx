@@ -11,7 +11,7 @@ interface UserTurnActionBarProps {
   onRetract: (index: number) => void;
 }
 
-export function UserTurnActionBar({
+export const UserTurnActionBar = React.memo(function UserTurnActionBar({
   index,
   text,
   onEditAndResend,
@@ -76,4 +76,4 @@ export function UserTurnActionBar({
       </button>
     </div>
   );
-}
+});

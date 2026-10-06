@@ -1,6 +1,7 @@
 import type { LoreEntry, StoryDeck, Turn } from './types';
 import { normalizeSession, TextRule, validateRule } from './sessionEngine';
 import { safeMediaUrl, SceneAsset } from './mediaRuntime';
+import { safeRandomUUID } from './uuid';
 
 type RecordValue = Record<string, unknown>;
 function record(v: unknown): RecordValue { return v && typeof v === 'object' && !Array.isArray(v) ? v as RecordValue : {}; }
@@ -8,7 +9,7 @@ function text(v: unknown) { return typeof v === 'string' ? v : ''; }
 function strings(v: unknown): string[] { return Array.isArray(v) ? v.filter(x => typeof x === 'string') : []; }
 export interface ImportResult { deck: StoryDeck; warnings: string[]; history?: Turn[] }
 
-export function importCard(value: unknown, id: string = `local_${crypto.randomUUID()}`): ImportResult {
+export function importCard(value: unknown, id: string = `local_${safeRandomUUID()}`): ImportResult {
   const root = record(value);
   const warnings: string[] = [];
   if (root.format === 'noval-session-v1' || root.format === 'noval-deck-v1') {

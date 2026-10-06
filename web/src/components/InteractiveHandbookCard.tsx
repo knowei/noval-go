@@ -32,15 +32,69 @@ export function InteractiveHandbookCard({
   const enhancedHtml = useMemo(() => {
     if (!html) return '';
 
-    const cssInject = customCss ? `<style>\n${customCss}\n</style>\n` : '';
-
-    const bridgeScript = `
+    const headShim = `
 <style>
+/* 优雅滚动条 */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
 ::-webkit-scrollbar-thumb { background: rgba(244,63,94,0.3); border-radius: 999px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(244,63,94,0.6); }
+
+/* 关键修复：长 iframe 视口自适应弹窗垂直居中显示 */
+.modal-overlay {
+  align-items: flex-start !important;
+  overflow-y: auto !important;
+  padding-top: 20px !important;
+  padding-bottom: 40px !important;
+}
+.modal-overlay.active .modal-content {
+  margin-top: var(--modal-target-top, 40px) !important;
+  max-height: 85vh !important;
+}
 </style>
+<script>
+// 1. AudioContext 安全防护垫片：杜绝 iframe 沙箱限制引发的异常阻断点击
+(function() {
+  try {
+    var OrigAudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (OrigAudioCtx) {
+      window.AudioContext = function() {
+        try {
+          return new OrigAudioCtx();
+        } catch(e) {
+          return {
+            state: 'suspended',
+            currentTime: 0,
+            destination: {},
+            createOscillator: function() {
+              return {
+                connect: function(){},
+                start: function(){},
+                stop: function(){},
+                frequency: { setValueAtTime: function(){}, exponentialRampToValueAtTime: function(){} },
+                type: ''
+              };
+            },
+            createGain: function() {
+              return {
+                connect: function(){},
+                gain: { setValueAtTime: function(){}, exponentialRampToValueAtTime: function(){} }
+              };
+            },
+            resume: function() { return Promise.resolve(); }
+          };
+        }
+      };
+      window.webkitAudioContext = window.AudioContext;
+    }
+  } catch(e) {}
+})();
+</script>
+`;
+
+    const cssInject = customCss ? `<style>\n${customCss}\n</style>\n` : '';
+
+    const bridgeScript = `
 <script>
 (function() {
   function notifyHeight() {
@@ -55,6 +109,40 @@ export function InteractiveHandbookCard({
       }
     } catch(e) {}
   }
+
+  // 2. 拦截 404 立绘图片，安全降级为精致矢量立绘，杜绝裂图
+  window.addEventListener('error', function(e) {
+    try {
+      var img = e.target;
+      if (img && img.tagName === 'IMG' && !img.dataset.hasHandledFallback) {
+        img.dataset.hasHandledFallback = 'true';
+        var card = img.closest ? (img.closest('.character-card') || img.closest('.roommate-card')) : null;
+        var charKey = card ? (card.dataset.character || '') : '';
+        var charName = charKey === 'suxiaoke' ? '可' : (charKey === 'lingyue' ? '玥' : (charKey === 'yezhirou' ? '柔' : (charKey === 'xiaqiange' ? '歌' : (img.alt ? img.alt[0] : '★'))));
+        var palettes = {
+          suxiaoke: ['#f43f5e', '#fb7185', '#fda4af'],
+          lingyue: ['#7c3aed', '#6366f1', '#a5b4fc'],
+          yezhirou: ['#9333ea', '#c084fc', '#e9d5ff'],
+          xiaqiange: ['#db2777', '#f472b6', '#fbcfe8']
+        };
+        var p = palettes[charKey] || ['#6366f1', '#a855f7', '#d8b4fe'];
+        var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g_' + charName + '" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="' + p[0] + '"/><stop offset="100%" stop-color="' + p[1] + '"/></linearGradient></defs><circle cx="50" cy="50" r="47" fill="url(#g_' + charName + ')" stroke="' + p[2] + '" stroke-width="3"/><text x="50" y="58" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="34" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="central">' + charName + '</text></svg>';
+        img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+      }
+    } catch(err) {}
+  }, true);
+
+  // 3. 点击角色卡或编辑按钮时，实时捕获偏移位置，让弹窗直接悬浮在当前视线前方
+  document.addEventListener('click', function(e) {
+    try {
+      var target = e.target;
+      var card = target && target.closest ? (target.closest('.character-card') || target.closest('.edit-roommate-btn') || target.closest('.roommate-card')) : null;
+      if (card) {
+        var topPos = Math.max(20, (card.offsetTop || 0) - 50);
+        document.documentElement.style.setProperty('--modal-target-top', topPos + 'px');
+      }
+    } catch(err) {}
+  }, true);
 
   window.addEventListener('load', function() {
     notifyHeight();
@@ -103,12 +191,12 @@ export function InteractiveHandbookCard({
 `;
 
     let result = html;
-    if (cssInject) {
-      if (result.includes('</head>')) {
-        result = result.replace('</head>', cssInject + '</head>');
-      } else {
-        result = cssInject + result;
-      }
+    if (result.includes('<head>')) {
+      result = result.replace('<head>', '<head>\n' + headShim + '\n' + cssInject);
+    } else if (result.includes('</head>')) {
+      result = result.replace('</head>', headShim + '\n' + cssInject + '\n</head>');
+    } else {
+      result = headShim + '\n' + cssInject + '\n' + result;
     }
 
     // 插入到 </body> 之前，如果无 body 则追加到末尾
@@ -217,7 +305,8 @@ export function InteractiveHandbookCard({
           <iframe
             ref={iframeRef}
             srcDoc={enhancedHtml}
-            sandbox="allow-scripts allow-same-origin allow-forms"
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+            allow="autoplay"
             className="w-full border-0 block"
             style={{
               height: `${iframeHeight}px`,
@@ -251,7 +340,8 @@ export function InteractiveHandbookCard({
             <div className="flex-1 w-full overflow-hidden">
               <iframe
                 srcDoc={enhancedHtml}
-                sandbox="allow-scripts allow-same-origin allow-forms"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+                allow="autoplay"
                 className="w-full h-full border-0"
                 title="作品设定与人物卡全屏"
               />

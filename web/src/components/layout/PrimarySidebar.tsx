@@ -143,7 +143,7 @@ export function PrimarySidebar() {
               >
                 {/* Active Indicator on Desktop */}
                 {!isMobile && item.isActive && (
-                  <span className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-gradient-to-b from-amber-400 to-rose-500" />
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-gradient-to-b from-amber-400 to-rose-500" />
                 )}
 
                 <div className="relative w-5 h-5 flex items-center justify-center" suppressHydrationWarning>
@@ -210,22 +210,37 @@ export function PrimarySidebar() {
           }}
           className={`w-full py-2 px-1.5 rounded-xl bg-[#141622] hover:bg-[#1d2030] border border-[#2b2f42] hover:border-emerald-500/50 flex ${
             isMobile ? 'flex-row items-center justify-between px-3' : 'flex-col items-center justify-center'
-          } gap-1 transition cursor-pointer group shadow-sm`}
+          } gap-1 transition cursor-pointer group shadow-sm overflow-hidden`}
           title="点击切换推演大模型或配置 API Key"
         >
-          <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-            <span
-              suppressHydrationWarning
-              className="text-[11px] font-mono font-bold text-emerald-400 group-hover:text-emerald-300 truncate max-w-[65px]"
-            >
-              {mounted ? modelSettings.model || 'deepseek' : 'deepseek'}
-            </span>
-          </div>
-          {!isMobile && (
-            <span className="text-[9px] text-gray-500 group-hover:text-gray-400 scale-90">
-              模型设定
-            </span>
+          {isMobile ? (
+            <>
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span
+                  suppressHydrationWarning
+                  className="text-xs font-mono font-bold text-emerald-400 group-hover:text-emerald-300 truncate"
+                >
+                  {mounted ? modelSettings.model || 'deepseek' : 'deepseek'}
+                </span>
+              </div>
+              <span className="text-xs text-gray-400 shrink-0">模型设定</span>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center justify-center gap-1.5 w-full min-w-0 px-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                <span
+                  suppressHydrationWarning
+                  className="text-[10px] font-mono font-bold text-emerald-400 group-hover:text-emerald-300 truncate min-w-0 max-w-[52px]"
+                >
+                  {mounted ? modelSettings.model || 'deepseek' : 'deepseek'}
+                </span>
+              </div>
+              <span className="text-[9px] text-gray-500 group-hover:text-gray-400 leading-none">
+                模型设定
+              </span>
+            </>
           )}
         </button>
 
@@ -237,15 +252,15 @@ export function PrimarySidebar() {
           }}
           className={`w-full p-2 rounded-2xl bg-[#141622] hover:bg-[#1c1f2e] border border-amber-500/20 hover:border-amber-500/50 flex ${
             isMobile ? 'flex-row items-center gap-3' : 'flex-col items-center justify-center'
-          } cursor-pointer transition group shadow-md text-center`}
+          } cursor-pointer transition group shadow-md text-center overflow-hidden`}
           title="点击打开执笔账号与安全中心"
         >
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-500 via-orange-500 to-rose-600 border border-amber-300/40 flex items-center justify-center text-sm shadow-md group-hover:scale-105 transition shrink-0">
             {currentUser?.avatar || '🎭'}
           </div>
 
-          <div className="mt-1 min-w-0">
-            <div className="text-[11px] font-bold text-gray-200 group-hover:text-amber-300 truncate max-w-[70px]">
+          <div className="mt-1 min-w-0 w-full px-0.5">
+            <div className="text-[11px] font-bold text-gray-200 group-hover:text-amber-300 truncate w-full">
               {currentUser?.nickname || currentUser?.username || '设备访客'}
             </div>
             <div className="text-[10px] text-amber-400 font-bold font-mono tracking-tight flex items-center justify-center gap-0.5">
@@ -258,7 +273,7 @@ export function PrimarySidebar() {
         </div>
 
         {/* Settings gear */}
-        <div className="flex items-center gap-1 mt-1">
+        <div className="flex items-center justify-center gap-1.5 mt-1 w-full">
           {/* Settings gear */}
           <button
             suppressHydrationWarning
@@ -295,7 +310,7 @@ export function PrimarySidebar() {
   return (
     <>
       {/* 1. Desktop Fixed Left Sidebar */}
-      <aside className="hidden md:flex w-[78px] shrink-0 h-screen sticky top-0 bg-[#0c0d12] border-r border-[#1b1d26] flex-col justify-between py-3 px-2 z-40 select-none">
+      <aside className="hidden md:flex w-20 shrink-0 h-screen sticky top-0 bg-[#0c0d12] border-r border-[#1b1d26] flex-col justify-between py-3 px-2 z-40 select-none">
         {renderSidebarContent(false)}
       </aside>
 

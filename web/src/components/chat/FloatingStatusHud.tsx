@@ -32,7 +32,7 @@ interface FloatingStatusHudProps {
   onTriggerAction?: (actionText: string) => void;
 }
 
-export function FloatingStatusHud({ 
+export const FloatingStatusHud = React.memo(function FloatingStatusHud({ 
   turns, 
   enabledMods, 
   deckId = '', 
@@ -698,4 +698,4 @@ export function FloatingStatusHud({
       )}
     </div>
   );
-}
+});

@@ -15,7 +15,7 @@ export function TurnStatusCard({ status, deckId }: TurnStatusCardProps) {
   const [isOpen, setIsOpen] = useState(true);
   const [activeCgModal, setActiveCgModal] = useState<{ url: string; title: string; subtitle?: string; code?: string } | null>(null);
 
-  if (!status || !status.stats || status.stats.length === 0) {
+  if (!status || (!status.stats?.length && !status.customTags?.length && !status.mood && !status.moneyInfo)) {
     return null;
   }
 
@@ -193,8 +193,28 @@ export function TurnStatusCard({ status, deckId }: TurnStatusCardProps) {
               </div>
             )}
 
-          {/* 数值进度条列表 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* 情境与局势标签 (当前时间、主角状态、室友位置等) */}
+            {status.customTags && status.customTags.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-[#0c0d14]/90 p-2.5 rounded-xl border border-purple-500/20 shadow-inner">
+                {status.customTags.map((tag, idx) => (
+                  <div 
+                    key={idx} 
+                    className="flex flex-col gap-0.5 bg-[#141622]/90 p-2 rounded-lg border border-purple-500/15"
+                  >
+                    <span className="text-[10px] text-purple-300 font-semibold flex items-center gap-1">
+                      <span>{tag.icon || '📌'}</span> {tag.label}
+                    </span>
+                    <span className="text-xs text-gray-200 leading-snug break-words">
+                      {tag.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* 数值进度条列表 */}
+            {status.stats && status.stats.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {status.stats.map((st, idx) => {
               const pct = Math.min(100, Math.max(0, Math.round((st.value / st.max) * 100)));
               const isPositive = st.delta && st.delta.includes('+');
@@ -251,6 +271,7 @@ export function TurnStatusCard({ status, deckId }: TurnStatusCardProps) {
               );
             })}
           </div>
+          )}
 
           {/* 心境微澜独白 */}
           {status.mood && (

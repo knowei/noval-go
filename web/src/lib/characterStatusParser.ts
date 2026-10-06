@@ -22,6 +22,12 @@ export interface MoneyDebtInfo {
   day?: string;
 }
 
+export interface CustomStatusTag {
+  label: string;
+  value: string;
+  icon?: string;
+}
+
 export interface CharacterStatusSnapshot {
   characterName: string;
   stageName?: string;
@@ -29,44 +35,314 @@ export interface CharacterStatusSnapshot {
   thought?: string;
   stats: StatMetric[];
   moneyInfo?: MoneyDebtInfo;
+  customTags?: CustomStatusTag[];
 }
 
 /**
- * 从一轮对话文本或历史中，解析当前角色的心理数值与本轮波动
+ * 通用状态块提取器：
+ * 从模型回复正文中剥离出各种形式的状态面板（XML标签或中文方括号块），
+ * 返回剥离后的干净正文 cleanText，以及提取到的 statusBlock
+ */
+export function extractStatusBlock(text: string): { cleanText: string; statusBlock: string | null } {
+  if (!text) return { cleanText: '', statusBlock: null };
+
+  // 1. 匹配 XML-like 状态标签，如 <dormitory_status>...</dormitory_status>, <status>...</status>, <char_status>...</char_status>
+  const xmlMatch = text.match(/(<([a-zA-Z0-9_-]*status[a-zA-Z0-9_-]*)>([\s\S]*?)(?:<\/\2>|$))/i);
+  if (xmlMatch) {
+    const cleanText = text.replace(xmlMatch[1], '').trim();
+    return { cleanText, statusBlock: xmlMatch[3].trim() || xmlMatch[1].trim() };
+  }
+
+  // 2. 匹配中文方头括号状态面板块，例如：【404女生宿舍状态面板】... 或 【末世生存监控】...
+  const bracketMatch = text.match(/(【[^】]*(?:状态|面板|监控|属性|数值|好感|危机|存活|生理|情报)[^】]*】[\s\S]*?)(?=(?:【[^】]*(?:选项|抉择|分支|行动)[^】]*】|<opt>|<actions>|$))/i);
+  if (bracketMatch) {
+    const cleanText = text.replace(bracketMatch[1], '').trim();
+    return { cleanText, statusBlock: bracketMatch[1].trim() };
+  }
+
+  // 3. 匹配【当前状态】/ [状态面板] 等格式
+  const altMatch = text.match(/((?:\[(?:当前状态|状态面板|数值监控)\]|【(?:当前状态|状态面板|数值监控)】)[\s\S]*?)(?=(?:\[(?:选项|抉择)\]|【(?:选项|抉择)】|<opt>|$))/i);
+  if (altMatch) {
+    const cleanText = text.replace(altMatch[1], '').trim();
+    return { cleanText, statusBlock: altMatch[1].trim() };
+  }
+
+  return { cleanText: text, statusBlock: null };
+}
+
+/**
+ * 通用自适应状态解析器：
+ * 自动识别任何剧本卡片输出的状态文本，提取指标进度条、情境标签与角色心理
+ */
+export function parseUniversalStatusBlock(
+  content: string,
+  deckId: string = '',
+  deckTitle: string = ''
+): CharacterStatusSnapshot | null {
+  if (!content || !content.trim()) return null;
+
+  // 1. 提取面板标题或阶段名，如从【404女生宿舍状态面板】提取
+  let stageName: string | undefined;
+  const titleMatch = content.match(/【([^】]*(?:状态|面板|监控|属性|数值|好感|危机|存活)[^】]*)】/);
+  if (titleMatch) {
+    stageName = titleMatch[1].trim();
+  }
+
+  // 2. 提取角色名 (如果有显式声明，或从标题提取，或从首个角色指标提取)
+  let characterName = '当前局势';
+  const charMatch = content.match(/\[(?:目标角色|角色|当前对象)\]:\s*([^\n|]+)/i) ||
+                     content.match(/(?:目标角色|角色|当前对象)[：:]\s*([^\n|]+)/i);
+  if (charMatch) {
+    characterName = charMatch[1].trim();
+  } else if (stageName) {
+    characterName = stageName.replace(/状态面板|状态栏|面板|监控/g, '').trim() || '当前局势';
+  }
+
+  const stats: StatMetric[] = [];
+  const customTags: CustomStatusTag[] = [];
+  let moodText: string | undefined;
+
+  // 3. 逐行自适应解析指标项与情境标签
+  const lines = content.split('\n').map(l => l.trim()).filter(Boolean);
+  const processedKeys = new Set<string>();
+
+  for (const line of lines) {
+    if (/^【.*】$/.test(line)) continue;
+
+    // 匹配 "键 : 值 (说明/备注)" 模式
+    const lineMatch = line.match(/^([^\s:：\[【]+|\S.*?)\s*[:：]\s*([\s\S]*)$/);
+    if (!lineMatch) continue;
+
+    let rawKey = lineMatch[1].trim();
+    const rawVal = lineMatch[2].trim();
+
+    // 提取行首 Emoji 图标与清洗键名
+    const emojiMatch = rawKey.match(/^([\p{Emoji_Presentation}\p{Extended_Pictographic}⚠️❄️🎨🍷💕⏰👤📍💭📌✨💖🛡️💰]+)\s*(.*)$/u);
+    let iconFromLine: string | null = null;
+    if (emojiMatch) {
+      iconFromLine = emojiMatch[1];
+      if (emojiMatch[2]) {
+        rawKey = emojiMatch[2].trim();
+      }
+    }
+
+    if (!rawKey || processedKeys.has(rawKey)) continue;
+
+    // 判断值是否为数值指标项（如 15%、50%、15/100，并附带小括号说明）
+    const numValMatch = rawVal.match(/^(\d+)%?(?:\s*\/(\d+))?(?:\s*[（(]([\s\S]*?)[）)])?$/);
+    const isExplicitNonNum = rawKey.includes('时间') || rawKey.includes('主角状态') || rawKey.includes('位置') || rawKey.includes('地点') || rawKey.includes('心境') || rawKey.includes('微澜');
+
+    if (numValMatch && !isExplicitNonNum) {
+      const value = parseInt(numValMatch[1], 10);
+      const max = parseInt(numValMatch[2], 10) || 100;
+      const extra = (numValMatch[3] || '').trim();
+
+      let icon = iconFromLine || '📊';
+      let color = 'from-blue-500 to-indigo-500';
+      let barColor = 'linear-gradient(90deg, #3b82f6, #6366f1)';
+
+      if (rawKey.includes('好感') || rawKey.includes('心动') || rawKey.includes('爱意') || rawKey.includes('迷恋') || rawKey.includes('依恋') || rawKey.includes('小可') || rawKey.includes('芷柔') || rawKey.includes('玥') || rawKey.includes('仟歌')) {
+        if (!iconFromLine) icon = '💖';
+        color = 'from-pink-500 to-rose-500';
+        barColor = 'linear-gradient(90deg, #ec4899, #f43f5e)';
+      } else if (rawKey.includes('风险') || rawKey.includes('危机') || rawKey.includes('暴露') || rawKey.includes('警报') || rawKey.includes('怀疑') || rawKey.includes('堕落') || rawKey.includes('警戒')) {
+        if (!iconFromLine) icon = value > 50 ? '🚨' : '⚠️';
+        color = value > 50 ? 'from-rose-600 to-red-600' : 'from-amber-500 to-rose-500';
+        barColor = value > 50 ? 'linear-gradient(90deg, #e11d48, #be123c)' : 'linear-gradient(90deg, #f59e0b, #f43f5e)';
+      } else if (rawKey.includes('防线') || rawKey.includes('理智') || rawKey.includes('安全') || rawKey.includes('防御') || rawKey.includes('抗性')) {
+        if (!iconFromLine) icon = '🛡️';
+        color = 'from-emerald-500 to-teal-500';
+        barColor = 'linear-gradient(90deg, #10b981, #14b8a6)';
+      } else if (rawKey.includes('金钱') || rawKey.includes('现金') || rawKey.includes('债务') || rawKey.includes('资源') || rawKey.includes('水') || rawKey.includes('食物')) {
+        if (!iconFromLine) icon = '💰';
+        color = 'from-amber-400 to-emerald-400';
+        barColor = 'linear-gradient(90deg, #f59e0b, #10b981)';
+      }
+
+      stats.push({
+        name: rawKey,
+        value,
+        max,
+        stageDesc: extra || undefined,
+        color,
+        barColor,
+        icon
+      });
+      processedKeys.add(rawKey);
+    } else {
+      // 4. 情境标签与文本状态
+      let icon = iconFromLine || '📌';
+      if (rawKey.includes('时间') || rawKey.includes('日期') || rawKey.includes('时刻')) {
+        if (!iconFromLine) icon = '⏰';
+      } else if (rawKey.includes('状态') || rawKey.includes('主角') || rawKey.includes('伪装')) {
+        if (!iconFromLine) icon = '👤';
+      } else if (rawKey.includes('位置') || rawKey.includes('地点') || rawKey.includes('室友') || rawKey.includes('场景')) {
+        if (!iconFromLine) icon = '📍';
+      } else if (rawKey.includes('心理') || rawKey.includes('心境') || rawKey.includes('微澜') || rawKey.includes('心声')) {
+        if (!iconFromLine) icon = '💭';
+        moodText = rawVal;
+      }
+
+      customTags.push({
+        label: rawKey,
+        value: rawVal,
+        icon
+      });
+      processedKeys.add(rawKey);
+    }
+  }
+
+  if (stats.length === 0 && customTags.length === 0) {
+    return null;
+  }
+
+  return {
+    characterName,
+    stageName: stageName || '局势监控',
+    mood: moodText || (customTags.find(t => t.label.includes('状态'))?.value),
+    stats,
+    customTags
+  };
+}
+
+/**
+ * 寻找历史对话中最近一轮确立的有效状态快照
+ */
+export function findLatestStatusSnapshot(
+  history: Turn[],
+  deckId: string = '',
+  deckTitle: string = ''
+): CharacterStatusSnapshot | null {
+  if (!history || history.length === 0) return null;
+  for (let i = history.length - 1; i >= 0; i--) {
+    const t = history[i];
+    if (!t || t.isUser) continue;
+    const raw = t.rawText || t.story || t.text || '';
+    const { statusBlock } = extractStatusBlock(raw);
+    if (statusBlock) {
+      const snap = parseUniversalStatusBlock(statusBlock, deckId, deckTitle);
+      if (snap && (snap.stats.length > 0 || (snap.customTags && snap.customTags.length > 0))) {
+        return snap;
+      }
+    }
+    const charStatusMatch = raw.match(/<char_status>([\s\S]*?)<\/char_status>/i);
+    if (charStatusMatch) {
+      return parseExplicitCharStatus(charStatusMatch[1].trim(), deckId, deckTitle);
+    }
+  }
+  return null;
+}
+
+/**
+ * 将状态快照转换为供大模型在 system prompt 中参考的结构化基准文本
+ */
+export function formatSnapshotForPrompt(snapshot: CharacterStatusSnapshot): string {
+  const parts: string[] = [];
+  if (snapshot.stageName) {
+    parts.push(`【${snapshot.stageName}】`);
+  }
+  if (snapshot.customTags && snapshot.customTags.length > 0) {
+    for (const tag of snapshot.customTags) {
+      parts.push(`${tag.icon ? tag.icon + ' ' : ''}${tag.label}：${tag.value}`);
+    }
+  }
+  if (snapshot.stats && snapshot.stats.length > 0) {
+    for (const st of snapshot.stats) {
+      parts.push(`${st.icon ? st.icon + ' ' : ''}${st.name}：${st.value}%${st.stageDesc ? `（${st.stageDesc}）` : ''}`);
+    }
+  }
+  if (snapshot.mood) {
+    parts.push(`💭 心境微澜：${snapshot.mood}`);
+  }
+  return parts.join('\n');
+}
+
+const turnStatusCache = new WeakMap<Turn, CharacterStatusSnapshot | null>();
+
+/**
+ * 从一轮对话文本或历史中，解析当前角色的心理数值与本轮波动（内置 WeakMap 缓存）
  */
 export function parseTurnCharacterStatus(
   turn: Turn,
   deckId: string = '',
   deckTitle: string = '',
-  turnIndex: number = 0
+  turnIndex: number = 0,
+  history?: Turn[]
 ): CharacterStatusSnapshot | null {
   if (!turn || turn.isUser) return null;
+  if (turnStatusCache.has(turn)) {
+    return turnStatusCache.get(turn)!;
+  }
+  const result = parseTurnCharacterStatusInternal(turn, deckId, deckTitle, turnIndex, history);
+  turnStatusCache.set(turn, result);
+  return result;
+}
 
+function parseTurnCharacterStatusInternal(
+  turn: Turn,
+  deckId: string = '',
+  deckTitle: string = '',
+  turnIndex: number = 0,
+  history?: Turn[]
+): CharacterStatusSnapshot | null {
   const rawText = turn.rawText || turn.story || turn.text || '';
   if (!rawText) return null;
 
-  // 1. 尝试从 <char_status> 标签解析
+  // 1. 通用自适应解析器优先：自动命中任意卡片的状态面板（如【404女生宿舍状态面板】或 <dormitory_status>）
+  const { statusBlock } = extractStatusBlock(rawText);
+  if (statusBlock) {
+    const universal = parseUniversalStatusBlock(statusBlock, deckId, deckTitle);
+    if (universal && (universal.stats.length > 0 || (universal.customTags && universal.customTags.length > 0))) {
+      return universal;
+    }
+  }
+
+  // 2. 尝试从 <char_status> 标签解析
   const charStatusMatch = rawText.match(/<char_status>([\s\S]*?)<\/char_status>/i);
   if (charStatusMatch) {
     const content = charStatusMatch[1].trim();
     return parseExplicitCharStatus(content, deckId, deckTitle);
   }
 
-  // 2. 尝试从 <love_status> 标签解析
+  // 3. 尝试从 <love_status> 标签解析
   const loveMatch = rawText.match(/<love_status>([\s\S]*?)<\/love_status>/i);
   if (loveMatch) {
     const content = loveMatch[1].trim();
     return parseLoveStatus(content, rawText);
   }
 
-  // 3. 尝试从 <rpg_status> 标签解析
+  // 4. 尝试从 <rpg_status> 标签解析
   const rpgMatch = rawText.match(/<rpg_status>([\s\S]*?)<\/rpg_status>/i);
   if (rpgMatch) {
     const content = rpgMatch[1].trim();
     return parseRpgStatus(content, rawText);
   }
 
-  // 4. 启发式保底回退：若无上述标签，根据剧本特征和正文内容生成精准的状态卡
+  // 5. 状态平滑继承机制 (State Inheritance)：
+  // 若本轮模型未输出状态面板（如长上下文、模型注意力转移或未触发输出），
+  // 向前回溯最近一轮有效的面板状态并无损继承，绝不降级丢掉已有角色与数值！
+  if (history && history.length > 0) {
+    const maxSearch = Math.min(turnIndex, history.length);
+    for (let i = maxSearch - 1; i >= 0; i--) {
+      const prevTurn = history[i];
+      if (!prevTurn || prevTurn.isUser) continue;
+      const prevRaw = prevTurn.rawText || prevTurn.story || prevTurn.text || '';
+      const { statusBlock: prevBlock } = extractStatusBlock(prevRaw);
+      if (prevBlock) {
+        const prevSnap = parseUniversalStatusBlock(prevBlock, deckId, deckTitle);
+        if (prevSnap && (prevSnap.stats.length > 0 || (prevSnap.customTags && prevSnap.customTags.length > 0))) {
+          // 提取本轮可能的微表情作为心声更新
+          const innerMatch = rawText.match(/(?:心想|心境|心头|暗想|心道|暗自)[：:，,]([^。\n]+)/);
+          return {
+            ...prevSnap,
+            mood: innerMatch ? innerMatch[1].trim() : prevSnap.mood
+          };
+        }
+      }
+    }
+  }
+
+  // 6. 启发式保底回退：若全剧本历史从未出现过任何结构化面板，才生成基础状态卡
   return generateHeuristicStatus(turn, deckId, deckTitle, turnIndex);
 }
 

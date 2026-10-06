@@ -7,6 +7,7 @@ import { fetchPrivateCards, PrivateCardRecord, updatePrivateCard } from '@/lib/a
 import { StoryDeck } from '@/lib/types';
 import { downloadJson } from '@/components/chat/SessionWorkbench';
 import { LIGHTHOUSE_DECK } from '@/lib/storyDiagnostics';
+import { safeRandomUUID } from '@/lib/uuid';
 
 const subscribeToMount = () => () => {};
 export function PrivateCardLibrary() {
@@ -39,7 +40,7 @@ function LibraryPanel({ user }: { user: string }) {
   const visible = [...cards, ...cloud.filter(c => !c.deleted && !cards.some(local => local.id === c.id)).map(c => c.deck)];
   return <section aria-label="我的角色卡" className="space-y-3 rounded-2xl border border-sky-900 bg-slate-900 p-4 text-slate-200">
     <h2 className="font-semibold">我的角色卡</h2>
-    <button disabled={busy} className="rounded-lg border border-slate-600 px-3 py-2 text-sm disabled:opacity-40" onClick={()=>void perform(()=>{savePrivateCard(user,{...LIGHTHOUSE_DECK,id:'local_'+crypto.randomUUID()});setMessage('已添加灯塔来信样例，可开始试玩并在会话工作台调整规则。');})}>添加灯塔冒险样例</button>
+    <button disabled={busy} className="rounded-lg border border-slate-600 px-3 py-2 text-sm disabled:opacity-40" onClick={()=>void perform(()=>{savePrivateCard(user,{...LIGHTHOUSE_DECK,id:'local_'+safeRandomUUID()});setMessage('已添加灯塔来信样例，可开始试玩并在会话工作台调整规则。');})}>添加灯塔冒险样例</button>
     <p className="text-xs text-slate-400">支持酒馆 V2 / V3、普通角色卡 JSON、PNG 和本站备份。导入先保存在本机；登录后可上传到私人云端，在其他设备登录同一账号使用。</p>
     {token ? <button disabled={busy} className="text-sm text-sky-200 underline" onClick={() => void perform(async () => { setCloud(await fetchPrivateCards()); setMessage('云端列表已刷新。本机内容保持不变。'); })}>刷新云端角色卡</button> : <p className="text-xs text-amber-200">当前使用本机卡库，登录账号后可同步。</p>}
     <label className="block text-sm">选择角色卡或备份文件<input disabled={busy} className="mt-2 block max-w-full text-xs" type="file" accept=".json,.png" onChange={async e => {
@@ -73,7 +74,7 @@ function LibraryPanel({ user }: { user: string }) {
           {card.sourceCard !== undefined && <button onClick={() => downloadJson(card.sourceCard, '原始酒馆角色卡.json')}>导出原卡</button>}
           {token && local && <button disabled={busy} onClick={() => void perform(async () => { updateCloud(await updatePrivateCard(card.id, remote?.revision || 0, 'save', card)); setMessage('本机版本已保存到私人云端。'); })}>上传本机版本</button>}
           {remote && !remote.deleted && <button disabled={busy} onClick={() => void perform(() => {
-            if (differs && local) savePrivateCard(user, { ...card, id: 'local_' + crypto.randomUUID(), title: card.title + ' · 同步前备份' });
+            if (differs && local) savePrivateCard(user, { ...card, id: 'local_' + safeRandomUUID(), title: card.title + ' · 同步前备份' });
             savePrivateCard(user, remote.deck); setMessage('云端版本已保存到本机；原本机差异内容已另存备份。');
           })}>下载云端版本</button>}
           <button disabled={busy} onClick={() => void perform(async () => {

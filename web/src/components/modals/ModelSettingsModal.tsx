@@ -158,10 +158,10 @@ export function ModelSettingsModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
-      <div className="w-full max-w-lg bg-[#161720] border border-[#2b2e3c] rounded-2xl p-6 shadow-2xl text-gray-200 space-y-5 max-h-[90vh] overflow-y-auto no-scrollbar">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-lg bg-[#141620] border border-[#2b2e3c] rounded-2xl shadow-2xl text-gray-200 flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#252836] pb-3">
+        <div className="flex items-center justify-between border-b border-[#252836] px-6 py-4 bg-[#161722] shrink-0">
           <div className="flex items-center gap-2">
             <Cpu className="w-5 h-5 text-amber-400" />
             <div>
@@ -177,7 +177,9 @@ export function ModelSettingsModal() {
           </button>
         </div>
 
-        {/* Quick Provider Chips */}
+        {/* Scrollable Body */}
+        <div className="px-6 py-4 overflow-y-auto space-y-5 flex-1 min-h-0 no-scrollbar">
+          {/* Quick Provider Chips */}
         <div className="flex items-center gap-2 text-xs flex-wrap">
           <span className="text-gray-400 text-[11px]">快捷预设:</span>
           <button
@@ -478,9 +480,10 @@ export function ModelSettingsModal() {
             </div>
           </div>
         )}
+        </div>
 
-        {/* Footer */}
-        <div className="pt-3 border-t border-[#252836] flex items-center justify-between gap-2">
+        {/* Fixed Sticky Footer */}
+        <div className="px-6 py-3.5 border-t border-[#252836] bg-[#12141e] flex items-center justify-between gap-2 shrink-0">
           <button
             type="button"
             disabled={isTesting}
@@ -506,7 +509,7 @@ export function ModelSettingsModal() {
             </button>
             <button
               onClick={handleSave}
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-stone-900 font-bold text-xs shadow-lg shadow-amber-500/20 transition cursor-pointer"
+              className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-stone-900 font-bold text-xs shadow-lg shadow-amber-500/20 transition cursor-pointer active:scale-95"
             >
               保存并生效
             </button>

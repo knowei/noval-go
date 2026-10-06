@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { UserProfile, StoryDeck, Turn, ConversationSave, ModelSettings, EnabledMods } from './types';
 import { fetchConversations, fetchConversation, saveConversation, deleteConversation } from './api';
 import { normalizeSession, SessionSettings } from './sessionEngine';
+import { safeRandomUUID } from './uuid';
 
 // Serialize writes so an older streaming save cannot overwrite a completed reply.
 let saveQueue: Promise<void> = Promise.resolve();
@@ -410,7 +411,7 @@ async function changeBranch(loadHistory: () => Promise<Turn[]>, reason: string, 
     const next = await loadHistory();
     if (!isCurrent()) return false;
     const oldHistory = initial.conversationHistory;
-    const archiveId = 'branch_' + crypto.randomUUID();
+    const archiveId = 'branch_' + safeRandomUUID();
     let saved = !oldHistory.length;
     if (oldHistory.length) {
       const createdAt = new Date().toISOString();
