@@ -928,38 +928,43 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
 
             # 同步写入/更新 plaza_cards 广场卡片，让新创作的剧本即刻在首页展示。
             # 这只是副作用：即使失败也不能连带让「保存剧本」整体失败（例如唯一标题冲突）。
-            try:
-                desc = s.get('desc') or (s.get('handbook') or {}).get('desc') or title
-                tags = s.get('tags') or []
-                if isinstance(tags, str):
-                    tags = [t.strip() for t in tags.split(',') if t.strip()]
-                category = s.get('category') or '都市'
-                c.execute("""
-                INSERT OR REPLACE INTO plaza_cards (
-                    id, deck_id, title, badge, badge_color, author,
-                    "desc", rating, tags_json, heat, is_featured, order_index, category
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, (
-                    f"p_{deck_id}",
-                    deck_id,
-                    title,
-                    badge,
-                    theme_color,
-                    s.get('author', '原创作者'),
-                    desc,
-                    '9.9',
-                    json.dumps(tags, ensure_ascii=False),
-                    'NEW · 刚刚创作',
-                    1,
-                    1,
-                    category
-                ))
-            except Exception as plaza_err:
-                print(f"[Plaza Sync Warning] 广场卡片同步失败，但剧本已保存：{plaza_err}")
+            # skipPlaza：导入对话存档时带过来的私人剧本，不应出现在广场列表里。
+            skip_plaza = bool(payload.get('skipPlaza') or s.get('skipPlaza'))
+            if skip_plaza:
+                print(f"[Plaza Sync] 按请求跳过广场同步（私人/导入剧本）：{deck_id}")
+            else:
                 try:
-                    conn.rollback()
-                except Exception:
-                    pass
+                    desc = s.get('desc') or (s.get('handbook') or {}).get('desc') or title
+                    tags = s.get('tags') or []
+                    if isinstance(tags, str):
+                        tags = [t.strip() for t in tags.split(',') if t.strip()]
+                    category = s.get('category') or '都市'
+                    c.execute("""
+                    INSERT OR REPLACE INTO plaza_cards (
+                        id, deck_id, title, badge, badge_color, author,
+                        "desc", rating, tags_json, heat, is_featured, order_index, category
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """, (
+                        f"p_{deck_id}",
+                        deck_id,
+                        title,
+                        badge,
+                        theme_color,
+                        s.get('author', '原创作者'),
+                        desc,
+                        '9.9',
+                        json.dumps(tags, ensure_ascii=False),
+                        'NEW · 刚刚创作',
+                        1,
+                        1,
+                        category
+                    ))
+                except Exception as plaza_err:
+                    print(f"[Plaza Sync Warning] 广场卡片同步失败，但剧本已保存：{plaza_err}")
+                    try:
+                        conn.rollback()
+                    except Exception:
+                        pass
 
             conn.commit()
             conn.close()
@@ -1424,9 +1429,19 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
         self.send_response(405)
         self.end_headers()
 
+class ReusableThreadingServer(http.server.ThreadingHTTPServer):
+    allow_reuse_address = True
+    daemon_threads = True
+
 if __name__ == '__main__':
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
     init_db()
-    with http.server.ThreadingHTTPServer(("127.0.0.1", PORT), ProxyHandler) as httpd:
-        print(f"Server successfully started on http://127.0.0.1:{PORT}")
-        httpd.serve_forever()
+    try:
+        with ReusableThreadingServer(("127.0.0.1", PORT), ProxyHandler) as httpd:
+            print(f"Server successfully started on http://127.0.0.1:{PORT}", flush=True)
+            httpd.serve_forever()
+    except Exception as e:
+        import traceback
+        print(f"[FATAL ERROR] Server crashed: {e}", file=sys.stderr, flush=True)
+        traceback.print_exc()
+
