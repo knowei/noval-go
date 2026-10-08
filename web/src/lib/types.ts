@@ -193,6 +193,25 @@ export interface EnabledMods {
   lorebookArbiter?: boolean;
   phaseLock?: boolean;
   sceneIncidents?: boolean;
+  haremIntimacyRecord?: boolean;
+}
+
+export interface CharacterIntimacyRecord {
+  characterName: string;
+  avatar?: string;
+  tag?: string;
+  relation: string;
+  favor: number;
+  mood: string;
+  kissCount: number;
+  oralCount: number;
+  sexCount: number;
+  creampieCount: number;
+  orgasmCount: number;
+  firstTimeLost?: boolean;
+  sensitivePoints?: string[];
+  specialEvents?: string[];
+  defenseStage?: string;
 }
 
 export interface LoveStatusData {

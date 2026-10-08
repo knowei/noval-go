@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Turn, EnabledMods, ScenePhaseData } from '@/lib/types';
+import { Turn, EnabledMods, ScenePhaseData, StoryDeck } from '@/lib/types';
+import { useAppStore } from '@/lib/store';
+import { parseHaremIntimacyRecords } from '@/lib/haremStatusTracker';
+import { HaremIntimacyPanel } from './HaremIntimacyPanel';
 import { 
   Heart, 
   ShieldCheck, 
@@ -29,6 +32,7 @@ interface FloatingStatusHudProps {
   enabledMods: EnabledMods;
   deckId?: string;
   deckTitle?: string;
+  currentDeck?: StoryDeck | null;
   onTriggerAction?: (actionText: string) => void;
 }
 
@@ -37,12 +41,15 @@ export const FloatingStatusHud = React.memo(function FloatingStatusHud({
   enabledMods, 
   deckId = '', 
   deckTitle = '',
+  currentDeck,
   onTriggerAction 
 }: FloatingStatusHudProps) {
   const [mounted, setMounted] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isBagOpen, setIsBagOpen] = useState(false);
   const [isPropPanelOpen, setIsPropPanelOpen] = useState(true);
+  const storeDeck = useAppStore(state => state.currentDeck);
+  const effectiveDeck = currentDeck || storeDeck;
   const [activeCgModal, setActiveCgModal] = useState<{ url: string; title: string; subtitle?: string; code?: string } | null>(null);
 
   useEffect(() => {
@@ -203,15 +210,21 @@ export const FloatingStatusHud = React.memo(function FloatingStatusHud({
     return { loveData, rpgData, phaseData, charStatus };
   }, [turns, enabledMods.affectionGauge, enabledMods.rpgAdventureHud, enabledMods.phaseLock, deckId, deckTitle]);
 
+  const haremRecords = useMemo(() => {
+    if (!enabledMods?.haremIntimacyRecord) return [];
+    return parseHaremIntimacyRecords(turns, effectiveDeck, deckId);
+  }, [turns, enabledMods?.haremIntimacyRecord, effectiveDeck, deckId]);
+
   const { loveData, rpgData, phaseData, charStatus } = hudData;
   const showProps = Boolean(enabledMods.sceneIncidents);
+  const showHaremRecords = Boolean(enabledMods.haremIntimacyRecord && haremRecords.length > 0);
 
   if (!mounted) {
     return null;
   }
 
   // 如果所有状态都没开启且无通用属性和道具盘，不渲染
-  if (!loveData && !rpgData && !phaseData && !charStatus && !showProps) {
+  if (!loveData && !rpgData && !phaseData && !charStatus && !showProps && !showHaremRecords) {
     return null;
   }
 
@@ -283,6 +296,12 @@ export const FloatingStatusHud = React.memo(function FloatingStatusHud({
                 <span>心防羁绊</span>
               </span>
             )}
+            {showHaremRecords && (
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30 flex items-center gap-1">
+                <Heart className="w-3 h-3 text-rose-400 fill-rose-500/30" />
+                <span>全员私密记录 ({haremRecords.length}人)</span>
+              </span>
+            )}
             {rpgData && (
               <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 flex items-center gap-1">
                 <Swords className="w-3 h-3 text-indigo-400" />
@@ -304,6 +323,11 @@ export const FloatingStatusHud = React.memo(function FloatingStatusHud({
         {/* HUD 主体面板 */}
         {!isCollapsed && (
           <div className="pt-2.5 space-y-2.5">
+            {/* 全员私密关系与体态记录面板 (肉卡 / 多角色互动卡) */}
+            {showHaremRecords && (
+              <HaremIntimacyPanel records={haremRecords} deckTitle={deckTitle || effectiveDeck?.title} />
+            )}
+
             {/* 0. 核心机制 · 角色数值与路线控制台 (1:1 对齐设定图) */}
             {charStatus && (
               <div className="bg-[#151722]/90 rounded-xl p-3 border border-purple-500/25 space-y-3 shadow-lg">

@@ -883,7 +883,7 @@ ${deckDesc ? `世界观简述：${deckDesc}\n` : ''}`;
 <p><climax>🎬【番剧高能名场面·定格特写】：（在情绪突破、心防破防或重大进展时定格呈现CG画面）</climax></p>
 </article>
 <char_status>[目标角色]: [主要互动NPC] | [核心属性1]: [数值]/100 ([本轮增减如+5, 阶段名]) | [核心属性2]: [数值]/100 ([本轮增减如-5, 阶段名]) | [心境微澜]: [一句话描述NPC本轮受玩家行动影响后的深层心理波动或微表情]</char_status>
-${enabledMods?.phaseLock ? '<scene_phase>[当前阶段]: 阶段X·[阶段名] (进度: [数字]/100) | [核心任务]: [当前目标] | [解锁判定]: [解锁条件]</scene_phase>\n' : ''}${enabledMods?.affectionGauge ? '<love_status>[目标角色]: [角色名] | [心动值]: [数字]/100 ([阶段]) | [心防防御]: [数字]% | [亲密许可]: [许可行为]</love_status>\n' : ''}${enabledMods?.rpgAdventureHud ? '<rpg_status>[境界/等级]: [境界] (进度: [数字]/100) | [生命/气血]: [数字]% | [法力/真元]: [数字]% | [储物背包]: [物品列表] | [本轮收获]: [收获物]</rpg_status>\n' : ''}
+${enabledMods?.phaseLock ? '<scene_phase>[当前阶段]: 阶段X·[阶段名] (进度: [数字]/100) | [核心任务]: [当前目标] | [解锁判定]: [解锁条件]</scene_phase>\n' : ''}${enabledMods?.affectionGauge ? '<love_status>[目标角色]: [角色名] | [心动值]: [数字]/100 ([阶段]) | [心防防御]: [数字]% | [亲密许可]: [许可行为]</love_status>\n' : ''}${enabledMods?.rpgAdventureHud ? '<rpg_status>[境界/等级]: [境界] (进度: [数字]/100) | [生命/气血]: [数字]% | [法力/真元]: [数字]% | [储物背包]: [物品列表] | [本轮收获]: [收获物]</rpg_status>\n' : ''}${enabledMods?.haremIntimacyRecord ? '<harem_status>\n[角色名]: 心情:[当期真实心境] | 关系:[与主角当前关系] | 好感:[N]% | 接吻:[N]次 | 口交:[N]次 | 合体:[N]次 | 中出:[N]次 | 高潮:[N]次 | 隐秘状态:[敏感部位/私密进展]\n</harem_status>\n' : ''}
 <opt>
 <suggested_questions>
 <d>A. [行动标题] - 具体的行动举措或带有台词的交互说明【风险/策略评估：简要说明此举可能引发的心防变化或潜在代价】</d>

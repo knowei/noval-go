@@ -20,7 +20,8 @@ import {
   Settings,
   PanelLeftClose,
   PanelLeftOpen,
-  Puzzle
+  Puzzle,
+  Heart
 } from 'lucide-react';
 
 import { isCheckpointId, useAppStore } from '@/lib/store';
@@ -172,7 +173,14 @@ export default function ChatPage() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const latestUserTurnRef = useRef<HTMLDivElement>(null);
   const streamBottomRef = useRef<HTMLDivElement>(null);
+  const statusHudRef = useRef<HTMLDivElement>(null);
   const hasInitialScrolledRef = useRef(false);
+
+  const handleScrollToStatusHud = () => {
+    if (statusHudRef.current) {
+      statusHudRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  };
 
   const generateStoryExportText = () => {
     const title = currentDeck?.title || '沉浸式推演剧本';
@@ -364,6 +372,7 @@ export default function ChatPage() {
   const isXiuxianWorld = deckId === 'deck_xiuxian_world' || deckId === '4339eb70-6f5b-40f8-9f19-0da2d6acd6b7';
   const isDaughterDoorBlock = deckId === 'deck_daughter_door_block' || deckId === '2168197e-903b-4727-97e3-bf5f1d5b6c8f';
   const isMotherSisterBaby = deckId === 'deck_mother_sister_baby' || deckId === '758e40b4-c1b3-4655-a83a-5ef136b60a2b';
+  const isAzurLane = deckId === 'deck_azur_lane_open_world' || (typeof deckId === 'string' && (deckId.includes('azur_lane') || deckId.includes('碧蓝')));
 
   let bgClass = '';
   if (isCoser) bgClass = 'coser-sister-bg';
@@ -397,6 +406,7 @@ export default function ChatPage() {
   else if (isXiuxianWorld) bgClass = 'xiuxian-world-bg';
   else if (isDaughterDoorBlock) bgClass = 'daughter-door-block-bg';
   else if (isMotherSisterBaby) bgClass = 'mother-sister-baby-bg';
+  else if (isAzurLane) bgClass = 'azur-lane-bg';
 
   const scopedCss = React.useMemo(
     () => scopeDeckCustomCss(currentDeck?.customCss, 'story-custom-scope'),
@@ -421,9 +431,12 @@ export default function ChatPage() {
     // 这样 runGeneration 及依赖它的回调都能保持稳定身份。
     const live = useAppStore.getState();
     const modelSettings = live.modelSettings;
-    // 把模组中心的开关翻译成声明式扩展（尾部 system 钩子）后再组装提示词，
-    // 否则这些开关只影响界面显示，对模型毫无作用。
-    const sessionSettings = applyModExtensions(live.sessionSettings, live.enabledMods);
+    const activeRoleplayMode = modelSettings.roleplayMode || 'realistic';
+    const sessionSettings = applyModExtensions(
+      { ...live.sessionSettings, roleplayMode: activeRoleplayMode },
+      live.enabledMods,
+      activeRoleplayMode
+    );
     const currentDeck = live.currentDeck;
     const currentUserId = live.currentUserId;
     const currentConversationId = live.currentConversationId;
@@ -817,11 +830,21 @@ export default function ChatPage() {
       />
 
       {/* 硬件加速独立背景层：脱离滚动流，避免手机端显存溢出与重绘崩溃 */}
-      {bgClass && (
+      {(bgClass || currentDeck?.handbook?.bg_image) && (
         <div
           aria-hidden="true"
-          className={`fixed inset-0 pointer-events-none -z-10 ${bgClass}`}
-          style={{ transform: 'translateZ(0)', willChange: 'transform' }}
+          className={`fixed inset-0 pointer-events-none -z-10 ${bgClass || ''}`}
+          style={{
+            transform: 'translateZ(0)',
+            willChange: 'transform',
+            ...(!bgClass && currentDeck?.handbook?.bg_image ? {
+              backgroundImage: `radial-gradient(circle at 50% 25%, rgba(68, 48, 110, 0.85) 0%, rgba(20, 15, 42, 0.96) 65%, #0d0a20 100%), url('${currentDeck.handbook.bg_image}')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              backgroundAttachment: 'fixed'
+            } : {})
+          }}
         />
       )}
 
@@ -838,7 +861,11 @@ export default function ChatPage() {
         {/* Theater Sticky Header */}
         <header
           id="theater-header"
-          className="sticky top-0 z-20 border-b border-[#20222e] bg-[#0e0f14]/95 backdrop-blur-md px-2 sm:px-4 py-1.5 flex items-center justify-between gap-1.5 select-none"
+          className={`sticky top-0 z-20 border-b px-2 sm:px-4 py-1.5 flex items-center justify-between gap-1.5 select-none transition-colors ${
+            bgClass
+              ? 'border-purple-500/20 bg-[#0e0f14]/50 backdrop-blur-md'
+              : 'border-[#20222e] bg-[#0e0f14]/95 backdrop-blur-md'
+          }`}
         >
           {/* 左侧：折叠开关 + 返回探索 + 剧本标题 + 当前模型 */}
           <div className="flex items-center gap-1.5 min-w-0 flex-1">
@@ -987,6 +1014,16 @@ export default function ChatPage() {
                 <span className="hidden md:inline">设定卡</span>
               </button>
             )}
+
+            {/* 实时状态 HUD 快捷直达 (无论推演到第几幕，一键平滑滚动到状态面板) */}
+            <button
+              onClick={handleScrollToStatusHud}
+              className="inline-flex px-2 py-1 rounded-lg bg-pink-950/40 hover:bg-pink-900/50 border border-pink-500/40 text-pink-300 hover:text-white text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
+              title="一键查看全员私密记录与实时状态面板"
+            >
+              <Heart className="w-3.5 h-3.5 text-pink-400 fill-pink-500/30" />
+              <span className="hidden sm:inline">状态</span>
+            </button>
 
             {/* 存档抽屉 */}
             <button
@@ -1138,10 +1175,14 @@ export default function ChatPage() {
         </header>
 
         {/* Main Dialogue Stream */}
-        <div className="story-custom-scope flex-1 max-w-3xl mx-auto w-full p-3 sm:p-6 space-y-5 sm:space-y-6 pb-72 sm:pb-80">
+        <div className={`story-custom-scope flex-1 mx-auto w-full transition-all duration-300 pb-72 sm:pb-80 ${
+          conversationHistory.length === 0 && currentDeck?.customHtml
+            ? 'max-w-6xl xl:max-w-7xl p-2 sm:p-4'
+            : 'max-w-3xl p-3 sm:p-6 space-y-5 sm:space-y-6'
+        }`}>
           {/* Author-designed Interactive Character Card & Handbook */}
           {currentDeck?.customHtml && (
-            <div id="handbook-card-anchor" data-no-cv className="scroll-mt-14">
+            <div id="handbook-card-anchor" data-no-cv className="scroll-mt-14 w-full">
               <InteractiveHandbookCard
                 html={currentDeck.customHtml}
                 customCss={currentDeck.customCss}
@@ -1378,6 +1419,18 @@ export default function ChatPage() {
               />
             );
           })}
+
+          {/* 实时状态控制台与全员私密记录 LIVE HUD (推演后直接呈现在最新剧情下方，每次推演完即刻可见，无需费力拉回最顶部) */}
+          <div ref={statusHudRef} id="status-hud-anchor" className="scroll-mt-14 w-full">
+            <FloatingStatusHud
+              turns={conversationHistory}
+              enabledMods={enabledMods}
+              deckId={deckId}
+              deckTitle={currentDeck?.title}
+              currentDeck={currentDeck}
+              onTriggerAction={handleSend}
+            />
+          </div>
 
           <div ref={streamBottomRef} />
         </div>

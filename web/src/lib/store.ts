@@ -19,6 +19,7 @@ const defaultMods: EnabledMods = {
   lorebookArbiter: true,
   phaseLock: true,
   sceneIncidents: true,
+  haremIntimacyRecord: true,
 };
 
 const getInitialMods = (): EnabledMods => {
@@ -37,6 +38,7 @@ const getInitialMods = (): EnabledMods => {
         lorebookArbiter: parsed.lorebookArbiter ?? true,
         phaseLock: parsed.phaseLock ?? true,
         sceneIncidents: parsed.sceneIncidents ?? true,
+        haremIntimacyRecord: parsed.haremIntimacyRecord ?? true,
       };
     }
   } catch (e) {

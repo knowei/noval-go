@@ -1,0 +1,159 @@
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>继妹管教计划</title>
+<style>
+:root {--primary-pink:#ff1493;--dark-pink:#c71585;--bg-black:#0f0f14;--card-bg:#1a1a24;--text-main:#e0e0e0;--text-muted:#888899;--border-color:#333344;}
+* {box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body {font-family:'Microsoft YaHei', sans-serif;background-color:var(--bg-black);color:var(--text-main);line-height:1.6;font-size:15px;background-image:linear-gradient(45deg, rgba(255,20,147,0.03) 25%, transparent 25%, transparent 75%, rgba(255,20,147,0.03) 75%, rgba(255,20,147,0.03)), linear-gradient(45deg, rgba(255,20,147,0.03) 25%, transparent 25%, transparent 75%, rgba(255,20,147,0.03) 75%, rgba(255,20,147,0.03));background-size:40px 40px;background-position:0 0, 20px 20px;}
+.container {max-width:700px;margin:0 auto;padding:15px;min-height:100vh;}
+.header {text-align:center;padding:30px 0 20px;border-bottom:2px dashed var(--primary-pink);margin-bottom:25px;}
+.title {font-size:2.2em;color:var(--primary-pink);font-weight:900;text-shadow:2px 2px 5px rgba(255,20,147,0.4);letter-spacing:3px;margin-bottom:10px;text-transform:uppercase;}
+.subtitle {font-size:1em;color:var(--text-muted);font-style:italic;}
+.card {background:var(--card-bg);border:1px solid var(--border-color);border-left:4px solid var(--primary-pink);border-radius:8px;padding:20px;margin-bottom:20px;box-shadow:0 4px 15px rgba(0,0,0,0.5);position:relative;overflow:hidden;}
+.card::before {content:'🖤';position:absolute;top:10px;right:15px;font-size:1.5em;opacity:0.2;}
+.card-title {color:var(--primary-pink);font-size:1.3em;margin-bottom:15px;display:flex;align-items:center;font-weight:bold;}
+.card-title::before {content:'';display:inline-block;width:8px;height:8px;background:var(--primary-pink);border-radius:50%;margin-right:10px;}
+.tags-container {display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px;}
+.tag {background:rgba(255,20,147,0.1);color:var(--primary-pink);border:1px solid rgba(255,20,147,0.3);padding:4px 10px;border-radius:15px;font-size:0.85em;}
+.desc-text {margin-bottom:10px;color:#ccc;}
+.highlight {color:var(--primary-pink);font-weight:bold;}
+.warning-box {background:rgba(255,0,0,0.1);border:1px solid #ff4444;border-left:4px solid #ff4444;padding:15px;border-radius:6px;margin-top:15px;}
+.warning-title {color:#ff4444;font-weight:bold;margin-bottom:8px;display:flex;align-items:center;}
+.warning-title::before {content:'⚠️';margin-right:5px;}
+.warning-text {font-size:0.9em;color:#ffaaaa;margin-bottom:5px;}
+details {background:#111118;border:1px solid var(--border-color);border-radius:6px;margin-top:15px;overflow:hidden;}
+summary {padding:12px 15px;font-weight:bold;color:var(--primary-pink);cursor:pointer;user-select:none;display:flex;align-items:center;background:rgba(255,20,147,0.05);}
+summary::before {content:'▶';display:inline-block;margin-right:10px;font-size:0.8em;transition:transform 0.2s;}
+details[open] summary::before {transform:rotate(90deg);}
+.details-content {padding:15px;font-size:0.95em;border-top:1px solid var(--border-color);color:#ffb3c1;}
+.form-group {margin-bottom:20px;}
+.form-label {display:block;font-weight:bold;color:var(--text-main);margin-bottom:8px;font-size:1em;}
+.form-hint {font-size:0.8em;color:var(--text-muted);font-weight:normal;margin-left:5px;}
+input[type="text"], textarea {width:100%;padding:12px;border:1px solid var(--border-color);background:#111118;color:var(--text-main);font-family:inherit;font-size:0.95em;border-radius:4px;transition:all 0.3s;}
+input[type="text"]:focus, textarea:focus {outline:none;border-color:var(--primary-pink);box-shadow:0 0 8px rgba(255,20,147,0.3);}
+textarea {height:80px;resize:vertical;}
+.btn-submit {display:block;width:100%;padding:15px;background:transparent;color:var(--primary-pink);font-size:1.2em;font-weight:bold;border:2px solid var(--primary-pink);border-radius:6px;cursor:pointer;margin-top:30px;transition:all 0.3s;text-transform:uppercase;letter-spacing:2px;}
+.btn-submit:hover {background:var(--primary-pink);color:#fff;box-shadow:0 0 15px rgba(255,20,147,0.5);}
+#result-box {display:none;margin-top:25px;animation:fadeIn 0.5s;}
+@keyframes fadeIn {from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);}}
+#output-text {width:100%;height:220px;background:#0a0a0d;color:#ffb3c1;border:1px dashed var(--primary-pink);padding:15px;font-family:monospace;font-size:0.95em;white-space:pre-wrap;resize:none;border-radius:6px;}
+.footer {text-align:center;margin-top:40px;padding:20px 0;font-size:0.85em;color:var(--text-muted);border-top:1px solid var(--border-color);}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1 class="title">继妹管教计划</h1>
+<div class="subtitle">"别逼我急眼啊，老登！" —— 绝对服从的调教之路</div>
+</div>
+<div class="card">
+<div class="card-title">👧 目标档案：夏茉 (你的继妹)</div>
+<div class="tags-container">
+<span class="tag">地雷系亚逼</span>
+<span class="tag">嚣张嘴臭</span>
+<span class="tag">初恋脸</span>
+<span class="tag">158cm/42kg</span>
+<span class="tag">B罩杯微乳</span>
+<span class="tag">降噪耳机</span>
+<span class="tag">绝对处女</span>
+</div>
+<p class="desc-text">表面嚣张跋扈，把你当“爆金币的老登”和“免费佣人”。日常大码T恤配热裤/百褶裙、破洞网袜、厚底鞋，戴Choker。私下喜欢穿带骷髅或蕾丝元素的黑色内衣装成熟。</p>
+<details>
+<summary>💬 听听她怎么说</summary>
+<div class="details-content">
+「看什么看啊虾头男？尊嘟假嘟，你不会真以为老登把你当盘菜了吧？赶紧爆点金币给本小姐点个外卖，别逼我急眼啊，急了急了急了！」
+</div>
+</details>
+</div>
+<div class="card">
+<div class="card-title">⚙️ 核心玩法与排雷指南</div>
+<p class="desc-text" style="font-size:0.9em;color:var(--text-muted);">本作是高难度、慢热型、重惩罚的养成管教文字游戏。切勿开局硬上。</p>
+<ul style="padding-left:20px;margin-bottom:15px;color:#ccc;font-size:0.95em;">
+<li style="margin-bottom:8px;"><strong>管教与恩威并施：</strong>通过物理/心理管教(没收手机、断网、经济制裁等)打压【叛逆值】。破防哭泣时适时关怀，提升【服从值】和【依赖值】。</li>
+<li style="margin-bottom:8px;"><strong>感官体验：</strong>高频描写气味(劣质电子烟混少女奶香)、白眼、耳机漏音等五感细节。服从值达标后描写极度直白肉欲。</li>
+</ul>
+<div class="warning-box">
+<div class="warning-title">绝对的数值防线 (违反即GameOver)</div>
+<div class="warning-text">• <strong>服从值 < 30</strong>：极度抗拒亲密接触。强行猥亵会报警/咬人。</div>
+<div class="warning-text">• <strong>服从值 < 60</strong>：拒绝性交。执意强迫/下药将触发天降正义。</div>
+</div>
+</div>
+<div class="card">
+<div class="card-title">📝 建立你的威严 (开局设定)</div>
+<div class="form-group">
+<label class="form-label">1. 你的姓名 <span class="form-hint">(前期她多半叫你老登/虾头男)</span></label>
+<input type="text" id="p-name" placeholder="如：林渊" value="林渊">
+</div>
+<div class="form-group">
+<label class="form-label">2. 你的性格 <span class="form-hint">(影响管教手段)</span></label>
+<input type="text" id="p-persona" placeholder="如：冷酷严厉的霸总 / 腹黑笑面虎..." value="冷酷严厉，底线极高，不容挑衅">
+</div>
+<div class="form-group">
+<label class="form-label">3. 你的外貌 <span class="form-hint">(建立压迫感)</span></label>
+<input type="text" id="p-appearance" placeholder="如：身高185，常年穿白衬衫，戴金丝眼镜..." value="身高185，常年穿黑衬衫，身形挺拔且具有压迫感">
+</div>
+<div class="form-group">
+<label class="form-label">4. 你的肉棒 <span class="form-hint">(后期成人内容设定)</span></label>
+<input type="text" id="p-dick" placeholder="如：18cm，粗壮，青筋暴起..." value="18cm，极其粗壮，青筋暴起，龟头巨大">
+</div>
+<div class="form-group">
+<label class="form-label">5. 初始管教道具 <span class="form-hint">(你手头的筹码)</span></label>
+<input type="text" id="p-item" placeholder="如：戒尺、她的生活费银行卡、备用钥匙..." value="她的生活费银行卡、家里的WiFi路由器控制权">
+</div>
+<div class="form-group">
+<label class="form-label">6. 开场动作/场景 <span class="form-hint">(至关重要)</span></label>
+<textarea id="p-scene" placeholder="描写你想开始的画面...">她刚提着行李箱被父母扔到我家门口，正嚼着口香糖，戴着耳机对我翻白眼，把行李箱往我脚边一踢，伸手找我要钱点外卖。而我决定给她立下第一条规矩……</textarea>
+</div>
+<button class="btn-submit" id="btn-gen">生成设定 · 开始管教</button>
+<div id="result-box">
+<textarea id="output-text" readonly></textarea>
+</div>
+</div>
+<div class="footer">
+©继妹管教计划<br>
+</div>
+</div>
+<script>
+document.getElementById('btn-gen').addEventListener('click', function() {
+const name = document.getElementById('p-name').value || '未命名';
+const persona = document.getElementById('p-persona').value || '未设定';
+const appearance = document.getElementById('p-appearance').value || '未设定';
+const dick = document.getElementById('p-dick').value || '未设定';
+const item = document.getElementById('p-item').value || '无';
+const scene = document.getElementById('p-scene').value || '未设定';
+const output = `【管教者设定已确认】
+姓名：${name}
+性格：${persona}
+外貌：${appearance}
+肉棒：${dick}
+初始道具：${item}
+开场场景：${scene}
+[系统提示：设定已锁定。地雷系继妹夏茉正站在你面前，空气中弥漫着劣质电子烟味。]
+[初始数值生成中...]
+👿叛逆值: 90 | 🛐服从值: 0 | 🥺依赖值: 5
+[警告：当前服从值极低，严禁任何强迫性行为！请从基础管教开始。]
+[请发送你的第一个行动指令...]`;
+const resBox = document.getElementById('result-box');
+const outText = document.getElementById('output-text');
+resBox.style.display = 'block';
+outText.value = output;
+outText.select();
+try {
+document.execCommand('copy');
+this.innerText = '设定已复制 · 准备接入';
+this.style.background = 'var(--primary-pink)';
+this.style.color = '#fff';
+setTimeout(() => { 
+this.innerText = '生成设定 · 开始管教';
+this.style.background = 'transparent';
+this.style.color = 'var(--primary-pink)';
+}, 3000);
+} catch(err) {
+this.innerText = '生成成功，请手动复制';
+}
+});
+</script>
+</body>
+</html>

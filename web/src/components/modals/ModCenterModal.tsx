@@ -47,6 +47,7 @@ export function ModCenterModal() {
       lorebookArbiter: true,
       phaseLock: true,
       sceneIncidents: true,
+      haremIntimacyRecord: true,
     });
   };
 
@@ -491,6 +492,52 @@ export function ModCenterModal() {
                 <span
                   className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
                     enabledMods.sceneIncidents ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {/* 模组 10：全员私密关系与体态记录 MOD */}
+          <div className={`p-4 rounded-xl border transition-all ${
+            enabledMods.haremIntimacyRecord
+              ? 'bg-[#181a24] border-pink-500/50 shadow-[0_0_15px_rgba(244,114,182,0.15)]'
+              : 'bg-[#13141b] border-gray-800 opacity-70'
+          }`}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="space-y-1.5 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="p-1.5 rounded-lg bg-pink-500/20 text-pink-400">
+                    <Heart className="w-4 h-4 fill-pink-500/30" />
+                  </div>
+                  <span className="font-bold text-sm text-gray-100">
+                    全员私密关系与体态记录 MOD
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-pink-500/20 text-pink-300 border border-pink-500/30">
+                    多角色互动卡 / 肉卡必备
+                  </span>
+                </div>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  实时追踪全员（如女生宿舍4人、碧蓝航线舰船等）内心真实心境、契约关系阶段、完璧破身状态，以及深层身体交互频次（接吻、口交、合体、中出灌满、绝顶高潮及敏感弱点）。
+                </p>
+                <div className="text-[11px] text-gray-400 flex items-center gap-2 pt-1 font-mono">
+                  <span className="text-pink-400">● 实时心境心理活动</span>
+                  <span className="text-purple-400">● 5维私密交互计数</span>
+                  <span className="text-rose-400">● 完璧/破身与防线追踪</span>
+                </div>
+              </div>
+
+              {/* 开关 */}
+              <button
+                type="button"
+                onClick={() => toggleMod('haremIntimacyRecord')}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  enabledMods.haremIntimacyRecord ? 'bg-pink-600' : 'bg-gray-700'
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out ${
+                    enabledMods.haremIntimacyRecord ? 'translate-x-5' : 'translate-x-0'
                   }`}
                 />
               </button>

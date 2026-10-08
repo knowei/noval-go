@@ -483,11 +483,14 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                 return obj.isoformat()
             return str(obj)
         resp_bytes = json.dumps(data, default=json_serial, ensure_ascii=False).encode('utf-8')
-        self.send_response(status)
-        self.send_header('Content-Type', 'application/json; charset=utf-8')
-        self.send_header('Content-Length', str(len(resp_bytes)))
-        self.end_headers()
-        self.wfile.write(resp_bytes)
+        try:
+            self.send_response(status)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.send_header('Content-Length', str(len(resp_bytes)))
+            self.end_headers()
+            self.wfile.write(resp_bytes)
+        except (ConnectionAbortedError, BrokenPipeError, ConnectionResetError):
+            pass
 
     def do_POST(self):
         # 兜底：任何未捕获异常都不应让连接静默断开（前端只会看到网络错误）。
