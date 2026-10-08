@@ -223,20 +223,28 @@ body {
     } catch(err) {}
   }, true);
 
-  // 5. 跨移动端万能剪贴板垫片与剧情启动通信桥梁
+  // 5. 跨移动端万能剪贴板垫片与剧情启动通信桥梁（防重入设计）
+  var isInternalCopying = false;
+  var origWriteText = (navigator.clipboard && navigator.clipboard.writeText) ? navigator.clipboard.writeText.bind(navigator.clipboard) : null;
+  var origExecCommand = (document.execCommand) ? document.execCommand.bind(document) : null;
+
   function mobileSafeCopy(text) {
     if (!text) return false;
     var success = false;
+    var prevFlag = isInternalCopying;
+    isInternalCopying = true;
+
     try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).catch(function() {});
+      if (origWriteText) {
+        origWriteText(text).catch(function() {});
       }
     } catch(e) {}
 
     try {
       var ta = document.createElement('textarea');
       ta.value = text;
-      // 关键修复：iOS Safari与部分安卓环境若元素置于视口外（如 top: -1000px）或设为 readonly 将直接拒绝 execCommand
+      // 关键修复：iOS Safari与部分移动端在 pointer-events: none 或视口外时会拒绝聚焦与复制
+      ta.setAttribute('readonly', '');
       ta.style.position = 'fixed';
       ta.style.top = '10px';
       ta.style.left = '10px';
@@ -250,14 +258,17 @@ body {
       ta.style.color = 'transparent';
       ta.style.opacity = '0.01';
       ta.style.zIndex = '999999';
-      ta.style.pointerEvents = 'none';
       document.body.appendChild(ta);
       ta.focus();
       ta.setSelectionRange(0, text.length);
-      success = document.execCommand('copy');
+      if (origExecCommand) {
+        success = origExecCommand('copy');
+      }
       document.body.removeChild(ta);
     } catch(err) {
       success = false;
+    } finally {
+      isInternalCopying = prevFlag;
     }
     return success;
   }
@@ -302,7 +313,7 @@ body {
     if (!text || text.trim().length < 5) return;
     var cleanText = text.trim();
     var now = Date.now();
-    if (cleanText === lastTriggeredText && (now - lastTriggerTime < 600)) {
+    if (cleanText === lastTriggeredText && (now - lastTriggerTime < 800)) {
       return;
     }
     lastTriggeredText = cleanText;
@@ -325,16 +336,17 @@ body {
   // 7. 劫持 iframe 内部 navigator.clipboard.writeText，解决卡片内部自带复制失败并不通知宿主的问题
   try {
     if (navigator.clipboard) {
-      var origWriteText = navigator.clipboard.writeText ? navigator.clipboard.writeText.bind(navigator.clipboard) : null;
       navigator.clipboard.writeText = function(text) {
-        triggerStartStory(text, true);
+        if (!isInternalCopying) {
+          triggerStartStory(text, true);
+        }
         if (origWriteText) {
           return origWriteText(text).catch(function() {
-            mobileSafeCopy(text);
+            if (!isInternalCopying) mobileSafeCopy(text);
             return Promise.resolve();
           });
         }
-        mobileSafeCopy(text);
+        if (!isInternalCopying) mobileSafeCopy(text);
         return Promise.resolve();
       };
     }
@@ -342,12 +354,15 @@ body {
 
   // 8. 劫持 document.execCommand('copy')，捕获卡片传统复制执行
   try {
-    var origExecCommand = document.execCommand ? document.execCommand.bind(document) : null;
-    if (origExecCommand) {
+    if (document.execCommand) {
       document.execCommand = function(cmd) {
         var res = false;
-        try { res = origExecCommand(cmd); } catch(err) { res = false; }
-        if (cmd === 'copy') {
+        try {
+          res = origExecCommand ? origExecCommand(cmd) : false;
+        } catch(err) {
+          res = false;
+        }
+        if (cmd === 'copy' && !isInternalCopying) {
           var text = '';
           try {
             var sel = window.getSelection();
@@ -398,14 +413,21 @@ body {
     }
   }, true);
 
-  // 10. 全局表单 submit 拦截（适用于 <form id="generator-form"> 等卡片）
+  // 10. 全局表单 submit 拦截（防止 form 默认提交刷新 iframe 并提取设定）
   document.addEventListener('submit', function(e) {
+    e.preventDefault();
     setTimeout(function() {
       var output = findGeneratedOutput();
       if (output && output.length > 5) {
         triggerStartStory(output, true);
       }
     }, 70);
+    setTimeout(function() {
+      var output = findGeneratedOutput();
+      if (output && output.length > 5) {
+        triggerStartStory(output, true);
+      }
+    }, 240);
   }, true);
 
   // 11. 动态注入通用的【🚀 填入并以此设定开局】高亮操作按钮
@@ -514,6 +536,39 @@ body {
 
   // 监听来自 iframe 内部的 postMessage 消息
   useEffect(() => {
+    function copyToClipboardFallback(text: string) {
+      if (!text) return;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).catch(() => {
+            legacyCopy(text);
+          });
+          return;
+        }
+      } catch (e) {}
+      legacyCopy(text);
+    }
+
+    function legacyCopy(text: string) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '10px';
+        ta.style.left = '10px';
+        ta.style.width = '24px';
+        ta.style.height = '24px';
+        ta.style.opacity = '0.01';
+        ta.style.zIndex = '999999';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.setSelectionRange(0, text.length);
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch (e) {}
+    }
+
     function handleMessage(event: MessageEvent) {
       if (!event.data || typeof event.data !== 'object') return;
 
@@ -525,11 +580,7 @@ body {
       } else if (event.data.type === 'NOVAL_START_CUSTOM_SETUP' && event.data.payload) {
         const text = String(event.data.payload).trim();
         if (text) {
-          try {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-              navigator.clipboard.writeText(text).catch(() => {});
-            }
-          } catch(e) {}
+          copyToClipboardFallback(text);
           setAppliedNotice('已自动填入开局设定，正在启动剧情...');
           setTimeout(() => setAppliedNotice(null), 3500);
           setIsExpanded(false);
@@ -540,11 +591,7 @@ body {
       } else if (event.data.type === 'NOVAL_SUMMARY_COPIED') {
         const text = String(event.data.payload || '').trim();
         if (text) {
-          try {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-              navigator.clipboard.writeText(text).catch(() => {});
-            }
-          } catch(e) {}
+          copyToClipboardFallback(text);
         }
         setAppliedNotice('开局设定已复制并就绪！');
         setTimeout(() => setAppliedNotice(null), 2500);
