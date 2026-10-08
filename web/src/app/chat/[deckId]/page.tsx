@@ -627,7 +627,8 @@ export default function ChatPage() {
     let baseHistory = live.conversationHistory;
     if (baseHistory.length === 0 && live.currentDeck) {
       const openings = storyOpenings(live.currentDeck, live.sessionSettings);
-      if (openings.length > 0) {
+      const isPlaceholder = (s?: string) => !s || ['选择一段开场白', '请选择开场白', '选择开场白', '请选择一段开场白'].includes(s.trim());
+      if (openings.length > 0 && !isPlaceholder(openings[0]?.story || openings[0]?.text)) {
         addTurn(openings[0]);
         baseHistory = [openings[0]];
       }
@@ -639,8 +640,13 @@ export default function ChatPage() {
     setTimeout(() => {
       if (latestUserTurnRef.current) {
         latestUserTurnRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTo({
+          top: chatContainerRef.current.scrollHeight,
+          behavior: 'smooth'
+        });
       }
-    }, 60);
+    }, 80);
 
     await runGeneration(nextHistory);
   }, [addTurn, runGeneration]);
@@ -1188,6 +1194,9 @@ export default function ChatPage() {
                 customCss={currentDeck.customCss}
                 deckTitle={currentDeck.title}
                 onStartStory={(customPrompt) => {
+                  if (chatInputRef.current) {
+                    chatInputRef.current.setValue(customPrompt);
+                  }
                   handleSend(customPrompt);
                 }}
                 defaultExpanded={conversationHistory.length === 0}

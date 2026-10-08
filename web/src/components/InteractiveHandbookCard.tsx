@@ -223,48 +223,260 @@ body {
     } catch(err) {}
   }, true);
 
+  // 5. 跨移动端万能剪贴板垫片与剧情启动通信桥梁
+  function mobileSafeCopy(text) {
+    if (!text) return false;
+    var success = false;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(function() {});
+      }
+    } catch(e) {}
+
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      // 关键修复：iOS Safari与部分安卓环境若元素置于视口外（如 top: -1000px）或设为 readonly 将直接拒绝 execCommand
+      ta.style.position = 'fixed';
+      ta.style.top = '10px';
+      ta.style.left = '10px';
+      ta.style.width = '24px';
+      ta.style.height = '24px';
+      ta.style.padding = '0';
+      ta.style.border = 'none';
+      ta.style.outline = 'none';
+      ta.style.boxShadow = 'none';
+      ta.style.background = 'transparent';
+      ta.style.color = 'transparent';
+      ta.style.opacity = '0.01';
+      ta.style.zIndex = '999999';
+      ta.style.pointerEvents = 'none';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.setSelectionRange(0, text.length);
+      success = document.execCommand('copy');
+      document.body.removeChild(ta);
+    } catch(err) {
+      success = false;
+    }
+    return success;
+  }
+
+  // 6. 全局提取当前卡片内已生成的开局设定内容
+  function findGeneratedOutput() {
+    var ids = [
+      'output-area', 'out-text', 'outText', 'output-text',
+      'summaryBox', 'realtimeOutput', 'copyOutput', 'p-out',
+      'openerText', 'outputArea', 'output', 'p_out'
+    ];
+    for (var i = 0; i < ids.length; i++) {
+      var el = document.getElementById(ids[i]);
+      if (el) {
+        var val = (el.value !== undefined ? el.value : el.textContent) || '';
+        if (val.trim().length > 5) return val.trim();
+      }
+    }
+    // 检查所有 output / readonly textarea
+    var tas = document.querySelectorAll('textarea');
+    for (var j = 0; j < tas.length; j++) {
+      var ta = tas[j];
+      var isReadOnly = ta.readOnly || ta.hasAttribute('readonly');
+      var isOutClass = ta.classList.contains('output-area') || ta.classList.contains('copy-box') || ta.classList.contains('out-text');
+      if ((isReadOnly || isOutClass) && ta.value && ta.value.trim().length > 5) {
+        return ta.value.trim();
+      }
+    }
+    // 智能保底：匹配具备开局特征的富文本内容
+    for (var k = 0; k < tas.length; k++) {
+      var tVal = tas[k].value || '';
+      if (tVal.length > 20 && (/【玩家|【开局|【角色|周一|周二|周三|周四|周五|周六|周日|开场|设定|剧情/.test(tVal))) {
+        return tVal.trim();
+      }
+    }
+    return '';
+  }
+
+  var lastTriggeredText = '';
+  var lastTriggerTime = 0;
+  function triggerStartStory(text, autoStart) {
+    if (!text || text.trim().length < 5) return;
+    var cleanText = text.trim();
+    var now = Date.now();
+    if (cleanText === lastTriggeredText && (now - lastTriggerTime < 600)) {
+      return;
+    }
+    lastTriggeredText = cleanText;
+    lastTriggerTime = now;
+
+    mobileSafeCopy(cleanText);
+    try {
+      window.parent.postMessage({
+        type: 'NOVAL_START_CUSTOM_SETUP',
+        payload: cleanText,
+        autoStart: autoStart !== false
+      }, '*');
+      window.parent.postMessage({
+        type: 'NOVAL_SUMMARY_COPIED',
+        payload: cleanText
+      }, '*');
+    } catch(e) {}
+  }
+
+  // 7. 劫持 iframe 内部 navigator.clipboard.writeText，解决卡片内部自带复制失败并不通知宿主的问题
+  try {
+    if (navigator.clipboard) {
+      var origWriteText = navigator.clipboard.writeText ? navigator.clipboard.writeText.bind(navigator.clipboard) : null;
+      navigator.clipboard.writeText = function(text) {
+        triggerStartStory(text, true);
+        if (origWriteText) {
+          return origWriteText(text).catch(function() {
+            mobileSafeCopy(text);
+            return Promise.resolve();
+          });
+        }
+        mobileSafeCopy(text);
+        return Promise.resolve();
+      };
+    }
+  } catch(e) {}
+
+  // 8. 劫持 document.execCommand('copy')，捕获卡片传统复制执行
+  try {
+    var origExecCommand = document.execCommand ? document.execCommand.bind(document) : null;
+    if (origExecCommand) {
+      document.execCommand = function(cmd) {
+        var res = false;
+        try { res = origExecCommand(cmd); } catch(err) { res = false; }
+        if (cmd === 'copy') {
+          var text = '';
+          try {
+            var sel = window.getSelection();
+            if (sel) text = sel.toString();
+          } catch(e) {}
+          if (!text || text.length < 5) {
+            text = findGeneratedOutput();
+          }
+          if (text && text.length > 5) {
+            triggerStartStory(text, true);
+          }
+        }
+        return res;
+      };
+    }
+  } catch(e) {}
+
+  // 9. 全局拦截用户点击“生成 / 复制 / 确认 / 开始故事 / 一键开局”等所有动作按钮
+  document.addEventListener('click', function(e) {
+    var target = e.target;
+    if (!target) return;
+    var btn = target.closest ? target.closest('button, input[type="submit"], input[type="button"], .btn, .act-btn, .gen-btn, .copy-btn, .btn-submit, .btn-gen, .btn-copy, .btn-start') : null;
+    if (!btn) return;
+
+    var btnText = (btn.textContent || btn.value || '').trim();
+    var btnId = btn.id || '';
+    var btnClass = btn.className || '';
+
+    var isActionBtn = (
+      /生\s*成|复\s*制|确\s*认|开\s*始|开\s*局|管\s*教|推\s*演|一键/.test(btnText) ||
+      /btn-gen|gen-btn|btn-copy|btnCopy|copyBtn|copy-btn|btn-confirm|genBtn|btnStart|btn-start|submit/i.test(btnId) ||
+      /btn-gen|gen-btn|copy-btn|btn-submit|btn-start/i.test(btnClass)
+    );
+
+    if (isActionBtn) {
+      setTimeout(function() {
+        var output = findGeneratedOutput();
+        if (output && output.length > 5) {
+          triggerStartStory(output, true);
+        }
+      }, 70);
+      setTimeout(function() {
+        var output = findGeneratedOutput();
+        if (output && output.length > 5) {
+          triggerStartStory(output, true);
+        }
+      }, 240);
+    }
+  }, true);
+
+  // 10. 全局表单 submit 拦截（适用于 <form id="generator-form"> 等卡片）
+  document.addEventListener('submit', function(e) {
+    setTimeout(function() {
+      var output = findGeneratedOutput();
+      if (output && output.length > 5) {
+        triggerStartStory(output, true);
+      }
+    }, 70);
+  }, true);
+
+  // 11. 动态注入通用的【🚀 填入并以此设定开局】高亮操作按钮
+  function injectUniversalStartButtons() {
+    try {
+      if (document.getElementById('novalUniversalStartBtn')) return;
+      var candidates = [
+        document.querySelector('.copy-wrap'),
+        document.querySelector('.btn-row'),
+        document.getElementById('sec-output'),
+        document.querySelector('#output-area')?.parentElement,
+        document.querySelector('#outText')?.parentElement,
+        document.querySelector('#out-text')?.parentElement,
+        document.querySelector('#p-out')?.parentElement,
+        document.querySelector('#copyOutput')?.parentElement,
+        document.querySelector('#summaryBox')?.parentElement,
+        document.querySelector('form#generator-form'),
+        document.querySelector('.wrap')
+      ];
+
+      var container = null;
+      for (var i = 0; i < candidates.length; i++) {
+        if (candidates[i]) {
+          container = candidates[i];
+          break;
+        }
+      }
+
+      if (container) {
+        var startBtn = document.createElement('button');
+        startBtn.id = 'novalUniversalStartBtn';
+        startBtn.type = 'button';
+        startBtn.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:8px;width:100%;max-width:440px;margin:16px auto;padding:12px 20px;background:linear-gradient(135deg,#f43f5e,#a855f7);color:#ffffff;border:none;border-radius:14px;font-size:14.5px;font-weight:bold;cursor:pointer;box-shadow:0 8px 24px rgba(244,63,94,0.38);transition:all 0.2s ease;font-family:inherit;';
+        startBtn.innerHTML = '<span>🚀 填入并以此设定开局</span>';
+
+        startBtn.addEventListener('click', function(ev) {
+          ev.preventDefault();
+          var text = findGeneratedOutput();
+          if (!text) {
+            var genBtn = document.querySelector('#btn-confirm, #btn-gen, .gen-btn, #genBtn, #btnCopy, #copyBtn, button[type="submit"]');
+            if (genBtn && genBtn !== startBtn) {
+              genBtn.click();
+            }
+            setTimeout(function() {
+              text = findGeneratedOutput();
+              if (text) {
+                triggerStartStory(text, true);
+              }
+            }, 80);
+          } else {
+            triggerStartStory(text, true);
+          }
+        });
+
+        container.appendChild(startBtn);
+      }
+    } catch(err) {}
+  }
+
   window.addEventListener('load', function() {
     notifyHeight();
     setTimeout(notifyHeight, 300);
     setTimeout(notifyHeight, 1000);
+    injectUniversalStartButtons();
+    setTimeout(injectUniversalStartButtons, 500);
 
     // 观察 DOM 变化（用户点击开场白或生成时高度变动）
     if (window.ResizeObserver) {
       new ResizeObserver(notifyHeight).observe(document.body);
     }
-
-    // 注入【直接以此设定开启推演】专属快捷按钮
-    try {
-      var copyWrap = document.querySelector('.copy-wrap');
-      if (copyWrap) {
-        var startBtn = document.createElement('button');
-        startBtn.className = 'copy-btn';
-        startBtn.style.background = 'linear-gradient(135deg, #f43f5e, #a855f7)';
-        startBtn.style.boxShadow = '0 12px 32px rgba(244, 63, 94, 0.45)';
-        startBtn.style.marginTop = '12px';
-        startBtn.style.borderRadius = '14px';
-        startBtn.textContent = '🚀 填入并以此设定开局';
-        startBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          var summaryBox = document.getElementById('summaryBox');
-          var text = summaryBox ? (summaryBox.textContent || '') : '';
-          window.parent.postMessage({ type: 'NOVAL_START_CUSTOM_SETUP', payload: text }, '*');
-        });
-        copyWrap.appendChild(startBtn);
-      }
-    } catch(e) {}
   });
-
-  // 拦截一键复制，同步给宿主通知
-  window.addEventListener('click', function(e) {
-    var target = e.target;
-    if (target && (target.id === 'copyBtn' || target.classList.contains('copy-btn'))) {
-      var summaryBox = document.getElementById('summaryBox');
-      if (summaryBox && summaryBox.textContent) {
-        window.parent.postMessage({ type: 'NOVAL_SUMMARY_COPIED', payload: summaryBox.textContent }, '*');
-      }
-    }
-  }, true);
 })();
 </script>
 `;
@@ -313,15 +525,28 @@ body {
       } else if (event.data.type === 'NOVAL_START_CUSTOM_SETUP' && event.data.payload) {
         const text = String(event.data.payload).trim();
         if (text) {
-          setAppliedNotice('已应用并填入开局设定！');
-          setTimeout(() => setAppliedNotice(null), 3000);
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(text).catch(() => {});
+            }
+          } catch(e) {}
+          setAppliedNotice('已自动填入开局设定，正在启动剧情...');
+          setTimeout(() => setAppliedNotice(null), 3500);
           setIsExpanded(false);
           if (onStartStory) {
             onStartStory(text);
           }
         }
       } else if (event.data.type === 'NOVAL_SUMMARY_COPIED') {
-        setAppliedNotice('设定内容已复制并就绪！');
+        const text = String(event.data.payload || '').trim();
+        if (text) {
+          try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(text).catch(() => {});
+            }
+          } catch(e) {}
+        }
+        setAppliedNotice('开局设定已复制并就绪！');
         setTimeout(() => setAppliedNotice(null), 2500);
       }
     }
@@ -426,7 +651,7 @@ body {
             ref={iframeRef}
             srcDoc={enhancedHtml}
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
-            allow="autoplay"
+            allow="autoplay; clipboard-write; clipboard-read"
             className="w-full border-0 block"
             style={{
               height: `${iframeHeight}px`,
@@ -465,7 +690,7 @@ body {
               <iframe
                 srcDoc={enhancedHtml}
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
-                allow="autoplay"
+                allow="autoplay; clipboard-write; clipboard-read"
                 className="w-full h-full border-0"
                 style={{ background: 'transparent' }}
                 title="作品设定与人物卡全屏"
