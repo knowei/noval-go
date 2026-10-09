@@ -605,6 +605,12 @@ body {
     // 自动将 const characterData / let characterData 提升至全局 window.characterData，确保无论外部还是内部均能即时读取
     result = result.replace(/(?:const|let|var)\s+characterData\s*=/g, 'var characterData = window.characterData = window.characterData ||');
 
+    // 自动修复历史迁移导致的 %s 三元表达式 / URL 参数损坏（如 typeof val === 'string' %s val.trim() : val）
+    result = result
+      .replace(/(\btypeof\s+[^=]+===[^%]+)%\s*s(\s+[^:]+:)/g, '$1?$2')
+      .replace(/([a-zA-Z0-9_)\]\'"])\s*%\s*s\s*([^\r\n;{}]+?\s*:\s*)/g, '$1 ? $2')
+      .replace(/([a-zA-Z0-9_/-]+)%s([a-zA-Z0-9_-]+=[^\s\'"`<>]+)/g, '$1?$2');
+
     // 修复部分卡片作者写死的错误复制逻辑（-1000px / readonly 导致现代浏览器在 iframe 或移动端拒绝复制并弹出失败提示）
     result = result
       .replace(/ta\.style\.top\s*=\s*["']-1000px["'];?/g, 'ta.style.top="0";ta.style.left="0";ta.style.width="2em";ta.style.height="2em";ta.style.opacity="0.01";')
