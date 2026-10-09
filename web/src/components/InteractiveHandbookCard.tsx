@@ -234,22 +234,29 @@ body {
     var prevFlag = isInternalCopying;
     isInternalCopying = true;
 
+    // 1) Clipboard API：仅安全上下文（HTTPS / localhost）存在。
+    //    http://<IP>:3000 这类非安全上下文里它是 undefined，所以这里只是顺带一试。
     try {
       if (origWriteText) {
         origWriteText(text).catch(function() {});
+        success = true;
       }
     } catch(e) {}
 
+    // 2) 同步 execCommand：HTTP 部署下唯一可行的路径。
+    //    必须在用户手势的同步调用栈里执行 —— 一旦跨出 setTimeout / postMessage，
+    //    移动端（iOS Safari、Android Chrome）就会拒绝，这正是手机上复制失败的根因。
     try {
       var ta = document.createElement('textarea');
       ta.value = text;
-      // 关键修复：iOS Safari与部分移动端在 pointer-events: none 或视口外时会拒绝聚焦与复制
-      ta.setAttribute('readonly', '');
+      // iOS 关键：必须 contentEditable 可编辑选区；只 setSelectionRange 在 Safari 上不稳定
+      ta.contentEditable = 'true';
+      ta.readOnly = false;
       ta.style.position = 'fixed';
-      ta.style.top = '10px';
-      ta.style.left = '10px';
-      ta.style.width = '24px';
-      ta.style.height = '24px';
+      ta.style.top = '0';
+      ta.style.left = '0';
+      ta.style.width = '1px';
+      ta.style.height = '1px';
       ta.style.padding = '0';
       ta.style.border = 'none';
       ta.style.outline = 'none';
@@ -257,16 +264,21 @@ body {
       ta.style.background = 'transparent';
       ta.style.color = 'transparent';
       ta.style.opacity = '0.01';
-      ta.style.zIndex = '999999';
+      ta.style.zIndex = '2147483647';
       document.body.appendChild(ta);
+      try {
+        var range = document.createRange();
+        range.selectNodeContents(ta);
+        var sel = window.getSelection();
+        if (sel) { sel.removeAllRanges(); sel.addRange(range); }
+      } catch(e) {}
       ta.focus();
       ta.setSelectionRange(0, text.length);
-      if (origExecCommand) {
-        success = origExecCommand('copy');
-      }
+      var ok = origExecCommand ? origExecCommand('copy') : false;
+      if (ok) success = true;
       document.body.removeChild(ta);
     } catch(err) {
-      success = false;
+      // 保持 success 现状，交由调用方上报真实结果
     } finally {
       isInternalCopying = prevFlag;
     }
@@ -319,36 +331,59 @@ body {
     lastTriggeredText = cleanText;
     lastTriggerTime = now;
 
-    mobileSafeCopy(cleanText);
+    var copyOk = mobileSafeCopy(cleanText);
     try {
       window.parent.postMessage({
         type: 'NOVAL_START_CUSTOM_SETUP',
         payload: cleanText,
-        autoStart: autoStart !== false
+        autoStart: autoStart !== false,
+        copyOk: copyOk
       }, '*');
       window.parent.postMessage({
         type: 'NOVAL_SUMMARY_COPIED',
-        payload: cleanText
+        payload: cleanText,
+        copyOk: copyOk
       }, '*');
     } catch(e) {}
   }
 
-  // 7. 劫持 iframe 内部 navigator.clipboard.writeText，解决卡片内部自带复制失败并不通知宿主的问题
+  // 7. 补出 navigator.clipboard 垫片并接管 writeText。
+  //    非安全上下文（http://<IP>:3000 这类部署）下 navigator.clipboard 是 undefined，
+  //    卡片自带的复制按钮写的是 if (navigator.clipboard) {...}，于是会「静默什么都不做」。
+  //    必须主动补出这个对象，把复制引导到同步的 mobileSafeCopy 上。
   try {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText = function(text) {
-        if (!isInternalCopying) {
-          triggerStartStory(text, true);
+    var clip = null;
+    try { clip = navigator.clipboard; } catch(e) { clip = null; }
+    if (!clip) {
+      clip = {};
+      try {
+        Object.defineProperty(navigator, 'clipboard', { value: clip, configurable: true, writable: true });
+      } catch(e) {
+        try { navigator.clipboard = clip; } catch(e2) {}
+      }
+    }
+    if (clip && !clip.__novalPatched) {
+      clip.writeText = function(text) {
+        // 该函数通常由卡片自身按钮的 click 处理器直接调用，此刻仍在用户手势内，
+        // 所以这里能走同步复制；返回 Promise 以兼容卡片的 .then() 写法。
+        try {
+          if (!isInternalCopying) {
+            triggerStartStory(text, true);
+          } else {
+            mobileSafeCopy(text);
+          }
+        } catch(e) {}
+        try {
+          return Promise.resolve();
+        } catch(e) {
+          return {
+            then: function(res) { try { res && res(); } catch(e2) {} return this; },
+            catch: function() { return this; },
+            'finally': function(fn) { try { fn && fn(); } catch(e2) {} return this; }
+          };
         }
-        if (origWriteText) {
-          return origWriteText(text).catch(function() {
-            if (!isInternalCopying) mobileSafeCopy(text);
-            return Promise.resolve();
-          });
-        }
-        if (!isInternalCopying) mobileSafeCopy(text);
-        return Promise.resolve();
       };
+      clip.__novalPatched = true;
     }
   } catch(e) {}
 
@@ -398,6 +433,12 @@ body {
     );
 
     if (isActionBtn) {
+      // 同步复制：若此刻内容已经生成，就在用户手势的同步栈里立即写剪贴板。
+      // 移动端只允许手势内同步调用，这一步是手机上复制能成功的关键。
+      var immediate = findGeneratedOutput();
+      if (immediate && immediate.length > 5) {
+        mobileSafeCopy(immediate);
+      }
       setTimeout(function() {
         var output = findGeneratedOutput();
         if (output && output.length > 5) {
@@ -536,37 +577,50 @@ body {
 
   // 监听来自 iframe 内部的 postMessage 消息
   useEffect(() => {
-    function copyToClipboardFallback(text: string) {
-      if (!text) return;
+    function copyToClipboardFallback(text: string): boolean {
+      if (!text) return false;
+      // 非安全上下文（http://<IP> 部署）下 navigator.clipboard 是 undefined，
+      // 直接走同步 execCommand，并且不要用 .catch() 把失败吞掉。
       try {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(text).catch(() => {
             legacyCopy(text);
           });
-          return;
+          return true;
         }
       } catch (e) {}
-      legacyCopy(text);
+      return legacyCopy(text);
     }
 
-    function legacyCopy(text: string) {
+    function legacyCopy(text: string): boolean {
       try {
         const ta = document.createElement('textarea');
         ta.value = text;
-        ta.setAttribute('readonly', '');
+        // iOS：contentEditable + Range 选中，比只 setSelectionRange 可靠得多
+        ta.contentEditable = 'true';
+        ta.readOnly = false;
         ta.style.position = 'fixed';
-        ta.style.top = '10px';
-        ta.style.left = '10px';
-        ta.style.width = '24px';
-        ta.style.height = '24px';
+        ta.style.top = '0';
+        ta.style.left = '0';
+        ta.style.width = '1px';
+        ta.style.height = '1px';
         ta.style.opacity = '0.01';
-        ta.style.zIndex = '999999';
+        ta.style.zIndex = '2147483647';
         document.body.appendChild(ta);
+        try {
+          const range = document.createRange();
+          range.selectNodeContents(ta);
+          const sel = window.getSelection();
+          if (sel) { sel.removeAllRanges(); sel.addRange(range); }
+        } catch (e) {}
         ta.focus();
         ta.setSelectionRange(0, text.length);
-        document.execCommand('copy');
+        const ok = document.execCommand('copy');
         document.body.removeChild(ta);
-      } catch (e) {}
+        return !!ok;
+      } catch (e) {
+        return false;
+      }
     }
 
     function handleMessage(event: MessageEvent) {
@@ -589,12 +643,18 @@ body {
           }
         }
       } else if (event.data.type === 'NOVAL_SUMMARY_COPIED') {
-        const text = String(event.data.payload || '').trim();
-        if (text) {
-          copyToClipboardFallback(text);
+        const hasText = String(event.data.payload || '').trim().length > 0;
+        if (!hasText) return;
+        // iframe 内已尝试在手势内同步复制；这里只负责如实回报，
+        // 不再重复异步复制（移动端的异步复制必然被拒，还可能覆盖掉成功的那次）。
+        if (event.data.copyOk === false) {
+          // 内容刚生成时点击已脱离用户手势，移动端会拒绝自动复制；
+          // 此时内容已存在，用户再点一次按钮即可走同步路径成功复制。
+          setAppliedNotice('内容已生成。手机浏览器禁止自动复制，请再点一次按钮即可复制。');
+        } else {
+          setAppliedNotice('开局设定已复制并就绪！');
         }
-        setAppliedNotice('开局设定已复制并就绪！');
-        setTimeout(() => setAppliedNotice(null), 2500);
+        setTimeout(() => setAppliedNotice(null), 4000);
       }
     }
 
@@ -698,7 +758,7 @@ body {
             ref={iframeRef}
             srcDoc={enhancedHtml}
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
-            allow="autoplay; clipboard-write; clipboard-read"
+            allow="autoplay; clipboard-write"
             className="w-full border-0 block"
             style={{
               height: `${iframeHeight}px`,
@@ -737,7 +797,7 @@ body {
               <iframe
                 srcDoc={enhancedHtml}
                 sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
-                allow="autoplay; clipboard-write; clipboard-read"
+                allow="autoplay; clipboard-write"
                 className="w-full h-full border-0"
                 style={{ background: 'transparent' }}
                 title="作品设定与人物卡全屏"
