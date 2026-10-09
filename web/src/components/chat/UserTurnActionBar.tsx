@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Edit3, RotateCcw, Trash2, Copy, Check } from 'lucide-react';
+import { copyText } from '@/lib/clipboard';
 
 interface UserTurnActionBarProps {
   index: number;
@@ -20,13 +21,11 @@ export const UserTurnActionBar = React.memo(function UserTurnActionBar({
 }: UserTurnActionBarProps) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(text);
+  const handleCopy = () => {
+    // copyText 内部已处理「HTTP 下 navigator.clipboard 不存在」的降级
+    if (copyText(text)) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // ignore
     }
   };
 

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Copy, Check, Play, RotateCcw, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { Turn } from '@/lib/types';
+import { copyText } from '@/lib/clipboard';
 
 interface CardTurnActionBarProps {
   index: number;
@@ -35,14 +36,12 @@ export function CardTurnActionBar({
   const { modelSettings } = useAppStore();
   const [isCopied, setIsCopied] = useState(false);
 
-  const handleCopy = async () => {
+  const handleCopy = () => {
     if (!storyContent) return;
-    try {
-      await navigator.clipboard.writeText(storyContent);
+    // copyText 内部已处理「HTTP 下 navigator.clipboard 不存在」的降级
+    if (copyText(storyContent)) {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
-    } catch {
-      // ignore
     }
   };
 

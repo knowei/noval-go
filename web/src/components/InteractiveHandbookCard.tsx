@@ -383,6 +383,59 @@ body {
           };
         }
       };
+      // 新版 API 的富文本复制：navigator.clipboard.write([new ClipboardItem(...)])
+      // 手写卡一般不用，但将来新导入的卡可能会用；不垫的话会直接抛
+      // 「clipboard.write is not a function」并中断卡片自身的初始化。
+      clip.write = function(items) {
+        try {
+          var text = '';
+          if (items && items.length) {
+            for (var i = 0; i < items.length; i++) {
+              var it = items[i];
+              if (typeof it === 'string') { text = it; break; }
+              if (it && typeof it.__novalText === 'string' && it.__novalText) { text = it.__novalText; break; }
+            }
+          }
+          if (text) {
+            // 有同步可得的纯文本，仍然能在手势内完成复制
+            if (!isInternalCopying) { triggerStartStory(text, true); } else { mobileSafeCopy(text); }
+          } else if (!isInternalCopying) {
+            // 拿不到同步文本（Blob 只能异步读），跳过手势已失效，如实告知宿主
+            try {
+              window.parent.postMessage({ type: 'NOVAL_COPY_FAILED', reason: 'rich-clipboard' }, '*');
+            } catch(e) {}
+          }
+        } catch(e) {}
+        try { return Promise.resolve(); } catch(e) {
+          return { then: function(res) { try { res && res(); } catch(e2) {} return this; }, catch: function() { return this; } };
+        }
+      };
+
+      // 部分卡片会先 readText 再决定复制内容；HTTP 下它不存在会直接抛错，垫一个空实现
+      clip.readText = function() {
+        try { return Promise.resolve(''); } catch(e) {
+          return { then: function(res) { try { res && res(''); } catch(e2) {} return this; }, catch: function() { return this; } };
+        }
+      };
+
+      // ClipboardItem 在非安全上下文同样不存在，补一个能容纳纯文本提示的实现，
+      // 避免 new ClipboardItem(...) 直接抛 ReferenceError 打断卡片脚本。
+      try {
+        if (typeof window.ClipboardItem === 'undefined') {
+          window.ClipboardItem = function(data) {
+            this.__novalText = '';
+            try {
+              for (var k in (data || {})) {
+                var v = data[k];
+                if (typeof v === 'string') { this.__novalText = v; break; }
+              }
+            } catch(e) {}
+            this.types = Object.keys(data || {});
+            this.getType = function() { return null; };
+          };
+        }
+      } catch(e) {}
+
       clip.__novalPatched = true;
     }
   } catch(e) {}
@@ -427,9 +480,12 @@ body {
     var btnClass = btn.className || '';
 
     var isActionBtn = (
-      /生\s*成|复\s*制|确\s*认|开\s*始|开\s*局|管\s*教|推\s*演|一键/.test(btnText) ||
-      /btn-gen|gen-btn|btn-copy|btnCopy|copyBtn|copy-btn|btn-confirm|genBtn|btnStart|btn-start|submit/i.test(btnId) ||
-      /btn-gen|gen-btn|copy-btn|btn-submit|btn-start/i.test(btnClass)
+      // 中文文案：尽量覆盖「生成/复制/确认/填入」的各种写法，新导入的卡不必再改代码
+      /生\s*成|复\s*制|拷\s*贝|确\s*认|填\s*入|应\s*用|开\s*始|开\s*局|管\s*教|推\s*演|一\s*键|发\s*送|进入剧情|立即体验/.test(btnText) ||
+      // 英文文案
+      /^\s*(copy|generate|confirm|apply|start)\s*$/i.test(btnText) ||
+      /btn-gen|gen-btn|btn-copy|btnCopy|copyBtn|copy-btn|copy_btn|copyButton|btn-confirm|btn-apply|genBtn|btnStart|btn-start|submit/i.test(btnId) ||
+      /btn-gen|gen-btn|copy-btn|copy_btn|copyButton|btn-submit|btn-start|btn-apply/i.test(btnClass)
     );
 
     if (isActionBtn) {
@@ -642,6 +698,11 @@ body {
             onStartStory(text);
           }
         }
+      } else if (event.data.type === 'NOVAL_COPY_FAILED') {
+        // 卡片用了无法在非安全上下文同步复制的写法（如富文本 clipboard.write），
+        // 给出可操作的兜底指引，而不是静默失败。
+        setAppliedNotice('浏览器拒绝了自动复制，请长按文本选择复制。');
+        setTimeout(() => setAppliedNotice(null), 4000);
       } else if (event.data.type === 'NOVAL_SUMMARY_COPIED') {
         const hasText = String(event.data.payload || '').trim().length > 0;
         if (!hasText) return;

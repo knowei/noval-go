@@ -28,6 +28,7 @@ import { isCheckpointId, useAppStore } from '@/lib/store';
 import { fetchStory, fetchConversations, fetchConversation, getSiteToken, clearSiteToken } from '@/lib/api';
 import { selectReplyVersion, resolveSnapshot, PromptReport } from '@/lib/sessionEngine';
 import { applyModExtensions } from '@/lib/modExtensions';
+import { copyText } from '@/lib/clipboard';
 import { streamCompletion, CompletionStreamError, CompletionUsage } from '@/lib/streamCompletion';
 import { inspectReplyEnvelope, mergeReplyContinuation } from '@/lib/replyEnvelope';
 import { safeRandomUUID } from '@/lib/uuid';
@@ -218,9 +219,11 @@ export default function ChatPage() {
 
   const handleCopyStory = () => {
     const text = generateStoryExportText();
-    navigator.clipboard.writeText(text);
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+    // copyText 内部已处理「HTTP 下 navigator.clipboard 不存在」的降级
+    if (copyText(text)) {
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    }
   };
 
   const handleDownloadStory = (format: 'txt' | 'md') => {
@@ -1194,10 +1197,12 @@ export default function ChatPage() {
                 customCss={currentDeck.customCss}
                 deckTitle={currentDeck.title}
                 onStartStory={(customPrompt) => {
+                  // 只填入输入框、不自动发送：把卡片生成的开局设定直接当玩家发言送出去，
+                  // 会让玩家失去编辑与确认的机会，而且发送后输入框还会残留内容。
                   if (chatInputRef.current) {
                     chatInputRef.current.setValue(customPrompt);
+                    chatInputRef.current.focus();
                   }
-                  handleSend(customPrompt);
                 }}
                 defaultExpanded={conversationHistory.length === 0}
               />

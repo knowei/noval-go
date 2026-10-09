@@ -5,6 +5,7 @@ import { CardTurnActionBar } from './CardTurnActionBar';
 import { RichStoryRenderer } from './RichStoryRenderer';
 import { Turn } from '@/lib/types';
 import { generateContextualBranches } from '@/lib/modelParser';
+import { copyText } from '@/lib/clipboard';
 import { Sparkles, BookOpen, Copy, Check } from 'lucide-react';
 
 interface CoserCardProps {
@@ -59,8 +60,8 @@ export const CoserCard = React.memo(function CoserCard({
 💗 心防：渴望独占注视（95%）`;
 
   const handleCopy = () => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(archivePreview);
+    // copyText 内部已处理「HTTP 下 navigator.clipboard 不存在」的降级
+    if (copyText(archivePreview)) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
