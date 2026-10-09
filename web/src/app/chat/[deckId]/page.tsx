@@ -1197,12 +1197,12 @@ export default function ChatPage() {
                 customCss={currentDeck.customCss}
                 deckTitle={currentDeck.title}
                 onStartStory={(customPrompt) => {
-                  // 只填入输入框、不自动发送：把卡片生成的开局设定直接当玩家发言送出去，
-                  // 会让玩家失去编辑与确认的机会，而且发送后输入框还会残留内容。
                   if (chatInputRef.current) {
                     chatInputRef.current.setValue(customPrompt);
                     chatInputRef.current.focus();
                   }
+                  // 载入开局设定并立即启动剧情推演
+                  handleSend(customPrompt);
                 }}
                 defaultExpanded={conversationHistory.length === 0}
               />

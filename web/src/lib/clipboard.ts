@@ -20,7 +20,39 @@ export function copyText(text: string): boolean {
   if (!text) return false;
   let ok = false;
 
-  // 1) 安全上下文（HTTPS / localhost）下的原生路径
+  // 1) 优先尝试同步 execCommand：确保在非安全上下文（HTTP）与移动端手势中稳定执行
+  try {
+    if (typeof document !== 'undefined' && document.body) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.readOnly = false;
+      ta.style.position = 'fixed';
+      ta.style.top = '0';
+      ta.style.left = '0';
+      ta.style.width = '2em';
+      ta.style.height = '2em';
+      ta.style.padding = '0';
+      ta.style.border = 'none';
+      ta.style.outline = 'none';
+      ta.style.boxShadow = 'none';
+      ta.style.background = 'transparent';
+      ta.style.color = 'transparent';
+      ta.style.opacity = '0.01';
+      ta.style.zIndex = '2147483647';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      if (document.execCommand && document.execCommand('copy')) {
+        ok = true;
+      }
+      document.body.removeChild(ta);
+    }
+  } catch {
+    // 忽略异常，尝试下个通道
+  }
+
+  // 2) 若安全上下文可用，并发调用 clipboard.writeText 作为补充
   try {
     const clip = typeof navigator !== 'undefined' ? navigator.clipboard : undefined;
     if (clip && typeof clip.writeText === 'function') {
@@ -28,47 +60,7 @@ export function copyText(text: string): boolean {
       ok = true;
     }
   } catch {
-    // 忽略：继续走兜底
-  }
-
-  // 2) 同步 execCommand：非安全上下文下唯一可行的路径
-  try {
-    if (typeof document === 'undefined' || !document.body) return ok;
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.contentEditable = 'true';
-    ta.readOnly = false;
-    ta.style.position = 'fixed';
-    ta.style.top = '0';
-    ta.style.left = '0';
-    ta.style.width = '1px';
-    ta.style.height = '1px';
-    ta.style.padding = '0';
-    ta.style.border = 'none';
-    ta.style.outline = 'none';
-    ta.style.boxShadow = 'none';
-    ta.style.background = 'transparent';
-    ta.style.color = 'transparent';
-    ta.style.opacity = '0.01';
-    ta.style.zIndex = '2147483647';
-    document.body.appendChild(ta);
-    try {
-      const range = document.createRange();
-      range.selectNodeContents(ta);
-      const sel = window.getSelection();
-      if (sel) {
-        sel.removeAllRanges();
-        sel.addRange(range);
-      }
-    } catch {
-      // 选区设置失败时仍尝试 setSelectionRange
-    }
-    ta.focus();
-    ta.setSelectionRange(0, text.length);
-    if (document.execCommand && document.execCommand('copy')) ok = true;
-    document.body.removeChild(ta);
-  } catch {
-    // 保持 ok 现状
+    // 忽略
   }
 
   return ok;

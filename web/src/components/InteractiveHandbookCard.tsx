@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown, ChevronUp, Maximize2, Sparkles, BookOpen, X, Check } from 'lucide-react';
+import { copyText } from '@/lib/clipboard';
 
 interface InteractiveHandbookCardProps {
   html: string;
@@ -62,8 +63,8 @@ body {
 }
 </style>
 <script>
-// 1. AudioContext 安全防护垫片：杜绝 iframe 沙箱限制引发的异常阻断点击
 (function() {
+  // 1. AudioContext 安全防护垫片：杜绝 iframe 沙箱限制引发的异常阻断点击
   try {
     var OrigAudioCtx = window.AudioContext || window.webkitAudioContext;
     if (OrigAudioCtx) {
@@ -95,6 +96,203 @@ body {
         }
       };
       window.webkitAudioContext = window.AudioContext;
+    }
+  } catch(e) {}
+
+  // 2. 提前在 head 中注入万能同步剪贴板垫片，使卡片后续所有原生脚本无论是同步还是异步检测 navigator.clipboard 均正常运行
+  var isInternalCopying = false;
+  var origWriteText = (navigator.clipboard && navigator.clipboard.writeText) ? navigator.clipboard.writeText.bind(navigator.clipboard) : null;
+  var origExecCommand = (document.execCommand) ? document.execCommand.bind(document) : null;
+
+  window.__novalMobileSafeCopy = function(text) {
+    if (!text) return false;
+    var success = false;
+    var prevFlag = isInternalCopying;
+    isInternalCopying = true;
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.readOnly = false;
+      ta.style.position = 'fixed';
+      ta.style.top = '0';
+      ta.style.left = '0';
+      ta.style.width = '2em';
+      ta.style.height = '2em';
+      ta.style.padding = '0';
+      ta.style.border = 'none';
+      ta.style.outline = 'none';
+      ta.style.boxShadow = 'none';
+      ta.style.background = 'transparent';
+      ta.style.color = 'transparent';
+      ta.style.opacity = '0.01';
+      ta.style.zIndex = '2147483647';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      var ok = origExecCommand ? origExecCommand('copy') : false;
+      if (ok) success = true;
+      document.body.removeChild(ta);
+    } catch(e) {}
+
+    try {
+      if (origWriteText) {
+        origWriteText(text).catch(function() {});
+        success = true;
+      }
+    } catch(e) {}
+
+    isInternalCopying = prevFlag;
+    return success;
+  };
+
+  var lastTriggeredText = '';
+  var lastTriggerTime = 0;
+  window.__novalTriggerCopyAndStart = function(text, autoStart) {
+    if (!text || text.trim().length < 5) return;
+    var cleanText = text.trim();
+    var now = Date.now();
+    if (cleanText === lastTriggeredText && (now - lastTriggerTime < 800)) {
+      return;
+    }
+    lastTriggeredText = cleanText;
+    lastTriggerTime = now;
+
+    var copyOk = window.__novalMobileSafeCopy(cleanText);
+    try {
+      window.parent.postMessage({
+        type: 'NOVAL_START_CUSTOM_SETUP',
+        payload: cleanText,
+        autoStart: autoStart !== false,
+        copyOk: copyOk
+      }, '*');
+      window.parent.postMessage({
+        type: 'NOVAL_SUMMARY_COPIED',
+        payload: cleanText,
+        copyOk: copyOk
+      }, '*');
+    } catch(e) {}
+  };
+
+  window.__novalSafeCopyPromise = function(text) {
+    return new Promise(function(resolve) {
+      try {
+        window.__novalTriggerCopyAndStart(text, true);
+      } catch(e) {}
+      resolve();
+    });
+  };
+
+  try {
+    var clip = null;
+    try { clip = navigator.clipboard; } catch(e) { clip = null; }
+    if (!clip) {
+      clip = {};
+      try {
+        Object.defineProperty(navigator, 'clipboard', { value: clip, configurable: true, writable: true });
+      } catch(e) {
+        try { navigator.clipboard = clip; } catch(e2) {}
+      }
+    }
+    if (clip && !clip.__novalPatched) {
+      clip.writeText = function(text) {
+        try {
+          if (!isInternalCopying) {
+            window.__novalTriggerCopyAndStart(text, true);
+          } else {
+            window.__novalMobileSafeCopy(text);
+          }
+        } catch(e) {}
+        try {
+          return Promise.resolve();
+        } catch(e) {
+          return {
+            then: function(res) { try { res && res(); } catch(e2) {} return this; },
+            catch: function() { return this; },
+            'finally': function(fn) { try { fn && fn(); } catch(e2) {} return this; }
+          };
+        }
+      };
+
+      clip.write = function(items) {
+        try {
+          var text = '';
+          if (items && items.length) {
+            for (var i = 0; i < items.length; i++) {
+              var it = items[i];
+              if (typeof it === 'string') { text = it; break; }
+              if (it && typeof it.__novalText === 'string' && it.__novalText) { text = it.__novalText; break; }
+            }
+          }
+          if (text) {
+            window.__novalTriggerCopyAndStart(text, true);
+          }
+        } catch(e) {}
+        return Promise.resolve();
+      };
+
+      clip.readText = function() { return Promise.resolve(''); };
+
+      try {
+        if (typeof window.ClipboardItem === 'undefined') {
+          window.ClipboardItem = function(data) {
+            this.__novalText = '';
+            try {
+              for (var k in (data || {})) {
+                var v = data[k];
+                if (typeof v === 'string') { this.__novalText = v; break; }
+              }
+            } catch(e) {}
+            this.types = Object.keys(data || {});
+            this.getType = function() { return null; };
+          };
+        }
+      } catch(e) {}
+
+      clip.__novalPatched = true;
+    }
+  } catch(e) {}
+
+  // 劫持 document.execCommand('copy')
+  try {
+    if (document.execCommand) {
+      document.execCommand = function(cmd) {
+        var res = false;
+        try {
+          res = origExecCommand ? origExecCommand(cmd) : false;
+        } catch(err) {
+          res = false;
+        }
+        if (cmd === 'copy' && !isInternalCopying) {
+          var text = '';
+          try {
+            var activeEl = document.activeElement;
+            if (activeEl && (activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'INPUT')) {
+              var sStart = activeEl.selectionStart, sEnd = activeEl.selectionEnd;
+              if (typeof sStart === 'number' && typeof sEnd === 'number' && sEnd > sStart) {
+                text = activeEl.value.substring(sStart, sEnd);
+              }
+            }
+          } catch(e) {}
+          if (!text || text.length < 5) {
+            try {
+              var sel = window.getSelection();
+              if (sel) text = sel.toString();
+            } catch(e) {}
+          }
+          if (!text || text.length < 5) {
+            if (window.__novalFindGeneratedOutput) {
+              text = window.__novalFindGeneratedOutput();
+            }
+          }
+          if (text && text.length > 5) {
+            var copyOk = window.__novalMobileSafeCopy(text);
+            if (copyOk) res = true;
+            window.__novalTriggerCopyAndStart(text, true);
+          }
+        }
+        return res;
+      };
     }
   } catch(e) {}
 })();
@@ -223,69 +421,7 @@ body {
     } catch(err) {}
   }, true);
 
-  // 5. 跨移动端万能剪贴板垫片与剧情启动通信桥梁（防重入设计）
-  var isInternalCopying = false;
-  var origWriteText = (navigator.clipboard && navigator.clipboard.writeText) ? navigator.clipboard.writeText.bind(navigator.clipboard) : null;
-  var origExecCommand = (document.execCommand) ? document.execCommand.bind(document) : null;
-
-  function mobileSafeCopy(text) {
-    if (!text) return false;
-    var success = false;
-    var prevFlag = isInternalCopying;
-    isInternalCopying = true;
-
-    // 1) Clipboard API：仅安全上下文（HTTPS / localhost）存在。
-    //    http://<IP>:3000 这类非安全上下文里它是 undefined，所以这里只是顺带一试。
-    try {
-      if (origWriteText) {
-        origWriteText(text).catch(function() {});
-        success = true;
-      }
-    } catch(e) {}
-
-    // 2) 同步 execCommand：HTTP 部署下唯一可行的路径。
-    //    必须在用户手势的同步调用栈里执行 —— 一旦跨出 setTimeout / postMessage，
-    //    移动端（iOS Safari、Android Chrome）就会拒绝，这正是手机上复制失败的根因。
-    try {
-      var ta = document.createElement('textarea');
-      ta.value = text;
-      // iOS 关键：必须 contentEditable 可编辑选区；只 setSelectionRange 在 Safari 上不稳定
-      ta.contentEditable = 'true';
-      ta.readOnly = false;
-      ta.style.position = 'fixed';
-      ta.style.top = '0';
-      ta.style.left = '0';
-      ta.style.width = '1px';
-      ta.style.height = '1px';
-      ta.style.padding = '0';
-      ta.style.border = 'none';
-      ta.style.outline = 'none';
-      ta.style.boxShadow = 'none';
-      ta.style.background = 'transparent';
-      ta.style.color = 'transparent';
-      ta.style.opacity = '0.01';
-      ta.style.zIndex = '2147483647';
-      document.body.appendChild(ta);
-      try {
-        var range = document.createRange();
-        range.selectNodeContents(ta);
-        var sel = window.getSelection();
-        if (sel) { sel.removeAllRanges(); sel.addRange(range); }
-      } catch(e) {}
-      ta.focus();
-      ta.setSelectionRange(0, text.length);
-      var ok = origExecCommand ? origExecCommand('copy') : false;
-      if (ok) success = true;
-      document.body.removeChild(ta);
-    } catch(err) {
-      // 保持 success 现状，交由调用方上报真实结果
-    } finally {
-      isInternalCopying = prevFlag;
-    }
-    return success;
-  }
-
-  // 6. 全局提取当前卡片内已生成的开局设定内容
+  // 5. 跨移动端万能剪贴板提取与剧情启动通信桥梁
   function findGeneratedOutput() {
     var ids = [
       'output-area', 'out-text', 'outText', 'output-text',
@@ -299,17 +435,15 @@ body {
         if (val.trim().length > 5) return val.trim();
       }
     }
-    // 检查所有 output / readonly textarea
     var tas = document.querySelectorAll('textarea');
     for (var j = 0; j < tas.length; j++) {
       var ta = tas[j];
       var isReadOnly = ta.readOnly || ta.hasAttribute('readonly');
-      var isOutClass = ta.classList.contains('output-area') || ta.classList.contains('copy-box') || ta.classList.contains('out-text');
+      var isOutClass = ta.classList.contains('output-area') || ta.classList.contains('copy-box') || ta.classList.contains('out-text') || ta.classList.contains('out');
       if ((isReadOnly || isOutClass) && ta.value && ta.value.trim().length > 5) {
         return ta.value.trim();
       }
     }
-    // 智能保底：匹配具备开局特征的富文本内容
     for (var k = 0; k < tas.length; k++) {
       var tVal = tas[k].value || '';
       if (tVal.length > 20 && (/【玩家|【开局|【角色|周一|周二|周三|周四|周五|周六|周日|开场|设定|剧情/.test(tVal))) {
@@ -318,157 +452,19 @@ body {
     }
     return '';
   }
+  window.__novalFindGeneratedOutput = findGeneratedOutput;
 
-  var lastTriggeredText = '';
-  var lastTriggerTime = 0;
-  function triggerStartStory(text, autoStart) {
-    if (!text || text.trim().length < 5) return;
-    var cleanText = text.trim();
-    var now = Date.now();
-    if (cleanText === lastTriggeredText && (now - lastTriggerTime < 800)) {
-      return;
-    }
-    lastTriggeredText = cleanText;
-    lastTriggerTime = now;
-
-    var copyOk = mobileSafeCopy(cleanText);
-    try {
-      window.parent.postMessage({
-        type: 'NOVAL_START_CUSTOM_SETUP',
-        payload: cleanText,
-        autoStart: autoStart !== false,
-        copyOk: copyOk
-      }, '*');
-      window.parent.postMessage({
-        type: 'NOVAL_SUMMARY_COPIED',
-        payload: cleanText,
-        copyOk: copyOk
-      }, '*');
-    } catch(e) {}
+  function mobileSafeCopy(text) {
+    return window.__novalMobileSafeCopy ? window.__novalMobileSafeCopy(text) : false;
   }
 
-  // 7. 补出 navigator.clipboard 垫片并接管 writeText。
-  //    非安全上下文（http://<IP>:3000 这类部署）下 navigator.clipboard 是 undefined，
-  //    卡片自带的复制按钮写的是 if (navigator.clipboard) {...}，于是会「静默什么都不做」。
-  //    必须主动补出这个对象，把复制引导到同步的 mobileSafeCopy 上。
-  try {
-    var clip = null;
-    try { clip = navigator.clipboard; } catch(e) { clip = null; }
-    if (!clip) {
-      clip = {};
-      try {
-        Object.defineProperty(navigator, 'clipboard', { value: clip, configurable: true, writable: true });
-      } catch(e) {
-        try { navigator.clipboard = clip; } catch(e2) {}
-      }
+  function triggerStartStory(text, autoStart) {
+    if (window.__novalTriggerCopyAndStart) {
+      window.__novalTriggerCopyAndStart(text, autoStart);
     }
-    if (clip && !clip.__novalPatched) {
-      clip.writeText = function(text) {
-        // 该函数通常由卡片自身按钮的 click 处理器直接调用，此刻仍在用户手势内，
-        // 所以这里能走同步复制；返回 Promise 以兼容卡片的 .then() 写法。
-        try {
-          if (!isInternalCopying) {
-            triggerStartStory(text, true);
-          } else {
-            mobileSafeCopy(text);
-          }
-        } catch(e) {}
-        try {
-          return Promise.resolve();
-        } catch(e) {
-          return {
-            then: function(res) { try { res && res(); } catch(e2) {} return this; },
-            catch: function() { return this; },
-            'finally': function(fn) { try { fn && fn(); } catch(e2) {} return this; }
-          };
-        }
-      };
-      // 新版 API 的富文本复制：navigator.clipboard.write([new ClipboardItem(...)])
-      // 手写卡一般不用，但将来新导入的卡可能会用；不垫的话会直接抛
-      // 「clipboard.write is not a function」并中断卡片自身的初始化。
-      clip.write = function(items) {
-        try {
-          var text = '';
-          if (items && items.length) {
-            for (var i = 0; i < items.length; i++) {
-              var it = items[i];
-              if (typeof it === 'string') { text = it; break; }
-              if (it && typeof it.__novalText === 'string' && it.__novalText) { text = it.__novalText; break; }
-            }
-          }
-          if (text) {
-            // 有同步可得的纯文本，仍然能在手势内完成复制
-            if (!isInternalCopying) { triggerStartStory(text, true); } else { mobileSafeCopy(text); }
-          } else if (!isInternalCopying) {
-            // 拿不到同步文本（Blob 只能异步读），跳过手势已失效，如实告知宿主
-            try {
-              window.parent.postMessage({ type: 'NOVAL_COPY_FAILED', reason: 'rich-clipboard' }, '*');
-            } catch(e) {}
-          }
-        } catch(e) {}
-        try { return Promise.resolve(); } catch(e) {
-          return { then: function(res) { try { res && res(); } catch(e2) {} return this; }, catch: function() { return this; } };
-        }
-      };
+  }
 
-      // 部分卡片会先 readText 再决定复制内容；HTTP 下它不存在会直接抛错，垫一个空实现
-      clip.readText = function() {
-        try { return Promise.resolve(''); } catch(e) {
-          return { then: function(res) { try { res && res(''); } catch(e2) {} return this; }, catch: function() { return this; } };
-        }
-      };
-
-      // ClipboardItem 在非安全上下文同样不存在，补一个能容纳纯文本提示的实现，
-      // 避免 new ClipboardItem(...) 直接抛 ReferenceError 打断卡片脚本。
-      try {
-        if (typeof window.ClipboardItem === 'undefined') {
-          window.ClipboardItem = function(data) {
-            this.__novalText = '';
-            try {
-              for (var k in (data || {})) {
-                var v = data[k];
-                if (typeof v === 'string') { this.__novalText = v; break; }
-              }
-            } catch(e) {}
-            this.types = Object.keys(data || {});
-            this.getType = function() { return null; };
-          };
-        }
-      } catch(e) {}
-
-      clip.__novalPatched = true;
-    }
-  } catch(e) {}
-
-  // 8. 劫持 document.execCommand('copy')，捕获卡片传统复制执行
-  try {
-    if (document.execCommand) {
-      document.execCommand = function(cmd) {
-        var res = false;
-        try {
-          res = origExecCommand ? origExecCommand(cmd) : false;
-        } catch(err) {
-          res = false;
-        }
-        if (cmd === 'copy' && !isInternalCopying) {
-          var text = '';
-          try {
-            var sel = window.getSelection();
-            if (sel) text = sel.toString();
-          } catch(e) {}
-          if (!text || text.length < 5) {
-            text = findGeneratedOutput();
-          }
-          if (text && text.length > 5) {
-            triggerStartStory(text, true);
-          }
-        }
-        return res;
-      };
-    }
-  } catch(e) {}
-
-  // 9. 全局拦截用户点击“生成 / 复制 / 确认 / 开始故事 / 一键开局”等所有动作按钮
+  // 6. 全局拦截用户点击“生成 / 复制 / 确认 / 开始故事 / 一键开局”等动作按钮
   document.addEventListener('click', function(e) {
     var target = e.target;
     if (!target) return;
@@ -480,17 +476,13 @@ body {
     var btnClass = btn.className || '';
 
     var isActionBtn = (
-      // 中文文案：尽量覆盖「生成/复制/确认/填入」的各种写法，新导入的卡不必再改代码
       /生\s*成|复\s*制|拷\s*贝|确\s*认|填\s*入|应\s*用|开\s*始|开\s*局|管\s*教|推\s*演|一\s*键|发\s*送|进入剧情|立即体验/.test(btnText) ||
-      // 英文文案
       /^\s*(copy|generate|confirm|apply|start)\s*$/i.test(btnText) ||
       /btn-gen|gen-btn|btn-copy|btnCopy|copyBtn|copy-btn|copy_btn|copyButton|btn-confirm|btn-apply|genBtn|btnStart|btn-start|submit/i.test(btnId) ||
       /btn-gen|gen-btn|copy-btn|copy_btn|copyButton|btn-submit|btn-start|btn-apply/i.test(btnClass)
     );
 
     if (isActionBtn) {
-      // 同步复制：若此刻内容已经生成，就在用户手势的同步栈里立即写剪贴板。
-      // 移动端只允许手势内同步调用，这一步是手机上复制能成功的关键。
       var immediate = findGeneratedOutput();
       if (immediate && immediate.length > 5) {
         mobileSafeCopy(immediate);
@@ -500,34 +492,33 @@ body {
         if (output && output.length > 5) {
           triggerStartStory(output, true);
         }
-      }, 70);
+      }, 40);
       setTimeout(function() {
         var output = findGeneratedOutput();
         if (output && output.length > 5) {
           triggerStartStory(output, true);
         }
-      }, 240);
+      }, 180);
     }
   }, true);
 
-  // 10. 全局表单 submit 拦截（防止 form 默认提交刷新 iframe 并提取设定）
+  // 7. 全局表单 submit 拦截
   document.addEventListener('submit', function(e) {
-    e.preventDefault();
     setTimeout(function() {
       var output = findGeneratedOutput();
       if (output && output.length > 5) {
         triggerStartStory(output, true);
       }
-    }, 70);
+    }, 40);
     setTimeout(function() {
       var output = findGeneratedOutput();
       if (output && output.length > 5) {
         triggerStartStory(output, true);
       }
-    }, 240);
+    }, 180);
   }, true);
 
-  // 11. 动态注入通用的【🚀 填入并以此设定开局】高亮操作按钮
+  // 8. 动态注入通用的【🚀 填入并以此设定开局】高亮操作按钮
   function injectUniversalStartButtons() {
     try {
       if (document.getElementById('novalUniversalStartBtn')) return;
@@ -535,6 +526,7 @@ body {
         document.querySelector('.copy-wrap'),
         document.querySelector('.btn-row'),
         document.getElementById('sec-output'),
+        document.querySelector('#out-box'),
         document.querySelector('#output-area')?.parentElement,
         document.querySelector('#outText')?.parentElement,
         document.querySelector('#out-text')?.parentElement,
@@ -573,7 +565,7 @@ body {
               if (text) {
                 triggerStartStory(text, true);
               }
-            }, 80);
+            }, 60);
           } else {
             triggerStartStory(text, true);
           }
@@ -584,18 +576,26 @@ body {
     } catch(err) {}
   }
 
-  window.addEventListener('load', function() {
+  function initBridge() {
     notifyHeight();
     setTimeout(notifyHeight, 300);
     setTimeout(notifyHeight, 1000);
     injectUniversalStartButtons();
-    setTimeout(injectUniversalStartButtons, 500);
+    setTimeout(injectUniversalStartButtons, 300);
+    setTimeout(injectUniversalStartButtons, 800);
+    setTimeout(injectUniversalStartButtons, 1500);
 
-    // 观察 DOM 变化（用户点击开场白或生成时高度变动）
     if (window.ResizeObserver) {
       new ResizeObserver(notifyHeight).observe(document.body);
     }
-  });
+  }
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initBridge();
+  } else {
+    document.addEventListener('DOMContentLoaded', initBridge);
+    window.addEventListener('load', initBridge);
+  }
 })();
 </script>
 `;
@@ -604,6 +604,12 @@ body {
 
     // 自动将 const characterData / let characterData 提升至全局 window.characterData，确保无论外部还是内部均能即时读取
     result = result.replace(/(?:const|let|var)\s+characterData\s*=/g, 'var characterData = window.characterData = window.characterData ||');
+
+    // 修复部分卡片作者写死的错误复制逻辑（-1000px / readonly 导致现代浏览器在 iframe 或移动端拒绝复制并弹出失败提示）
+    result = result
+      .replace(/ta\.style\.top\s*=\s*["']-1000px["'];?/g, 'ta.style.top="0";ta.style.left="0";ta.style.width="2em";ta.style.height="2em";ta.style.opacity="0.01";')
+      .replace(/ta\.setAttribute\(\s*["']readonly["']\s*,\s*["']["']\s*\);?/g, 'ta.readOnly=false;')
+      .replace(/copyPromise\s*=\s*\(function\s*\(\s*t\s*\)\s*\{[\s\S]*?\}\)\s*\(\s*output\s*\);/g, 'copyPromise = (window.__novalSafeCopyPromise ? window.__novalSafeCopyPromise(output) : (navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(output) : Promise.resolve()));');
 
     // 自动替换女生宿舍已知易失效外链为高画质本地资源
     result = result
@@ -633,52 +639,6 @@ body {
 
   // 监听来自 iframe 内部的 postMessage 消息
   useEffect(() => {
-    function copyToClipboardFallback(text: string): boolean {
-      if (!text) return false;
-      // 非安全上下文（http://<IP> 部署）下 navigator.clipboard 是 undefined，
-      // 直接走同步 execCommand，并且不要用 .catch() 把失败吞掉。
-      try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).catch(() => {
-            legacyCopy(text);
-          });
-          return true;
-        }
-      } catch (e) {}
-      return legacyCopy(text);
-    }
-
-    function legacyCopy(text: string): boolean {
-      try {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        // iOS：contentEditable + Range 选中，比只 setSelectionRange 可靠得多
-        ta.contentEditable = 'true';
-        ta.readOnly = false;
-        ta.style.position = 'fixed';
-        ta.style.top = '0';
-        ta.style.left = '0';
-        ta.style.width = '1px';
-        ta.style.height = '1px';
-        ta.style.opacity = '0.01';
-        ta.style.zIndex = '2147483647';
-        document.body.appendChild(ta);
-        try {
-          const range = document.createRange();
-          range.selectNodeContents(ta);
-          const sel = window.getSelection();
-          if (sel) { sel.removeAllRanges(); sel.addRange(range); }
-        } catch (e) {}
-        ta.focus();
-        ta.setSelectionRange(0, text.length);
-        const ok = document.execCommand('copy');
-        document.body.removeChild(ta);
-        return !!ok;
-      } catch (e) {
-        return false;
-      }
-    }
-
     function handleMessage(event: MessageEvent) {
       if (!event.data || typeof event.data !== 'object') return;
 
@@ -690,8 +650,8 @@ body {
       } else if (event.data.type === 'NOVAL_START_CUSTOM_SETUP' && event.data.payload) {
         const text = String(event.data.payload).trim();
         if (text) {
-          copyToClipboardFallback(text);
-          setAppliedNotice('已自动填入开局设定，正在启动剧情...');
+          copyText(text);
+          setAppliedNotice('已自动载入开局设定并开启推演！');
           setTimeout(() => setAppliedNotice(null), 3500);
           setIsExpanded(false);
           if (onStartStory) {
@@ -699,18 +659,12 @@ body {
           }
         }
       } else if (event.data.type === 'NOVAL_COPY_FAILED') {
-        // 卡片用了无法在非安全上下文同步复制的写法（如富文本 clipboard.write），
-        // 给出可操作的兜底指引，而不是静默失败。
         setAppliedNotice('浏览器拒绝了自动复制，请长按文本选择复制。');
         setTimeout(() => setAppliedNotice(null), 4000);
       } else if (event.data.type === 'NOVAL_SUMMARY_COPIED') {
         const hasText = String(event.data.payload || '').trim().length > 0;
         if (!hasText) return;
-        // iframe 内已尝试在手势内同步复制；这里只负责如实回报，
-        // 不再重复异步复制（移动端的异步复制必然被拒，还可能覆盖掉成功的那次）。
         if (event.data.copyOk === false) {
-          // 内容刚生成时点击已脱离用户手势，移动端会拒绝自动复制；
-          // 此时内容已存在，用户再点一次按钮即可走同步路径成功复制。
           setAppliedNotice('内容已生成。手机浏览器禁止自动复制，请再点一次按钮即可复制。');
         } else {
           setAppliedNotice('开局设定已复制并就绪！');
