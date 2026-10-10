@@ -21,7 +21,7 @@ import {
   Shirt,
   Blinds,
   AlertTriangle,
-  ZoomIn
+  ZoomIn, X
 } from 'lucide-react';
 import { parseTurnCharacterStatus, CharacterStatusSnapshot } from '@/lib/characterStatusParser';
 import { resolveCgUrl } from '@/lib/cgManager';
@@ -48,13 +48,22 @@ export const FloatingStatusHud = React.memo(function FloatingStatusHud({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isBagOpen, setIsBagOpen] = useState(false);
   const [isPropPanelOpen, setIsPropPanelOpen] = useState(true);
+  const [isDismissed, setIsDismissed] = useState(false);
   const storeDeck = useAppStore(state => state.currentDeck);
   const effectiveDeck = currentDeck || storeDeck;
   const [activeCgModal, setActiveCgModal] = useState<{ url: string; title: string; subtitle?: string; code?: string } | null>(null);
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    try {
+      if (localStorage.getItem(`noval_hud_dismissed_${deckId}`) === '1') {
+        setIsDismissed(true);
+      }
+      if (localStorage.getItem('noval_hud_collapsed') === '1') {
+        setIsCollapsed(true);
+      }
+    } catch {}
+  }, [deckId]);
 
   // 从最新的 AI 轮次中逆向解析状态
   const hudData = useMemo(() => {
@@ -175,9 +184,7 @@ export const FloatingStatusHud = React.memo(function FloatingStatusHud({
       }
     }
 
-    if (!charStatus) {
-      charStatus = parseTurnCharacterStatus({ isUser: false, story: '' }, deckId, deckTitle, 0);
-    }
+// 不强行构造空数据
 
     // 针对密闭/酒店剧本，若开启了 phaseLock 但模型前几轮尚未输出标签，提供默认保底阶段
     const isAtourOrHotel = deckId === 'deck_atour_app' || deckId.includes('1ad4e5fd') || deckTitle.includes('亚朵') || deckTitle.includes('酒店');
@@ -219,7 +226,7 @@ export const FloatingStatusHud = React.memo(function FloatingStatusHud({
   const showProps = Boolean(enabledMods.sceneIncidents);
   const showHaremRecords = Boolean(enabledMods.haremIntimacyRecord && haremRecords.length > 0);
 
-  if (!mounted) {
+  if (!mounted || isDismissed) {
     return null;
   }
 
@@ -310,14 +317,31 @@ export const FloatingStatusHud = React.memo(function FloatingStatusHud({
             )}
           </div>
 
-          <button
-            type="button"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-gray-200 px-2 py-0.5 rounded bg-gray-900/60 border border-gray-800 hover:bg-gray-800 transition cursor-pointer"
-          >
-            <span>{isCollapsed ? '展开控制台' : '收起面板'}</span>
-            {isCollapsed ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => {
+                const next = !isCollapsed;
+                setIsCollapsed(next);
+                try { localStorage.setItem('noval_hud_collapsed', next ? '1' : '0'); } catch {}
+              }}
+              className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-gray-200 px-2 py-0.5 rounded bg-gray-900/60 border border-gray-800 hover:bg-gray-800 transition cursor-pointer"
+            >
+              <span>{isCollapsed ? '展开控制台' : '收起面板'}</span>
+              {isCollapsed ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsDismissed(true);
+                try { localStorage.setItem(`noval_hud_dismissed_${deckId}`, '1'); } catch {}
+              }}
+              className="flex items-center gap-1 text-[11px] text-gray-400 hover:text-red-300 px-1.5 py-0.5 rounded bg-gray-900/60 border border-gray-800 hover:border-red-500/40 hover:bg-red-950/30 transition cursor-pointer"
+              title="关闭此面板（随时可通过顶部导航栏【状态】查看）"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
 
         {/* HUD 主体面板 */}

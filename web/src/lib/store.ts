@@ -10,16 +10,16 @@ let saveQueue: Promise<void> = Promise.resolve();
 export const isCheckpointId = (id: string) => id.startsWith('branch_');
 
 const defaultMods: EnabledMods = {
-  apocalypseSurvival: true,
+  apocalypseSurvival: false,
   antiCoercion: true,
   innerVoice: true,
   explorationBranches: true,
   affectionGauge: false,
   rpgAdventureHud: false,
   lorebookArbiter: true,
-  phaseLock: true,
-  sceneIncidents: true,
-  haremIntimacyRecord: true,
+  phaseLock: false,
+  sceneIncidents: false,
+  haremIntimacyRecord: false,
 };
 
 const getInitialMods = (): EnabledMods => {
@@ -29,16 +29,16 @@ const getInitialMods = (): EnabledMods => {
     if (raw) {
       const parsed = JSON.parse(raw);
       return {
-        apocalypseSurvival: parsed.apocalypseSurvival ?? true,
+        apocalypseSurvival: parsed.apocalypseSurvival ?? false,
         antiCoercion: parsed.antiCoercion ?? true,
         innerVoice: parsed.innerVoice ?? true,
         explorationBranches: parsed.explorationBranches ?? true,
         affectionGauge: parsed.affectionGauge ?? false,
         rpgAdventureHud: parsed.rpgAdventureHud ?? false,
         lorebookArbiter: parsed.lorebookArbiter ?? true,
-        phaseLock: parsed.phaseLock ?? true,
-        sceneIncidents: parsed.sceneIncidents ?? true,
-        haremIntimacyRecord: parsed.haremIntimacyRecord ?? true,
+        phaseLock: parsed.phaseLock ?? false,
+        sceneIncidents: parsed.sceneIncidents ?? false,
+        haremIntimacyRecord: parsed.haremIntimacyRecord ?? false,
       };
     }
   } catch (e) {

@@ -1031,34 +1031,6 @@ function generateHeuristicStatus(
     };
   }
 
-  // 通用恋爱心防模型
-  const aff = Math.min(100, 25 + turnIndex * 5);
-  const def = Math.max(10, 75 - turnIndex * 5);
-  return {
-    characterName: '主要角色',
-    stageName: aff > 60 ? '暧昧悸动' : '初步动摇',
-    mood: innerThought || '被你的言行牵动着情绪，正在重新衡量彼此的距离……',
-    stats: [
-      {
-        name: '心动好感度',
-        value: aff,
-        max: 100,
-        delta: '+5 ▲',
-        stageDesc: aff > 60 ? '深层好感' : '打破隔阂',
-        color: 'from-pink-500 to-rose-500',
-        barColor: 'linear-gradient(90deg, #ec4899, #f472b6)',
-        icon: '💖'
-      },
-      {
-        name: '戒备防线',
-        value: def,
-        max: 100,
-        delta: '-5 ▼',
-        stageDesc: def < 40 ? '防线微弱' : '有所保留',
-        color: 'from-purple-500 to-indigo-500',
-        barColor: 'linear-gradient(90deg, #a855f7, #6366f1)',
-        icon: '🔒'
-      }
-    ]
-  };
+  // 通用剧本：若文本中未携带结构化状态面板，不凭空伪造状态数据
+  return null;
 }

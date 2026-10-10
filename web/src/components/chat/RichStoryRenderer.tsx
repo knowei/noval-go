@@ -172,15 +172,19 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
 
   // 6. 统一段落划分 (<p> 标签拆分或换行拆分)
   let rawParas: string[] = [];
-  if (sanitized.includes('<p>') || sanitized.includes('</p>')) {
+  const normalizedText = sanitized.replace(/<br\s*\/?>/gi, '\n');
+  if (/<p[\s>]/i.test(normalizedText) || /<\/p>/i.test(normalizedText)) {
     // 将 </p> 转换为换行符，将 <p> 清除以准确切割段落
-    const byP = sanitized
-      .split(/<\/p>|\n+/gi)
+    const byP = normalizedText
+      .split(/<\/p>|\r?\n+/gi)
       .map((p) => p.replace(/<\/?p[^>]*>/gi, '').trim())
       .filter(Boolean);
     rawParas = byP;
   } else {
-    rawParas = sanitized.split('\n+').map((l) => l.trim()).filter(Boolean);
+    rawParas = normalizedText
+      .split(/\r?\n+/)
+      .map((l) => l.trim())
+      .filter(Boolean);
   }
 
   // 二次清理段落首尾的残损或断裂标签符号（如单独的 </p、p>、<p）
@@ -449,9 +453,9 @@ export const RichStoryRenderer = React.memo(function RichStoryRenderer({ rawStor
       )}
 
       {/* ③ 正文段落渲染 */}
-      <div className="novel-text space-y-3 select-text font-serif leading-[1.95] text-[14.5px] sm:text-[15px] text-gray-200">
+      <div className="novel-text space-y-3.5 select-text font-serif leading-[1.95] text-[14.5px] sm:text-[15px] text-gray-200">
         {paragraphs.map((p, pi) => (
-          <div key={pi} className="tracking-[0.015em] mb-2.5">
+          <div key={pi} className="tracking-[0.015em] mb-3 whitespace-pre-wrap break-words">
             {renderParagraphContent(p)}
           </div>
         ))}
