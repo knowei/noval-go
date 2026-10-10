@@ -5,6 +5,7 @@ import { CardTurnActionBar } from './CardTurnActionBar';
 import { RichStoryRenderer } from './RichStoryRenderer';
 import { Turn } from '@/lib/types';
 import { generateContextualBranches } from '@/lib/modelParser';
+import { formatBranchAction } from '@/lib/branchUtils';
 
 interface SisterTruthOrDareCardProps {
   turn: Turn;
@@ -266,7 +267,7 @@ export const SisterTruthOrDareCard = React.memo(function SisterTruthOrDareCard({
                   {activeBranches.map((b, bIdx) => (
                     <button
                       key={bIdx}
-                      onClick={() => onSendAction?.(b.desc ? `${b.title}：${b.desc}` : b.title)}
+                      onClick={() => onSendAction?.(formatBranchAction(b))}
                       className="p-3 rounded-xl border border-[#272938] bg-[#191a24] hover:border-rose-500/60 hover:bg-rose-950/20 text-left transition cursor-pointer group"
                     >
                       <div className="font-bold text-xs text-gray-200 group-hover:text-rose-300 flex items-center gap-1.5">

@@ -11,6 +11,7 @@ import { TurnStatusCard } from './TurnStatusCard';
 import { TurnIllustrations } from './IllustrationPanel';
 import { inspectReplyEnvelope } from '@/lib/replyEnvelope';
 import { useAppStore } from '@/lib/store';
+import { formatBranchAction } from '@/lib/branchUtils';
 
 interface GenericCardProps {
   turn: Turn;
@@ -215,7 +216,7 @@ const GenericCardBody = React.memo(function GenericCardBody({
                     return (
                       <button
                         key={bi}
-                        onClick={() => onSendAction(`【${b.title}】：${b.desc || b.title}`)}
+                        onClick={() => onSendAction(formatBranchAction(b))}
                         className="p-3 rounded-xl bg-[#1d1f2b] hover:bg-[#252838] border border-[#2d3142] hover:border-amber-500/60 text-left text-xs text-gray-200 hover:text-amber-200 transition group flex flex-col justify-between cursor-pointer shadow-sm gap-1.5"
                       >
                         <div className="flex items-start justify-between w-full gap-2">

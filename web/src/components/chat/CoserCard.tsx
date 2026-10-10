@@ -7,6 +7,7 @@ import { Turn } from '@/lib/types';
 import { generateContextualBranches } from '@/lib/modelParser';
 import { copyText } from '@/lib/clipboard';
 import { Sparkles, BookOpen, Copy, Check } from 'lucide-react';
+import { formatBranchAction } from '@/lib/branchUtils';
 
 interface CoserCardProps {
   turn: Turn;
@@ -368,7 +369,7 @@ export const CoserCard = React.memo(function CoserCard({
             ]).map((b, bi) => (
               <button
                 key={bi}
-                onClick={() => onSendAction(`【${b.title}】：${b.desc || b.title}`)}
+                onClick={() => onSendAction(formatBranchAction(b))}
                 className="p-2.5 rounded-xl bg-[#1b1326] hover:bg-pink-950/40 border border-pink-500/30 hover:border-pink-500 text-left text-xs text-gray-200 hover:text-pink-300 transition group flex items-center justify-between cursor-pointer"
               >
                 <span><strong>【{b.tag || '◆'}】</strong> {b.title}</span>
@@ -530,7 +531,7 @@ export const CoserCard = React.memo(function CoserCard({
                   {activeBranches.map((b, bi) => (
                     <button
                       key={bi}
-                      onClick={() => onSendAction(`【${b.title}】：${b.desc || b.title}`)}
+                      onClick={() => onSendAction(formatBranchAction(b))}
                       className="p-2.5 rounded-xl bg-[#1b1326] hover:bg-pink-950/40 border border-pink-500/30 hover:border-pink-500 text-left text-xs text-gray-200 hover:text-pink-300 transition group flex items-center justify-between cursor-pointer"
                     >
                       <span><strong>【{b.tag || '◆'}】</strong> {b.title}</span>

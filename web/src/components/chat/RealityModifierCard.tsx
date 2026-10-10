@@ -5,6 +5,7 @@ import { Turn } from '@/lib/types';
 import { generateContextualBranches } from '@/lib/modelParser';
 import { CardTurnActionBar } from './CardTurnActionBar';
 import { RichStoryRenderer } from './RichStoryRenderer';
+import { formatBranchAction } from '@/lib/branchUtils';
 
 interface RealityModifierCardProps {
   turn: Turn;
@@ -144,7 +145,7 @@ export const RealityModifierCard = React.memo(function RealityModifierCard({
 
   const dynamicActionList = React.useMemo(() => {
     if (turn.branches && turn.branches.length > 0) {
-      return turn.branches.map((b) => `【${b.title}】：“${b.desc || b.title}”`);
+      return turn.branches.map((b) => formatBranchAction(b));
     } else if (index === 0) {
       return [
         "【尝试第一次修改】：“让对门邻居林婉柔在五分钟内主动来敲我的门借调味品。”",
@@ -154,7 +155,7 @@ export const RealityModifierCard = React.memo(function RealityModifierCard({
       ];
     } else {
       const fallbackBranches = generateContextualBranches('deck_reality_modifier', storyRaw, index);
-      return fallbackBranches.map((b) => `【${b.title}】：“${b.desc || b.title}”`);
+      return fallbackBranches.map((b) => formatBranchAction(b));
     }
   }, [turn.branches, index, storyRaw]);
 

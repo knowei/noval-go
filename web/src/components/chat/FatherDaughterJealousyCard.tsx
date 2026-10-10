@@ -6,6 +6,7 @@ import { RichStoryRenderer } from './RichStoryRenderer';
 import { Turn } from '@/lib/types';
 import { generateContextualBranches } from '@/lib/modelParser';
 import { RotateCcw, ChevronDown, BookOpen, Sliders, Flame } from 'lucide-react';
+import { formatBranchAction } from '@/lib/branchUtils';
 
 interface FatherDaughterJealousyCardProps {
   turn: Turn;
@@ -311,7 +312,7 @@ export const FatherDaughterJealousyCard = React.memo(function FatherDaughterJeal
                   {activeBranches.map((b, bIdx) => (
                     <button
                       key={bIdx}
-                      onClick={() => onSendAction?.(b.desc ? `${b.title}：${b.desc}` : b.title)}
+                      onClick={() => onSendAction?.(formatBranchAction(b))}
                       className="p-3 rounded-xl border border-[#272938] bg-[#191a24] hover:border-amber-500/60 hover:bg-amber-950/20 text-left transition cursor-pointer group"
                     >
                       <div className="font-bold text-xs text-gray-200 group-hover:text-amber-300 flex items-center gap-1.5">

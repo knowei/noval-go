@@ -6,6 +6,7 @@ import { generateContextualBranches } from '@/lib/modelParser';
 import { CardTurnActionBar } from './CardTurnActionBar';
 import { RichStoryRenderer } from './RichStoryRenderer';
 import { useAppStore } from '@/lib/store';
+import { formatBranchAction } from '@/lib/branchUtils';
 import {
   Activity,
   Droplets,
@@ -356,7 +357,7 @@ export const ApocalypseSurvivalCard = React.memo(function ApocalypseSurvivalCard
                     if (isDeathBranch && b.title.includes('读档')) {
                       onDelete(index);
                     } else {
-                      onSendAction(b.desc ? `【${b.title}】：${b.desc}` : b.title);
+                      onSendAction(formatBranchAction(b));
                     }
                   }}
                   className={`text-left p-2.5 sm:p-3 rounded-xl border transition cursor-pointer group shadow-xs ${

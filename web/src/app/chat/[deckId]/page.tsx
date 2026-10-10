@@ -57,6 +57,7 @@ import { FloatingStatusHud } from '@/components/chat/FloatingStatusHud';
 import { scopeDeckCustomCss } from '@/lib/scopeCss';
 import { registerDeckCgMap, extractCgMapFromCss } from '@/lib/cgManager';
 import { RichStoryRenderer } from '@/components/chat/RichStoryRenderer';
+import { normalizeActionText } from '@/lib/branchUtils';
 
 export default function ChatPage() {
   const params = useParams();
@@ -625,8 +626,9 @@ export default function ChatPage() {
 
   const handleSend = useCallback(async (actionText: string) => {
     const live = useAppStore.getState();
-    if (!actionText.trim() || isLoadingRef.current || live.isBranching || generationRef.current || !isDeckReadyRef.current) return;
-    const userTurn: Turn = { isUser: true, text: actionText.trim() };
+    const cleanActionText = normalizeActionText(actionText);
+    if (!cleanActionText.trim() || isLoadingRef.current || live.isBranching || generationRef.current || !isDeckReadyRef.current) return;
+    const userTurn: Turn = { isUser: true, text: cleanActionText.trim() };
     let baseHistory = live.conversationHistory;
     if (baseHistory.length === 0 && live.currentDeck) {
       const openings = storyOpenings(live.currentDeck, live.sessionSettings);
