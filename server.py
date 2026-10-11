@@ -1272,10 +1272,10 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                 c.execute("""
                 SELECT * FROM plaza_cards
                 WHERE is_featured = 1 AND (title LIKE ? OR "desc" LIKE ? OR author LIKE ? OR tags_json LIKE ?)
-                ORDER BY order_index ASC
+                ORDER BY created_at DESC NULLS LAST, order_index ASC
                 """, (kw_pat, kw_pat, kw_pat, kw_pat))
             else:
-                c.execute("SELECT * FROM plaza_cards WHERE is_featured = 1 ORDER BY order_index ASC")
+                c.execute("SELECT * FROM plaza_cards WHERE is_featured = 1 ORDER BY created_at DESC NULLS LAST, order_index ASC")
             rows = c.fetchall()
             conn.close()
             items = []
