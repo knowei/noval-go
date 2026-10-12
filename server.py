@@ -1369,7 +1369,7 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                 page = total_pages
 
             offset = (page - 1) * size
-            c.execute(f"SELECT * FROM plaza_cards {where_clause} ORDER BY order_index ASC LIMIT ? OFFSET ?", args + [size, offset])
+            c.execute(f"SELECT * FROM plaza_cards {where_clause} ORDER BY created_at DESC NULLS LAST, order_index ASC LIMIT ? OFFSET ?", args + [size, offset])
             rows = c.fetchall()
             conn.close()
 

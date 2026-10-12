@@ -31,7 +31,17 @@ import db_engine  # noqa: E402
 CTX = ssl.create_default_context()
 CTX.check_hostname = False
 CTX.verify_mode = ssl.CERT_NONE
-OPENER = urllib.request.build_opener(urllib.request.HTTPSHandler(context=CTX))
+
+def _build_opener():
+    proxy = os.environ.get('HTTPS_PROXY') or os.environ.get('HTTP_PROXY') or 'http://127.0.0.1:7897'
+    try:
+        # test proxy handler first
+        p_handler = urllib.request.ProxyHandler({'http': proxy, 'https': proxy})
+        return urllib.request.build_opener(p_handler, urllib.request.HTTPSHandler(context=CTX))
+    except Exception:
+        return urllib.request.build_opener(urllib.request.HTTPSHandler(context=CTX))
+
+OPENER = _build_opener()
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'Referer': 'https://genraton.xyz/zh/explore/apps?ranking=overall_rank&display=simple',
