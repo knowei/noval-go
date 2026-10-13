@@ -106,7 +106,7 @@ export function HeroRecommendationBanner({ cards }: HeroRecommendationBannerProp
     <div
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#1c1226] via-[#161426] to-[#121626] border border-pink-500/30 p-6 sm:p-10 shadow-2xl transition-all duration-500 group"
+      className="hero-recommendation-banner relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#1c1226] via-[#161426] to-[#121626] border border-pink-500/30 p-6 sm:p-10 shadow-2xl transition-all duration-500 group"
     >
       {/* 渐变氛围背景光圈 */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl pointer-events-none" />

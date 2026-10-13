@@ -681,5 +681,77 @@ details.reality-panel[open] > summary.reality-summary,
   background: rgba(37, 99, 235, 0.45);
 }
 
+/* 8. 广场 Hero Banner 蓝白模式高颜值重绘 */
+.light .hero-recommendation-banner {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 50%, #fdf2f8 100%) !important;
+  border-color: #bfdbfe !important;
+  box-shadow: 0 10px 35px rgba(37, 99, 235, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.light .hero-recommendation-banner h1,
+.light .hero-recommendation-banner h1 a {
+  color: #0f172a !important;
+}
+
+.light .hero-recommendation-banner h1 a:hover {
+  color: #2563eb !important;
+}
+
+.light .hero-recommendation-banner p {
+  color: #475569 !important;
+}
+
+.light .hero-recommendation-banner .bg-\[\#251e36\] {
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+
+.light .hero-recommendation-banner .bg-\[\#202230\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+.light .hero-recommendation-banner .bg-\[\#202230\]:hover {
+  background-color: #f8fafc !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+}
+
+.light .hero-recommendation-banner .bg-\[\#1d1b2a\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #475569 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.light .hero-recommendation-banner .bg-\[\#1d1b2a\]:hover {
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+
+/* 9. 搜索栏与热搜词适配 */
+.light .bg-\[\#1b1d28\] {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+}
+
+.light .bg-\[\#1b1d28\]:hover {
+  background-color: #eff6ff !important;
+  border-color: #93c5fd !important;
+  color: #1d4ed8 !important;
+}
+
+/* 10. 侧边栏及通用卡片浅色模式高质感微调 */
+.light aside .text-gray-400,
+.light aside .text-gray-500 {
+  color: #64748b !important;
+}
+
+
 
 

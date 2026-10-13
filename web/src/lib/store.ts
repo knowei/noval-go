@@ -84,7 +84,8 @@ interface AppState {
   modelSettings: ModelSettings;
   isSettingsOpen: boolean;
   isUserSwitchOpen: boolean;
-  isDrawerOpen: boolean;
+  isDrawerOpen: boolean;
+  drawerTab: 'current' | 'all' | 'cards';
   isModCenterOpen: boolean;
   enabledMods: EnabledMods;
   isSiteUnlocked: boolean;
@@ -105,7 +106,8 @@ interface AppState {
   toggleRoleplayMode: () => void;
   setIsSettingsOpen: (open: boolean) => void;
   setIsUserSwitchOpen: (open: boolean) => void;
-  setIsDrawerOpen: (open: boolean) => void;
+  setIsDrawerOpen: (open: boolean, tab?: 'current' | 'all' | 'cards') => void;
+  setDrawerTab: (tab: 'current' | 'all' | 'cards') => void;
   setIsModCenterOpen: (open: boolean) => void;
   toggleMod: (modKey: keyof EnabledMods) => void;
   setEnabledMods: (mods: Partial<EnabledMods>) => void;
@@ -157,7 +159,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   isSettingsOpen: false,
   isUserSwitchOpen: false,
-  isDrawerOpen: false,
+  isDrawerOpen: false,
+  drawerTab: 'current',
   isModCenterOpen: false,
   enabledMods: getInitialMods(),
   isSiteUnlocked: (() => {
@@ -309,7 +312,8 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setIsSettingsOpen: (open) => set({ isSettingsOpen: open }),
   setIsUserSwitchOpen: (open) => set({ isUserSwitchOpen: open }),
-  setIsDrawerOpen: (open) => set({ isDrawerOpen: open }),
+  setIsDrawerOpen: (open, tab) => set({ isDrawerOpen: open, ...(tab ? { drawerTab: tab } : {}) }),
+  setDrawerTab: (tab) => set({ drawerTab: tab }),
   setIsModCenterOpen: (open) => set({ isModCenterOpen: open }),
 
   toggleMod: (modKey) => {

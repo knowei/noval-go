@@ -4,14 +4,17 @@ import React, { useEffect, useState } from 'react';
 import { isCheckpointId, useAppStore } from '@/lib/store';
 import { deleteConversation, fetchConversation } from '@/lib/api';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
-import { X, Plus, Trash2, BookOpen, Clock } from 'lucide-react';
+import { X, Plus, Trash2, BookOpen, Clock, Layers } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { PrivateCardLibrary } from '@/components/plaza/PrivateCardLibrary';
 
 export function Drawer() {
   const router = useRouter();
   const {
     isDrawerOpen,
     setIsDrawerOpen,
+    drawerTab,
+    setDrawerTab,
     savedConversations,
     refreshSaves,
     currentDeckKey,
@@ -23,21 +26,19 @@ export function Drawer() {
   } = useAppStore();
 
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'current' | 'all'>('current');
+  const [activeTab, setActiveTab] = useState<'current' | 'all' | 'cards'>('current');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (isDrawerOpen) {
       refreshSaves();
+      if (drawerTab) {
+        setActiveTab(drawerTab);
+      } else if (!currentDeckKey) {
+        setActiveTab('all');
+      }
     }
-  }, [isDrawerOpen, refreshSaves]);
-
-  // Default to 'all' if no current deck is active or in plaza
-  useEffect(() => {
-    if (!currentDeckKey && isDrawerOpen) {
-      setActiveTab('all');
-    }
-  }, [currentDeckKey, isDrawerOpen]);
+  }, [isDrawerOpen, refreshSaves, drawerTab, currentDeckKey]);
 
   if (!isDrawerOpen) return null;
 
@@ -101,82 +102,113 @@ export function Drawer() {
       />
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-sm bg-[#15161c] border-l border-[#262832] text-gray-200 shadow-2xl flex flex-col">
+        <div className="w-screen max-w-sm sm:max-w-md bg-[var(--app-card-bg,#15161c)] border-l border-[var(--app-card-border,#262832)] text-[var(--app-text-main,#f1f5f9)] shadow-2xl flex flex-col">
           {/* Header */}
-          <div className="p-4 border-b border-[#242630] flex items-center justify-between">
+          <div className="p-4 border-b border-[var(--app-card-border,#242630)] flex items-center justify-between bg-[var(--app-card-bg-subtle,#161722)]">
             <div className="flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-pink-400" />
-              <h2 className="font-bold text-sm">剧本推演存档库</h2>
+              <h2 className="font-bold text-sm">
+                {activeTab === 'cards' ? '私密角色卡与导入库' : '剧本推演存档库'}
+              </h2>
             </div>
             <button
               onClick={() => setIsDrawerOpen(false)}
-              className="p-1 rounded-lg hover:bg-[#20222a] text-gray-400 hover:text-white transition cursor-pointer"
+              className="p-1 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 text-gray-400 hover:text-white transition cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Dual Tabs: Current Deck vs All Stories */}
-          <div className="px-3 pt-3 flex items-center gap-1.5 border-b border-[#242630] pb-2.5">
-            <button
-              onClick={() => setActiveTab('current')}
-              className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
-                activeTab === 'current'
-                  ? 'bg-pink-600/20 text-pink-300 border border-pink-500/40 shadow-sm'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-[#1f202b]'
-              }`}
-            >
-              <span>当前剧本</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-pink-500/30 text-pink-200 font-mono">
-                {currentDeckSaves.length}
-              </span>
-            </button>
+          {/* Triple Tabs: Current Deck vs All Stories vs Private Cards */}
+          <div className="px-3 pt-3 flex items-center gap-1.5 border-b border-[var(--app-card-border,#242630)] pb-2.5">
+            {currentDeckKey && (
+              <button
+                onClick={() => {
+                  setActiveTab('current');
+                  setDrawerTab('current');
+                }}
+                className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                  activeTab === 'current'
+                    ? 'bg-pink-600/20 text-pink-400 border border-pink-500/40 shadow-xs'
+                    : 'text-[var(--app-text-muted,#94a3b8)] hover:text-[var(--app-text-main,#f1f5f9)] hover:bg-black/5 dark:hover:bg-white/5'
+                }`}
+              >
+                <span>当前剧本</span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-pink-500/25 text-pink-400 font-mono">
+                  {currentDeckSaves.length}
+                </span>
+              </button>
+            )}
 
             <button
-              onClick={() => setActiveTab('all')}
+              onClick={() => {
+                setActiveTab('all');
+                setDrawerTab('all');
+              }}
               className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
                 activeTab === 'all'
-                  ? 'bg-purple-600/20 text-purple-300 border border-purple-500/40 shadow-sm'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-[#1f202b]'
+                  ? 'bg-purple-600/20 text-purple-400 border border-purple-500/40 shadow-xs'
+                  : 'text-[var(--app-text-muted,#94a3b8)] hover:text-[var(--app-text-main,#f1f5f9)] hover:bg-black/5 dark:hover:bg-white/5'
               }`}
             >
-              <span>全部历史</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-purple-500/30 text-purple-200 font-mono">
+              <span>全部存档</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-purple-500/25 text-purple-400 font-mono">
                 {savedConversations.length}
               </span>
             </button>
+
+            <button
+              onClick={() => {
+                setActiveTab('cards');
+                setDrawerTab('cards');
+              }}
+              className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer ${
+                activeTab === 'cards'
+                  ? 'bg-blue-600/20 text-blue-400 border border-blue-500/40 shadow-xs'
+                  : 'text-[var(--app-text-muted,#94a3b8)] hover:text-[var(--app-text-main,#f1f5f9)] hover:bg-black/5 dark:hover:bg-white/5'
+              }`}
+            >
+              <span>🎴 角色卡库</span>
+            </button>
           </div>
 
-          {/* Search bar inside drawer */}
-          <div className="px-3 pt-2 pb-1">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="搜索存档标题或剧本名称..."
-              className="w-full px-3 py-1.5 rounded-xl bg-[#1a1b24] border border-[#2c2e3c] focus:border-pink-500/60 text-xs text-gray-200 placeholder-gray-500 outline-none transition"
-            />
-          </div>
-
-          {/* New Conversation Button */}
-          {currentDeck && activeTab === 'current' && (
-            <div className="p-3 pt-1.5">
-              <button
-                onClick={() => {
-                  startNewStory(currentDeck);
-                  setIsDrawerOpen(false);
-                  router.push(`/chat/${currentDeck.id}`);
-                }}
-                className="w-full py-2 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-pink-600/20 transition active:scale-[0.99] cursor-pointer"
-              >
-                <Plus className="w-4 h-4" />
-                <span>开启新一轮推演（第一幕）</span>
-              </button>
+          {/* Body Content */}
+          {activeTab === 'cards' ? (
+            <div className="flex-1 overflow-y-auto p-3 space-y-3">
+              <PrivateCardLibrary />
             </div>
-          )}
+          ) : (
+            <>
+              {/* Search bar inside drawer */}
+              <div className="px-3 pt-2 pb-1">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="搜索存档标题或剧本名称..."
+                  className="w-full px-3 py-1.5 rounded-xl bg-[var(--app-card-bg-subtle,#1a1b24)] border border-[var(--app-card-border,#2c2e3c)] focus:border-pink-500/60 text-xs text-[var(--app-text-main,#f1f5f9)] placeholder-[var(--app-text-dim,#64748b)] outline-none transition"
+                />
+              </div>
 
-          {/* Saves List */}
-          <div className="flex-1 overflow-y-auto p-3 space-y-2">
+              {/* New Conversation Button */}
+              {currentDeck && activeTab === 'current' && (
+                <div className="p-3 pt-1.5">
+                  <button
+                    onClick={() => {
+                      startNewStory(currentDeck);
+                      setIsDrawerOpen(false);
+                      router.push(`/chat/${currentDeck.id}`);
+                    }}
+                    className="w-full py-2 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-pink-600/20 transition active:scale-[0.99] cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>开启新一轮推演（第一幕）</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Saves List */}
+              <div className="flex-1 overflow-y-auto p-3 space-y-2">
             {filteredSaves.length === 0 ? (
               <div className="text-center py-12 text-gray-500 text-xs leading-relaxed">
                 {searchQuery
@@ -222,8 +254,10 @@ export function Drawer() {
               ))
             )}
           </div>
-        </div>
-      </div>
+        </>
+      )}
+    </div>
+  </div>
 
       <ConfirmModal
         isOpen={!!deleteTargetId}
