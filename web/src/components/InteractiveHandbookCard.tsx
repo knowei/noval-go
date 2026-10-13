@@ -49,9 +49,27 @@ export function InteractiveHandbookCard({
 ::-webkit-scrollbar-thumb { background: rgba(244,63,94,0.3); border-radius: 999px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(244,63,94,0.6); }
 
-/* 页面背景透明，确保父级全景渐变无缝贯通舞台 */
+/* 根级高度自适应与背景透明：防止卡片写死 min-height: 100vh 导致撑满 iframe 高度并产生巨大空白 */
+html {
+  overflow-y: hidden !important;
+  min-height: 0 !important;
+  height: auto !important;
+}
+html, body {
+  min-height: auto !important;
+  height: auto !important;
+}
 body {
   background: transparent !important;
+  align-items: flex-start !important; /* 强制顶部对齐，防止弹性盒居中造成上方数百像素空白并引发视差滑动感 */
+  padding-top: 10px !important;
+}
+
+/* 确保各作者卡片主体容器顶部贴齐且水平居中 */
+.guide, .wrapper, .container, .app, #app {
+  margin-top: 0 !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 /* 彻底隐藏 iframe 内部的 modal-overlay，杜绝遮挡 iframe 导致后续无法点击其他角色卡 */
