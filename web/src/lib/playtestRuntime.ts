@@ -45,7 +45,7 @@ export function prepareReplyContinuation(report: PromptReport, prefix: string): 
 export async function runPlaytestTurn(args: { deck: StoryDeck; history: Turn[]; settings: SessionSettings; model: ModelSettings; input: string; siteToken?: string | null; signal: AbortSignal }) {
   const { deck, settings, model, signal } = args;
   signal.throwIfAborted();
-  const base = (model.baseUrl || 'https://api.openai.com/v1').replace(/\/+$/, '');
+  const base = (model.baseUrl || 'https://api.openai.com/v1').replace(/\/+$/, '').replace(/\/chat\/completions\/?$/i, '').replace(/\/+$/, '');
   const url = new URL(base);
   if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.search || url.hash) throw new Error('模型地址格式无效，请检查模型设置');
   if (!model.model.trim() || !model.apiKey?.trim() && url.hostname === 'api.openai.com') throw new Error('尚未配置可用模型，请先在设置中填写模型地址与密钥。');

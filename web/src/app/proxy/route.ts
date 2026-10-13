@@ -5,8 +5,7 @@ import { imageFailure, readImageErrorBody } from '@/lib/imageErrors';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function POST(req: NextRequest) {
-  // 站点全局访问门禁权限校验 (防止未经授权消耗上游模型 Token)
+async function checkAuth(req: NextRequest): Promise<boolean> {
   const sitePassword = (process.env.SITE_PASSWORD || '888888').trim();
   const siteTokenHeader = req.headers.get('x-site-token');
   const cookieToken = req.cookies.get('site_access_token')?.value;
@@ -15,15 +14,13 @@ export async function POST(req: NextRequest) {
   const salt = process.env.SITE_TOKEN_SALT || 'noval_site_access_salt_2026';
   const expectedToken = sitePassword ? crypto.createHash('sha256').update(sitePassword + ':' + salt).digest('hex') : '';
 
-  let isAuthorized = false;
   if (!sitePassword) {
-    // 站长未设置任何访问密码，全员开放
-    isAuthorized = true;
-  } else if (clientToken && (clientToken === expectedToken || clientToken === sitePassword)) {
-    // 本地快速比对通过
-    isAuthorized = true;
-  } else if (clientToken) {
-    // 本地不匹配时向后端服务做穿透校验 (支持数据库动态修改的站点密码)
+    return true;
+  }
+  if (clientToken && (clientToken === expectedToken || clientToken === sitePassword)) {
+    return true;
+  }
+  if (clientToken) {
     const backendUrl = process.env.BACKEND_URL || 'http://127.0.0.1:5173';
     try {
       const verifyResp = await fetch(`${backendUrl}/api/auth/site-status`, {
@@ -34,15 +31,78 @@ export async function POST(req: NextRequest) {
       if (verifyResp.ok) {
         const authData = await verifyResp.json();
         if (authData?.authenticated) {
-          isAuthorized = true;
+          return true;
         }
       }
     } catch (e) {
       console.warn('[Proxy Auth Verify Error]:', e);
     }
   }
+  return false;
+}
 
-  if (!isAuthorized) {
+export async function GET(req: NextRequest) {
+  if (!(await checkAuth(req))) {
+    return NextResponse.json({ error: '未授权：请先在网站输入站点访问密码解锁使用' }, { status: 401 });
+  }
+
+  const { searchParams } = new URL(req.url);
+  const targetUrl = searchParams.get('target');
+
+  if (!targetUrl) {
+    return NextResponse.json({ error: 'Missing target url parameter' }, { status: 400 });
+  }
+
+  try {
+    const parsedTarget = new URL(targetUrl);
+    if (!['http:', 'https:'].includes(parsedTarget.protocol)) {
+      return NextResponse.json({ error: '非法请求协议：仅支持 http 或 https' }, { status: 400 });
+    }
+    const host = parsedTarget.hostname.toLowerCase();
+    const port = parsedTarget.port ? parseInt(parsedTarget.port, 10) : (parsedTarget.protocol === 'https:' ? 443 : 80);
+    if (host === '169.254.169.254' || host.startsWith('169.254.') || host === 'metadata.google.internal' || host === 'instance-data') {
+      return NextResponse.json({ error: '禁止代理请求云厂商元数据服务' }, { status: 403 });
+    }
+    if ([5432, 3306, 6379, 27017, 22, 23, 25].includes(port)) {
+      return NextResponse.json({ error: '禁止代理访问敏感系统端口' }, { status: 403 });
+    }
+
+    const headers: Record<string, string> = {};
+    const auth = req.headers.get('authorization');
+    if (auth) {
+      headers['Authorization'] = auth;
+    }
+    const contentType = req.headers.get('content-type');
+    if (contentType) {
+      headers['Content-Type'] = contentType;
+    }
+
+    const upstreamResp = await fetch(targetUrl, {
+      method: 'GET',
+      headers,
+      signal: AbortSignal.any([req.signal, AbortSignal.timeout(60000)]),
+      redirect: 'follow',
+    });
+
+    const bodyText = await upstreamResp.text();
+    return new Response(bodyText, {
+      status: upstreamResp.status,
+      headers: {
+        'Content-Type': upstreamResp.headers.get('content-type') || 'application/json; charset=utf-8',
+        'Cache-Control': 'no-cache',
+      },
+    });
+  } catch (err: any) {
+    console.error('[Proxy GET Error]:', err);
+    return NextResponse.json(
+      { error: err?.message || '无法连接到模型服务，请检查网络或目标接口' },
+      { status: 502 }
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  if (!(await checkAuth(req))) {
     return NextResponse.json({ error: '未授权：请先在网站输入站点访问密码解锁使用' }, { status: 401 });
   }
 

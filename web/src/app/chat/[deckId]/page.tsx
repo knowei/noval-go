@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 
 import { isCheckpointId, useAppStore } from '@/lib/store';
-import { fetchStory, fetchConversations, fetchConversation, getSiteToken, clearSiteToken } from '@/lib/api';
+import { fetchStory, fetchConversations, fetchConversation, getSiteToken, clearSiteToken, cleanApiBaseUrl } from '@/lib/api';
 import { selectReplyVersion, resolveSnapshot, PromptReport } from '@/lib/sessionEngine';
 import { applyModExtensions } from '@/lib/modExtensions';
 import { copyText } from '@/lib/clipboard';
@@ -498,7 +498,8 @@ export default function ChatPage() {
       setActiveLoreEntries(activeEntries);
       const promptMessages = report.messages;
 
-      const targetUrl = `${modelSettings.baseUrl || 'https://api.openai.com/v1'}/chat/completions`;
+      const cleanBase = cleanApiBaseUrl(modelSettings.baseUrl || 'https://api.openai.com/v1');
+      const targetUrl = `${cleanBase}/chat/completions`;
       const apiModel = targetUrl.includes('deepseek.com') && (activeModel === 'deepseek-flash' || activeModel === 'deepseek-v4-pro')
         ? 'deepseek-chat'
         : activeModel;

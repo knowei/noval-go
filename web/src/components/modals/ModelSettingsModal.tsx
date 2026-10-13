@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
-import { saveModelSettings, testModelConnection, fetchRemoteModels, changeSitePasswordApi } from '@/lib/api';
+import { saveModelSettings, testModelConnection, fetchRemoteModels, changeSitePasswordApi, cleanApiBaseUrl } from '@/lib/api';
 import { X, Check, Cpu, Key, Globe, Sliders, Zap, Loader2, Lock, KeyRound, ShieldCheck } from 'lucide-react';
 
 const PRESET_MODELS = [
-  { name: 'deepseek-flash', label: 'DeepSeek Flash (极速极简推荐)', desc: '毫秒级响应，超低消耗，风月默认高频引擎', provider: 'deepseek' },
-  { name: 'deepseek-chat', label: 'DeepSeek V3 (沉浸文学推荐)', desc: '文学描写极具张力，多轨心理反差解析力拔群', provider: 'deepseek' },
+  { name: 'deepseek-chat', label: 'DeepSeek V3 (官方推荐)', desc: '文学描写极具张力，多轨心理反差解析力拔群', provider: 'deepseek' },
+  { name: 'deepseek-reasoner', label: 'DeepSeek R1 (深度思考)', desc: '深度推理与思维链推演，逻辑严密', provider: 'deepseek' },
   { name: 'claude-3-5-sonnet', label: 'Claude 3.5 Sonnet (顶级推演)', desc: '超强常识与情景推演，极度真实自然', provider: 'anthropic' },
   { name: 'gpt-4o', label: 'GPT-4o (全能旗舰)', desc: '多角色节奏掌控稳定，情境推进流畅', provider: 'openai' },
   { name: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro', desc: '百万超长上下文，记忆承载力极高', provider: 'google' },
@@ -17,7 +17,7 @@ const PRESET_MODELS = [
 export function ModelSettingsModal() {
   const { isSettingsOpen, setIsSettingsOpen, modelSettings, setModelSettings, currentUserId, authToken } = useAppStore();
   
-  const [model, setModel] = useState(modelSettings.model || 'deepseek-flash');
+  const [model, setModel] = useState(modelSettings.model || 'deepseek-chat');
   const [baseUrl, setBaseUrl] = useState(modelSettings.baseUrl || 'https://api.deepseek.com/v1');
   const [apiKey, setApiKey] = useState(modelSettings.apiKey || '');
   const [temperature, setTemperature] = useState(modelSettings.temperature ?? 0.7);
@@ -84,14 +84,18 @@ export function ModelSettingsModal() {
   };
 
   const handleFetchModels = async () => {
-    if (!baseUrl) {
+    const cleanedBase = cleanApiBaseUrl(baseUrl);
+    if (!cleanedBase) {
       setTestStatus({ type: 'error', message: '请先填写 Base URL！' });
       return;
+    }
+    if (cleanedBase !== baseUrl) {
+      setBaseUrl(cleanedBase);
     }
     setIsFetchingModels(true);
     setTestStatus({ type: 'loading', message: '正在从 Base URL 拉取可用模型列表...' });
     try {
-      const list = await fetchRemoteModels(baseUrl, apiKey);
+      const list = await fetchRemoteModels(cleanedBase, apiKey);
       if (list.length > 0) {
         setAvailableModels(list);
         setTestStatus({
@@ -115,6 +119,10 @@ export function ModelSettingsModal() {
   };
 
   const handleTestConnection = async () => {
+    const cleanedBase = cleanApiBaseUrl(baseUrl);
+    if (cleanedBase !== baseUrl) {
+      setBaseUrl(cleanedBase);
+    }
     if (!apiKey || !model) {
       setTestStatus({ type: 'error', message: '请填写完整 API Key 与模型名称！' });
       return;
@@ -122,7 +130,7 @@ export function ModelSettingsModal() {
     setIsTesting(true);
     setTestStatus({ type: 'loading', message: `正在向 [${model}] 发送探针请求...` });
     try {
-      const res = await testModelConnection(baseUrl, apiKey, model);
+      const res = await testModelConnection(cleanedBase, apiKey, model);
       if (res.success) {
         setTestStatus({
           type: 'success',
@@ -145,7 +153,8 @@ export function ModelSettingsModal() {
   };
 
   const handleSave = async () => {
-    const updated = { model, baseUrl, apiKey, temperature, roleplayMode };
+    const cleanedBase = cleanApiBaseUrl(baseUrl);
+    const updated = { model, baseUrl: cleanedBase, apiKey, temperature, roleplayMode };
     setModelSettings(updated);
     if (authToken && !currentUserId.startsWith('guest_') && currentUserId !== 'default_user') {
       try {
@@ -186,7 +195,7 @@ export function ModelSettingsModal() {
             type="button"
             onClick={() => {
               setBaseUrl('https://api.deepseek.com/v1');
-              setModel('deepseek-flash');
+              setModel('deepseek-chat');
             }}
             className="px-2.5 py-1 rounded-lg bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-900/60 text-[11px] transition cursor-pointer"
           >
@@ -302,9 +311,20 @@ export function ModelSettingsModal() {
               type="text"
               value={baseUrl}
               onChange={(e) => setBaseUrl(e.target.value)}
+              onBlur={() => {
+                const cleaned = cleanApiBaseUrl(baseUrl);
+                if (cleaned !== baseUrl) {
+                  setBaseUrl(cleaned);
+                }
+              }}
               placeholder="https://api.openai.com/v1"
               className="w-full px-3.5 py-2.5 rounded-xl bg-[#1a1b25] border border-[#2b2e3c] focus:border-amber-500 text-gray-100 outline-none font-mono text-xs"
             />
+            {baseUrl.toLowerCase().includes('/chat/completions') && (
+              <p className="text-[11px] text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1.5 rounded-lg mt-1.5 flex items-center gap-1.5">
+                <span>💡 提示：Base URL 只需填写到 <code>/v1</code> 接入点（例如 <code>http://111.231.79.218:7863/v1</code>），无需拼接 <code>/chat/completions</code>（失焦或测试时会自动修正）。</span>
+              </p>
+            )}
           </div>
 
           <div>

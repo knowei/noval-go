@@ -370,12 +370,20 @@ export async function smartFetch(url: string, options: RequestInit = {}): Promis
   }
 }
 
+export function cleanApiBaseUrl(url: string): string {
+  if (!url) return '';
+  let cleaned = url.trim().replace(/\/+$/, '');
+  // 智能剔除用户误复制的完整 endpoint 后缀
+  cleaned = cleaned.replace(/\/chat\/completions\/?$/i, '');
+  return cleaned.replace(/\/+$/, '');
+}
+
 export async function testModelConnection(
   baseUrl: string,
   apiKey: string,
   model: string
 ): Promise<{ success: boolean; latencyMs: number; reply?: string; error?: string }> {
-  const cleanUrl = baseUrl.trim().replace(/\/+$/, '');
+  const cleanUrl = cleanApiBaseUrl(baseUrl);
   const startTime = Date.now();
   try {
     const resp = await smartFetch(`${cleanUrl}/chat/completions`, {
@@ -405,10 +413,16 @@ export async function testModelConnection(
       const reply = (data.choices[0].message?.content || '').trim();
       return { success: true, latencyMs, reply: reply || 'OK' };
     } else {
+      let errMsg = data?.error?.message || data?.message || resp.statusText || '请求失败';
+      if (resp.status === 401) {
+        errMsg = `HTTP 401 密钥验证失败: ${data?.error?.message || 'API Key 无效或未授权，请核验密钥是否正确'}`;
+      } else if (resp.status === 405) {
+        errMsg = `HTTP 405 请求方式不匹配: 请确认 Base URL 为 API 接入点根路径（无需包含 /chat/completions）`;
+      }
       return {
         success: false,
         latencyMs,
-        error: data?.error?.message || resp.statusText || '请求失败'
+        error: errMsg
       };
     }
   } catch (err: any) {
@@ -421,7 +435,7 @@ export async function testModelConnection(
 }
 
 export async function fetchRemoteModels(baseUrl: string, apiKey: string): Promise<string[]> {
-  const cleanUrl = baseUrl.trim().replace(/\/+$/, '');
+  const cleanUrl = cleanApiBaseUrl(baseUrl);
   const resp = await smartFetch(`${cleanUrl}/models`, {
     method: 'GET',
     headers: {
@@ -430,9 +444,22 @@ export async function fetchRemoteModels(baseUrl: string, apiKey: string): Promis
     }
   });
   if (!resp.ok) {
-    throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+    let detail = '';
+    try {
+      const errData = await resp.json();
+      detail = errData?.error?.message || errData?.message || (typeof errData?.error === 'string' ? errData.error : '');
+    } catch {
+      try {
+        detail = await resp.text();
+      } catch {}
+    }
+    if (resp.status === 401) {
+      throw new Error(`HTTP 401 密钥鉴权失败: ${detail || 'API Key 无效或未授权，请检查密钥是否正确（若使用中转平台请核对 Base URL）'}`);
+    }
+    throw new Error(`HTTP ${resp.status}: ${detail || resp.statusText || '拉取失败'}`);
   }
   const data = await resp.json();
-  const list = (data.data || data || []).map((m: any) => m.id || m.name || m);
-  return list.filter((m: any) => typeof m === 'string' && m.length > 0);
+  const rawList = Array.isArray(data) ? data : (data.data || data.models || data.items || []);
+  const list = rawList.map((m: any) => (typeof m === 'object' && m ? (m.id || m.name || m.model || '') : String(m || '')));
+  return list.filter((m: string) => typeof m === 'string' && m.trim().length > 0);
 }
