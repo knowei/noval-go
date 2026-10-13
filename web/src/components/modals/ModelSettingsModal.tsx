@@ -169,19 +169,19 @@ export function ModelSettingsModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-lg bg-[#141620] border border-[#2b2e3c] rounded-2xl shadow-2xl text-gray-200 flex flex-col max-h-[90vh] overflow-hidden">
+      <div className="model-settings-modal w-full max-w-lg bg-[var(--app-card-bg,#141620)] border border-[var(--app-card-border,#2b2e3c)] rounded-2xl shadow-2xl text-[var(--app-text-main,#f1f5f9)] flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#252836] px-6 py-4 bg-[#161722] shrink-0">
+        <div className="flex items-center justify-between border-b border-[var(--app-card-border,#252836)] px-6 py-4 bg-[var(--app-card-bg-subtle,#161722)] shrink-0">
           <div className="flex items-center gap-2">
             <Cpu className="w-5 h-5 text-amber-400" />
             <div>
-              <h2 className="font-bold text-base text-gray-100">AI 推演模型与接口配置</h2>
-              <p className="text-[11px] text-gray-400">随时切换推演大模型或配置自定义 API 密钥</p>
+              <h2 className="font-bold text-base text-[var(--app-text-main,#f1f5f9)]">AI 推演模型与接口配置</h2>
+              <p className="text-[11px] text-[var(--app-text-muted,#94a3b8)]">随时切换推演大模型或配置自定义 API 密钥</p>
             </div>
           </div>
           <button
             onClick={() => setIsSettingsOpen(false)}
-            className="p-1 rounded-lg hover:bg-[#222532] text-gray-400 hover:text-white transition cursor-pointer"
+            className="p-1 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 text-[var(--app-text-muted,#94a3b8)] hover:text-[var(--app-text-main,#f1f5f9)] transition cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -516,12 +516,12 @@ export function ModelSettingsModal() {
         </div>
 
         {/* Fixed Sticky Footer */}
-        <div className="px-6 py-3.5 border-t border-[#252836] bg-[#12141e] flex items-center justify-between gap-2 shrink-0">
+        <div className="px-6 py-3.5 border-t border-[var(--app-card-border,#252836)] bg-[var(--app-card-bg-subtle,#12141e)] flex items-center justify-between gap-2 shrink-0">
           <button
             type="button"
             disabled={isTesting}
             onClick={handleTestConnection}
-            className="px-3.5 py-2 rounded-xl border border-sky-500/50 bg-sky-950/30 hover:bg-sky-900/50 text-sky-300 font-medium text-xs flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
+            className="px-3.5 py-2 rounded-xl border border-sky-500/50 bg-sky-950/30 hover:bg-sky-900/50 text-sky-400 hover:text-sky-300 font-medium text-xs flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
           >
             {isTesting ? (
               <>
@@ -536,13 +536,13 @@ export function ModelSettingsModal() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsSettingsOpen(false)}
-              className="px-4 py-2 rounded-xl bg-[#20222e] hover:bg-[#282a3a] text-gray-300 text-xs transition cursor-pointer"
+              className="px-4 py-2 rounded-xl border border-[var(--app-card-border,#2b2f42)] bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[var(--app-text-muted,#94a3b8)] hover:text-[var(--app-text-main,#f1f5f9)] text-xs transition cursor-pointer font-medium"
             >
               取消
             </button>
             <button
               onClick={handleSave}
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-stone-900 font-bold text-xs shadow-lg shadow-amber-500/20 transition cursor-pointer active:scale-95"
+              className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-stone-950 font-bold text-xs shadow-lg shadow-amber-500/25 transition cursor-pointer active:scale-95"
             >
               保存并生效
             </button>

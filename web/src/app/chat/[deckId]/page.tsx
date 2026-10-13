@@ -52,6 +52,7 @@ import { UserTurnActionBar } from '@/components/chat/UserTurnActionBar';
 import { ErrorCard } from '@/components/chat/ErrorCard';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
 import { LorebookModal } from '@/components/chat/LorebookModal';
+import { DeckDetailModal } from '@/components/modals/DeckDetailModal';
 import { InteractiveHandbookCard } from '@/components/InteractiveHandbookCard';
 import { FloatingStatusHud } from '@/components/chat/FloatingStatusHud';
 import { scopeDeckCustomCss } from '@/lib/scopeCss';
@@ -111,6 +112,7 @@ export default function ChatPage() {
   const [isCopied, setIsCopied] = useState(false);
   const [isRainActive, setIsRainActive] = useState(false);
   const [isLorebookOpen, setIsLorebookOpen] = useState(false);
+  const [isDeckDetailOpen, setIsDeckDetailOpen] = useState(false);
   const [activeLoreEntries, setActiveLoreEntries] = useState<LoreEntry[]>([]);
   const [isHeaderMoreOpen, setIsHeaderMoreOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -803,6 +805,7 @@ export default function ChatPage() {
       >
         {!isSidebarCollapsed && (
           <ScenarioSidebar
+            onOpenDeckDetail={() => setIsDeckDetailOpen(true)}
             onOpenHandbook={handleOpenHandbook}
             onOpenLorebook={() => setIsLorebookOpen(true)}
           />
@@ -819,6 +822,7 @@ export default function ChatPage() {
           <div className="relative z-10 w-72 max-w-[85vw] bg-[#121319] h-full shadow-2xl animate-in slide-in-from-left duration-200">
             <ScenarioSidebar
               onClose={() => setIsMobileScenarioOpen(false)}
+              onOpenDeckDetail={() => setIsDeckDetailOpen(true)}
               onOpenHandbook={handleOpenHandbook}
               onOpenLorebook={() => setIsLorebookOpen(true)}
             />
@@ -968,23 +972,6 @@ export default function ChatPage() {
               )}
             </button>
 
-            {/* 世界书 (lg 起直显) */}
-            <button
-              onClick={() => setIsLorebookOpen(true)}
-              className={`hidden lg:inline-flex px-2 py-1 rounded-lg border text-[11px] items-center gap-1 transition cursor-pointer shrink-0 ${
-                activeLoreEntries.length > 0
-                  ? 'bg-indigo-950/70 hover:bg-indigo-900/80 border-indigo-500/60 text-indigo-200 shadow-sm'
-                  : 'bg-[#1b1d28] hover:bg-[#252838] border-[#2e3142] text-gray-300 hover:text-indigo-300'
-              }`}
-              title="打开世界书背景设定与自定义词条"
-            >
-              <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
-              <span>世界书</span>
-              {activeLoreEntries.length > 0 && (
-                <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              )}
-            </button>
-
             {/* 导出长文 (xl 起直显) */}
             <button
               onClick={() => setIsExportModalOpen(true)}
@@ -1015,17 +1002,15 @@ export default function ChatPage() {
               <span>重开</span>
             </button>
 
-            {/* 作品专属人物设定卡入口 */}
-            {currentDeck?.customHtml && (
-              <button
-                onClick={handleOpenHandbook}
-                className="hidden sm:inline-flex px-2 py-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/70 border border-purple-500/40 text-purple-300 hover:text-white text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
-                title="查看作者专属排版作品详情与人物卡"
-              >
-                <BookOpen className="w-3.5 h-3.5 text-purple-400" />
-                <span className="hidden md:inline">设定卡</span>
-              </button>
-            )}
+            {/* 作品专属人物设定卡与详情入口 */}
+            <button
+              onClick={() => setIsDeckDetailOpen(true)}
+              className="hidden sm:inline-flex px-2 py-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/70 border border-purple-500/40 text-purple-300 hover:text-white text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
+              title="查看作者专属排版作品详情、世界观与人物卡"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-purple-400" />
+              <span className="hidden md:inline">作品详情</span>
+            </button>
 
             {/* 实时状态 HUD 快捷直达 (无论推演到第几幕，一键平滑滚动到状态面板) */}
             <button
@@ -1073,16 +1058,16 @@ export default function ChatPage() {
                     <span className="truncate">当前模型：{modelSettings.model || 'deepseek-flash'}</span>
                   </button>
 
-                  {/* lg 以下显示世界书 */}
+                  {/* 作品详情与人物卡 */}
                   <button
                     onClick={() => {
                       setIsHeaderMoreOpen(false);
-                      setIsLorebookOpen(true);
+                      setIsDeckDetailOpen(true);
                     }}
-                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition lg:hidden"
+                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
                   >
-                    <BookOpen className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>世界书档案{activeLoreEntries.length > 0 ? `（${activeLoreEntries.length} 条已激活）` : ''}</span>
+                    <BookOpen className="w-3.5 h-3.5 text-purple-400" />
+                    <span>作品详情与人物卡</span>
                   </button>
 
                   {/* xl 以下显示导出 */}
@@ -1535,6 +1520,16 @@ export default function ChatPage() {
         deckId={deckId}
         deck={currentDeck}
         activeEntries={activeLoreEntries}
+      />
+
+      {/* 作品详情与人物卡弹窗 */}
+      <DeckDetailModal
+        isOpen={isDeckDetailOpen}
+        onClose={() => setIsDeckDetailOpen(false)}
+        deck={currentDeck}
+        onStartStory={() => {
+          if (currentDeck) startNewStory(currentDeck);
+        }}
       />
     </div>
   );

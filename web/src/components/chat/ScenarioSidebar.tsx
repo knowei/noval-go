@@ -7,15 +7,16 @@ import { isCheckpointId, useAppStore } from '@/lib/store';
 import { fetchConversation, deleteConversation } from '@/lib/api';
 import { exportConversationBundle, importConversationFile } from '@/lib/conversationBundle';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
-import { ArrowLeft, Plus, Trash2, ArrowUpDown, Clock, Heart, Award, Sparkles, X, Download, Upload, Loader2 } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, ArrowUpDown, Clock, Heart, Award, Sparkles, X, Download, Upload, Loader2, BookOpen, ChevronRight } from 'lucide-react';
 
 interface ScenarioSidebarProps {
   onClose?: () => void;
   onOpenHandbook?: () => void;
   onOpenLorebook?: () => void;
+  onOpenDeckDetail?: () => void;
 }
 
-export function ScenarioSidebar({ onClose, onOpenHandbook, onOpenLorebook }: ScenarioSidebarProps) {
+export function ScenarioSidebar({ onClose, onOpenHandbook, onOpenLorebook, onOpenDeckDetail }: ScenarioSidebarProps) {
   const {
     currentDeckKey,
     currentDeck,
@@ -165,7 +166,7 @@ export function ScenarioSidebar({ onClose, onOpenHandbook, onOpenLorebook }: Sce
         </div>
       )}
 
-      <aside className="w-64 sm:w-72 shrink-0 h-screen sticky top-0 bg-[#121319] border-r border-[#20222e] flex flex-col justify-between py-4 px-3.5 z-30 select-none overflow-y-auto">
+      <aside className="scenario-sidebar w-64 sm:w-72 shrink-0 h-screen sticky top-0 bg-[#121319] border-r border-[#20222e] flex flex-col justify-between py-4 px-3.5 z-30 select-none overflow-y-auto">
         {/* Top Header */}
         <div className="space-y-4">
           {/* Back link & badge */}
@@ -202,32 +203,22 @@ export function ScenarioSidebar({ onClose, onOpenHandbook, onOpenLorebook }: Sce
           </p>
         </div>
 
-        {/* Quick Action Buttons */}
-        <div className="grid grid-cols-3 gap-1.5 pt-1 text-[11px]">
+        {/* Quick Action Button: 作品详情与人物设定 (弹窗直达) */}
+        <div className="pt-1">
           <button
             onClick={() => {
-              if (onOpenHandbook) onOpenHandbook();
+              if (onOpenDeckDetail) onOpenDeckDetail();
+              else if (onOpenHandbook) onOpenHandbook();
               if (onClose) onClose();
             }}
-            className="py-1.5 rounded-lg bg-[#191b24] hover:bg-purple-900/40 border border-[#2b2d3d] hover:border-purple-500/40 text-purple-300 hover:text-white transition cursor-pointer text-center font-medium"
-            title="查看作者专属排版作品详情与人物卡"
+            className="w-full py-2.5 px-3 rounded-xl bg-purple-950/40 hover:bg-purple-900/60 border border-purple-500/40 hover:border-purple-400 text-purple-300 hover:text-white transition cursor-pointer flex items-center justify-between text-xs font-semibold shadow-xs group"
+            title="查看作者专属排版作品详情、故事世界观与人物设定卡"
           >
-            作品详情
-          </button>
-          <button
-            onClick={() => {
-              if (onOpenLorebook) onOpenLorebook();
-              if (onClose) onClose();
-            }}
-            className="py-1.5 rounded-lg bg-[#191b24] hover:bg-indigo-900/40 border border-[#2b2d3d] hover:border-indigo-500/40 text-indigo-300 hover:text-white transition cursor-pointer text-center font-medium flex items-center justify-center gap-1"
-            title="查看与管理世界书词条与背景设定"
-          >
-            <Sparkles className="w-3 h-3 text-indigo-400" />
-            <span>世界书</span>
-          </button>
-          <button className="py-1.5 rounded-lg bg-[#191b24] hover:bg-[#222432] border border-[#2b2d3d] text-gray-300 hover:text-amber-300 transition cursor-pointer text-center flex items-center justify-center gap-1">
-            <Award className="w-3 h-3 text-amber-400" />
-            <span>热门存档</span>
+            <div className="flex items-center gap-2">
+              <BookOpen className="w-4 h-4 text-purple-400 group-hover:scale-110 transition-transform" />
+              <span>作品详情与人物卡</span>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-purple-400/80 group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>
 

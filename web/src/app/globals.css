@@ -752,6 +752,152 @@ details.reality-panel[open] > summary.reality-summary,
   color: #64748b !important;
 }
 
+/* 11. 剧场场景与存档侧边栏 (ScenarioSidebar) 蓝白模式重绘 */
+.light .scenario-sidebar {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 2px 0 16px rgba(15, 23, 42, 0.04) !important;
+}
+
+.light .scenario-sidebar .bg-\[\#121319\],
+.light .scenario-sidebar .bg-\[\#161720\],
+.light .scenario-sidebar .bg-\[\#191b24\] {
+  background-color: #f8fafd !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light .scenario-sidebar .bg-\[\#161720\]:hover,
+.light .scenario-sidebar .bg-\[\#191b24\]:hover {
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
+}
+
+.light .scenario-sidebar .border-\[\#20222e\],
+.light .scenario-sidebar .border-\[\#1e202b\],
+.light .scenario-sidebar .border-\[\#232532\],
+.light .scenario-sidebar .border-\[\#2b2d3d\] {
+  border-color: #e2e8f0 !important;
+}
+
+.light .scenario-sidebar .bg-purple-950\/40 {
+  background-color: #f5f3ff !important;
+  border-color: #ddd6fe !important;
+  color: #7c3aed !important;
+}
+
+.light .scenario-sidebar .bg-purple-950\/40:hover {
+  background-color: #ede9fe !important;
+  border-color: #c4b5fd !important;
+  color: #6d28d9 !important;
+}
+
+.light .scenario-sidebar .text-purple-300 {
+  color: #7c3aed !important;
+}
+
+.light .scenario-sidebar .text-purple-400 {
+  color: #8b5cf6 !important;
+}
+
+.light .scenario-sidebar .bg-gradient-to-r.from-amber-500\/15 {
+  background: linear-gradient(to right, #fffbeb, #ffffff) !important;
+  border-color: #f59e0b !important;
+  color: #92400e !important;
+}
+
+/* 12. 弹窗容器与底部操作栏蓝白模式全量适配 (模态框、设置、MOD中心、世界书) */
+.light .bg-\[\#11131a\],
+.light .bg-\[\#121319\],
+.light .bg-\[\#12141e\],
+.light .bg-\[\#13141b\],
+.light .bg-\[\#141620\],
+.light .bg-\[\#151620\],
+.light .bg-\[\#161722\],
+.light .bg-\[\#0e1017\],
+.light .bg-neutral-900 {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.light .model-settings-modal,
+.light .mod-center-modal,
+.light .lorebook-modal {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15) !important;
+  color: #0f172a !important;
+}
+
+.light .model-settings-modal .bg-\[\#161722\],
+.light .model-settings-modal .bg-\[\#12141e\],
+.light .mod-center-modal .bg-\[\#0e1017\],
+.light .lorebook-modal .bg-neutral-950\/60,
+.light .lorebook-modal .bg-neutral-950 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light .mod-center-modal .bg-\[\#13141b\],
+.light .lorebook-modal .bg-neutral-800\/50,
+.light .lorebook-modal .bg-neutral-800 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.light .border-neutral-800,
+.light .border-neutral-700\/80,
+.light .border-gray-800\/80,
+.light .border-gray-800 {
+  border-color: #e2e8f0 !important;
+}
+
+.light .text-neutral-100,
+.light .text-neutral-200 {
+  color: #0f172a !important;
+}
+
+.light .text-neutral-300,
+.light .text-neutral-400 {
+  color: #475569 !important;
+}
+
+/* 13. 底部对话输入条与快捷操作药丸适配 */
+.light #chat-input-container {
+  background: linear-gradient(to top, rgba(244, 247, 252, 0.98) 70%, rgba(244, 247, 252, 0.8) 85%, transparent 100%) !important;
+}
+
+.light #chat-input-container .bg-\[\#1a1b24\] {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+}
+
+.light #chat-input-container .bg-\[\#1a1b24\]:hover {
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+
+.light #chat-input-container .border-gray-700\/60 {
+  border-color: #e2e8f0 !important;
+}
+
+.light #chat-input-container .bg-\[\#14151e\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06) !important;
+}
+
+.light #chat-input-container textarea {
+  color: #0f172a !important;
+}
+
+.light #chat-input-container textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+
 
 
 
