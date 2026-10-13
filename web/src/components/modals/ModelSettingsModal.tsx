@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
 import { saveModelSettings, testModelConnection, fetchRemoteModels, changeSitePasswordApi, cleanApiBaseUrl } from '@/lib/api';
-import { X, Check, Cpu, Key, Globe, Sliders, Zap, Loader2, Lock, KeyRound, ShieldCheck } from 'lucide-react';
+import { X, Check, Cpu, Key, Globe, Sliders, Zap, Loader2, Lock, KeyRound, ShieldCheck, Palette } from 'lucide-react';
+import { ThemeToggle } from '@/components/common/ThemeToggle';
 
 const PRESET_MODELS = [
   { name: 'deepseek-chat', label: 'DeepSeek V3 (官方推荐)', desc: '文学描写极具张力，多轨心理反差解析力拔群', provider: 'deepseek' },
@@ -409,6 +410,18 @@ export function ModelSettingsModal() {
                 </p>
               </button>
             </div>
+          </div>
+
+          {/* Visual Theme Style Section */}
+          <div className="pt-4 border-t border-[#252836] space-y-2.5">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-gray-200 flex items-center gap-1.5">
+                <Palette className="w-3.5 h-3.5 text-blue-400" />
+                <span>界面视觉主题 (Visual Theme)</span>
+              </label>
+              <span className="text-[10px] text-gray-400">支持暗夜/蓝白/自动跟随客户端</span>
+            </div>
+            <ThemeToggle />
           </div>
 
           {/* Site Password & Protection Section */}

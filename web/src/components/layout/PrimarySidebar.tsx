@@ -16,6 +16,7 @@ import {
   Menu,
   Lock
 } from 'lucide-react';
+import { ThemeToggle } from '@/components/common/ThemeToggle';
 
 export function PrimarySidebar() {
   const pathname = usePathname();
@@ -202,6 +203,9 @@ export function PrimarySidebar() {
 
       {/* Bottom User & Model Settings Area */}
       <div className="flex flex-col items-center space-y-2 w-full pt-3 border-t border-[#1a1c26]">
+        {/* Theme Toggle Button (暗夜 / 蓝白 / 跟随系统) */}
+        <ThemeToggle compact={!isMobile} className="w-full" />
+
         {/* Model Switch Pill Button */}
         <button
           onClick={() => {

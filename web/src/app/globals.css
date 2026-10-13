@@ -1,8 +1,82 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ==========================================================================
+   全局沉浸式双主题系统（暗夜模式 vs 蓝白模式 vs 跟随客户端系统）
+   ========================================================================== */
+
+:root,
+[data-theme="dark"],
+.dark {
+  color-scheme: dark;
+  --background: #0a0b10;
+  --foreground: #f1f5f9;
+
+  --app-bg: #0a0b10;
+  --app-bg-gradient: radial-gradient(circle at 50% 0%, #151824 0%, #0a0b10 100%);
+  --app-card-bg: #151722;
+  --app-card-bg-subtle: #191b28;
+  --app-card-border: #232636;
+  --app-card-border-hover: rgba(244, 63, 94, 0.45);
+  --app-sidebar-bg: #0c0d12;
+  --app-sidebar-border: #1a1c26;
+  --app-header-bg: rgba(14, 15, 20, 0.88);
+  --app-header-border: #20222e;
+
+  --app-text-main: #f1f5f9;
+  --app-text-sub: #cbd5e1;
+  --app-text-muted: #94a3b8;
+  --app-text-dim: #64748b;
+
+  --app-input-bg: #12131b;
+  --app-input-border: #282a3a;
+
+  --app-primary: #f43f5e;
+  --app-primary-glow: rgba(244, 63, 94, 0.25);
+  --app-accent-blue: #38bdf8;
+  --app-accent-purple: #a855f7;
+
+  --app-chat-bubble-ai: rgba(20, 22, 32, 0.88);
+  --app-chat-bubble-ai-border: #232638;
+  --app-chat-bubble-user: rgba(36, 22, 46, 0.85);
+  --app-chat-bubble-user-border: rgba(168, 85, 247, 0.35);
+  --app-chat-bubble-user-text: #f3e8ff;
+}
+
+[data-theme="light"],
+.light {
+  color-scheme: light;
+  --background: #f4f7fc;
+  --foreground: #0f172a;
+
+  --app-bg: #f4f7fc;
+  --app-bg-gradient: radial-gradient(circle at 50% 0%, #e8f0fe 0%, #f4f7fc 100%);
+  --app-card-bg: #ffffff;
+  --app-card-bg-subtle: #f8fafd;
+  --app-card-border: #e2e8f0;
+  --app-card-border-hover: #3b82f6;
+  --app-sidebar-bg: #ffffff;
+  --app-sidebar-border: #e2e8f0;
+  --app-header-bg: rgba(255, 255, 255, 0.90);
+  --app-header-border: #e2e8f0;
+
+  --app-text-main: #0f172a;
+  --app-text-sub: #334155;
+  --app-text-muted: #64748b;
+  --app-text-dim: #94a3b8;
+
+  --app-input-bg: #ffffff;
+  --app-input-border: #cbd5e1;
+
+  --app-primary: #2563eb;
+  --app-primary-glow: rgba(37, 99, 235, 0.18);
+  --app-accent-blue: #0284c7;
+  --app-accent-purple: #7c3aed;
+
+  --app-chat-bubble-ai: rgba(255, 255, 255, 0.96);
+  --app-chat-bubble-ai-border: #e2e8f0;
+  --app-chat-bubble-user: rgba(239, 246, 255, 0.98);
+  --app-chat-bubble-user-border: rgba(96, 165, 250, 0.55);
+  --app-chat-bubble-user-text: #1e3a8a;
 }
 
 @theme inline {
@@ -12,17 +86,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--app-bg, var(--background));
+  color: var(--app-text-main, var(--foreground));
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
@@ -442,5 +510,176 @@ details.reality-panel[open] > summary.reality-summary,
     scroll-behavior: auto !important;
   }
 }
+
+/* ==========================================================================
+   蓝白模式（Light Mode）全站高质感适配样式
+   ========================================================================== */
+
+/* 1. 顶层容器与主体架构 */
+.light body {
+  background-color: var(--app-bg) !important;
+  color: var(--app-text-main) !important;
+}
+
+.light aside,
+.light #primary-sidebar {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 2px 0 16px rgba(15, 23, 42, 0.03) !important;
+}
+
+.light aside button:hover,
+.light aside a:hover,
+.light #primary-sidebar button:hover,
+.light #primary-sidebar a:hover {
+  background-color: #f1f5f9 !important;
+}
+
+.light header#theater-header {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 8px rgba(15, 23, 42, 0.04) !important;
+}
+
+.light header#theater-header button,
+.light header#theater-header a {
+  color: #334155 !important;
+}
+
+.light header#theater-header button:hover,
+.light header#theater-header a:hover {
+  color: #0f172a !important;
+  background-color: #f1f5f9 !important;
+}
+
+/* 2. 广场与卡片网格适配 */
+.light .bg-\[\#171821\],
+.light .bg-\[\#161720\],
+.light .bg-\[\#161722\],
+.light .bg-\[\#181a24\],
+.light .bg-\[\#151722\],
+.light .bg-\[\#13151f\],
+.light .bg-\[\#141620\],
+.light .bg-\[\#141622\],
+.light .bg-\[\#171822\] {
+  background-color: #ffffff !important;
+}
+
+.light .border-\[\#272936\],
+.light .border-\[\#262834\],
+.light .border-\[\#262838\],
+.light .border-\[\#232532\],
+.light .border-\[\#232534\],
+.light .border-\[\#1b1d26\],
+.light .border-\[\#1a1c26\],
+.light .border-\[\#20222e\],
+.light .border-\[\#2b2f42\],
+.light .border-\[\#272a38\],
+.light .border-\[\#252836\],
+.light .border-\[\#252834\],
+.light .border-\[\#2c2f3e\],
+.light .border-\[\#2b2e3c\] {
+  border-color: #e2e8f0 !important;
+}
+
+.light .bg-\[\#0c0d12\],
+.light .bg-\[\#0e0f14\],
+.light .bg-\[\#0a0b10\],
+.light .bg-\[\#0d0e14\],
+.light .bg-\[\#0f1015\] {
+  background-color: #f1f5f9 !important;
+}
+
+.light .bg-\[\#20222d\],
+.light .bg-\[\#252834\]\/80,
+.light .bg-\[\#1a1b25\],
+.light .bg-\[\#1a1b24\],
+.light .bg-\[\#202230\] {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* 3. 推演剧场对话气泡适配 */
+.light .bg-\[\#242734\] {
+  background-color: #eff6ff !important;
+  color: #1e3a8a !important;
+  border-color: #bfdbfe !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08) !important;
+}
+
+.light .dialogue-quote {
+  color: #0284c7 !important;
+  font-weight: 600 !important;
+}
+
+.light .text-sky-400 {
+  color: #0284c7 !important;
+}
+
+.light .text-sky-300 {
+  color: #0369a1 !important;
+}
+
+/* 4. 输入框与底部操作栏 */
+.light #chat-input-container {
+  background: linear-gradient(to top, #f4f7fc 65%, rgba(244, 247, 252, 0.95) 85%, transparent 100%) !important;
+}
+
+.light #chat-input-container .bg-\[\#14151e\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08) !important;
+}
+
+.light #chat-input-container textarea {
+  color: #0f172a !important;
+}
+
+.light #chat-input-container textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.light #chat-input-container button {
+  color-scheme: light !important;
+}
+
+/* 5. 抽屉与模态弹窗 */
+.light .bg-\[\#10111a\],
+.light .bg-\[\#12131c\],
+.light .bg-\[\#13141f\],
+.light .bg-\[\#0f1017\] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* 6. 文字对比度修正 */
+.light .text-gray-100 {
+  color: #0f172a !important;
+}
+.light .text-gray-200 {
+  color: #1e293b !important;
+}
+.light .text-gray-300 {
+  color: #334155 !important;
+}
+.light .text-gray-400 {
+  color: #64748b !important;
+}
+.light .text-gray-500 {
+  color: #94a3b8 !important;
+}
+
+/* 7. 蓝白模式滚动条 */
+.light ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.04);
+}
+.light ::-webkit-scrollbar-thumb {
+  background: rgba(37, 99, 235, 0.25);
+  border-radius: 999px;
+}
+.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(37, 99, 235, 0.45);
+}
+
 
 

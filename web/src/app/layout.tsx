@@ -27,8 +27,32 @@ export default function RootLayout({
     <html lang="zh-CN" className="dark" suppressHydrationWarning>
       <head>
         <meta name="darkreader-lock" content="darkreader-lock" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var pref = localStorage.getItem('noval_theme') || 'system';
+                  var isDark = true;
+                  if (pref === 'light') {
+                    isDark = false;
+                  } else if (pref === 'dark') {
+                    isDark = true;
+                  } else {
+                    isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  }
+                  var root = document.documentElement;
+                  root.classList.remove('dark', 'light');
+                  root.classList.add(isDark ? 'dark' : 'light');
+                  root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+                  root.setAttribute('data-theme-pref', pref);
+                } catch(e) {}
+              })();
+            `
+          }}
+        />
       </head>
-      <body suppressHydrationWarning className="min-h-screen bg-[#0e0f14] text-gray-100 antialiased flex flex-row font-sans selection:bg-pink-500/30 selection:text-pink-200 overflow-x-hidden">
+      <body suppressHydrationWarning className="min-h-screen bg-[var(--app-bg,#0e0f14)] text-[var(--app-text-main,#f1f5f9)] antialiased flex flex-row font-sans selection:bg-blue-500/30 selection:text-blue-200 overflow-x-hidden transition-colors duration-200">
         <SiteAccessGate>
           {/* Leftmost Global Navigation Sidebar */}
           <PrimarySidebar />
