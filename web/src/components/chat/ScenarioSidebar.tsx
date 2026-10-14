@@ -179,7 +179,7 @@ export function ScenarioSidebar({ onClose, onOpenHandbook, onOpenLorebook, onOpe
               <span>返回探索广场</span>
             </Link>
             <div className="flex items-center gap-1">
-              <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#1e202c] text-pink-300 border border-pink-500/20">
+              <span className="scenario-badge px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#1e202c] text-pink-300 border border-pink-500/20">
                 SCENARIO
               </span>
               {onClose && (

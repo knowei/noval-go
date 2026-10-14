@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useTheme, ThemePreference } from '@/lib/theme';
-import { Moon, Sun, Laptop, Check } from 'lucide-react';
+import { Moon, Sun, Laptop, Heart, Check } from 'lucide-react';
 
 interface ThemeToggleProps {
   compact?: boolean;
@@ -59,6 +59,14 @@ export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProp
       bgColor: 'bg-blue-50'
     },
     {
+      id: 'pink',
+      label: '樱花粉色',
+      sublabel: '甜美浪漫',
+      icon: Heart,
+      color: 'text-pink-500',
+      bgColor: 'bg-pink-50 dark:bg-pink-950/50'
+    },
+    {
       id: 'system',
       label: '跟随系统',
       sublabel: '自动同步客户端',
@@ -77,13 +85,13 @@ export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProp
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full py-2 px-1.5 rounded-xl border flex flex-col items-center justify-center gap-1 transition cursor-pointer group shadow-xs overflow-hidden theme-toggle-btn bg-[var(--app-card-bg-subtle,#141622)] hover:bg-[var(--app-card-bg,#1d2030)] border-[var(--app-card-border,#2b2f42)] hover:border-blue-500/50"
+          className="w-full py-2 px-1.5 rounded-xl border flex flex-col items-center justify-center gap-1 transition cursor-pointer group shadow-xs overflow-hidden theme-toggle-btn bg-[var(--app-card-bg-subtle,#141622)] hover:bg-[var(--app-card-bg,#1d2030)] border-[var(--app-card-border,#2b2f42)] hover:border-pink-500/50"
           title={`当前风格：${currentOption.label}（点击切换）`}
         >
           <div className="flex items-center justify-center gap-1.5 w-full min-w-0">
             <CurrentIcon className={`w-3.5 h-3.5 ${currentOption.color} transition-transform group-hover:scale-110`} />
             <span className="text-[10px] font-bold text-[var(--app-text-main,#f1f5f9)] truncate max-w-[52px]">
-              {theme === 'system' ? '跟随' : theme === 'light' ? '蓝白' : '暗夜'}
+              {theme === 'system' ? '跟随' : theme === 'pink' ? '粉色' : theme === 'light' ? '蓝白' : '暗夜'}
             </span>
           </div>
           <span className="text-[9px] text-[var(--app-text-dim,#6b7280)] group-hover:text-[var(--app-text-muted,#9ca3af)] leading-none">
@@ -92,7 +100,7 @@ export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProp
         </button>
 
         {isOpen && (
-          <div className="absolute left-full bottom-0 ml-2 w-44 rounded-2xl p-1.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150 border bg-[var(--app-card-bg,#161722)] border-[var(--app-card-border,#2a2d3e)]">
+          <div className="absolute left-full bottom-0 ml-2 w-48 rounded-2xl p-1.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150 border bg-[var(--app-card-bg,#161722)] border-[var(--app-card-border,#2a2d3e)]">
             <div className="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider border-b text-[var(--app-text-dim,#6b7280)] border-[var(--app-card-border,#232638)]">
               选择视觉主题
             </div>
@@ -110,7 +118,7 @@ export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProp
                     }}
                     className={`w-full px-2.5 py-2 rounded-xl text-left flex items-center justify-between transition cursor-pointer text-xs ${
                       isSelected
-                        ? 'bg-blue-600/15 border border-blue-500/30 font-bold text-blue-400'
+                        ? 'bg-pink-600/15 border border-pink-500/30 font-bold text-pink-500 dark:text-pink-400'
                         : 'hover:bg-black/5 dark:hover:bg-white/5 text-[var(--app-text-sub,#cbd5e1)]'
                     }`}
                   >
@@ -121,7 +129,7 @@ export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProp
                         <div className="text-[10px] text-[var(--app-text-dim,#64748b)] font-normal">{opt.sublabel}</div>
                       </div>
                     </div>
-                    {isSelected && <Check className="w-3.5 h-3.5 text-blue-400" />}
+                    {isSelected && <Check className="w-3.5 h-3.5 text-pink-500" />}
                   </button>
                 );
               })}
@@ -134,7 +142,7 @@ export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProp
 
   // Full segmented control for settings modal
   return (
-    <div className={`grid grid-cols-3 gap-2 w-full ${className}`}>
+    <div className={`grid grid-cols-2 sm:grid-cols-4 gap-2 w-full ${className}`}>
       {THEME_OPTIONS.map((opt) => {
         const Icon = opt.icon;
         const isSelected = theme === opt.id;
@@ -145,7 +153,7 @@ export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProp
             onClick={() => setTheme(opt.id)}
             className={`p-3 rounded-2xl border flex flex-col items-center justify-center gap-2 transition cursor-pointer text-center relative ${
               isSelected
-                ? 'border-blue-500 bg-blue-500/10 shadow-sm shadow-blue-500/10'
+                ? 'border-pink-500 bg-pink-500/10 shadow-sm shadow-pink-500/15'
                 : 'border-[var(--app-card-border,#282a3a)] bg-[var(--app-card-bg-subtle,#141520)] hover:bg-black/5 dark:hover:bg-white/5 opacity-80 hover:opacity-100'
             }`}
           >
@@ -157,7 +165,7 @@ export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProp
               <div className="text-[10px] text-[var(--app-text-dim,#64748b)] mt-0.5">{opt.sublabel}</div>
             </div>
             {isSelected && (
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-blue-500 shadow-sm shadow-blue-500/50" />
+              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-pink-500 shadow-sm shadow-pink-500/50" />
             )}
           </button>
         );

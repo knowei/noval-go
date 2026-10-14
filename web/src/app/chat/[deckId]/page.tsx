@@ -849,7 +849,7 @@ export default function ChatPage() {
       {(bgClass || currentDeck?.handbook?.bg_image) && (
         <div
           aria-hidden="true"
-          className={`fixed inset-0 pointer-events-none -z-10 ${bgClass || ''}`}
+          className={`deck-ambient-bg fixed inset-0 pointer-events-none -z-10 ${bgClass || ''}`}
           style={{
             transform: 'translateZ(0)',
             willChange: 'transform',
@@ -920,7 +920,7 @@ export default function ChatPage() {
                 {currentDeck?.title || '沉浸剧场'}
               </span>
               {currentDeck?.badge && (
-                <span className="hidden xl:inline px-2 py-0.5 rounded-full text-[10px] bg-pink-500/20 text-pink-300 border border-pink-500/30 shrink-0">
+                <span className="header-deck-badge hidden xl:inline px-2 py-0.5 rounded-full text-[10px] bg-pink-500/20 text-pink-300 border border-pink-500/30 shrink-0">
                   {currentDeck.badge}
                 </span>
               )}
@@ -929,7 +929,7 @@ export default function ChatPage() {
             {/* 当前模型（md 起直显，紧凑药丸） */}
             <button
               onClick={() => setIsSettingsOpen(true)}
-              className="hidden md:inline-flex items-center gap-1.5 text-xs text-emerald-300 hover:text-emerald-200 bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-500/50 hover:border-emerald-400 px-2 py-1 rounded-full font-mono cursor-pointer transition shadow-sm shrink-0 group max-w-[140px]"
+              className="header-model-pill hidden md:inline-flex items-center gap-1.5 text-xs text-emerald-300 hover:text-emerald-200 bg-emerald-950/60 hover:bg-emerald-900/70 border border-emerald-500/50 hover:border-emerald-400 px-2 py-1 rounded-full font-mono cursor-pointer transition shadow-sm shrink-0 group max-w-[140px]"
               title="点击切换推演大模型或配置 API 密钥"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)] shrink-0" />
@@ -944,7 +944,7 @@ export default function ChatPage() {
             {/* 会话工作台 */}
             <button
               onClick={() => setIsWorkbenchOpen(true)}
-              className="rounded-lg border border-sky-700/70 bg-sky-950/40 px-2 py-1 text-[11px] text-sky-200 hover:bg-sky-900/50 transition shrink-0 cursor-pointer"
+              className="header-workbench-btn rounded-lg border border-sky-700/70 bg-sky-950/40 px-2 py-1 text-[11px] text-sky-200 hover:bg-sky-900/50 transition shrink-0 cursor-pointer"
             >
               工作台
             </button>
@@ -953,7 +953,7 @@ export default function ChatPage() {
             <button
               suppressHydrationWarning
               onClick={() => setIsModCenterOpen(true)}
-              className={`inline-flex px-2 py-1 rounded-lg border text-[11px] items-center gap-1 transition cursor-pointer shrink-0 ${
+              className={`header-mod-btn inline-flex px-2 py-1 rounded-lg border text-[11px] items-center gap-1 transition cursor-pointer shrink-0 ${
                 isMounted && activeModCount > 0
                   ? 'bg-orange-950/60 hover:bg-orange-900/80 border-orange-500/50 text-orange-200 shadow-sm shadow-orange-950/40'
                   : 'bg-[#1b1d28] hover:bg-[#252838] border-[#2e3142] text-gray-300 hover:text-orange-300'
@@ -975,7 +975,7 @@ export default function ChatPage() {
             {/* 导出长文 (xl 起直显) */}
             <button
               onClick={() => setIsExportModalOpen(true)}
-              className="hidden xl:inline-flex px-2 py-1 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-amber-500/50 text-gray-300 hover:text-amber-300 text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
+              className="header-action-btn hidden xl:inline-flex px-2 py-1 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-amber-500/50 text-gray-300 hover:text-amber-300 text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
               title="导出或复制整场推演故事长文记录"
             >
               <Share2 className="w-3.5 h-3.5 text-amber-400" />
@@ -985,7 +985,7 @@ export default function ChatPage() {
             {/* 模型设置 (lg 起直显) */}
             <button
               onClick={() => setIsSettingsOpen(true)}
-              className="hidden lg:inline-flex px-2 py-1 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-emerald-500/50 text-gray-300 hover:text-emerald-300 text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
+              className="header-action-btn hidden lg:inline-flex px-2 py-1 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] hover:border-emerald-500/50 text-gray-300 hover:text-emerald-300 text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
               title="切换推演大模型与接口配置"
             >
               <Settings className="w-3.5 h-3.5 text-emerald-400" />
@@ -995,7 +995,7 @@ export default function ChatPage() {
             {/* 重新开卷 (xl 起直显) */}
             <button
               onClick={() => setIsResetConfirmOpen(true)}
-              className="hidden xl:inline-flex px-2 py-1 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-amber-300 text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
+              className="header-action-btn hidden xl:inline-flex px-2 py-1 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-amber-300 text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
               title="重置到第一幕开局"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -1005,7 +1005,7 @@ export default function ChatPage() {
             {/* 作品专属人物设定卡与详情入口 */}
             <button
               onClick={() => setIsDeckDetailOpen(true)}
-              className="hidden sm:inline-flex px-2 py-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/70 border border-purple-500/40 text-purple-300 hover:text-white text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
+              className="header-deck-detail-btn hidden sm:inline-flex px-2 py-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/70 border border-purple-500/40 text-purple-300 hover:text-white text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
               title="查看作者专属排版作品详情、世界观与人物卡"
             >
               <BookOpen className="w-3.5 h-3.5 text-purple-400" />
@@ -1015,7 +1015,7 @@ export default function ChatPage() {
             {/* 实时状态 HUD 快捷直达 (无论推演到第几幕，一键平滑滚动到状态面板) */}
             <button
               onClick={handleScrollToStatusHud}
-              className="inline-flex px-2 py-1 rounded-lg bg-pink-950/40 hover:bg-pink-900/50 border border-pink-500/40 text-pink-300 hover:text-white text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
+              className="header-status-btn inline-flex px-2 py-1 rounded-lg bg-pink-950/40 hover:bg-pink-900/50 border border-pink-500/40 text-pink-300 hover:text-white text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
               title="一键查看全员私密记录与实时状态面板"
             >
               <Heart className="w-3.5 h-3.5 text-pink-400 fill-pink-500/30" />
@@ -1025,7 +1025,7 @@ export default function ChatPage() {
             {/* 存档抽屉 */}
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="inline-flex px-2 py-1 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-pink-300 text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
+              className="header-action-btn inline-flex px-2 py-1 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-pink-300 text-[11px] items-center gap-1 transition cursor-pointer shrink-0"
               title="打开会话存档抽屉"
             >
               <History className="w-3.5 h-3.5 text-pink-400" />
@@ -1035,7 +1035,7 @@ export default function ChatPage() {
             {/* 「更多」菜单按钮 */}
             <button
               onClick={() => setIsHeaderMoreOpen(!isHeaderMoreOpen)}
-              className="p-1.5 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-white transition cursor-pointer shrink-0"
+              className="header-action-btn p-1.5 rounded-lg bg-[#1b1d28] hover:bg-[#252838] border border-[#2e3142] text-gray-300 hover:text-white transition cursor-pointer shrink-0"
               title="更多操作"
             >
               <MoreHorizontal className="w-4 h-4 text-gray-300" />

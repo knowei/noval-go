@@ -162,8 +162,8 @@ export const ChatInput = React.memo(React.forwardRef<ChatInputHandle, ChatInputP
                 disabled={!inputVal.trim() || isLoading}
                 className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition shadow-md cursor-pointer shrink-0 ${
                   inputVal.trim() && !isLoading
-                    ? 'bg-amber-400 hover:bg-amber-300 text-stone-900 shadow-amber-400/25 active:scale-95'
-                    : 'bg-gray-800 text-gray-600 opacity-60 cursor-not-allowed'
+                    ? 'bg-gradient-to-r from-amber-400 to-pink-500 hover:from-amber-300 hover:to-pink-400 text-stone-950 shadow-md shadow-pink-500/25 active:scale-95'
+                    : 'bg-black/10 dark:bg-white/10 text-gray-400 dark:text-gray-600 cursor-not-allowed'
                 }`}
                 title="发送消息 (Enter)"
               >

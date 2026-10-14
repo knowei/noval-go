@@ -33,18 +33,20 @@ export default function RootLayout({
               (function() {
                 try {
                   var pref = localStorage.getItem('noval_theme') || 'system';
-                  var isDark = true;
+                  var eff = 'dark';
                   if (pref === 'light') {
-                    isDark = false;
+                    eff = 'light';
+                  } else if (pref === 'pink') {
+                    eff = 'pink';
                   } else if (pref === 'dark') {
-                    isDark = true;
+                    eff = 'dark';
                   } else {
-                    isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    eff = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                   }
                   var root = document.documentElement;
-                  root.classList.remove('dark', 'light');
-                  root.classList.add(isDark ? 'dark' : 'light');
-                  root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+                  root.classList.remove('dark', 'light', 'pink');
+                  root.classList.add(eff);
+                  root.setAttribute('data-theme', eff);
                   root.setAttribute('data-theme-pref', pref);
                 } catch(e) {}
               })();

@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-export type ThemePreference = 'system' | 'dark' | 'light';
-export type EffectiveTheme = 'dark' | 'light';
+export type ThemePreference = 'system' | 'dark' | 'light' | 'pink';
+export type EffectiveTheme = 'dark' | 'light' | 'pink';
 
 const STORAGE_KEY = 'noval_theme';
 
@@ -14,7 +14,7 @@ export function getStoredThemePreference(): ThemePreference {
   if (typeof window === 'undefined') return 'system';
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved === 'dark' || saved === 'light' || saved === 'system') {
+    if (saved === 'dark' || saved === 'light' || saved === 'pink' || saved === 'system') {
       return saved;
     }
   } catch (e) {}
@@ -41,6 +41,7 @@ export function getSystemTheme(): EffectiveTheme {
 export function resolveEffectiveTheme(pref: ThemePreference): EffectiveTheme {
   if (pref === 'dark') return 'dark';
   if (pref === 'light') return 'light';
+  if (pref === 'pink') return 'pink';
   return getSystemTheme();
 }
 
@@ -54,7 +55,7 @@ export function applyTheme(pref: ThemePreference): EffectiveTheme {
   const root = document.documentElement;
 
   // 更新 class 与属性
-  root.classList.remove('dark', 'light');
+  root.classList.remove('dark', 'light', 'pink');
   root.classList.add(effective);
   root.setAttribute('data-theme', effective);
   root.setAttribute('data-theme-pref', pref);
@@ -113,9 +114,12 @@ export function useTheme() {
   }, []);
 
   const toggleTheme = useCallback(() => {
-    // 循环切换：暗夜 -> 蓝白 -> 跟随系统 -> 暗夜
+    // 循环切换：暗夜 -> 蓝白 -> 粉色 -> 跟随系统 -> 暗夜
     setPreferenceState(prev => {
-      const nextPref: ThemePreference = prev === 'dark' ? 'light' : prev === 'light' ? 'system' : 'dark';
+      const nextPref: ThemePreference =
+        prev === 'dark' ? 'light' :
+        prev === 'light' ? 'pink' :
+        prev === 'pink' ? 'system' : 'dark';
       const eff = applyTheme(nextPref);
       setEffectiveThemeState(eff);
       return nextPref;
