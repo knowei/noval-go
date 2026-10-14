@@ -313,7 +313,7 @@ export const FatherDaughterJealousyCard = React.memo(function FatherDaughterJeal
                     <button
                       key={bIdx}
                       onClick={() => onSendAction?.(formatBranchAction(b))}
-                      className="p-3 rounded-xl border border-[#272938] bg-[#191a24] hover:border-amber-500/60 hover:bg-amber-950/20 text-left transition cursor-pointer group"
+                      className="reality-branch-btn p-3 rounded-xl border border-[#272938] bg-[#191a24] hover:border-amber-500/60 hover:bg-amber-950/20 text-left transition cursor-pointer group"
                     >
                       <div className="font-bold text-xs text-gray-200 group-hover:text-amber-300 flex items-center gap-1.5">
                         <span className="text-amber-400 font-mono">[{b.tag || String.fromCharCode(65 + bIdx)}]</span>

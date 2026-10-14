@@ -532,7 +532,7 @@ export const CoserCard = React.memo(function CoserCard({
                     <button
                       key={bi}
                       onClick={() => onSendAction(formatBranchAction(b))}
-                      className="p-2.5 rounded-xl bg-[#1b1326] hover:bg-pink-950/40 border border-pink-500/30 hover:border-pink-500 text-left text-xs text-gray-200 hover:text-pink-300 transition group flex items-center justify-between cursor-pointer"
+                      className="reality-branch-btn p-2.5 rounded-xl bg-[#1b1326] hover:bg-pink-950/40 border border-pink-500/30 hover:border-pink-500 text-left text-xs text-gray-200 hover:text-pink-300 transition group flex items-center justify-between cursor-pointer"
                     >
                       <span><strong>【{b.tag || '◆'}】</strong> {b.title}</span>
                       <span className="text-[10px] text-pink-400 opacity-0 group-hover:opacity-100 transition">➔</span>

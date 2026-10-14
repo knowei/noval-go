@@ -1537,6 +1537,303 @@ details.reality-panel[open] > summary.reality-summary,
   color: #4b5563 !important;
 }
 
+/* ==========================================================================
+   18. 剧情现实折叠面板 (Reality Panels) & 下一步行动抉择分支与底栏 (Light & Pink)
+   ========================================================================== */
+
+/* 18.1 折叠群容器 (reality-panels-container) */
+.light .reality-panels-container,
+.light .story-custom-scope .reality-panels-container {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+}
+
+.pink .reality-panels-container,
+.pink .story-custom-scope .reality-panels-container {
+  background: #fff5f8 !important;
+  border: 1px solid #fce7f3 !important;
+  box-shadow: 0 1px 4px rgba(236, 72, 153, 0.05) !important;
+}
+
+/* 单个折叠条 (reality-panel) 闭合与展开状态 */
+.light details.reality-panel,
+.light .story-custom-scope details.reality-panel,
+.light .reality-panel {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.pink details.reality-panel,
+.pink .story-custom-scope details.reality-panel,
+.pink .reality-panel {
+  background: #ffffff !important;
+  border: 1px solid #fbcfe8 !important;
+}
+
+.light details.reality-panel[open],
+.light .story-custom-scope details.reality-panel[open] {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04) !important;
+}
+
+.pink details.reality-panel[open],
+.pink .story-custom-scope details.reality-panel[open] {
+  background: #ffffff !important;
+  border-color: #f472b6 !important;
+  box-shadow: 0 2px 8px rgba(236, 72, 153, 0.08) !important;
+}
+
+/* 折叠条标题 summary (reality-summary) */
+.light summary.reality-summary,
+.light .story-custom-scope summary.reality-summary,
+.light .reality-summary {
+  background: #f1f5f9 !important;
+  color: #1e293b !important;
+}
+.light summary.reality-summary:hover,
+.light .story-custom-scope summary.reality-summary:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.pink summary.reality-summary,
+.pink .story-custom-scope summary.reality-summary,
+.pink .reality-summary {
+  background: #fff0f5 !important;
+  color: #831843 !important;
+}
+.pink summary.reality-summary:hover,
+.pink .story-custom-scope summary.reality-summary:hover {
+  background: #fce7f3 !important;
+  color: #be185d !important;
+}
+
+/* 展开状态下的 summary 头部高亮 */
+.light details.reality-panel[open] > summary.reality-summary,
+.light .story-custom-scope details.reality-panel[open] > summary.reality-summary,
+.light .reality-panel[open] > .reality-summary {
+  background: #e0f2fe !important;
+  color: #0369a1 !important;
+  border-bottom: 1px solid #bae6fd !important;
+}
+
+.pink details.reality-panel[open] > summary.reality-summary,
+.pink .story-custom-scope details.reality-panel[open] > summary.reality-summary,
+.pink .reality-panel[open] > .reality-summary {
+  background: #fdf2f8 !important;
+  color: #db2777 !important;
+  border-bottom: 1px solid #fbcfe8 !important;
+}
+
+/* 折叠内容体 reality-body */
+.light .reality-body,
+.light .story-custom-scope .reality-body {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border-top: 1px solid #e2e8f0 !important;
+}
+
+.pink .reality-body,
+.pink .story-custom-scope .reality-body {
+  background: #ffffff !important;
+  color: #374151 !important;
+  border-top: 1px solid #fce7f3 !important;
+}
+
+/* 18.2 下一步行动抉择选项卡片 (The core action branch buttons) */
+.light .reality-branch-btn,
+.light .reality-body button {
+  background-color: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05) !important;
+}
+
+.light .reality-branch-btn:hover,
+.light .reality-body button:hover {
+  background-color: #f0f9ff !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 3px 10px rgba(14, 165, 233, 0.15) !important;
+}
+
+.light .reality-branch-btn span,
+.light .reality-body button span {
+  color: #0f172a !important;
+}
+
+.light .reality-branch-btn strong,
+.light .reality-body button strong {
+  color: #d97706 !important;
+}
+
+.light .reality-branch-btn:hover span,
+.light .reality-body button:hover span {
+  color: #0284c7 !important;
+}
+
+.light .reality-branch-btn .text-gray-400,
+.light .reality-body button .text-gray-400 {
+  color: #475569 !important;
+}
+
+.pink .reality-branch-btn,
+.pink .reality-body button {
+  background-color: #fff5f8 !important;
+  border: 1px solid #fbcfe8 !important;
+  color: #1e293b !important;
+  box-shadow: 0 1px 3px rgba(236, 72, 153, 0.06) !important;
+}
+
+.pink .reality-branch-btn:hover,
+.pink .reality-body button:hover {
+  background-color: #fff0f5 !important;
+  border-color: #f472b6 !important;
+  box-shadow: 0 3px 12px rgba(236, 72, 153, 0.18) !important;
+}
+
+.pink .reality-branch-btn span,
+.pink .reality-body button span {
+  color: #374151 !important;
+}
+
+.pink .reality-branch-btn strong,
+.pink .reality-body button strong {
+  color: #db2777 !important;
+}
+
+.pink .reality-branch-btn:hover span,
+.pink .reality-body button:hover span {
+  color: #be185d !important;
+}
+
+.pink .reality-branch-btn .text-gray-400,
+.pink .reality-body button .text-gray-400 {
+  color: #6b7280 !important;
+}
+
+/* 18.3 消息底栏 (CardTurnActionBar) */
+.light .card-turn-action-bar {
+  border-top-color: #e2e8f0 !important;
+}
+.pink .card-turn-action-bar {
+  border-top-color: #fce7f3 !important;
+}
+
+.light .turn-model-badge {
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+  color: #0284c7 !important;
+}
+.pink .turn-model-badge {
+  background-color: #fdf2f8 !important;
+  border-color: #fbcfe8 !important;
+  color: #db2777 !important;
+}
+
+.light .turn-swipes-badge {
+  background-color: #eef2ff !important;
+  border-color: #c7d2fe !important;
+  color: #4338ca !important;
+}
+.pink .turn-swipes-badge {
+  background-color: #fdf2f8 !important;
+  border-color: #fbcfe8 !important;
+  color: #db2777 !important;
+}
+
+.light .turn-btn-copy {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+.light .turn-btn-copy:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+.pink .turn-btn-copy {
+  background-color: #fff5f8 !important;
+  border-color: #fbcfe8 !important;
+  color: #4b5563 !important;
+}
+.pink .turn-btn-copy:hover {
+  background-color: #fff0f5 !important;
+  color: #be185d !important;
+}
+
+.light .turn-btn-continue {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+  color: #b45309 !important;
+}
+.light .turn-btn-continue:hover {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+}
+.pink .turn-btn-continue {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+  color: #be123c !important;
+}
+.pink .turn-btn-continue:hover {
+  background-color: #ffe4e6 !important;
+  color: #9f1239 !important;
+}
+
+.light .turn-btn-regenerate {
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+  color: #0284c7 !important;
+}
+.light .turn-btn-regenerate:hover {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+}
+.pink .turn-btn-regenerate {
+  background-color: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+  color: #15803d !important;
+}
+.pink .turn-btn-regenerate:hover {
+  background-color: #dcfce7 !important;
+}
+
+.light .turn-btn-edit {
+  background-color: #faf5ff !important;
+  border-color: #e9d5ff !important;
+  color: #7e22ce !important;
+}
+.light .turn-btn-edit:hover {
+  background-color: #f3e8ff !important;
+}
+.pink .turn-btn-edit {
+  background-color: #fdf2f8 !important;
+  border-color: #fbcfe8 !important;
+  color: #db2777 !important;
+}
+.pink .turn-btn-edit:hover {
+  background-color: #fce7f3 !important;
+}
+
+.light .turn-btn-delete {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+  color: #e11d48 !important;
+}
+.light .turn-btn-delete:hover {
+  background-color: #ffe4e6 !important;
+}
+.pink .turn-btn-delete {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+  color: #e11d48 !important;
+}
+.pink .turn-btn-delete:hover {
+  background-color: #ffe4e6 !important;
+}
+
+
 
 
 

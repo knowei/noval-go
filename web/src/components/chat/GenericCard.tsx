@@ -217,7 +217,7 @@ const GenericCardBody = React.memo(function GenericCardBody({
                       <button
                         key={bi}
                         onClick={() => onSendAction(formatBranchAction(b))}
-                        className="p-3 rounded-xl bg-[#1d1f2b] hover:bg-[#252838] border border-[#2d3142] hover:border-amber-500/60 text-left text-xs text-gray-200 hover:text-amber-200 transition group flex flex-col justify-between cursor-pointer shadow-sm gap-1.5"
+                        className="reality-branch-btn p-3 rounded-xl bg-[#1d1f2b] hover:bg-[#252838] border border-[#2d3142] hover:border-amber-500/60 text-left text-xs text-gray-200 hover:text-amber-200 transition group flex flex-col justify-between cursor-pointer shadow-sm gap-1.5"
                       >
                         <div className="flex items-start justify-between w-full gap-2">
                           <span className="font-semibold text-gray-100 group-hover:text-amber-300 leading-snug">
