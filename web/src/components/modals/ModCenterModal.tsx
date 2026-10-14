@@ -60,7 +60,7 @@ export function ModCenterModal() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* 顶部标题栏 */}
-        <div className="p-4 sm:p-5 border-b border-gray-800/80 bg-gradient-to-r from-orange-950/40 via-[#161823] to-[#11131a] flex items-center justify-between">
+        <div className="mod-center-header p-4 sm:p-5 border-b border-gray-800/80 bg-gradient-to-r from-orange-950/40 via-[#161823] to-[#11131a] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-orange-500/20 border border-orange-500/40 text-orange-400">
               <Puzzle className="w-5 h-5 animate-pulse" />
@@ -602,7 +602,7 @@ export function ModCenterModal() {
           <button
             type="button"
             onClick={handleResetDefaults}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-800/60 hover:bg-gray-800 text-gray-300 text-xs transition cursor-pointer"
+            className="mod-reset-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-800/60 hover:bg-gray-800 text-gray-300 text-xs transition cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>恢复默认推荐</span>

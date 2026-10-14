@@ -198,7 +198,7 @@ export function ModelSettingsModal() {
               setBaseUrl('https://api.deepseek.com/v1');
               setModel('deepseek-chat');
             }}
-            className="px-2.5 py-1 rounded-lg bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-900/60 text-[11px] transition cursor-pointer"
+            className="quick-preset-deepseek px-2.5 py-1 rounded-lg bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-900/60 text-[11px] transition cursor-pointer"
           >
             ⚡ DeepSeek 官方
           </button>
@@ -208,7 +208,7 @@ export function ModelSettingsModal() {
               setBaseUrl('https://api.siliconflow.cn/v1');
               setModel('deepseek-ai/DeepSeek-V3');
             }}
-            className="px-2.5 py-1 rounded-lg bg-sky-950/40 border border-sky-500/40 text-sky-300 hover:bg-sky-900/60 text-[11px] transition cursor-pointer"
+            className="quick-preset-silicon px-2.5 py-1 rounded-lg bg-sky-950/40 border border-sky-500/40 text-sky-300 hover:bg-sky-900/60 text-[11px] transition cursor-pointer"
           >
             🌊 硅基流动
           </button>
@@ -218,7 +218,7 @@ export function ModelSettingsModal() {
               setBaseUrl('https://api.openai.com/v1');
               setModel('gpt-4o');
             }}
-            className="px-2.5 py-1 rounded-lg bg-purple-950/40 border border-purple-500/40 text-purple-300 hover:bg-purple-900/60 text-[11px] transition cursor-pointer"
+            className="quick-preset-openai px-2.5 py-1 rounded-lg bg-purple-950/40 border border-purple-500/40 text-purple-300 hover:bg-purple-900/60 text-[11px] transition cursor-pointer"
           >
             🌐 OpenAI 官方
           </button>
@@ -521,7 +521,7 @@ export function ModelSettingsModal() {
             type="button"
             disabled={isTesting}
             onClick={handleTestConnection}
-            className="px-3.5 py-2 rounded-xl border border-sky-500/50 bg-sky-950/30 hover:bg-sky-900/50 text-sky-400 hover:text-sky-300 font-medium text-xs flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
+            className="model-test-btn px-3.5 py-2 rounded-xl border border-sky-500/50 bg-sky-950/30 hover:bg-sky-900/50 text-sky-400 hover:text-sky-300 font-medium text-xs flex items-center gap-1.5 transition cursor-pointer disabled:opacity-50"
           >
             {isTesting ? (
               <>

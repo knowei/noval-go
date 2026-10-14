@@ -270,7 +270,7 @@ export const FloatingStatusHud = React.memo(function FloatingStatusHud({
   ];
 
   return (
-    <div className="w-full mb-3 px-1 sm:px-2 select-none animate-in fade-in slide-in-from-top-2 duration-300">
+    <div className="floating-hud-root w-full mb-3 px-1 sm:px-2 select-none animate-in fade-in slide-in-from-top-2 duration-300">
       <div className="bg-[#11131a]/95 backdrop-blur-md border border-gray-800/80 hover:border-gray-700/80 rounded-xl p-2.5 sm:p-3 shadow-2xl transition-all">
         {/* HUD 顶栏标签与折叠切换 */}
         <div className="flex items-center justify-between gap-2 pb-2 border-b border-gray-800/50 text-xs flex-wrap">

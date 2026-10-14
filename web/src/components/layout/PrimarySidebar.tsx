@@ -249,15 +249,19 @@ export function PrimarySidebar() {
         </button>
 
         {/* User Profile Card */}
-        <div
+        <Link
+          href="/profile"
           onClick={() => {
-            setIsUserSwitchOpen(true);
             if (isMobile) setIsMobileDrawerOpen(false);
           }}
-          className={`w-full p-2 rounded-2xl bg-[#141622] hover:bg-[#1c1f2e] border border-amber-500/20 hover:border-amber-500/50 flex ${
+          className={`sidebar-user-card w-full p-2 rounded-2xl bg-[#141622] hover:bg-[#1c1f2e] border ${
+            pathname === '/profile'
+              ? 'border-amber-500 bg-amber-500/10 shadow-lg shadow-amber-500/20'
+              : 'border-amber-500/20 hover:border-amber-500/50'
+          } flex ${
             isMobile ? 'flex-row items-center gap-3' : 'flex-col items-center justify-center'
           } cursor-pointer transition group shadow-md text-center overflow-hidden`}
-          title="点击打开执笔账号与安全中心"
+          title="点击进入个人中心与账号管理"
         >
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-500 via-orange-500 to-rose-600 border border-amber-300/40 flex items-center justify-center text-sm shadow-md group-hover:scale-105 transition shrink-0">
             {currentUser?.avatar || '🎭'}
@@ -274,7 +278,7 @@ export function PrimarySidebar() {
               </span>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Settings gear */}
         <div className="flex items-center justify-center gap-1.5 mt-1 w-full">

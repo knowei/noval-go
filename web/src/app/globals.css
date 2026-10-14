@@ -1322,6 +1322,222 @@ details.reality-panel[open] > summary.reality-summary,
   background: rgba(236, 72, 153, 0.45);
 }
 
+/* ==========================================================================
+   17. 弹窗与控制面板全域自适应 (Light & Pink)
+   ========================================================================== */
+
+/* 17.1 模组管理器 (ModCenterModal) 顶栏与重置按钮 */
+.light .mod-center-header {
+  background: linear-gradient(to right, #fff7ed, #ffffff, #f8fafc) !important;
+  border-color: #e2e8f0 !important;
+}
+.light .mod-center-header h2 {
+  color: #0f172a !important;
+}
+.pink .mod-center-header {
+  background: linear-gradient(to right, #fff0f5, #ffffff, #fff5f8) !important;
+  border-color: #fce7f3 !important;
+}
+.pink .mod-center-header h2 {
+  color: #831843 !important;
+}
+
+.light .mod-reset-btn {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+}
+.light .mod-reset-btn:hover {
+  background-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+.pink .mod-reset-btn {
+  background-color: #fdf2f8 !important;
+  border: 1px solid #fbcfe8 !important;
+  color: #db2777 !important;
+}
+.pink .mod-reset-btn:hover {
+  background-color: #fce7f3 !important;
+  color: #be185d !important;
+}
+
+/* 17.2 模型配置 (ModelSettingsModal) 快捷预设与测速按钮 */
+.light .quick-preset-deepseek {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+}
+.light .quick-preset-deepseek:hover {
+  background-color: #d1fae5 !important;
+}
+.light .quick-preset-silicon {
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+  color: #0369a1 !important;
+}
+.light .quick-preset-silicon:hover {
+  background-color: #e0f2fe !important;
+}
+.light .quick-preset-openai {
+  background-color: #faf5ff !important;
+  border-color: #e9d5ff !important;
+  color: #7e22ce !important;
+}
+.light .quick-preset-openai:hover {
+  background-color: #f3e8ff !important;
+}
+
+.pink .quick-preset-deepseek {
+  background-color: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+  color: #15803d !important;
+}
+.pink .quick-preset-deepseek:hover {
+  background-color: #dcfce7 !important;
+}
+.pink .quick-preset-silicon {
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+  color: #0284c7 !important;
+}
+.pink .quick-preset-silicon:hover {
+  background-color: #e0f2fe !important;
+}
+.pink .quick-preset-openai {
+  background-color: #fdf2f8 !important;
+  border-color: #fbcfe8 !important;
+  color: #db2777 !important;
+}
+.pink .quick-preset-openai:hover {
+  background-color: #fce7f3 !important;
+}
+
+.light .model-test-btn {
+  background-color: #f0f9ff !important;
+  border-color: #7dd3fc !important;
+  color: #0284c7 !important;
+}
+.light .model-test-btn:hover {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+}
+.pink .model-test-btn {
+  background-color: #fdf2f8 !important;
+  border-color: #fbcfe8 !important;
+  color: #db2777 !important;
+}
+.pink .model-test-btn:hover {
+  background-color: #fce7f3 !important;
+  color: #be185d !important;
+}
+
+.light .model-settings-modal .bg-\[\#1a1b25\] {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #334155 !important;
+}
+.pink .model-settings-modal .bg-\[\#1a1b25\] {
+  background-color: #fff5f8 !important;
+  border-color: #fce7f3 !important;
+  color: #4b5563 !important;
+}
+
+/* 17.3 侧边栏用户卡片 (sidebar-user-card) */
+.light .sidebar-user-card {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+.light .sidebar-user-card:hover {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+}
+.pink .sidebar-user-card {
+  background-color: #ffffff !important;
+  border-color: #fce7f3 !important;
+  color: #374151 !important;
+}
+.pink .sidebar-user-card:hover {
+  background-color: #fff0f5 !important;
+  border-color: #fbcfe8 !important;
+}
+
+/* 17.4 羁绊私密记录面板 (HaremIntimacyPanel) 与 角色数值路线 HUD (FloatingStatusHud) */
+.light .harem-panel,
+.light .floating-hud-root > div {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
+  color: #1e293b !important;
+}
+
+.pink .harem-panel,
+.pink .floating-hud-root > div {
+  background-color: #ffffff !important;
+  border-color: #fbcfe8 !important;
+  box-shadow: 0 10px 35px rgba(236, 72, 153, 0.1) !important;
+  color: #1e293b !important;
+}
+
+/* 内部卡片与网格容器 */
+.light .harem-panel .bg-\[\#171928\]\/95,
+.light .harem-panel .bg-\[\#171928\],
+.light .floating-hud-root .bg-\[\#151722\]\/90,
+.light .floating-hud-root .bg-\[\#0e1017\]\/90,
+.light .floating-hud-root .bg-\[\#171822\]\/90 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+.pink .harem-panel .bg-\[\#171928\]\/95,
+.pink .harem-panel .bg-\[\#171928\],
+.pink .floating-hud-root .bg-\[\#151722\]\/90,
+.pink .floating-hud-root .bg-\[\#0e1017\]\/90,
+.pink .floating-hud-root .bg-\[\#171822\]\/90 {
+  background-color: #fff5f8 !important;
+  border-color: #fce7f3 !important;
+  color: #374151 !important;
+}
+
+/* 微小芯片、进度条底色与心境背景 */
+.light .harem-panel .bg-\[\#121320\],
+.light .harem-panel .bg-\[\#10111a\],
+.light .harem-panel .bg-\[\#10111b\],
+.light .harem-panel .bg-\[\#181a28\],
+.light .floating-hud-root .bg-\[\#0c0d14\]\/90,
+.light .floating-hud-root .bg-\[\#141622\]\/90,
+.light .floating-hud-root .bg-\[\#1b1c28\],
+.light .floating-hud-root .bg-\[\#0e1017\]\/70 {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #334155 !important;
+}
+
+.pink .harem-panel .bg-\[\#121320\],
+.pink .harem-panel .bg-\[\#10111a\],
+.pink .harem-panel .bg-\[\#10111b\],
+.pink .harem-panel .bg-\[\#181a28\],
+.pink .floating-hud-root .bg-\[\#0c0d14\]\/90,
+.pink .floating-hud-root .bg-\[\#141622\]\/90,
+.pink .floating-hud-root .bg-\[\#1b1c28\],
+.pink .floating-hud-root .bg-\[\#0e1017\]\/70 {
+  background-color: #fff0f5 !important;
+  border-color: #fce7f3 !important;
+  color: #4b5563 !important;
+}
+
+/* 文本文字高对比度适配 */
+.light .harem-panel p,
+.light .floating-hud-root p {
+  color: #334155 !important;
+}
+.pink .harem-panel p,
+.pink .floating-hud-root p {
+  color: #4b5563 !important;
+}
+
+
 
 
 

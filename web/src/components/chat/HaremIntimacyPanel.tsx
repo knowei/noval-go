@@ -42,7 +42,7 @@ export function HaremIntimacyPanel({ records, deckTitle }: HaremIntimacyPanelPro
     : records.filter(r => r.characterName === activeTab);
 
   return (
-    <div className="w-full bg-[#131422]/95 border border-pink-500/30 hover:border-pink-500/50 rounded-2xl p-3 sm:p-4 shadow-2xl backdrop-blur-md space-y-3 transition-all animate-in fade-in duration-300">
+    <div className="harem-panel w-full bg-[#131422]/95 border border-pink-500/30 hover:border-pink-500/50 rounded-2xl p-3 sm:p-4 shadow-2xl backdrop-blur-md space-y-3 transition-all animate-in fade-in duration-300">
       {/* 顶部标题栏与全局战绩统计 */}
       <div className="flex items-center justify-between gap-2 border-b border-pink-500/20 pb-2.5 flex-wrap">
         <div className="flex items-center gap-2 flex-wrap">
