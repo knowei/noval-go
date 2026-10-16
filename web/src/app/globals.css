@@ -12,6 +12,7 @@
   --foreground: #f1f5f9;
 
   --app-bg: #0a0b10;
+  --app-bg-main: #0a0b10;
   --app-bg-gradient: radial-gradient(circle at 50% 0%, #151824 0%, #0a0b10 100%);
   --app-card-bg: #151722;
   --app-card-bg-subtle: #191b28;
@@ -49,6 +50,7 @@
   --foreground: #0f172a;
 
   --app-bg: #f4f7fc;
+  --app-bg-main: #f4f7fc;
   --app-bg-gradient: radial-gradient(circle at 50% 0%, #e8f0fe 0%, #f4f7fc 100%);
   --app-card-bg: #ffffff;
   --app-card-bg-subtle: #f8fafd;
@@ -86,6 +88,7 @@
   --foreground: #1e293b;
 
   --app-bg: #fff5f7;
+  --app-bg-main: #fff5f7;
   --app-bg-gradient: radial-gradient(circle at 50% 0%, #ffe4ec 0%, #fff5f7 100%);
   --app-card-bg: #ffffff;
   --app-card-bg-subtle: #fff0f5;
@@ -558,15 +561,18 @@ details.reality-panel[open] > summary.reality-summary,
   color: var(--app-text-main) !important;
 }
 
-.light aside,
+.light aside#primary-sidebar,
+.light .scenario-sidebar,
 .light #primary-sidebar {
   background-color: #ffffff !important;
   border-color: #e2e8f0 !important;
   box-shadow: 2px 0 16px rgba(15, 23, 42, 0.03) !important;
 }
 
-.light aside button:hover,
-.light aside a:hover,
+.light aside#primary-sidebar button:hover,
+.light aside#primary-sidebar a:hover,
+.light .scenario-sidebar button:hover,
+.light .scenario-sidebar a:hover,
 .light #primary-sidebar button:hover,
 .light #primary-sidebar a:hover {
   background-color: #f1f5f9 !important;
@@ -858,7 +864,8 @@ details.reality-panel[open] > summary.reality-summary,
 
 .light .model-settings-modal,
 .light .mod-center-modal,
-.light .lorebook-modal {
+.light .lorebook-modal,
+.light .session-workbench-modal {
   background-color: #ffffff !important;
   border-color: #e2e8f0 !important;
   box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15) !important;
@@ -988,6 +995,27 @@ details.reality-panel[open] > summary.reality-summary,
   background-color: #fce7f3 !important;
   border-color: #f472b6 !important;
   color: #9d174d !important;
+}
+
+.light .header-lorebook-btn {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+  color: #b45309 !important;
+}
+.light .header-lorebook-btn:hover {
+  background-color: #fef3c7 !important;
+  border-color: #fcd34d !important;
+  color: #92400e !important;
+}
+.pink .header-lorebook-btn {
+  background-color: #fff7ed !important;
+  border-color: #fed7aa !important;
+  color: #c2410c !important;
+}
+.pink .header-lorebook-btn:hover {
+  background-color: #ffedd5 !important;
+  border-color: #fdba74 !important;
+  color: #9a3412 !important;
 }
 
 .light .header-mod-btn {
@@ -1197,7 +1225,7 @@ details.reality-panel[open] > summary.reality-summary,
   color: var(--app-text-main) !important;
 }
 
-.pink aside,
+.pink aside#primary-sidebar,
 .pink #primary-sidebar,
 .pink .scenario-sidebar {
   background-color: #ffffff !important;
@@ -1205,8 +1233,10 @@ details.reality-panel[open] > summary.reality-summary,
   box-shadow: 2px 0 20px rgba(236, 72, 153, 0.06) !important;
 }
 
-.pink aside button:hover,
-.pink aside a:hover,
+.pink aside#primary-sidebar button:hover,
+.pink aside#primary-sidebar a:hover,
+.pink .scenario-sidebar button:hover,
+.pink .scenario-sidebar a:hover,
 .pink #primary-sidebar button:hover,
 .pink #primary-sidebar a:hover {
   background-color: #fff0f5 !important;
@@ -1296,7 +1326,8 @@ details.reality-panel[open] > summary.reality-summary,
 
 .pink .model-settings-modal,
 .pink .mod-center-modal,
-.pink .lorebook-modal {
+.pink .lorebook-modal,
+.pink .session-workbench-modal {
   background-color: #ffffff !important;
   border-color: #fbcfe8 !important;
   box-shadow: 0 25px 50px -12px rgba(236, 72, 153, 0.2) !important;
@@ -1442,7 +1473,114 @@ details.reality-panel[open] > summary.reality-summary,
   color: #4b5563 !important;
 }
 
-/* 17.3 侧边栏用户卡片 (sidebar-user-card) */
+/* 17.3 会话工作台 (SessionWorkbench) 深度主题适配 */
+.light .session-workbench-modal {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.light .session-workbench-modal #workbench-title {
+  color: #0f172a !important;
+}
+
+.light .session-workbench-modal .bg-\[\#151724\],
+.light .session-workbench-modal .bg-\[\#0d0f17\],
+.light .session-workbench-modal .bg-\[\#161826\],
+.light .session-workbench-modal .bg-\[\#080910\],
+.light .session-workbench-modal .bg-\[\#0e1018\],
+.light .session-workbench-modal .bg-\[\#090b12\],
+.light .session-workbench-modal .bg-\[\#141624\],
+.light .session-workbench-modal .bg-\[\#181a28\] {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.light .session-workbench-modal .border-\[\#202334\],
+.light .session-workbench-modal .border-\[\#222538\],
+.light .session-workbench-modal .border-\[\#24283c\],
+.light .session-workbench-modal .border-\[\#25293d\],
+.light .session-workbench-modal .border-\[\#2b2f42\],
+.light .session-workbench-modal .border-\[\#2b2f44\],
+.light .session-workbench-modal .border-\[\#1f2233\],
+.light .session-workbench-modal .border-\[\#272b3c\] {
+  border-color: #e2e8f0 !important;
+}
+
+.light .session-workbench-modal input,
+.light .session-workbench-modal textarea,
+.light .session-workbench-modal select {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+.light .session-workbench-modal pre {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+.light .session-workbench-modal details {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+.pink .session-workbench-modal {
+  background-color: #ffffff !important;
+  border-color: #fbcfe8 !important;
+  color: #4a044e !important;
+}
+
+.pink .session-workbench-modal #workbench-title {
+  color: #831843 !important;
+}
+
+.pink .session-workbench-modal .bg-\[\#151724\],
+.pink .session-workbench-modal .bg-\[\#0d0f17\],
+.pink .session-workbench-modal .bg-\[\#161826\],
+.pink .session-workbench-modal .bg-\[\#080910\],
+.pink .session-workbench-modal .bg-\[\#0e1018\],
+.pink .session-workbench-modal .bg-\[\#090b12\],
+.pink .session-workbench-modal .bg-\[\#141624\],
+.pink .session-workbench-modal .bg-\[\#181a28\] {
+  background-color: #fdf2f8 !important;
+  border-color: #fce7f3 !important;
+  color: #831843 !important;
+}
+
+.pink .session-workbench-modal .border-\[\#202334\],
+.pink .session-workbench-modal .border-\[\#222538\],
+.pink .session-workbench-modal .border-\[\#24283c\],
+.pink .session-workbench-modal .border-\[\#25293d\],
+.pink .session-workbench-modal .border-\[\#2b2f42\],
+.pink .session-workbench-modal .border-\[\#2b2f44\],
+.pink .session-workbench-modal .border-\[\#1f2233\],
+.pink .session-workbench-modal .border-\[\#272b3c\] {
+  border-color: #fce7f3 !important;
+}
+
+.pink .session-workbench-modal input,
+.pink .session-workbench-modal textarea,
+.pink .session-workbench-modal select {
+  background-color: #ffffff !important;
+  border-color: #f472b6 !important;
+  color: #4a044e !important;
+}
+
+.pink .session-workbench-modal pre {
+  background-color: #fff0f5 !important;
+  border-color: #fbcfe8 !important;
+  color: #831843 !important;
+}
+
+.pink .session-workbench-modal details {
+  background-color: #fff0f5 !important;
+  border-color: #fce7f3 !important;
+}
+
+/* 17.4 侧边栏用户卡片 (sidebar-user-card) */
 .light .sidebar-user-card {
   background-color: #ffffff !important;
   border-color: #e2e8f0 !important;
@@ -1833,10 +1971,470 @@ details.reality-panel[open] > summary.reality-summary,
   background-color: #ffe4e6 !important;
 }
 
+/* ==========================================================================
+   19. 回复完整性警告条 (ReplyCompletionNotice) & 用户消息操作条 (UserTurnActionBar)
+   ========================================================================== */
 
+/* 19.1 回复完整性检查通知框 (Light & Pink) */
+.light .reply-completion-notice {
+  background-color: #fffbeb !important;
+  border: 1px solid #fcd34d !important;
+  color: #78350f !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08) !important;
+}
 
+.light .reply-completion-notice .notice-title {
+  color: #78350f !important;
+  font-weight: 700 !important;
+}
 
+.light .reply-completion-notice .notice-desc,
+.light .reply-completion-notice p {
+  color: #92400e !important;
+}
 
+.light .reply-completion-notice .notice-hint {
+  color: #b45309 !important;
+}
 
+.light .reply-completion-notice .notice-btn {
+  background-color: #fef3c7 !important;
+  border: 1px solid #f59e0b !important;
+  color: #78350f !important;
+  box-shadow: 0 1px 2px rgba(245, 158, 11, 0.1) !important;
+}
 
+.light .reply-completion-notice .notice-btn:hover {
+  background-color: #fde68a !important;
+  border-color: #d97706 !important;
+  color: #451a03 !important;
+}
 
+.light .reply-completion-notice summary {
+  color: #b45309 !important;
+  font-weight: 600 !important;
+}
+
+.light .reply-completion-notice .notice-pre {
+  background-color: #fef3c7 !important;
+  border: 1px solid #fde68a !important;
+  color: #78350f !important;
+}
+
+/* Pink 模式下的完整性通知框 */
+.pink .reply-completion-notice {
+  background-color: #fff1f2 !important;
+  border: 1px solid #fecdd3 !important;
+  color: #881337 !important;
+  box-shadow: 0 2px 8px rgba(244, 63, 94, 0.08) !important;
+}
+
+.pink .reply-completion-notice .notice-title {
+  color: #881337 !important;
+  font-weight: 700 !important;
+}
+
+.pink .reply-completion-notice .notice-desc,
+.pink .reply-completion-notice p {
+  color: #9f1239 !important;
+}
+
+.pink .reply-completion-notice .notice-hint {
+  color: #be123c !important;
+}
+
+.pink .reply-completion-notice .notice-btn {
+  background-color: #ffe4e6 !important;
+  border: 1px solid #fb7185 !important;
+  color: #881337 !important;
+  box-shadow: 0 1px 2px rgba(244, 63, 94, 0.1) !important;
+}
+
+.pink .reply-completion-notice .notice-btn:hover {
+  background-color: #fecdd3 !important;
+  border-color: #e11d48 !important;
+  color: #4c0519 !important;
+}
+
+.pink .reply-completion-notice summary {
+  color: #be123c !important;
+  font-weight: 600 !important;
+}
+
+.pink .reply-completion-notice .notice-pre {
+  background-color: #ffe4e6 !important;
+  border: 1px solid #fecdd3 !important;
+  color: #881337 !important;
+}
+
+/* 19.2 用户消息快捷操作条 (UserTurnActionBar) */
+.light .user-turn-action-bar button,
+.light .user-action-btn {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06) !important;
+}
+
+.light .user-turn-action-bar button:hover,
+.light .user-action-btn:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+}
+
+.light .user-btn-resend {
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+  color: #0284c7 !important;
+}
+.light .user-btn-resend:hover {
+  background-color: #e0f2fe !important;
+  border-color: #7dd3fc !important;
+  color: #0369a1 !important;
+}
+
+.light .user-btn-retract {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+  color: #e11d48 !important;
+}
+.light .user-btn-retract:hover {
+  background-color: #ffe4e6 !important;
+  border-color: #fda4af !important;
+  color: #be123c !important;
+}
+
+.pink .user-turn-action-bar button,
+.pink .user-action-btn {
+  background-color: #ffffff !important;
+  border: 1px solid #fbcfe8 !important;
+  color: #4b5563 !important;
+  box-shadow: 0 1px 3px rgba(236, 72, 153, 0.06) !important;
+}
+
+.pink .user-turn-action-bar button:hover,
+.pink .user-action-btn:hover {
+  background-color: #fff0f5 !important;
+  border-color: #f472b6 !important;
+  color: #be185d !important;
+}
+
+.pink .user-btn-resend {
+  background-color: #fdf2f8 !important;
+  border-color: #fbcfe8 !important;
+  color: #db2777 !important;
+}
+.pink .user-btn-resend:hover {
+  background-color: #fce7f3 !important;
+  border-color: #f472b6 !important;
+  color: #9d174d !important;
+}
+
+.pink .user-btn-retract {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+  color: #e11d48 !important;
+}
+.pink .user-btn-retract:hover {
+  background-color: #ffe4e6 !important;
+  border-color: #fda4af !important;
+  color: #be123c !important;
+}
+
+/* 19.3 AI 流式推演中占位指示器 (AI 正在沉浸推演...) */
+.light .streaming-card-indicator {
+  background-color: #ffffff !important;
+  border-color: #fcd34d !important;
+  color: #1e293b !important;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.06) !important;
+}
+.light .streaming-card-indicator .text-amber-300\/90,
+.light .streaming-card-indicator .text-amber-300 {
+  color: #b45309 !important;
+  font-weight: 600 !important;
+}
+
+.pink .streaming-card-indicator {
+  background-color: #ffffff !important;
+  border-color: #fbcfe8 !important;
+  color: #1e293b !important;
+  box-shadow: 0 4px 20px rgba(236, 72, 153, 0.08) !important;
+}
+.pink .streaming-card-indicator .text-amber-300\/90,
+.pink .streaming-card-indicator .text-amber-300 {
+  color: #db2777 !important;
+  font-weight: 600 !important;
+}
+
+/* ==========================================================================
+   20. 移动端顶部顶栏 (mobile-top-header) 与 底部导航栏 (mobile-bottom-nav)
+   ========================================================================== */
+
+/* 20.1 侧边栏按钮悬浮背景修复 (解决“存档”悬浮变黑块的问题) */
+.light .hover\:bg-\[\#161824\]:hover,
+.light aside#primary-sidebar button:hover,
+.light aside#primary-sidebar a:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+.pink .hover\:bg-\[\#161824\]:hover,
+.pink aside#primary-sidebar button:hover,
+.pink aside#primary-sidebar a:hover {
+  background-color: #fff0f5 !important;
+  color: #831843 !important;
+}
+
+.light .hover\:bg-\[\#1d2030\]:hover {
+  background-color: #f1f5f9 !important;
+}
+.pink .hover\:bg-\[\#1d2030\]:hover {
+  background-color: #fff0f5 !important;
+}
+
+/* 20.2 移动端顶部标题栏 (Mobile Top Header) */
+.light #mobile-top-header,
+.light .mobile-top-header {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  box-shadow: 0 1px 6px rgba(15, 23, 42, 0.04) !important;
+  color: #0f172a !important;
+}
+.light #mobile-top-header span,
+.light #mobile-top-header .text-gray-200 {
+  color: #0f172a !important;
+}
+.light .mobile-model-pill {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+}
+
+.pink #mobile-top-header,
+.pink .mobile-top-header {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-bottom: 1px solid #fce7f3 !important;
+  box-shadow: 0 1px 8px rgba(236, 72, 153, 0.06) !important;
+  color: #831843 !important;
+}
+.pink #mobile-top-header span,
+.pink #mobile-top-header .text-gray-200 {
+  color: #831843 !important;
+}
+.pink .mobile-model-pill {
+  background-color: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+  color: #15803d !important;
+}
+
+/* 20.3 移动端底部导航栏 (Mobile Bottom Nav) */
+.light #mobile-bottom-nav,
+.light .mobile-bottom-nav {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-top: 1px solid #e2e8f0 !important;
+  box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.06) !important;
+}
+.light #mobile-bottom-nav a,
+.light #mobile-bottom-nav button {
+  color: #64748b !important;
+}
+.light #mobile-bottom-nav a:hover,
+.light #mobile-bottom-nav button:hover {
+  color: #0f172a !important;
+}
+.light #mobile-bottom-nav .text-amber-400 {
+  color: #d97706 !important;
+}
+.light #mobile-bottom-nav .text-pink-400 {
+  color: #db2777 !important;
+}
+.light #mobile-bottom-nav .text-purple-400 {
+  color: #7c3aed !important;
+}
+
+.pink #mobile-bottom-nav,
+.pink .mobile-bottom-nav {
+  background-color: rgba(255, 255, 255, 0.96) !important;
+  border-top: 1px solid #fce7f3 !important;
+  box-shadow: 0 -4px 25px rgba(236, 72, 153, 0.1) !important;
+}
+.pink #mobile-bottom-nav a,
+.pink #mobile-bottom-nav button {
+  color: #9d174d !important;
+  opacity: 0.8;
+}
+.pink #mobile-bottom-nav a:hover,
+.pink #mobile-bottom-nav button:hover {
+  color: #be185d !important;
+  opacity: 1;
+}
+.pink #mobile-bottom-nav .text-amber-400 {
+  color: #d97706 !important;
+  opacity: 1;
+}
+.pink #mobile-bottom-nav .text-pink-400 {
+  color: #db2777 !important;
+  opacity: 1;
+}
+.pink #mobile-bottom-nav .text-purple-400 {
+  color: #9333ea !important;
+  opacity: 1;
+}
+
+/* 20.4 移动端侧滑抽屉 (Mobile Slide Drawer) */
+.light .mobile-slide-drawer {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+.pink .mobile-slide-drawer {
+  background-color: #ffffff !important;
+  border-color: #fce7f3 !important;
+  color: #831843 !important;
+}
+
+/* ==========================================================================
+   21. 页面切换转场平滑动画系统 (Page Transition Animations)
+   ========================================================================== */
+
+@keyframes pageFadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.998);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes routeGlowSweep {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.8;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.page-transition-wrapper {
+  animation: pageFadeInUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: opacity, transform;
+  position: relative;
+}
+
+.page-route-glow-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent, #38bdf8, #f43f5e, #a855f7, transparent);
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.page-route-glow-bar.animating {
+  animation: routeGlowSweep 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.light .page-route-glow-bar {
+  background: linear-gradient(90deg, transparent, #2563eb, #38bdf8, #818cf8, transparent);
+}
+
+.pink .page-route-glow-bar {
+  background: linear-gradient(90deg, transparent, #ec4899, #f43f5e, #fb7185, transparent);
+}
+
+/* ==========================================================================
+   22. 按钮与交互元素全局动效系统 (Button Micro-interactions)
+   ========================================================================== */
+
+/* 全局可点击按钮平滑过渡动效 */
+button,
+[role="button"],
+.btn-interactive,
+input[type="button"],
+input[type="submit"] {
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 按钮鼠标悬浮微提亮与轻量抬升 (Hover Lift & Glow) */
+button:hover:not(:disabled):not([aria-disabled="true"]),
+[role="button"]:hover:not(:disabled):not([aria-disabled="true"]) {
+  filter: brightness(1.05);
+}
+
+/* 按钮点击触感按压弹性回弹 (Tactile Click Press / Active Feedback) */
+button:active:not(:disabled):not([aria-disabled="true"]),
+[role="button"]:active:not(:disabled):not([aria-disabled="true"]) {
+  transform: scale(0.95) !important;
+  transition-duration: 0.08s !important;
+}
+
+/* 主要行动按钮 (Primary / Gradient CTA Buttons) - 悬浮光泽与上浮 */
+button.bg-gradient-to-r:hover:not(:disabled),
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1.5px);
+  filter: brightness(1.08);
+}
+
+button.bg-gradient-to-r:active:not(:disabled),
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0) scale(0.95) !important;
+}
+
+/* 对话气泡操作按钮与药丸按钮轻巧微动效 */
+.user-turn-action-bar button:hover,
+.card-turn-action-bar button:hover,
+.user-action-btn:hover {
+  transform: translateY(-1px) scale(1.03);
+}
+
+.user-turn-action-bar button:active,
+.card-turn-action-bar button:active,
+.user-action-btn:active {
+  transform: scale(0.92) !important;
+}
+
+/* 侧边栏与移动端底部图标点击触感反馈 */
+#mobile-bottom-nav a:active,
+#mobile-bottom-nav button:active,
+#primary-sidebar button:active,
+#primary-sidebar a:active {
+  transform: scale(0.90) !important;
+  transition-duration: 0.1s !important;
+}
+
+/* 禁用状态消除动效 */
+button:disabled,
+button[disabled],
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  filter: opacity(0.5) !important;
+}
+
+/* 减弱动画无障碍模式 */
+@media (prefers-reduced-motion: reduce) {
+  .page-transition-wrapper,
+  .page-route-glow-bar,
+  button,
+  [role="button"] {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}

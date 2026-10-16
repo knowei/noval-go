@@ -847,6 +847,129 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             self.send_json({'success': True, 'id': user_id, 'nickname': nickname, 'avatar': avatar})
             return
 
+        # 积分充值接口 POST /api/user/recharge
+        if self.path == '/api/user/recharge':
+            content_len = int(self.headers.get('Content-Length', 0))
+            body = json.loads(self.rfile.read(content_len).decode('utf-8')) if content_len > 0 else {}
+            user_id = (body.get('userId') or body.get('user_id') or 'default_user').strip()
+            amount = float(body.get('amount') or 0)
+            points = int(body.get('points') or 0)
+            channel = str(body.get('channel') or 'wechat').strip()
+
+            if points <= 0 and amount > 0:
+                points = int(amount * 1000)
+
+            if points <= 0:
+                self.send_json({'success': False, 'error': '充值积分必须大于0'}, 400)
+                return
+
+            conn = get_db()
+            c = conn.cursor()
+            c.execute("SELECT points FROM users WHERE id = ?", (user_id,))
+            row = c.fetchone()
+            if row:
+                current_points = int(row['points'] or 0)
+                new_points = current_points + points
+                c.execute("UPDATE users SET points = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", (new_points, user_id))
+            else:
+                new_points = 9999 + points
+                c.execute("""
+                INSERT INTO users (id, username, password_hash, nickname, avatar, points)
+                VALUES (?, ?, '', ?, '🎭', ?)
+                ON CONFLICT(id) DO UPDATE SET points = users.points + excluded.points
+                """, (user_id, user_id, '执笔人', new_points))
+
+            rec_id = f"rec_{secrets.token_hex(8)}"
+            try:
+                c.execute("""
+                INSERT INTO recharge_records (id, user_id, amount, points, channel, status, created_at)
+                VALUES (?, ?, ?, ?, ?, 'success', CURRENT_TIMESTAMP)
+                """, (rec_id, user_id, amount, points, channel))
+            except Exception as e:
+                print(f"[Recharge Log Warning] {e}")
+
+            conn.commit()
+            conn.close()
+
+            self.send_json({
+                'success': True,
+                'recordId': rec_id,
+                'points': new_points,
+                'addedPoints': points,
+                'message': f'充值成功！已成功增加 {points:,} 积分'
+            })
+            return
+
+        # 对话 Token 与积分扣减接口 POST /api/user/points/consume
+        if self.path == '/api/user/points/consume':
+            content_len = int(self.headers.get('Content-Length', 0))
+            body = json.loads(self.rfile.read(content_len).decode('utf-8')) if content_len > 0 else {}
+            user_id = (body.get('userId') or body.get('user_id') or 'default_user').strip()
+            tokens = int(body.get('tokens') or 0)
+            cache_hit_tokens = int(body.get('cacheHitTokens') or 0)
+            prompt_tokens = int(body.get('promptTokens') or 0)
+            completion_tokens = int(body.get('completionTokens') or 0)
+            is_custom_model = bool(body.get('isCustomModel'))
+            model_name = body.get('model') or 'deepseek-chat'
+            conv_id = body.get('conversationId') or ''
+
+            conn = get_db()
+            c = conn.cursor()
+            c.execute("SELECT points FROM users WHERE id = ?", (user_id,))
+            row = c.fetchone()
+            current_points = int(row['points'] if row else 9999)
+
+            if is_custom_model:
+                points_cost = 0
+            else:
+                # 官方模型计费：
+                # 缓存未命中 tokens：1,000 Token = 1 积分
+                # 缓存命中 tokens：享 80% 优惠折扣 (0.2 计费权重)
+                # 每次完整回复保底 1 积分
+                effective_cache_hit = min(tokens, cache_hit_tokens)
+                effective_cache_miss = max(0, tokens - effective_cache_hit)
+                computed_cost = (effective_cache_miss + effective_cache_hit * 0.2) / 1000.0
+                points_cost = max(1, int(round(computed_cost)))
+
+            new_points = max(0, current_points - points_cost)
+            if row:
+                c.execute("UPDATE users SET points = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", (new_points, user_id))
+            else:
+                c.execute("""
+                INSERT INTO users (id, username, password_hash, nickname, avatar, points)
+                VALUES (?, ?, '', ?, '🎭', ?)
+                ON CONFLICT(id) DO UPDATE SET points = excluded.points
+                """, (user_id, user_id, '执笔人', new_points))
+
+            try:
+                usage_id = f"tok_{secrets.token_hex(8)}"
+                c.execute("""
+                INSERT INTO token_usage_records (
+                    id, user_id, conversation_id, model, is_custom_model,
+                    prompt_tokens, completion_tokens, cache_hit_tokens, cache_miss_tokens,
+                    total_tokens, points_cost, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                """, (
+                    usage_id, user_id, conv_id, model_name, 1 if is_custom_model else 0,
+                    prompt_tokens, completion_tokens, cache_hit_tokens,
+                    max(0, prompt_tokens - cache_hit_tokens), tokens, points_cost
+                ))
+            except Exception as te:
+                print(f"[Token Log Warning] {te}")
+
+            conn.commit()
+            conn.close()
+
+            self.send_json({
+                'success': True,
+                'isCustomModel': is_custom_model,
+                'pointsCost': points_cost,
+                'remainingPoints': new_points,
+                'tokens': tokens,
+                'cacheHitTokens': cache_hit_tokens
+            })
+            return
+
         # 5. 在线创建/更新剧本 POST /api/stories (创作中心持久化)
         if self.path == '/api/stories':
             content_len = int(self.headers.get('Content-Length', 0))
@@ -1075,27 +1198,27 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
             if not user_id and current_auth_user:
                 user_id = current_auth_user['id']
 
-            if not user_id or user_id == 'default_user' or str(user_id).startswith('guest_'):
-                self.send_json({
-                    'id': user_id or 'guest_default',
-                    'username': 'guest',
-                    'nickname': '设备访客',
-                    'avatar': '🎭',
-                    'points': 9999,
-                    'is_guest': True,
-                    'model_config': {}
-                })
-                return
-
+            target_uid = user_id or 'default_user'
             conn = get_db()
             c = conn.cursor()
-            c.execute('SELECT id, username, nickname, avatar, points, model_config_json FROM users WHERE id = ?', (user_id,))
+            c.execute('SELECT id, username, nickname, avatar, points, model_config_json FROM users WHERE id = ?', (target_uid,))
             row = c.fetchone()
-            conn.close()
+            if not row:
+                try:
+                    c.execute("""
+                    INSERT INTO users (id, username, password_hash, nickname, avatar, points)
+                    VALUES (?, ?, '', ?, '🎭', 9999)
+                    ON CONFLICT (id) DO NOTHING
+                    """, (target_uid, target_uid, '设备访客' if str(target_uid).startswith('guest_') or target_uid == 'default_user' else target_uid))
+                    conn.commit()
+                    c.execute('SELECT id, username, nickname, avatar, points, model_config_json FROM users WHERE id = ?', (target_uid,))
+                    row = c.fetchone()
+                except Exception:
+                    pass
+
             if row:
                 u = dict(row)
                 cfg = {}
-                # 只有携带本人有效 auth_token 时才返回私密 model_config (包含 API Key)
                 if current_auth_user and current_auth_user['id'] == u['id']:
                     if u.get('model_config_json'):
                         try:
@@ -1104,17 +1227,59 @@ class ProxyHandler(http.server.SimpleHTTPRequestHandler):
                             pass
                 u['model_config'] = cfg
                 u.pop('model_config_json', None)
+                conn.close()
                 self.send_json(u)
-            else:
-                self.send_json({
-                    'id': user_id,
-                    'username': 'guest',
-                    'nickname': '设备访客',
-                    'avatar': '🎭',
-                    'points': 9999,
-                    'is_guest': True,
-                    'model_config': {}
-                })
+                return
+
+            conn.close()
+            self.send_json({
+                'id': target_uid,
+                'username': 'guest',
+                'nickname': '设备访客',
+                'avatar': '🎭',
+                'points': 9999,
+                'is_guest': True,
+                'model_config': {}
+            })
+            return
+
+        # 获取用户实时积分 GET /api/user/points?user_id=...
+        if self.path.startswith('/api/user/points'):
+            parsed = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed.query)
+            target_uid = (params.get('userId', [None])[0] or params.get('user_id', [None])[0] or self.headers.get('X-User-Id') or 'default_user').strip()
+
+            conn = get_db()
+            c = conn.cursor()
+            c.execute('SELECT points FROM users WHERE id = ?', (target_uid,))
+            row = c.fetchone()
+            pts = int(row['points'] if row and row['points'] is not None else 9999)
+            conn.close()
+            self.send_json({'success': True, 'points': pts, 'userId': target_uid})
+            return
+
+        # 获取充值记录历史 GET /api/user/recharge/history?user_id=...
+        if self.path.startswith('/api/user/recharge/history'):
+            parsed = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed.query)
+            target_uid = (params.get('userId', [None])[0] or params.get('user_id', [None])[0] or self.headers.get('X-User-Id') or 'default_user').strip()
+
+            conn = get_db()
+            c = conn.cursor()
+            records = []
+            try:
+                c.execute("""
+                SELECT id, amount, points, channel, status, created_at
+                FROM recharge_records
+                WHERE user_id = ?
+                ORDER BY created_at DESC
+                LIMIT 20
+                """, (target_uid,))
+                records = [dict(r) for r in c.fetchall()]
+            except Exception as e:
+                print(f"[Recharge History Notice] {e}")
+            conn.close()
+            self.send_json({'success': True, 'records': records})
             return
 
         if self.path == '/api/user/list':

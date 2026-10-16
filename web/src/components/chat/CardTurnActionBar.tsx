@@ -3,13 +3,15 @@
 import React, { useState } from 'react';
 import { Copy, Check, Play, RotateCcw, Edit2, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
-import { Turn } from '@/lib/types';
+import { Turn, CompletionUsage } from '@/lib/types';
 import { copyText } from '@/lib/clipboard';
+import { TokenUsageBadge } from './TokenUsageBadge';
 
 interface CardTurnActionBarProps {
   index: number;
   model?: string;
   storyContent?: string;
+  usage?: CompletionUsage;
   onContinueWriting?: (index: number) => void;
   onRegenerate?: (index: number) => void;
   onEditToggle?: (index: number) => void;
@@ -24,6 +26,7 @@ export function CardTurnActionBar({
   index,
   model,
   storyContent = '',
+  usage,
   onContinueWriting,
   onRegenerate,
   onEditToggle,
@@ -56,6 +59,9 @@ export function CardTurnActionBar({
           <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
           <span className="max-w-[110px] truncate">{displayModel}</span>
         </span>
+
+        {/* ⚡ Token 消耗与缓存命中明细 Badge */}
+        <TokenUsageBadge usage={usage} model={displayModel} />
 
         {/* 🔀 多版本滑动切换 (Swipe Regeneration) */}
         {swipes && swipes.length > 1 && (

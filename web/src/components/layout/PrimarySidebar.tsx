@@ -14,7 +14,8 @@ import {
   Settings,
   X,
   Menu,
-  Lock
+  Lock,
+  User
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 
@@ -318,7 +319,7 @@ export function PrimarySidebar() {
   return (
     <>
       {/* 1. Desktop Fixed Left Sidebar */}
-      <aside className="hidden md:flex w-20 shrink-0 h-screen sticky top-0 bg-[#0c0d12] border-r border-[#1b1d26] flex-col justify-between py-3 px-2 z-40 select-none">
+      <aside id="primary-sidebar" className="hidden md:flex w-20 shrink-0 h-screen sticky top-0 bg-[#0c0d12] border-r border-[#1b1d26] flex-col justify-between py-3 px-2 z-40 select-none">
         {renderSidebarContent(false)}
       </aside>
 
@@ -329,7 +330,7 @@ export function PrimarySidebar() {
             className="fixed inset-0 bg-black/75 backdrop-blur-xs transition-opacity"
             onClick={() => setIsMobileDrawerOpen(false)}
           />
-          <div className="relative z-10 w-72 max-w-[85vw] bg-[#0c0d12] h-full shadow-2xl p-4 flex flex-col justify-between animate-in slide-in-from-left duration-200">
+          <div className="mobile-slide-drawer relative z-10 w-72 max-w-[85vw] bg-[#0c0d12] h-full shadow-2xl p-4 flex flex-col justify-between animate-in slide-in-from-left duration-200">
             {renderSidebarContent(true)}
           </div>
         </div>
@@ -337,7 +338,7 @@ export function PrimarySidebar() {
 
       {/* 3. Mobile Top Header (on non-chat pages) */}
       {!isChatActive && (
-        <div className="md:hidden fixed top-0 left-0 right-0 h-12 bg-[#0c0d12]/90 backdrop-blur-md border-b border-[#1b1d26] z-30 flex items-center justify-between px-3">
+        <div id="mobile-top-header" className="mobile-top-header md:hidden fixed top-0 left-0 right-0 h-12 bg-[#0c0d12]/90 backdrop-blur-md border-b border-[#1b1d26] z-30 flex items-center justify-between px-3">
           <div className="flex items-center gap-2">
             <button
               suppressHydrationWarning
@@ -357,25 +358,26 @@ export function PrimarySidebar() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsSettingsOpen(true)}
-              className="px-2 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-[10px] text-emerald-300 font-mono flex items-center gap-1 cursor-pointer"
+              className="mobile-model-pill px-2 py-0.5 rounded-full bg-emerald-950/60 border border-emerald-500/40 text-[10px] text-emerald-300 font-mono flex items-center gap-1 cursor-pointer"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <span suppressHydrationWarning>{mounted ? modelSettings.model || 'deepseek' : 'deepseek'}</span>
             </button>
 
-            <button
-              onClick={() => setIsUserSwitchOpen(true)}
+            <Link
+              href="/profile"
               className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-rose-600 flex items-center justify-center text-xs shadow-sm cursor-pointer"
+              title="进入个人中心"
             >
               {currentUser?.avatar || '🎭'}
-            </button>
+            </Link>
           </div>
         </div>
       )}
 
       {/* 4. Mobile Bottom Navigation Bar (hidden during chat) */}
       {!isChatActive && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-[#0c0d12]/95 backdrop-blur-md border-t border-[#1b1d26] z-40 flex items-center justify-around px-2 select-none shadow-2xl">
+        <div id="mobile-bottom-nav" className="mobile-bottom-nav md:hidden fixed bottom-0 left-0 right-0 h-14 bg-[#0c0d12]/95 backdrop-blur-md border-t border-[#1b1d26] z-40 flex items-center justify-around px-2 select-none shadow-2xl">
           <Link
             href="/"
             className={`flex flex-col items-center gap-1 text-[10px] ${
@@ -414,13 +416,15 @@ export function PrimarySidebar() {
             <span>存档</span>
           </button>
 
-          <button
-            onClick={() => setIsSettingsOpen(true)}
-            className="flex flex-col items-center gap-1 text-[10px] text-gray-400 hover:text-emerald-300 cursor-pointer"
+          <Link
+            href="/profile"
+            className={`flex flex-col items-center gap-1 text-[10px] ${
+              pathname === '/profile' ? 'text-amber-400 font-bold' : 'text-gray-400 hover:text-amber-300'
+            }`}
           >
-            <Sliders className="w-4 h-4 text-emerald-400" />
-            <span>设置</span>
-          </button>
+            <User className="w-4 h-4 text-amber-500" />
+            <span>我的</span>
+          </Link>
         </div>
       )}
     </>

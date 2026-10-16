@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '@/lib/store';
 import { saveModelSettings, testModelConnection, fetchRemoteModels, changeSitePasswordApi, cleanApiBaseUrl } from '@/lib/api';
-import { X, Check, Cpu, Key, Globe, Sliders, Zap, Loader2, Lock, KeyRound, ShieldCheck, Palette } from 'lucide-react';
+import { X, Check, Cpu, Key, Globe, Sliders, Zap, Loader2, Lock, KeyRound, ShieldCheck, Palette, Coins, Sparkles, CheckCircle2 } from 'lucide-react';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 
 const PRESET_MODELS = [
@@ -16,8 +16,11 @@ const PRESET_MODELS = [
 ];
 
 export function ModelSettingsModal() {
-  const { isSettingsOpen, setIsSettingsOpen, modelSettings, setModelSettings, currentUserId, authToken } = useAppStore();
+  const { isSettingsOpen, setIsSettingsOpen, modelSettings, setModelSettings, currentUserId, authToken, currentUser, setIsRechargeOpen } = useAppStore();
   
+  const [source, setSource] = useState<'official' | 'custom'>(
+    modelSettings.source || (modelSettings.apiKey ? 'custom' : 'official')
+  );
   const [model, setModel] = useState(modelSettings.model || 'deepseek-chat');
   const [baseUrl, setBaseUrl] = useState(modelSettings.baseUrl || 'https://api.deepseek.com/v1');
   const [apiKey, setApiKey] = useState(modelSettings.apiKey || '');
@@ -34,7 +37,8 @@ export function ModelSettingsModal() {
 
   useEffect(() => {
     if (isSettingsOpen) {
-      setModel(modelSettings.model || 'deepseek-flash');
+      setSource(modelSettings.source || (modelSettings.apiKey ? 'custom' : 'official'));
+      setModel(modelSettings.model || 'deepseek-chat');
       setBaseUrl(modelSettings.baseUrl || 'https://api.deepseek.com/v1');
       setApiKey(modelSettings.apiKey || '');
       setTemperature(modelSettings.temperature ?? 0.7);
@@ -155,7 +159,7 @@ export function ModelSettingsModal() {
 
   const handleSave = async () => {
     const cleanedBase = cleanApiBaseUrl(baseUrl);
-    const updated = { model, baseUrl: cleanedBase, apiKey, temperature, roleplayMode };
+    const updated = { model, baseUrl: cleanedBase, apiKey, temperature, roleplayMode, source };
     setModelSettings(updated);
     if (authToken && !currentUserId.startsWith('guest_') && currentUserId !== 'default_user') {
       try {
@@ -189,6 +193,90 @@ export function ModelSettingsModal() {
 
         {/* Scrollable Body */}
         <div className="px-6 py-4 overflow-y-auto space-y-5 flex-1 min-h-0 no-scrollbar">
+          {/* Points & Recharge Header Bar */}
+          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/25 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0">
+                <Coins className="w-5 h-5 animate-pulse" />
+              </div>
+              <div>
+                <div className="text-[11px] text-gray-400 flex items-center gap-1.5">
+                  <span>当前账户推演积分</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">实时</span>
+                </div>
+                <div className="text-base font-extrabold text-amber-300 font-mono flex items-baseline gap-1">
+                  <span>{(currentUser?.points ?? 9999).toLocaleString()}</span>
+                  <span className="text-xs font-normal text-amber-400/80">点</span>
+                </div>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsRechargeOpen(true)}
+              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-stone-950 font-bold text-xs shadow-md shadow-amber-500/20 transition cursor-pointer flex items-center gap-1.5 active:scale-95 shrink-0"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>快速充值</span>
+            </button>
+          </div>
+
+          {/* Model Source Mode Toggle (Official vs Custom) */}
+          <div className="space-y-2">
+            <label className="text-xs font-semibold text-gray-300 flex items-center justify-between">
+              <span>模型接入服务模式</span>
+              <span className="text-[11px] text-gray-400">
+                {source === 'official' ? '🌟 消耗平台积分' : '🎁 自带Key·免扣积分'}
+              </span>
+            </label>
+            <div className="grid grid-cols-2 gap-2 bg-[#12141e] p-1 rounded-2xl border border-[#262836]">
+              <button
+                type="button"
+                onClick={() => setSource('official')}
+                className={`py-2 px-3 rounded-xl text-xs font-medium transition cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
+                  source === 'official'
+                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/50 shadow-sm'
+                    : 'text-gray-400 hover:text-gray-200'
+                }`}
+              >
+                <div className="flex items-center gap-1.5 font-bold">
+                  <span>🌟 平台官方通道</span>
+                </div>
+                <span className="text-[10px] text-amber-400/80">无需自备Key · 消耗积分</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSource('custom')}
+                className={`py-2 px-3 rounded-xl text-xs font-medium transition cursor-pointer flex flex-col items-center justify-center gap-0.5 ${
+                  source === 'custom'
+                    ? 'bg-sky-500/20 text-sky-300 border border-sky-500/50 shadow-sm'
+                    : 'text-gray-400 hover:text-gray-200'
+                }`}
+              >
+                <div className="flex items-center gap-1.5 font-bold">
+                  <span>🔑 自定义模型通道</span>
+                </div>
+                <span className="text-[10px] text-sky-400/80">个人 API Key · 0积分扣除</span>
+              </button>
+            </div>
+
+            {source === 'official' ? (
+              <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-[11px] text-amber-200/90 leading-relaxed flex items-start gap-2">
+                <Sparkles className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <span>平台官方通道已配置极速推演节点，支持上下文 Prompt 缓存命中 (享 2 折积分优惠)。当前账户余额 <b>{(currentUser?.points ?? 9999).toLocaleString()}</b> 积分，对话时按 Token 自动计费，积分耗尽时需充值。</span>
+                </div>
+              </div>
+            ) : (
+              <div className="p-2.5 rounded-xl bg-sky-500/10 border border-sky-500/25 text-[11px] text-sky-200/90 leading-relaxed flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+                <div>
+                  <span>已启用个人自定义接入！填写您自备的 Base URL 和 API Key（如硅基流动、DeepSeek、OpenAI、Claude等），<b>推演对话完全不扣除平台积分</b>，尽情畅玩。</span>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Quick Provider Chips */}
         <div className="flex items-center gap-2 text-xs flex-wrap">
           <span className="text-gray-400 text-[11px]">快捷预设:</span>

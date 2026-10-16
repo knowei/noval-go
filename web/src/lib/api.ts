@@ -463,3 +463,83 @@ export async function fetchRemoteModels(baseUrl: string, apiKey: string): Promis
   const list = rawList.map((m: any) => (typeof m === 'object' && m ? (m.id || m.name || m.model || '') : String(m || '')));
   return list.filter((m: string) => typeof m === 'string' && m.trim().length > 0);
 }
+
+export async function rechargePointsApi(
+  userId: string,
+  amount: number,
+  points: number,
+  channel: string = 'wechat'
+): Promise<{ success: boolean; points?: number; addedPoints?: number; message?: string; error?: string }> {
+  try {
+    const resp = await fetch('/api/user/recharge', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders()
+      },
+      body: JSON.stringify({ userId, amount, points, channel })
+    });
+    return await resp.json();
+  } catch (e: any) {
+    return { success: false, error: e.message || '网络充值服务异常' };
+  }
+}
+
+export async function consumePointsApi(payload: {
+  userId: string;
+  tokens: number;
+  cacheHitTokens?: number;
+  promptTokens?: number;
+  completionTokens?: number;
+  isCustomModel: boolean;
+  model: string;
+  conversationId?: string;
+}): Promise<{
+  success: boolean;
+  isCustomModel?: boolean;
+  pointsCost?: number;
+  remainingPoints?: number;
+  tokens?: number;
+  cacheHitTokens?: number;
+  error?: string;
+}> {
+  try {
+    const resp = await fetch('/api/user/points/consume', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...getAuthHeaders()
+      },
+      body: JSON.stringify(payload)
+    });
+    return await resp.json();
+  } catch (e: any) {
+    return { success: false, error: e.message || '积分扣减异常' };
+  }
+}
+
+export async function fetchUserPointsApi(userId: string): Promise<number | null> {
+  try {
+    const resp = await fetch(`/api/user/points?user_id=${encodeURIComponent(userId)}`, {
+      headers: getAuthHeaders()
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    return typeof data.points === 'number' ? data.points : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+export async function fetchRechargeHistoryApi(userId: string): Promise<any[]> {
+  try {
+    const resp = await fetch(`/api/user/recharge/history?user_id=${encodeURIComponent(userId)}`, {
+      headers: getAuthHeaders()
+    });
+    if (!resp.ok) return [];
+    const data = await resp.json();
+    return Array.isArray(data.records) ? data.records : [];
+  } catch (e) {
+    return [];
+  }
+}

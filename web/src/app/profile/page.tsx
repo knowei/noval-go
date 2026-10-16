@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAppStore } from '@/lib/store';
-import { loginApi, registerApi } from '@/lib/api';
+import { loginApi, registerApi, fetchRechargeHistoryApi } from '@/lib/api';
+import { RechargeRecord } from '@/lib/types';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { 
   User, 
@@ -23,7 +24,11 @@ import {
   Coins, 
   Zap, 
   CloudCheck,
-  Laptop
+  Laptop,
+  ReceiptText,
+  PlusCircle,
+  History,
+  CreditCard
 } from 'lucide-react';
 
 export default function ProfilePage() {
@@ -34,8 +39,27 @@ export default function ProfilePage() {
     login,
     logout,
     setIsSettingsOpen,
-    setIsDrawerOpen
+    setIsDrawerOpen,
+    setIsRechargeOpen
   } = useAppStore();
+
+  const [rechargeHistory, setRechargeHistory] = useState<RechargeRecord[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  const loadHistory = async () => {
+    if (!currentUserId) return;
+    setLoadingHistory(true);
+    try {
+      const res = await fetchRechargeHistoryApi(currentUserId);
+      if (Array.isArray(res)) {
+        setRechargeHistory(res);
+      }
+    } catch (e) {
+      console.warn('Failed to load recharge history:', e);
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
 
   const [mounted, setMounted] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
@@ -49,7 +73,8 @@ export default function ProfilePage() {
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    loadHistory();
+  }, [currentUserId]);
 
   const isLoggedIn = !!authToken && !currentUserId.startsWith('guest_') && currentUserId !== 'default_user';
 
@@ -126,7 +151,7 @@ export default function ProfilePage() {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen bg-[var(--app-bg-main,#0c0d12)] text-[var(--app-text-main,#f1f5f9)] transition-colors duration-200">
+    <div className="min-h-screen bg-[var(--app-bg,#0a0b10)] text-[var(--app-text-main,#f1f5f9)] transition-colors duration-200">
       {/* Top Navigation Bar */}
       <header className="sticky top-0 z-30 bg-[var(--app-card-bg,#141622)]/90 backdrop-blur-md border-b border-[var(--app-card-border,#252836)] px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -244,13 +269,17 @@ export default function ProfilePage() {
 
           {/* Stats Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-[var(--app-card-border,#252836)] text-center">
-            <div className="p-3 rounded-2xl bg-black/5 dark:bg-white/5 border border-[var(--app-card-border,#252836)]">
-              <div className="text-[11px] text-[var(--app-text-muted,#94a3b8)] flex items-center justify-center gap-1">
-                <Coins className="w-3.5 h-3.5 text-amber-500" />
-                <span>点数能量</span>
+            <div 
+              onClick={() => setIsRechargeOpen(true)}
+              className="p-3 rounded-2xl bg-amber-500/5 hover:bg-amber-500/10 border border-amber-500/30 hover:border-amber-500/60 transition cursor-pointer group"
+            >
+              <div className="text-[11px] text-amber-400 flex items-center justify-center gap-1">
+                <Coins className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+                <span>点数能量 (充值)</span>
               </div>
-              <div className="text-base sm:text-lg font-bold font-mono text-amber-500 mt-1">
-                {(currentUser as any)?.points || '9,999'}
+              <div className="text-base sm:text-lg font-bold font-mono text-amber-500 mt-1 flex items-center justify-center gap-1">
+                <span>{(currentUser?.points ?? 9999).toLocaleString()}</span>
+                <span className="text-[10px] text-amber-400/80 group-hover:underline">+</span>
               </div>
             </div>
 
@@ -283,6 +312,152 @@ export default function ProfilePage() {
                 设备隔离
               </div>
             </div>
+          </div>
+        </div>
+
+        
+        {/* Points & Recharge Center Card */}
+        <div className="p-6 sm:p-8 rounded-3xl bg-[var(--app-card-bg,#141622)] border border-[var(--app-card-border,#252836)] shadow-xl space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--app-card-border,#252836)] pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-2xl bg-gradient-to-br from-amber-500/20 to-rose-500/20 text-amber-400 border border-amber-500/30">
+                <Coins className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="font-bold text-base sm:text-lg text-[var(--app-text-main,#f1f5f9)] flex items-center gap-2">
+                  <span>推演点数与能量中心</span>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                    充值生效中
+                  </span>
+                </h3>
+                <p className="text-xs text-[var(--app-text-muted,#94a3b8)] mt-0.5">
+                  官方推荐模型推演按量扣点，自带自定义模型 (个人 API Key) 享 0 积分永久免费
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsRechargeOpen(true)}
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-stone-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition cursor-pointer flex items-center gap-2 self-start sm:self-auto active:scale-95"
+            >
+              <PlusCircle className="w-4 h-4" />
+              <span>立即充值能量</span>
+            </button>
+          </div>
+
+          {/* Balance & Rules Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Current Balance */}
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/30 flex flex-col justify-between">
+              <div>
+                <div className="text-xs text-amber-300/80 font-medium">当前账户剩余积分</div>
+                <div className="text-3xl font-black text-amber-400 font-mono mt-2 tracking-tight">
+                  {(currentUser?.points ?? 9999).toLocaleString()}
+                </div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-amber-500/20 text-[11px] text-gray-400 flex items-center justify-between">
+                <span>单次对话约消耗 1~3 点</span>
+                <button
+                  type="button"
+                  onClick={() => setIsRechargeOpen(true)}
+                  className="text-amber-400 hover:underline cursor-pointer font-semibold"
+                >
+                  去充值 &rarr;
+                </button>
+              </div>
+            </div>
+
+            {/* Official Model Rule */}
+            <div className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-[var(--app-card-border,#252836)] space-y-2">
+              <div className="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>官方推荐通道计费</span>
+              </div>
+              <p className="text-xs text-[var(--app-text-muted,#94a3b8)] leading-relaxed">
+                无需个人配置复杂 API 密钥，直接体验 DeepSeek V3、R1 与 Claude 旗舰推演。
+              </p>
+              <div className="text-[11px] text-gray-400 space-y-1 pt-1">
+                <div>• 基准扣费: <b>1,000 Tokens ≈ 1 积分</b></div>
+                <div className="text-emerald-400">• 缓存命中: <b>享 2 折优惠 (0.2 积分/千Token)</b></div>
+              </div>
+            </div>
+
+            {/* Custom Model Rule */}
+            <div className="p-4 rounded-2xl bg-black/5 dark:bg-white/5 border border-[var(--app-card-border,#252836)] space-y-2">
+              <div className="text-xs font-bold text-sky-400 flex items-center gap-1.5">
+                <CreditCard className="w-3.5 h-3.5" />
+                <span>自定义模型通道</span>
+              </div>
+              <p className="text-xs text-[var(--app-text-muted,#94a3b8)] leading-relaxed">
+                在模型配置中切换为「自定义通道」并填入您自己的 API Key。
+              </p>
+              <div className="text-[11px] text-emerald-400 space-y-1 pt-1">
+                <div className="font-bold">• 平台积分: 0 消耗 (完全免扣除)</div>
+                <div className="text-gray-400">• 支持硅基流动、DeepSeek、OpenAI、OneAPI 等</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Recharge History Table */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center justify-between text-xs font-semibold text-gray-300">
+              <span className="flex items-center gap-1.5">
+                <History className="w-4 h-4 text-amber-400" />
+                <span>最近充值记录</span>
+              </span>
+              <button
+                type="button"
+                onClick={loadHistory}
+                disabled={loadingHistory}
+                className="text-amber-400/80 hover:text-amber-400 transition cursor-pointer text-[11px] flex items-center gap-1"
+              >
+                {loadingHistory ? <Loader2 className="w-3 h-3 animate-spin" /> : <span>刷新明细</span>}
+              </button>
+            </div>
+
+            {rechargeHistory.length === 0 ? (
+              <div className="p-6 rounded-2xl bg-black/5 dark:bg-white/5 border border-[var(--app-card-border,#252836)] text-center text-xs text-[var(--app-text-muted,#94a3b8)] space-y-1">
+                <p>暂无充值明细记录</p>
+                <p className="text-[11px] text-gray-500">点击右上角「立即充值能量」，体验模拟充值并即时获得积分</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-2xl border border-[var(--app-card-border,#252836)] bg-black/5 dark:bg-white/5">
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-[var(--app-card-border,#252836)] text-[var(--app-text-muted,#94a3b8)] text-[11px]">
+                      <th className="py-2.5 px-4 font-medium">流水单号</th>
+                      <th className="py-2.5 px-4 font-medium">金额</th>
+                      <th className="py-2.5 px-4 font-medium">充值积分</th>
+                      <th className="py-2.5 px-4 font-medium">支付通道</th>
+                      <th className="py-2.5 px-4 font-medium">状态</th>
+                      <th className="py-2.5 px-4 font-medium">时间</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--app-card-border,#252836)]">
+                    {rechargeHistory.map((item) => (
+                      <tr key={item.id} className="hover:bg-black/5 dark:hover:bg-white/5 transition">
+                        <td className="py-2.5 px-4 font-mono text-[11px] text-gray-400">{item.id}</td>
+                        <td className="py-2.5 px-4 font-bold text-amber-400 font-mono">￥{item.amount}</td>
+                        <td className="py-2.5 px-4 font-bold text-emerald-400 font-mono">+{item.points.toLocaleString()} 点</td>
+                        <td className="py-2.5 px-4 text-gray-300">
+                          {item.channel === 'wechat' ? '🟢 微信支付' : item.channel === 'alipay' ? '🔵 支付宝' : '⚡ 模拟沙盒'}
+                        </td>
+                        <td className="py-2.5 px-4">
+                          <span className="inline-flex items-center gap-1 text-emerald-400 text-[11px]">
+                            <Check className="w-3 h-3" />
+                            <span>成功已入账</span>
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-4 text-[11px] text-gray-400 font-mono">
+                          {item.created_at ? new Date(item.created_at).toLocaleString('zh-CN', { hour12: false }) : '-'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
 

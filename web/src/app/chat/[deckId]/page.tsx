@@ -21,11 +21,12 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Puzzle,
-  Heart
+  Heart,
+  BookMarked
 } from 'lucide-react';
 
 import { isCheckpointId, useAppStore } from '@/lib/store';
-import { fetchStory, fetchConversations, fetchConversation, getSiteToken, clearSiteToken, cleanApiBaseUrl } from '@/lib/api';
+import { fetchStory, fetchConversations, fetchConversation, getSiteToken, clearSiteToken, cleanApiBaseUrl, consumePointsApi } from '@/lib/api';
 import { selectReplyVersion, resolveSnapshot, PromptReport } from '@/lib/sessionEngine';
 import { applyModExtensions } from '@/lib/modExtensions';
 import { copyText } from '@/lib/clipboard';
@@ -90,6 +91,9 @@ export default function ChatPage() {
     sessionSettings,
     saveError,
     setIsSiteUnlocked,
+    currentUser,
+    updateUserPoints,
+    setIsRechargeOpen,
   } = useAppStore();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -506,6 +510,25 @@ export default function ChatPage() {
         ? 'deepseek-chat'
         : activeModel;
 
+      const isCustomModel = modelSettings.source === 'custom' || Boolean(modelSettings.apiKey?.trim() && modelSettings.source !== 'official');
+
+      // 官方模型积分校验拦截：积分耗尽时阻断并弹窗提醒充值
+      if (!isCustomModel) {
+        const userPoints = currentUser?.points ?? 9999;
+        if (userPoints <= 0) {
+          setIsRechargeOpen(true);
+          addTurn({
+            isUser: false,
+            isError: true,
+            error: '您的账户积分余额不足（当前 0 积分），无法使用官方提供的模型通道。您可以点击充值，或在设置中切换为「自定义模型」（自带 API Key 免费畅享）。',
+            model: activeModel,
+            location: currentDeck?.title || '积分不足提醒'
+          });
+          setIsLoading(false);
+          return;
+        }
+      }
+
       const siteToken = getSiteToken();
       const requestHeaders: Record<string, string> = {
         'Content-Type': 'application/json',
@@ -525,7 +548,8 @@ export default function ChatPage() {
           temperature: sessionSettings.sampling.temperature ?? modelSettings.temperature ?? 0.7,
           top_p: sessionSettings.sampling.topP ?? modelSettings.topP ?? 0.95,
           max_tokens: sessionSettings.responseTokens,
-          stream: true
+          stream: true,
+          stream_options: { include_usage: true }
         }),
         signal: controller.signal
       });
@@ -595,9 +619,48 @@ export default function ChatPage() {
       if (!receivedSuffix.trim()) throw new Error('模型没有返回新的正文，请重试；已保留原有内容。');
       const parsed = await completeSessionReply(streamedStory, historyContext, sessionSettings, true);
       if (!isCurrent()) return;
+
+      // 结算并上报 Token 消耗与积分扣减
+      let pointsCost = 0;
+      try {
+        const totalTok = usage?.totalTokens ?? (usage?.promptTokens ? (usage.promptTokens + (usage.completionTokens || 0)) : Math.ceil(receivedSuffix.length / 1.5));
+        const consumeRes = await consumePointsApi({
+          userId: currentUserId,
+          tokens: totalTok,
+          cacheHitTokens: usage?.cacheHitTokens || 0,
+          promptTokens: usage?.promptTokens,
+          completionTokens: usage?.completionTokens,
+          isCustomModel,
+          model: activeModel,
+          conversationId: currentConversationId
+        });
+        if (consumeRes.success) {
+          pointsCost = consumeRes.pointsCost ?? 0;
+          if (consumeRes.remainingPoints !== undefined) {
+            updateUserPoints(consumeRes.remainingPoints);
+          }
+        }
+      } catch (e) {
+        console.warn('[Points consume notice]:', e);
+      }
+
+      const finalUsage: CompletionUsage = usage ? {
+        ...usage,
+        costPoints: pointsCost,
+        isCustomModel,
+      } : {
+        promptTokens: Math.ceil(JSON.stringify(promptMessages).length / 3),
+        completionTokens: Math.ceil(receivedSuffix.length / 2),
+        totalTokens: Math.ceil(JSON.stringify(promptMessages).length / 3) + Math.ceil(receivedSuffix.length / 2),
+        cacheHitTokens: 0,
+        cacheMissTokens: Math.ceil(JSON.stringify(promptMessages).length / 3),
+        costPoints: pointsCost,
+        isCustomModel,
+      };
+
       const currentGeneratedTurn: Turn = {
         ...parsed, model: activeModel, location: currentDeck.title, activeLoreEntries: activeEntries, imageOriginId: safeRandomUUID(), illustrations: [],
-        completion: { reason: finishReason, responseTokens: sessionSettings.responseTokens, protocolVersion: 2, receivedChars: receivedSuffix.length, elapsedMs: Date.now()-startedAt, repairs: repair ? (repair.completion?.repairs || 0)+1 : 0, usage },
+        completion: { reason: finishReason, responseTokens: sessionSettings.responseTokens, protocolVersion: 2, receivedChars: receivedSuffix.length, elapsedMs: Date.now()-startedAt, repairs: repair ? (repair.completion?.repairs || 0)+1 : 0, usage: finalUsage },
       };
       currentGeneratedTurn.snapshot = resolveSnapshot([...historyContext, currentGeneratedTurn]);
       const finalSwipes = existingSwipes?.length ? [...existingSwipes, currentGeneratedTurn] : undefined;
@@ -796,7 +859,7 @@ export default function ChatPage() {
 
   return (
     <div className="flex-1 flex min-h-screen">
-      <SessionWorkbench open={isWorkbenchOpen} onClose={() => setIsWorkbenchOpen(false)} report={promptReport} busy={isLoading || isBranching} />
+      <SessionWorkbench open={isWorkbenchOpen} onClose={() => setIsWorkbenchOpen(false)} report={promptReport} busy={isLoading || isBranching} onOpenLorebook={() => setIsLorebookOpen(true)} />
       {/* Secondary Scenario & Saves Sidebar (Desktop: collapsible) */}
       <div
         className={`hidden md:block shrink-0 sidebar-collapse-transition overflow-hidden ${
@@ -949,6 +1012,16 @@ export default function ChatPage() {
               工作台
             </button>
 
+            {/* 世界书与背景设定 */}
+            <button
+              onClick={() => setIsLorebookOpen(true)}
+              className="header-lorebook-btn rounded-lg border border-amber-600/60 bg-amber-950/40 px-2 py-1 text-[11px] text-amber-200 hover:bg-amber-900/50 transition shrink-0 cursor-pointer flex items-center gap-1"
+              title="打开剧本世界书词条库与背景设定 (Lorebook)"
+            >
+              <BookMarked className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline">世界书</span>
+            </button>
+
             {/* 玩法模组中心 (MOD) */}
             <button
               suppressHydrationWarning
@@ -1068,6 +1141,18 @@ export default function ChatPage() {
                   >
                     <BookOpen className="w-3.5 h-3.5 text-purple-400" />
                     <span>作品详情与人物卡</span>
+                  </button>
+
+                  {/* 世界书与背景设定 */}
+                  <button
+                    onClick={() => {
+                      setIsHeaderMoreOpen(false);
+                      setIsLorebookOpen(true);
+                    }}
+                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
+                  >
+                    <BookMarked className="w-3.5 h-3.5 text-amber-400" />
+                    <span>世界书与背景档案</span>
                   </button>
 
                   {/* xl 以下显示导出 */}

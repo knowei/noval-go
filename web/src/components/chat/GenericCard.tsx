@@ -260,6 +260,7 @@ const GenericCardBody = React.memo(function GenericCardBody({
         index={index}
         model={turn.model}
         storyContent={storyText}
+        usage={turn.completion?.usage}
         onContinueWriting={turn.incomplete || brokenEnvelope ? undefined : onContinueWriting}
         onRegenerate={onRegenerate}
         onEditToggle={() => setIsEditing(!isEditing)}
@@ -284,7 +285,7 @@ export const GenericCard = React.memo(function GenericCard(props: GenericCardPro
   const { turn, index } = props;
   if (turn.runtimeVersion === 1 && turn.incomplete) {
     return (
-      <div className="p-4 sm:p-6 rounded-2xl border border-amber-500/25 bg-[#14151f] shadow-xl space-y-3 text-gray-200 select-text">
+      <div className="streaming-card-indicator p-4 sm:p-6 rounded-2xl border border-amber-500/25 bg-[#14151f] shadow-xl space-y-3 text-gray-200 select-text">
         <div className="flex items-center gap-2 text-[11px] text-amber-300/90 select-none">
           <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
           <span>AI 正在沉浸推演…（第 {index + 1} 幕）</span>

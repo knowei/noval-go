@@ -6,6 +6,7 @@ import { Drawer } from "@/components/layout/Drawer";
 import { ModelSettingsModal } from "@/components/modals/ModelSettingsModal";
 import { UserSwitchModal } from "@/components/modals/UserSwitchModal";
 import { ModCenterModal } from "@/components/modals/ModCenterModal";
+import { RechargeModal } from "@/components/modals/RechargeModal";
 import { SiteAccessGate } from "@/components/layout/SiteAccessGate";
 
 export const metadata: Metadata = {
@@ -64,6 +65,7 @@ export default function RootLayout({
           <ModelSettingsModal />
           <UserSwitchModal />
           <ModCenterModal />
+          <RechargeModal />
 
           {/* Main Content Area */}
           <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">

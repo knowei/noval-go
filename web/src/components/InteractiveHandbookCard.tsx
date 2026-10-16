@@ -51,7 +51,6 @@ export function InteractiveHandbookCard({
 
 /* 根级高度自适应与背景透明：防止卡片写死 min-height: 100vh 导致撑满 iframe 高度并产生巨大空白 */
 html {
-  overflow-y: hidden !important;
   min-height: 0 !important;
   height: auto !important;
 }
@@ -325,9 +324,10 @@ body {
   function notifyHeight() {
     try {
       var h = Math.max(
-        document.body.scrollHeight,
-        document.documentElement.scrollHeight,
-        document.body.offsetHeight
+        document.body ? document.body.scrollHeight : 0,
+        document.documentElement ? document.documentElement.scrollHeight : 0,
+        document.body ? document.body.offsetHeight : 0,
+        document.documentElement ? document.documentElement.offsetHeight : 0
       );
       if (h > 200) {
         window.parent.postMessage({ type: 'NOVAL_HANDBOOK_RESIZE', height: h }, '*');
@@ -604,8 +604,17 @@ body {
     setTimeout(injectUniversalStartButtons, 1500);
 
     if (window.ResizeObserver) {
-      new ResizeObserver(notifyHeight).observe(document.body);
+      var ro = new ResizeObserver(notifyHeight);
+      if (document.body) ro.observe(document.body);
+      if (document.documentElement && document.documentElement !== document.body) {
+        ro.observe(document.documentElement);
+      }
     }
+    window.addEventListener('resize', notifyHeight);
+    document.addEventListener('click', function() {
+      setTimeout(notifyHeight, 50);
+      setTimeout(notifyHeight, 350);
+    });
   }
 
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
@@ -667,8 +676,10 @@ body {
       if (!event.data || typeof event.data !== 'object') return;
 
       if (event.data.type === 'NOVAL_HANDBOOK_RESIZE' && typeof event.data.height === 'number') {
-        const h = Math.min(Math.max(event.data.height + 30, 450), 3800);
-        setIframeHeight(h);
+        const rawH = event.data.height;
+        if (rawH > 200) {
+          setIframeHeight(rawH + 40);
+        }
       } else if (event.data.type === 'NOVAL_SHOW_CHARACTER_MODAL' && event.data.character) {
         setActiveCharacter(event.data.character);
       } else if (event.data.type === 'NOVAL_START_CUSTOM_SETUP' && event.data.payload) {
@@ -796,6 +807,21 @@ body {
           <iframe
             ref={iframeRef}
             srcDoc={enhancedHtml}
+            onLoad={() => {
+              try {
+                const doc = iframeRef.current?.contentDocument || iframeRef.current?.contentWindow?.document;
+                if (doc) {
+                  const h = Math.max(
+                    doc.body ? doc.body.scrollHeight : 0,
+                    doc.documentElement ? doc.documentElement.scrollHeight : 0,
+                    doc.body ? doc.body.offsetHeight : 0
+                  );
+                  if (h > 200) {
+                    setIframeHeight(h + 40);
+                  }
+                }
+              } catch (e) {}
+            }}
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
             allow="autoplay; clipboard-write"
             className="w-full border-0 block"

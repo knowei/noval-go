@@ -296,6 +296,35 @@ class DatabaseEngine:
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
                 ''')
+                # 7. recharge_records (充值交易记录)
+                cur.execute('''
+                CREATE TABLE IF NOT EXISTS recharge_records (
+                    id TEXT PRIMARY KEY,
+                    user_id TEXT NOT NULL,
+                    amount REAL DEFAULT 0,
+                    points INTEGER DEFAULT 0,
+                    channel TEXT DEFAULT 'wechat',
+                    status TEXT DEFAULT 'success',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                ''')
+                # 8. token_usage_records (Token与缓存消耗统计流水)
+                cur.execute('''
+                CREATE TABLE IF NOT EXISTS token_usage_records (
+                    id TEXT PRIMARY KEY,
+                    user_id TEXT NOT NULL,
+                    conversation_id TEXT,
+                    model TEXT,
+                    is_custom_model INTEGER DEFAULT 0,
+                    prompt_tokens INTEGER DEFAULT 0,
+                    completion_tokens INTEGER DEFAULT 0,
+                    cache_hit_tokens INTEGER DEFAULT 0,
+                    cache_miss_tokens INTEGER DEFAULT 0,
+                    total_tokens INTEGER DEFAULT 0,
+                    points_cost INTEGER DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                ''')
             else:
                 # PostgreSQL 自动将旧版遗留 VARCHAR 字段无损扩容为 TEXT
                 if self.dialect == 'postgres':
@@ -440,6 +469,33 @@ class DatabaseEngine:
                     key TEXT PRIMARY KEY,
                     value TEXT,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                ''')
+                cur.execute('''
+                CREATE TABLE IF NOT EXISTS recharge_records (
+                    id TEXT PRIMARY KEY,
+                    user_id TEXT NOT NULL,
+                    amount NUMERIC DEFAULT 0,
+                    points INTEGER DEFAULT 0,
+                    channel TEXT DEFAULT 'wechat',
+                    status TEXT DEFAULT 'success',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+                ''')
+                cur.execute('''
+                CREATE TABLE IF NOT EXISTS token_usage_records (
+                    id TEXT PRIMARY KEY,
+                    user_id TEXT NOT NULL,
+                    conversation_id TEXT,
+                    model TEXT,
+                    is_custom_model INTEGER DEFAULT 0,
+                    prompt_tokens INTEGER DEFAULT 0,
+                    completion_tokens INTEGER DEFAULT 0,
+                    cache_hit_tokens INTEGER DEFAULT 0,
+                    cache_miss_tokens INTEGER DEFAULT 0,
+                    total_tokens INTEGER DEFAULT 0,
+                    points_cost INTEGER DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
                 ''')
 

@@ -7,7 +7,7 @@ import { isCheckpointId, useAppStore } from '@/lib/store';
 import { fetchConversation, deleteConversation } from '@/lib/api';
 import { exportConversationBundle, importConversationFile } from '@/lib/conversationBundle';
 import { ConfirmModal } from '@/components/modals/ConfirmModal';
-import { ArrowLeft, Plus, Trash2, ArrowUpDown, Clock, Heart, Award, Sparkles, X, Download, Upload, Loader2, BookOpen, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, ArrowUpDown, Clock, Heart, Award, Sparkles, X, Download, Upload, Loader2, BookOpen, BookMarked, ChevronRight } from 'lucide-react';
 
 interface ScenarioSidebarProps {
   onClose?: () => void;
@@ -219,6 +219,22 @@ export function ScenarioSidebar({ onClose, onOpenHandbook, onOpenLorebook, onOpe
               <span>作品详情与人物卡</span>
             </div>
             <ChevronRight className="w-3.5 h-3.5 text-purple-400/80 group-hover:translate-x-0.5 transition-transform" />
+          </button>
+
+          {/* Quick Action Button: 世界书与背景设定 (弹窗直达) */}
+          <button
+            onClick={() => {
+              if (onOpenLorebook) onOpenLorebook();
+              if (onClose) onClose();
+            }}
+            className="w-full mt-2 py-2.5 px-3 rounded-xl bg-amber-950/40 hover:bg-amber-900/60 border border-amber-500/40 hover:border-amber-400 text-amber-300 hover:text-white transition cursor-pointer flex items-center justify-between text-xs font-semibold shadow-xs group"
+            title="查看剧本世界观设定、背景词条与全景世界书 (Lorebook)"
+          >
+            <div className="flex items-center gap-2">
+              <BookMarked className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+              <span>世界书与背景档案</span>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-amber-400/80 group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>
 

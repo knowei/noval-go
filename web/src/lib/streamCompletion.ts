@@ -2,8 +2,8 @@ export class CompletionStreamError extends Error {
   constructor(public reason: string, message: string) { super(message); this.name = 'CompletionStreamError'; }
 }
 
-/** Yield the last delta before reporting a cutoff, so no received text is lost. */
-export interface CompletionUsage { promptTokens?: number; completionTokens?: number; reasoningTokens?: number }
+import type { CompletionUsage } from './types';
+export type { CompletionUsage } from './types';
 
 /**
  * 解析模型的流式输出。
@@ -32,7 +32,25 @@ export async function* streamCompletion(
     const value = JSON.parse(data);
     if (value.usage && onUsage) {
       const count = (n: unknown) => typeof n === 'number' && Number.isFinite(n) && n >= 0 ? n : undefined;
-      onUsage({promptTokens:count(value.usage.prompt_tokens),completionTokens:count(value.usage.completion_tokens),reasoningTokens:count(value.usage.completion_tokens_details?.reasoning_tokens)});
+      const prompt = count(value.usage.prompt_tokens);
+      const completion = count(value.usage.completion_tokens);
+      const reasoning = count(value.usage.completion_tokens_details?.reasoning_tokens);
+      const total = count(value.usage.total_tokens) ?? (prompt !== undefined && completion !== undefined ? prompt + completion : undefined);
+      const cacheHit = count(
+        value.usage.prompt_tokens_details?.cached_tokens ??
+        value.usage.prompt_cache_hit_tokens ??
+        value.usage.cache_hit_tokens
+      ) ?? 0;
+      const cacheMiss = prompt !== undefined ? Math.max(0, prompt - cacheHit) : undefined;
+
+      onUsage({
+        promptTokens: prompt,
+        completionTokens: completion,
+        reasoningTokens: reasoning,
+        totalTokens: total,
+        cacheHitTokens: cacheHit,
+        cacheMissTokens: cacheMiss,
+      });
     }
     if (value.error) throw new Error(value.error.message || '模型流返回错误');
     const reason = value.choices?.[0]?.finish_reason;

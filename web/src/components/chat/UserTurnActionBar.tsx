@@ -30,12 +30,12 @@ export const UserTurnActionBar = React.memo(function UserTurnActionBar({
   };
 
   return (
-    <div className="flex items-center gap-1.5 text-[11px] text-gray-400 select-none mb-1">
+    <div className="user-turn-action-bar flex items-center gap-1.5 text-[11px] text-gray-400 select-none mb-1">
       {/* ✏️ 编辑重发 */}
       <button
         type="button"
         onClick={() => onEditAndResend(index, text)}
-        className="px-2 py-0.5 rounded-md bg-[#1a1c27] hover:bg-[#252838] border border-gray-700/50 hover:border-gray-500 text-gray-300 hover:text-white transition flex items-center gap-1 cursor-pointer"
+        className="user-action-btn user-btn-edit px-2 py-0.5 rounded-md bg-[#1a1c27] hover:bg-[#252838] border border-gray-700/50 hover:border-gray-500 text-gray-300 hover:text-white transition flex items-center gap-1 cursor-pointer"
         title="编辑这句内容并重新发送"
       >
         <Edit3 className="w-3 h-3 text-gray-400" />
@@ -46,7 +46,7 @@ export const UserTurnActionBar = React.memo(function UserTurnActionBar({
       <button
         type="button"
         onClick={() => onResendFromTurn(index)}
-        className="px-2 py-0.5 rounded-md bg-[#1a1c27] hover:bg-[#252838] border border-gray-700/50 hover:border-sky-500/50 text-gray-300 hover:text-sky-300 transition flex items-center gap-1 cursor-pointer"
+        className="user-action-btn user-btn-resend px-2 py-0.5 rounded-md bg-[#1a1c27] hover:bg-[#252838] border border-gray-700/50 hover:border-sky-500/50 text-gray-300 hover:text-sky-300 transition flex items-center gap-1 cursor-pointer"
         title="保留这句内容，重新推演后续剧情"
       >
         <RotateCcw className="w-3 h-3 text-sky-400" />
@@ -57,7 +57,7 @@ export const UserTurnActionBar = React.memo(function UserTurnActionBar({
       <button
         type="button"
         onClick={() => onRetract(index)}
-        className="px-2 py-0.5 rounded-md bg-[#1a1c27] hover:bg-rose-950/40 border border-gray-700/50 hover:border-rose-500/50 text-gray-400 hover:text-rose-300 transition flex items-center gap-1 cursor-pointer"
+        className="user-action-btn user-btn-retract px-2 py-0.5 rounded-md bg-[#1a1c27] hover:bg-rose-950/40 border border-gray-700/50 hover:border-rose-500/50 text-gray-400 hover:text-rose-300 transition flex items-center gap-1 cursor-pointer"
         title="撤回这句发言及后续全部对话"
       >
         <Trash2 className="w-3 h-3 text-rose-400" />
@@ -68,7 +68,7 @@ export const UserTurnActionBar = React.memo(function UserTurnActionBar({
       <button
         type="button"
         onClick={handleCopy}
-        className="p-1 rounded-md bg-[#1a1c27] hover:bg-[#252838] border border-gray-700/50 hover:border-gray-500 text-gray-400 hover:text-white transition cursor-pointer"
+        className="user-action-btn user-btn-copy p-1 rounded-md bg-[#1a1c27] hover:bg-[#252838] border border-gray-700/50 hover:border-gray-500 text-gray-400 hover:text-white transition cursor-pointer"
         title="复制文本"
       >
         {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-gray-400" />}

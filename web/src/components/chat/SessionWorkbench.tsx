@@ -13,7 +13,8 @@ import { savePrivateCard } from '@/lib/cardImport';
 import { PlaytestPanel } from './PlaytestPanel';
 import { MemoryFactEditor } from './MemoryFactEditor';
 import { ImageSettingsPanel } from './IllustrationPanel';
-import { X, SlidersHorizontal, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, SlidersHorizontal, CheckCircle2, AlertCircle, ChevronRight, BookOpen, BookMarked, Sparkles } from 'lucide-react';
+import { getDeckLorebook } from '@/lib/lorebookEngine';
 import { safeRandomUUID } from '@/lib/uuid';
 
 export function downloadJson(value: unknown, name: string) {
@@ -22,8 +23,8 @@ export function downloadJson(value: unknown, name: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-const field = 'w-full rounded-xl border border-[#272b3c] bg-[#090b12] p-2.5 text-sm text-gray-100 placeholder:text-gray-600 focus:outline-none focus:border-amber-500/60 focus:ring-1 focus:ring-amber-500/30 transition shadow-inner';
-const button = 'rounded-xl border border-[#2b2f44] bg-[#161826] hover:bg-[#202338] px-3.5 py-2 text-xs font-medium text-gray-200 hover:text-white transition cursor-pointer disabled:opacity-40 shadow-xs active:scale-95';
+const field = 'w-full rounded-xl border border-[var(--app-card-border,#272b3c)] bg-[var(--app-card-bg-subtle,#090b12)] p-2.5 text-sm text-[var(--app-text-main,#f1f5f9)] placeholder:text-[var(--app-text-muted,#64748b)] focus:outline-none focus:border-amber-500/60 focus:ring-1 focus:ring-amber-500/30 transition shadow-inner';
+const button = 'rounded-xl border border-[var(--app-card-border,#2b2f44)] bg-[var(--app-card-bg-subtle,#161826)] hover:bg-black/10 dark:hover:bg-white/10 px-3.5 py-2 text-xs font-semibold text-[var(--app-text-main,#f1f5f9)] transition cursor-pointer disabled:opacity-40 shadow-xs active:scale-95';
 
 const tabs = ['玩法', '试玩与诊断', '剧情分支', '记忆与状态', '状态规则', '世界书', '正则', '扩展', '视听', '生图', '提示词'] as const;
 type Tab = typeof tabs[number];
@@ -42,12 +43,12 @@ const TAB_ICONS: Record<Tab, string> = {
   '提示词': '📝'
 };
 
-export function SessionWorkbench(props: { open: boolean; onClose: () => void; report: PromptReport | null; busy: boolean }) {
+export function SessionWorkbench(props: { open: boolean; onClose: () => void; report: PromptReport | null; busy: boolean; onOpenLorebook?: () => void }) {
   const conversation = useAppStore(s => s.currentConversationId);
   return props.open ? <WorkbenchPanel key={conversation} {...props} /> : null;
 }
 
-function WorkbenchPanel({ onClose, report, busy }: { onClose: () => void; report: PromptReport | null; busy: boolean }) {
+function WorkbenchPanel({ onClose, report, busy, onOpenLorebook }: { onClose: () => void; report: PromptReport | null; busy: boolean; onOpenLorebook?: () => void }) {
   const { sessionSettings, setSessionSettings, conversationHistory, currentDeck, currentConversationId, saveError } = useAppStore();
   const [draft, setDraft] = useState(() => normalizeSession(sessionSettings));
   const [tab, setTab] = useState<Tab>('玩法');
@@ -56,6 +57,7 @@ function WorkbenchPanel({ onClose, report, busy }: { onClose: () => void; report
   const [testResult, setTestResult] = useState('');
   const dialog = useRef<HTMLDialogElement>(null);
   const snapshot = resolveSnapshot(conversationHistory);
+  const deckBuiltinLore = React.useMemo(() => getDeckLorebook(currentDeck?.id || '', currentDeck?.lorebook), [currentDeck]);
   useEffect(() => { dialog.current?.showModal(); }, []);
 
   const patch = (value: Partial<SessionSettings>) => { setDraft(d => ({ ...d, ...value })); setMessage('有未保存的更改'); };
@@ -83,7 +85,7 @@ function WorkbenchPanel({ onClose, report, busy }: { onClose: () => void; report
       ref={dialog}
       onCancel={e => { e.preventDefault(); onClose(); }}
       aria-labelledby="workbench-title"
-      className="m-auto w-[min(94vw,940px)] max-h-[90dvh] rounded-2xl border border-[#2b2f42] bg-[#11131e] p-0 text-gray-200 backdrop:bg-black/80 backdrop:backdrop-blur-md shadow-2xl shadow-purple-950/40 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200"
+      className="session-workbench-modal m-auto w-[min(94vw,940px)] max-h-[90dvh] rounded-2xl border border-[var(--app-card-border,#2b2f42)] bg-[var(--app-card-bg,#11131e)] p-0 text-[var(--app-text-main,#e2e8f0)] backdrop:bg-black/80 backdrop:backdrop-blur-md shadow-2xl shadow-purple-950/40 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200"
     >
       {/* Header */}
       <div className="flex items-center justify-between border-b border-[#202334] px-6 py-4 bg-[#151724] shrink-0">
@@ -92,10 +94,10 @@ function WorkbenchPanel({ onClose, report, busy }: { onClose: () => void; report
             <SlidersHorizontal className="w-4 h-4" />
           </div>
           <div>
-            <h2 id="workbench-title" className="font-bold text-base text-gray-100 flex items-center gap-2">
+            <h2 id="workbench-title" className="font-bold text-base text-[var(--app-text-main,#f1f5f9)] flex items-center gap-2">
               会话工作台
             </h2>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-[var(--app-text-muted,#94a3b8)] mt-0.5">
               {currentDeck?.title} · {tab === '生图' ? '生图连接设置保存在本机' : '设置随当前存档保存'}
             </p>
           </div>
@@ -236,45 +238,201 @@ function WorkbenchPanel({ onClose, report, busy }: { onClose: () => void; report
           )}
 
           {tab === '世界书' && (
-            <>
-              <p className="text-xs text-gray-400">这里的词条随会话保存，与剧本自带世界书合并。同 ID 的会话词条覆盖原词条。</p>
-              <button className={`${button} text-amber-300 border-amber-500/40`} onClick={() => patch({ lore: [...draft.lore, { id: safeRandomUUID(), title: '新词条', keys: [], content: '', priority: 0, scanDepth: 6, enabled: true, position: 'early' }] })}>
-                + 添加词条
-              </button>
-              {draft.lore.map((entry, i) => (
-                <div key={entry.id} className="space-y-3 rounded-xl border border-[#25293d] bg-[#141624] p-4">
-                  <label className="block space-y-1"><span className="text-xs text-gray-300">标题</span><input className={field} value={entry.title} onChange={e => updateLore(i, { title: e.target.value })} /></label>
-                  <label className="block space-y-1"><span className="text-xs text-gray-300">关键词（逗号分隔，任意命中）</span><input className={field} value={entry.keys.join(',')} onChange={e => updateLore(i, { keys: e.target.value.split(/[,，]/).map(x => x.trim()) })} /></label>
-                  <label className="block space-y-1"><span className="text-xs text-gray-300">背景内容</span><textarea className={field} value={entry.content} onChange={e => updateLore(i, { content: e.target.value })} /></label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <label className="space-y-1 block"><span className="text-xs text-gray-300">优先级</span><input type="number" className={field} value={entry.priority || 0} onChange={e => updateLore(i, { priority: Number(e.target.value) })} /></label>
-                    <label className="space-y-1 block"><span className="text-xs text-gray-300">回看消息数</span><input type="number" min={1} max={100} className={field} value={entry.scanDepth ?? 6} onChange={e => updateLore(i, { scanDepth: Number(e.target.value) })} /></label>
+            <div className="space-y-5">
+              {/* Top Banner with Quick Access to Full Lorebook Modal */}
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/15 via-amber-500/5 to-transparent border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base">📖</span>
+                    <h3 className="font-bold text-sm text-[var(--app-text-main,#f1f5f9)]">全景世界书与背景档案</h3>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/20 text-amber-500 dark:text-amber-300 border border-amber-500/30 font-mono">
+                      内置 {deckBuiltinLore.length} 条设定
+                    </span>
                   </div>
-                  <div className="flex items-center gap-4 text-xs text-gray-300">
-                    <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={!!entry.constant} onChange={e => updateLore(i, { constant: e.target.checked })} /> 常驻</label>
-                    <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={entry.enabled !== false} onChange={e => updateLore(i, { enabled: e.target.checked })} /> 启用</label>
-                  </div>
-                  <label className="block space-y-1">
-                    <span className="text-xs text-gray-300">插入位置</span>
-                    <select className={field} value={entry.position || 'early'} onChange={e => updateLore(i, { position: e.target.value as 'early' | 'late' })}>
-                      <option value="early">背景设定区</option>
-                      <option value="late">最近消息之后</option>
-                    </select>
-                  </label>
-                  <details className="space-y-2 p-3 rounded-lg bg-[#0e1018] border border-[#202334]">
-                    <summary className="cursor-pointer text-xs font-medium text-gray-300">高级触发与分组</summary>
-                    <label className="block space-y-1"><span className="text-xs text-gray-300">次要关键词（逗号分隔）</span><input className={field} value={(entry.secondaryKeys || []).join(',')} onChange={e=>updateLore(i,{secondaryKeys:e.target.value.split(/[,，]/).map(s=>s.trim()).filter(Boolean)})}/></label>
-                    <label className="block space-y-1"><span className="text-xs text-gray-300">次要关键词条件</span><select className={field} value={entry.secondaryMode || 'andAny'} onChange={e=>updateLore(i,{secondaryMode:e.target.value as LoreEntry['secondaryMode']})}><option value="andAny">至少命中一个</option><option value="andAll">全部命中</option><option value="notAny">全部未命中</option><option value="notAll">至少一个未命中</option></select></label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <label className="space-y-1 block"><span className="text-xs text-gray-300">触发概率（%）</span><input type="number" min="0" max="100" className={field} value={entry.probability ?? 100} onChange={e=>updateLore(i,{probability:Number(e.target.value)})}/></label>
-                      <label className="space-y-1 block"><span className="text-xs text-gray-300">互斥组名称</span><input className={field} value={entry.group || ''} onChange={e=>updateLore(i,{group:e.target.value})}/></label>
-                    </div>
-                  </details>
-                  <button className={`${button} text-rose-300 border-rose-500/30 hover:bg-rose-950/40`} onClick={() => patch({ lore: draft.lore.filter((_, j) => i !== j) })}>移除此词条</button>
+                  <p className="text-xs text-[var(--app-text-muted,#94a3b8)]">
+                    角色推演时会根据对话内容自动触发对应设定词条，注入世界观与前置记忆。
+                  </p>
                 </div>
-              ))}
-              <p className="text-xs text-gray-400">上次命中：{report?.activeLore.map(e => e.title).join('、') || '尚无记录'}</p>
-            </>
+
+                {onOpenLorebook && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      onOpenLorebook();
+                    }}
+                    className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-400 hover:to-rose-400 text-stone-950 font-bold text-xs shadow-md shadow-amber-500/20 transition cursor-pointer flex items-center gap-1.5 self-start sm:self-auto shrink-0 active:scale-95"
+                  >
+                    <span>✨ 打开全景世界书图鉴</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Active Hit Status */}
+              <div className="p-3.5 rounded-xl bg-[var(--app-card-bg-subtle,#141624)] border border-[var(--app-card-border,#25293d)] flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 text-xs flex-wrap">
+                  <span className="text-amber-500 font-semibold shrink-0">🎯 上次命中：</span>
+                  {report?.activeLore && report.activeLore.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {report.activeLore.map(e => (
+                        <span key={e.id} className="px-2 py-0.5 rounded-lg text-[11px] font-medium bg-emerald-500/15 text-emerald-500 dark:text-emerald-300 border border-emerald-500/30">
+                          {e.title}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-[var(--app-text-muted,#94a3b8)]">尚无激活词条（对话涉及人物、地点或关键事件时将自动命中）</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Section 1: Session Custom / Override Lore Entries */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="space-y-0.5">
+                    <h4 className="text-xs font-bold text-[var(--app-text-main,#f1f5f9)] flex items-center gap-1.5">
+                      <span>✏️ 本会话私有词条 (随当前存档保存)</span>
+                      <span className="text-[11px] font-normal text-[var(--app-text-muted,#94a3b8)]">({draft.lore.length} 条)</span>
+                    </h4>
+                    <p className="text-[11px] text-[var(--app-text-muted,#94a3b8)]">
+                      同 ID 的会话词条将覆盖剧本自带设定，也可新增私有专属法则。
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    className="px-3 py-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 dark:text-amber-300 text-xs font-semibold transition cursor-pointer flex items-center gap-1 active:scale-95 shrink-0"
+                    onClick={() => patch({ lore: [...draft.lore, { id: safeRandomUUID(), title: '新设定词条', keys: [], content: '', priority: 0, scanDepth: 6, enabled: true, position: 'early' }] })}
+                  >
+                    <span>+ 添加私有词条</span>
+                  </button>
+                </div>
+
+                {draft.lore.length === 0 ? (
+                  <div className="p-4 rounded-xl border border-dashed border-[var(--app-card-border,#25293d)] text-center text-xs text-[var(--app-text-muted,#94a3b8)]">
+                    当前未创建会话私有词条，直接继承下方剧本自带世界书。点击上方按钮或从下方词条点击「复制修改」即可定制。
+                  </div>
+                ) : (
+                  draft.lore.map((entry, i) => (
+                    <div key={entry.id} className="space-y-3 rounded-xl border border-[var(--app-card-border,#25293d)] bg-[var(--app-card-bg-subtle,#141624)] p-4">
+                      <label className="block space-y-1"><span className="text-xs text-[var(--app-text-main,#f1f5f9)] font-medium">标题</span><input className={field} value={entry.title} onChange={e => updateLore(i, { title: e.target.value })} /></label>
+                      <label className="block space-y-1"><span className="text-xs text-[var(--app-text-main,#f1f5f9)] font-medium">关键词（逗号分隔，任意命中）</span><input className={field} value={entry.keys.join(',')} onChange={e => updateLore(i, { keys: e.target.value.split(/[,，]/).map(x => x.trim()) })} /></label>
+                      <label className="block space-y-1"><span className="text-xs text-[var(--app-text-main,#f1f5f9)] font-medium">背景内容</span><textarea className={field} rows={3} value={entry.content} onChange={e => updateLore(i, { content: e.target.value })} /></label>
+                      <div className="grid grid-cols-2 gap-2">
+                        <label className="space-y-1 block"><span className="text-xs text-[var(--app-text-muted,#94a3b8)]">优先级</span><input type="number" className={field} value={entry.priority || 0} onChange={e => updateLore(i, { priority: Number(e.target.value) })} /></label>
+                        <label className="space-y-1 block"><span className="text-xs text-[var(--app-text-muted,#94a3b8)]">回看消息数</span><input type="number" min={1} max={100} className={field} value={entry.scanDepth ?? 6} onChange={e => updateLore(i, { scanDepth: Number(e.target.value) })} /></label>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-[var(--app-text-main,#f1f5f9)]">
+                        <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={!!entry.constant} onChange={e => updateLore(i, { constant: e.target.checked })} /> 常驻</label>
+                        <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={entry.enabled !== false} onChange={e => updateLore(i, { enabled: e.target.checked })} /> 启用</label>
+                      </div>
+                      <label className="block space-y-1">
+                        <span className="text-xs text-[var(--app-text-main,#f1f5f9)] font-medium">插入位置</span>
+                        <select className={field} value={entry.position || 'early'} onChange={e => updateLore(i, { position: e.target.value as 'early' | 'late' })}>
+                          <option value="early">背景设定区</option>
+                          <option value="late">最近消息之后</option>
+                        </select>
+                      </label>
+                      <details className="space-y-2 p-3 rounded-lg bg-black/5 dark:bg-white/5 border border-[var(--app-card-border,#202334)]">
+                        <summary className="cursor-pointer text-xs font-medium text-[var(--app-text-main,#f1f5f9)]">高级触发与分组</summary>
+                        <label className="block space-y-1"><span className="text-xs text-[var(--app-text-muted,#94a3b8)]">次要关键词（逗号分隔）</span><input className={field} value={(entry.secondaryKeys || []).join(',')} onChange={e=>updateLore(i,{secondaryKeys:e.target.value.split(/[,，]/).map(s=>s.trim()).filter(Boolean)})}/></label>
+                        <label className="block space-y-1"><span className="text-xs text-[var(--app-text-muted,#94a3b8)]">次要关键词条件</span><select className={field} value={entry.secondaryMode || 'andAny'} onChange={e=>updateLore(i,{secondaryMode:e.target.value as LoreEntry['secondaryMode']})}><option value="andAny">至少命中一个</option><option value="andAll">全部命中</option><option value="notAny">全部未命中</option><option value="notAll">至少一个未命中</option></select></label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <label className="space-y-1 block"><span className="text-xs text-[var(--app-text-muted,#94a3b8)]">触发概率（%）</span><input type="number" min="0" max="100" className={field} value={entry.probability ?? 100} onChange={e=>updateLore(i,{probability:Number(e.target.value)})}/></label>
+                          <label className="space-y-1 block"><span className="text-xs text-[var(--app-text-muted,#94a3b8)]">互斥组名称</span><input className={field} value={entry.group || ''} onChange={e=>updateLore(i,{group:e.target.value})}/></label>
+                        </div>
+                      </details>
+                      <button className={`${button} text-rose-500 hover:text-rose-400 border-rose-500/30 hover:bg-rose-950/40`} onClick={() => patch({ lore: draft.lore.filter((_, j) => i !== j) })}>移除此词条</button>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              {/* Section 2: Deck Built-in Lorebook Entries (Viewable & Expandable) */}
+              <div className="space-y-3 pt-2">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <h4 className="text-xs font-bold text-[var(--app-text-main,#f1f5f9)] flex items-center gap-1.5">
+                      <span>📚 剧本自带世界书设定库</span>
+                      <span className="text-[11px] font-semibold text-amber-500 dark:text-amber-400">({deckBuiltinLore.length} 条)</span>
+                    </h4>
+                    <p className="text-[11px] text-[var(--app-text-muted,#94a3b8)]">
+                      预设的人物背景、环境与规则词条。点击任意词条展开查看详情，或复制到会话中个性化定制。
+                    </p>
+                  </div>
+                </div>
+
+                {deckBuiltinLore.length === 0 ? (
+                  <div className="p-4 rounded-xl border border-dashed border-[var(--app-card-border,#25293d)] text-center text-xs text-[var(--app-text-muted,#94a3b8)]">
+                    当前剧本暂无官方预设世界书条目，可在上方随时自创新设定词条。
+                  </div>
+                ) : (
+                  <div className="space-y-2 max-h-80 overflow-y-auto no-scrollbar pr-1">
+                    {deckBuiltinLore.map((entry) => {
+                      const isOverridden = draft.lore.some(e => e.id === entry.id);
+                      return (
+                        <details
+                          key={entry.id}
+                          className="p-3 rounded-xl bg-[var(--app-card-bg-subtle,#141624)] border border-[var(--app-card-border,#25293d)] group"
+                        >
+                          <summary className="cursor-pointer text-xs font-semibold text-[var(--app-text-main,#f1f5f9)] flex items-center justify-between gap-2 select-none">
+                            <div className="flex items-center gap-2 truncate">
+                              <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-500/15 text-amber-500 dark:text-amber-300 font-mono shrink-0">
+                                {entry.category === 'character' ? '人物' : entry.category === 'location' ? '地点' : entry.category === 'item' ? '物品' : '设定'}
+                              </span>
+                              <span className="font-bold truncate">{entry.title}</span>
+                              {entry.constant && (
+                                <span className="px-1.5 py-0.2 rounded text-[9px] bg-pink-500/15 text-pink-500 dark:text-pink-300 shrink-0">
+                                  常驻
+                                </span>
+                              )}
+                              {isOverridden && (
+                                <span className="px-1.5 py-0.2 rounded text-[9px] bg-sky-500/20 text-sky-500 dark:text-sky-300 shrink-0">
+                                  已在会话中覆写
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (!isOverridden) {
+                                    patch({ lore: [...draft.lore, { ...entry }] });
+                                  }
+                                }}
+                                disabled={isOverridden}
+                                className="px-2 py-0.5 rounded-lg border border-[var(--app-card-border,#2b2f44)] bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-[10px] text-amber-500 dark:text-amber-300 transition cursor-pointer disabled:opacity-40"
+                                title="复制此词条到会话中修改"
+                              >
+                                {isOverridden ? '已定制' : '复制到会话修改'}
+                              </button>
+                              <span className="text-[11px] text-[var(--app-text-muted,#94a3b8)] group-open:rotate-180 transition-transform">▼</span>
+                            </div>
+                          </summary>
+
+                          <div className="mt-2.5 pt-2 border-t border-[var(--app-card-border,#202334)] space-y-2 text-xs">
+                            {entry.keys && entry.keys.length > 0 && (
+                              <div className="flex items-center gap-1 flex-wrap text-[11px] text-[var(--app-text-muted,#94a3b8)]">
+                                <span className="font-medium">触发关键词:</span>
+                                {entry.keys.map((k, idx) => (
+                                  <span key={idx} className="px-1.5 py-0.2 rounded bg-black/5 dark:bg-white/10 text-gray-700 dark:text-gray-300 font-mono text-[10px]">
+                                    {k}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                            <p className="text-xs text-[var(--app-text-main,#f1f5f9)] leading-relaxed whitespace-pre-wrap">
+                              {entry.content}
+                            </p>
+                          </div>
+                        </details>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
           )}
 
           {tab === '正则' && (
