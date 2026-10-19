@@ -1118,14 +1118,14 @@ export default function ChatPage() {
               {isHeaderMoreOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setIsHeaderMoreOpen(false)} />
-                  <div className="absolute right-0 top-full mt-2 w-52 py-2 bg-[#171822] border border-[#2f3244] rounded-2xl shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150 space-y-1 max-h-[80vh] overflow-y-auto">
+                  <div className="header-more-dropdown absolute right-0 top-full mt-2 w-52 py-2 bg-[var(--app-card-bg,#171822)] border border-[var(--app-card-border,#2f3244)] rounded-2xl shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150 space-y-1 max-h-[80vh] overflow-y-auto text-[var(--app-text-main,#f1f5f9)]">
                   {/* md 以下显示模型切换入口 */}
                   <button
                     onClick={() => {
                       setIsHeaderMoreOpen(false);
                       setIsSettingsOpen(true);
                     }}
-                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition md:hidden"
+                    className="w-full px-3 py-2 text-left text-xs text-[var(--app-text-main,#f1f5f9)] hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2 transition md:hidden cursor-pointer"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                     <span className="truncate">当前模型：{modelSettings.model || 'deepseek-flash'}</span>
@@ -1137,7 +1137,7 @@ export default function ChatPage() {
                       setIsHeaderMoreOpen(false);
                       setIsDeckDetailOpen(true);
                     }}
-                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
+                    className="w-full px-3 py-2 text-left text-xs text-[var(--app-text-main,#f1f5f9)] hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2 transition cursor-pointer"
                   >
                     <BookOpen className="w-3.5 h-3.5 text-purple-400" />
                     <span>作品详情与人物卡</span>
@@ -1149,7 +1149,7 @@ export default function ChatPage() {
                       setIsHeaderMoreOpen(false);
                       setIsLorebookOpen(true);
                     }}
-                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
+                    className="w-full px-3 py-2 text-left text-xs text-[var(--app-text-main,#f1f5f9)] hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2 transition cursor-pointer"
                   >
                     <BookMarked className="w-3.5 h-3.5 text-amber-400" />
                     <span>世界书与背景档案</span>
@@ -1161,7 +1161,7 @@ export default function ChatPage() {
                       setIsHeaderMoreOpen(false);
                       setIsExportModalOpen(true);
                     }}
-                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition xl:hidden"
+                    className="w-full px-3 py-2 text-left text-xs text-[var(--app-text-main,#f1f5f9)] hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2 transition xl:hidden cursor-pointer"
                   >
                     <Share2 className="w-3.5 h-3.5 text-amber-400" />
                     <span>导出全景长文</span>
@@ -1173,7 +1173,7 @@ export default function ChatPage() {
                       setIsHeaderMoreOpen(false);
                       setIsSettingsOpen(true);
                     }}
-                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition lg:hidden"
+                    className="w-full px-3 py-2 text-left text-xs text-[var(--app-text-main,#f1f5f9)] hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2 transition lg:hidden cursor-pointer"
                   >
                     <Settings className="w-3.5 h-3.5 text-emerald-400" />
                     <span>切换模型与设置</span>
@@ -1184,7 +1184,7 @@ export default function ChatPage() {
                       setIsHeaderMoreOpen(false);
                       toggleRoleplayMode();
                     }}
-                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
+                    className="w-full px-3 py-2 text-left text-xs text-[var(--app-text-main,#f1f5f9)] hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2 transition cursor-pointer"
                   >
                     <span>{modelSettings.roleplayMode === 'unrestricted' ? '💖' : '🛡️'}</span>
                     <span>推演风格：{modelSettings.roleplayMode === 'unrestricted' ? '绝对顺从' : '真实推拉'}</span>
@@ -1195,7 +1195,7 @@ export default function ChatPage() {
                       setIsHeaderMoreOpen(false);
                       setIsModCenterOpen(true);
                     }}
-                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center justify-between transition"
+                    className="w-full px-3 py-2 text-left text-xs text-[var(--app-text-main,#f1f5f9)] hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-between transition cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
                       <Puzzle className="w-3.5 h-3.5 text-orange-400" />
@@ -1217,7 +1217,7 @@ export default function ChatPage() {
                       const active = soundEngine.toggleRain();
                       setIsRainActive(active);
                     }}
-                    className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition"
+                    className="w-full px-3 py-2 text-left text-xs text-[var(--app-text-main,#f1f5f9)] hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2 transition cursor-pointer"
                   >
                     <span>{isRainActive ? '🌧️' : '🎧'}</span>
                     <span>{isRainActive ? '关闭雨声白噪音' : '开启雨声白噪音'}</span>
@@ -1230,14 +1230,14 @@ export default function ChatPage() {
                         setIsHeaderMoreOpen(false);
                         handleOpenHandbook();
                       }}
-                      className="w-full px-3 py-2 text-left text-xs text-gray-200 hover:bg-[#242738] flex items-center gap-2 transition sm:hidden"
+                      className="w-full px-3 py-2 text-left text-xs text-[var(--app-text-main,#f1f5f9)] hover:bg-black/5 dark:hover:bg-white/10 flex items-center gap-2 transition sm:hidden cursor-pointer"
                     >
                       <BookOpen className="w-3.5 h-3.5 text-purple-400" />
                       <span>作品设定卡</span>
                     </button>
                   )}
 
-                  <div className="border-t border-[#262836] my-1" />
+                  <div className="border-t border-[var(--app-card-border,#262836)] my-1" />
 
                   {/* xl 以下显示重新开卷 */}
                   <button
@@ -1245,7 +1245,7 @@ export default function ChatPage() {
                       setIsHeaderMoreOpen(false);
                       setIsResetConfirmOpen(true);
                     }}
-                    className="w-full px-3 py-2 text-left text-xs text-rose-400 hover:bg-rose-950/30 flex items-center gap-2 transition xl:hidden"
+                    className="w-full px-3 py-2 text-left text-xs text-rose-500 dark:text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 transition xl:hidden cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>重新开卷</span>

@@ -875,17 +875,28 @@ details.reality-panel[open] > summary.reality-summary,
 .light .model-settings-modal .bg-\[\#161722\],
 .light .model-settings-modal .bg-\[\#12141e\],
 .light .mod-center-modal .bg-\[\#0e1017\],
+.light .mod-center-modal .bg-\[\#181a24\],
+.light .mod-center-modal .bg-\[\#13141b\],
 .light .lorebook-modal .bg-neutral-950\/60,
 .light .lorebook-modal .bg-neutral-950 {
   background-color: #f8fafc !important;
   border-color: #e2e8f0 !important;
+  color: #0f172a !important;
 }
 
-.light .mod-center-modal .bg-\[\#13141b\],
 .light .lorebook-modal .bg-neutral-800\/50,
 .light .lorebook-modal .bg-neutral-800 {
   background-color: #ffffff !important;
   border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.light .lorebook-modal input,
+.light .lorebook-modal select,
+.light .lorebook-modal textarea {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
 }
 
 .light .border-neutral-800,
@@ -1337,9 +1348,21 @@ details.reality-panel[open] > summary.reality-summary,
 .pink .model-settings-modal .bg-\[\#161722\],
 .pink .model-settings-modal .bg-\[\#12141e\],
 .pink .mod-center-modal .bg-\[\#0e1017\],
-.pink .lorebook-modal .bg-neutral-950\/60 {
+.pink .mod-center-modal .bg-\[\#181a24\],
+.pink .mod-center-modal .bg-\[\#13141b\],
+.pink .lorebook-modal .bg-neutral-950\/60,
+.pink .lorebook-modal .bg-neutral-950 {
   background-color: #fff0f5 !important;
   border-color: #fce7f3 !important;
+  color: #4a044e !important;
+}
+
+.pink .lorebook-modal input,
+.pink .lorebook-modal select,
+.pink .lorebook-modal textarea {
+  background-color: #ffffff !important;
+  border-color: #f472b6 !important;
+  color: #4a044e !important;
 }
 
 .pink ::-webkit-scrollbar-track {

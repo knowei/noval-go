@@ -137,7 +137,7 @@ export function RechargeModal() {
 
           <button
             onClick={() => setIsRechargeOpen(false)}
-            className="p-1.5 rounded-xl text-[var(--app-text-muted,#94a3b8)] hover:text-white hover:bg-white/10 transition cursor-pointer"
+            className="p-1.5 rounded-xl text-[var(--app-text-muted,#94a3b8)] hover:text-[var(--app-text-main,#f1f5f9)] hover:bg-black/5 dark:hover:bg-white/10 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -147,9 +147,9 @@ export function RechargeModal() {
         <div className="p-5 sm:p-6 space-y-5 overflow-y-auto max-h-[75vh]">
           {/* Success Banner */}
           {successInfo && (
-            <div className="p-4 rounded-2xl bg-emerald-950/50 border border-emerald-500/50 text-emerald-300 space-y-1.5 animate-in zoom-in-95 duration-200 shadow-lg">
+            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 space-y-1.5 animate-in zoom-in-95 duration-200 shadow-lg">
               <div className="flex items-center gap-2 font-bold text-sm">
-                <Check className="w-5 h-5 text-emerald-400" />
+                <Check className="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
                 <span>支付成功！已存入 +{successInfo.points.toLocaleString()} 积分</span>
               </div>
               <p className="text-xs opacity-90">
@@ -159,7 +159,7 @@ export function RechargeModal() {
           )}
 
           {errorMsg && (
-            <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-600/40 text-rose-300 text-xs">
+            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-300 text-xs">
               ❌ {errorMsg}
             </div>
           )}
@@ -168,7 +168,7 @@ export function RechargeModal() {
           <div className="space-y-2">
             <label className="text-xs font-semibold text-[var(--app-text-muted,#94a3b8)] flex items-center justify-between">
               <span>选择充值档位</span>
-              <span className="text-[11px] text-amber-400">1 元 ≈ 1,000 积分（约 100 万 Token）</span>
+              <span className="text-[11px] text-amber-500 dark:text-amber-400 font-medium">1 元 ≈ 1,000 积分（约 100 万 Token）</span>
             </label>
 
             <div className="grid grid-cols-2 gap-2.5">
@@ -185,8 +185,8 @@ export function RechargeModal() {
                     }}
                     className={`relative p-3.5 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between gap-2 ${
                       isSelected
-                        ? 'bg-amber-500/15 border-amber-500 text-white shadow-lg shadow-amber-500/10'
-                        : 'bg-[var(--app-card-bg-subtle,#181a26)] border-[var(--app-card-border,#282a3c)] text-[var(--app-text-muted,#94a3b8)] hover:border-amber-500/40 hover:text-white'
+                        ? 'bg-amber-500/15 border-amber-500 text-[var(--app-text-main,#f1f5f9)] shadow-lg shadow-amber-500/10 ring-1 ring-amber-500/50'
+                        : 'bg-[var(--app-card-bg-subtle,#181a26)] border-[var(--app-card-border,#282a3c)] text-[var(--app-text-muted,#94a3b8)] hover:border-amber-500/40 hover:text-[var(--app-text-main,#f1f5f9)]'
                     }`}
                   >
                     {pkg.tag && (
@@ -194,7 +194,7 @@ export function RechargeModal() {
                         className={`absolute top-2 right-2 px-1.5 py-0.5 rounded-md text-[9px] font-bold ${
                           pkg.popular
                             ? 'bg-rose-500 text-white'
-                            : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                            : 'bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/30'
                         }`}
                       >
                         {pkg.tag}
@@ -205,8 +205,8 @@ export function RechargeModal() {
                       <div className="text-xs text-[var(--app-text-muted,#94a3b8)] font-medium">
                         ￥<span className="text-lg font-bold text-[var(--app-text-main,#f1f5f9)] font-mono">{pkg.amount}</span>
                       </div>
-                      <div className="text-sm font-bold text-amber-400 font-mono mt-0.5">
-                        {totalPts.toLocaleString()} <span className="text-[10px] font-normal text-amber-300">积分</span>
+                      <div className="text-sm font-bold text-amber-500 dark:text-amber-400 font-mono mt-0.5">
+                        {totalPts.toLocaleString()} <span className="text-[10px] font-normal text-amber-600 dark:text-amber-300">积分</span>
                       </div>
                     </div>
 
@@ -230,7 +230,7 @@ export function RechargeModal() {
                 onClick={() => setPayChannel('wechat')}
                 className={`py-2 px-3 rounded-xl border text-xs font-medium flex items-center justify-center gap-1.5 transition cursor-pointer ${
                   payChannel === 'wechat'
-                    ? 'bg-emerald-500/15 border-emerald-500 text-emerald-400 font-bold'
+                    ? 'bg-emerald-500/15 border-emerald-500 text-emerald-600 dark:text-emerald-400 font-bold'
                     : 'bg-[var(--app-card-bg-subtle,#181a26)] border-[var(--app-card-border,#282a3c)] text-[var(--app-text-muted,#94a3b8)]'
                 }`}
               >
@@ -243,7 +243,7 @@ export function RechargeModal() {
                 onClick={() => setPayChannel('alipay')}
                 className={`py-2 px-3 rounded-xl border text-xs font-medium flex items-center justify-center gap-1.5 transition cursor-pointer ${
                   payChannel === 'alipay'
-                    ? 'bg-sky-500/15 border-sky-500 text-sky-400 font-bold'
+                    ? 'bg-sky-500/15 border-sky-500 text-sky-600 dark:text-sky-400 font-bold'
                     : 'bg-[var(--app-card-bg-subtle,#181a26)] border-[var(--app-card-border,#282a3c)] text-[var(--app-text-muted,#94a3b8)]'
                 }`}
               >
@@ -256,7 +256,7 @@ export function RechargeModal() {
                 onClick={() => setPayChannel('quick')}
                 className={`py-2 px-3 rounded-xl border text-xs font-medium flex items-center justify-center gap-1.5 transition cursor-pointer ${
                   payChannel === 'quick'
-                    ? 'bg-purple-500/15 border-purple-500 text-purple-400 font-bold'
+                    ? 'bg-purple-500/15 border-purple-500 text-purple-600 dark:text-purple-400 font-bold'
                     : 'bg-[var(--app-card-bg-subtle,#181a26)] border-[var(--app-card-border,#282a3c)] text-[var(--app-text-muted,#94a3b8)]'
                 }`}
               >
